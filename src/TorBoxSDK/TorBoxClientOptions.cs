@@ -24,28 +24,31 @@ public sealed class TorBoxClientOptions
     /// Gets or sets the base URL for the Main API.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>https://api.torbox.app/v1/api</c>.
+    /// Defaults to <c>https://api.torbox.app/v1/api/</c>.
     /// Override this value for testing or when using a custom endpoint.
+    /// The trailing slash is required for correct relative URI resolution.
     /// </remarks>
-    public string MainApiBaseUrl { get; set; } = "https://api.torbox.app/v1/api";
+    public string MainApiBaseUrl { get; set; } = "https://api.torbox.app/v1/api/";
 
     /// <summary>
     /// Gets or sets the base URL for the Search API.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>https://search-api.torbox.app</c>.
+    /// Defaults to <c>https://search-api.torbox.app/</c>.
     /// Override this value for testing or when using a custom endpoint.
+    /// The trailing slash is required for correct relative URI resolution.
     /// </remarks>
-    public string SearchApiBaseUrl { get; set; } = "https://search-api.torbox.app";
+    public string SearchApiBaseUrl { get; set; } = "https://search-api.torbox.app/";
 
     /// <summary>
     /// Gets or sets the base URL for the Relay API.
     /// </summary>
     /// <remarks>
-    /// Defaults to <c>https://relay.torbox.app</c>.
+    /// Defaults to <c>https://relay.torbox.app/</c>.
     /// Override this value for testing or when using a custom endpoint.
+    /// The trailing slash is required for correct relative URI resolution.
     /// </remarks>
-    public string RelayApiBaseUrl { get; set; } = "https://relay.torbox.app";
+    public string RelayApiBaseUrl { get; set; } = "https://relay.torbox.app/";
 
     /// <summary>
     /// Gets or sets the HTTP request timeout.

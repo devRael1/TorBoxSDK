@@ -27,7 +27,8 @@ public sealed class RelayApiClient : IRelayApiClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<RelayStatus>> GetStatusAsync(CancellationToken ct = default)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        // An empty relative URI resolves to the relay base address itself (GET /).
+        using var request = new HttpRequestMessage(HttpMethod.Get, string.Empty);
         return await TorBoxApiHelper.SendAsync<RelayStatus>(_httpClient, request, ct).ConfigureAwait(false);
     }
 

@@ -28,8 +28,8 @@ public sealed class GeneralClient : IGeneralClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetUpStatusAsync(CancellationToken ct = default)
     {
-        // The TorBox API root "/" returns the service status.
-        using var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        // An empty relative URI resolves to the API base address itself (GET /v1/api/).
+        using var request = new HttpRequestMessage(HttpMethod.Get, string.Empty);
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
