@@ -1,0 +1,139 @@
+using System.Text.Json.Serialization;
+using TorBoxSDK.Models.Common;
+
+namespace TorBoxSDK.Models.WebDownloads;
+
+/// <summary>
+/// Represents a web (direct link / hoster) download item returned by the TorBox API.
+/// </summary>
+public sealed record WebDownload
+{
+    /// <summary>
+    /// Gets the unique identifier of the web download.
+    /// </summary>
+    [JsonPropertyName("id")]
+    public long Id { get; init; }
+
+    /// <summary>
+    /// Gets the authentication identifier of the user who owns this download,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("auth_id")]
+    public string? AuthId { get; init; }
+
+    /// <summary>
+    /// Gets the hash of the web download, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("hash")]
+    public string? Hash { get; init; }
+
+    /// <summary>
+    /// Gets the display name of the web download.
+    /// </summary>
+    [JsonPropertyName("name")]
+    public string Name { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the total size of the download in bytes.
+    /// </summary>
+    [JsonPropertyName("size")]
+    public long Size { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the download is currently active.
+    /// </summary>
+    [JsonPropertyName("active")]
+    public bool Active { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the download was created, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("created_at")]
+    public DateTimeOffset? CreatedAt { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the download was last updated, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("updated_at")]
+    public DateTimeOffset? UpdatedAt { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the download will expire, or <see langword="null"/> if not set.
+    /// </summary>
+    [JsonPropertyName("expires_at")]
+    public DateTimeOffset? ExpiresAt { get; init; }
+
+    /// <summary>
+    /// Gets the current download state as a string descriptor,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("download_state")]
+    public string? DownloadState { get; init; }
+
+    /// <summary>
+    /// Gets the current download speed in bytes per second.
+    /// </summary>
+    [JsonPropertyName("download_speed")]
+    public long DownloadSpeed { get; init; }
+
+    /// <summary>
+    /// Gets the current upload speed in bytes per second.
+    /// </summary>
+    [JsonPropertyName("upload_speed")]
+    public long UploadSpeed { get; init; }
+
+    /// <summary>
+    /// Gets the download progress as a value between 0.0 and 1.0.
+    /// </summary>
+    [JsonPropertyName("progress")]
+    public double Progress { get; init; }
+
+    /// <summary>
+    /// Gets the availability of the download data.
+    /// </summary>
+    [JsonPropertyName("availability")]
+    public double Availability { get; init; }
+
+    /// <summary>
+    /// Gets the estimated time of arrival (completion) in seconds.
+    /// </summary>
+    [JsonPropertyName("eta")]
+    public long Eta { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the download has finished.
+    /// </summary>
+    [JsonPropertyName("download_finished")]
+    public bool DownloadFinished { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the downloaded data is present on the server.
+    /// </summary>
+    [JsonPropertyName("download_present")]
+    public bool DownloadPresent { get; init; }
+
+    /// <summary>
+    /// Gets the inactive check interval in seconds.
+    /// </summary>
+    [JsonPropertyName("inactive_check")]
+    public long InactiveCheck { get; init; }
+
+    /// <summary>
+    /// Gets the server identifier where the download is hosted.
+    /// </summary>
+    [JsonPropertyName("server")]
+    public int Server { get; init; }
+
+    /// <summary>
+    /// Gets the error message if the download encountered an error,
+    /// or <see langword="null"/> if no error occurred.
+    /// </summary>
+    [JsonPropertyName("error")]
+    public string? Error { get; init; }
+
+    /// <summary>
+    /// Gets the list of files contained in this download.
+    /// </summary>
+    [JsonPropertyName("files")]
+    public IReadOnlyList<DownloadFile> Files { get; init; } = [];
+}
