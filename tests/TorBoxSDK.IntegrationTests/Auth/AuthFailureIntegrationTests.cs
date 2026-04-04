@@ -9,6 +9,7 @@ namespace TorBoxSDK.IntegrationTests.Auth;
 /// Integration tests that verify the SDK correctly surfaces authentication errors
 /// when an invalid API key is provided.
 /// </summary>
+[Collection("Integration")]
 [Trait("Category", "Integration")]
 public sealed class AuthFailureIntegrationTests
 {

@@ -5,4 +5,6 @@ namespace TorBoxSDK.IntegrationTests.Helpers;
 /// across all test classes in the <c>Integration</c> collection.
 /// </summary>
 [CollectionDefinition("Integration")]
-public sealed class IntegrationTestCollection : ICollectionFixture<TorBoxIntegrationFixture>;
+public sealed class IntegrationTestCollection : ICollectionFixture<TorBoxIntegrationFixture>
+{
+}
