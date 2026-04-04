@@ -4,6 +4,7 @@ TorBoxSDK uses two related patterns:
 
 - successful responses return `TorBoxResponse` or `TorBoxResponse<T>`
 - unsuccessful API responses throw `TorBoxException`
+- transport failures and cancellations may still surface as `HttpRequestException` or `TaskCanceledException`
 
 ## Response envelope
 
@@ -58,5 +59,6 @@ catch (TorBoxException ex) when (ex.ErrorCode == TorBoxErrorCode.TooManyRequests
 ## Notes
 
 - All public async methods accept `CancellationToken`
-- Transport and API-level errors are normalized into `TorBoxException`
+- API-level errors are normalized into `TorBoxException`
+- Transport failures and cancellations may surface as `HttpRequestException` or `TaskCanceledException`
 - Unmapped API error strings fall back to `TorBoxErrorCode.Unknown`

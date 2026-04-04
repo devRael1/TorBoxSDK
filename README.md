@@ -1,7 +1,6 @@
 # TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
-![Build](https://img.shields.io/badge/build-placeholder-lightgrey)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![.NET](https://img.shields.io/badge/.NET-net6.0%20%7C%20net7.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-purple)](#supported-net-versions)
 
@@ -143,7 +142,7 @@ TorBoxClient (ITorBoxClient)
 
 ## Error Handling
 
-Successful requests return the standard TorBox response envelope. API failures are surfaced as `TorBoxException`, which includes a typed `TorBoxErrorCode` and the API-provided detail message.
+Successful requests return the standard TorBox response envelope. API failures returned by TorBox are surfaced as `TorBoxException`, which includes a typed `TorBoxErrorCode` and the API-provided detail message. Transport failures from `HttpClient` (for example DNS, connectivity, or timeout issues) can still surface as `HttpRequestException` or `TaskCanceledException`.
 
 ```csharp
 using TorBoxSDK.Models.Common;
@@ -155,6 +154,14 @@ try
 catch (TorBoxException ex)
 {
     Console.Error.WriteLine($"[{ex.ErrorCode}] {ex.Detail ?? ex.Message}");
+}
+catch (HttpRequestException ex)
+{
+    Console.Error.WriteLine($"Transport error: {ex.Message}");
+}
+catch (TaskCanceledException ex)
+{
+    Console.Error.WriteLine($"Request timed out or was canceled: {ex.Message}");
 }
 ```
 
