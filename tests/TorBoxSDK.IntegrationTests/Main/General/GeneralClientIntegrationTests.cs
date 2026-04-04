@@ -45,4 +45,21 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Assert.True(response.Success);
         Assert.NotNull(response.Data);
     }
+
+    [SkippableFact]
+    public async Task Get30DayStatsAsync_WithValidApiKey_ReturnsStats()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        TorBoxResponse<Stats> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+        Assert.NotNull(response.Data);
+    }
 }
