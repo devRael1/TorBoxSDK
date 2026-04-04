@@ -43,7 +43,10 @@ public static class TorBoxServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configure);
 
-        services.Configure(configure);
+        services
+            .AddOptions<TorBoxClientOptions>()
+            .Configure(configure)
+            .ValidateDataAnnotations();
 
         RegisterCore(services);
 
@@ -69,7 +72,10 @@ public static class TorBoxServiceCollectionExtensions
         ArgumentNullException.ThrowIfNull(services);
         ArgumentNullException.ThrowIfNull(configuration);
 
-        services.Configure<TorBoxClientOptions>(configuration.GetSection("TorBox"));
+        services
+            .AddOptions<TorBoxClientOptions>()
+            .Bind(configuration.GetSection("TorBox"))
+            .ValidateDataAnnotations();
 
         RegisterCore(services);
 

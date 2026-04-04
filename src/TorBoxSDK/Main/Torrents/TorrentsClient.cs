@@ -30,6 +30,11 @@ public sealed class TorrentsClient : ITorrentsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        if (request.Magnet is null && request.File is null)
+        {
+            throw new ArgumentException("Either Magnet or File must be provided.", nameof(request));
+        }
+
         var content = new MultipartFormDataContent();
         if (request.Magnet is not null)
         {
@@ -185,6 +190,11 @@ public sealed class TorrentsClient : ITorrentsClient
     public async Task<TorBoxResponse<Torrent>> AsyncCreateTorrentAsync(CreateTorrentRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        if (request.Magnet is null && request.File is null)
+        {
+            throw new ArgumentException("Either Magnet or File must be provided.", nameof(request));
+        }
 
         var content = new MultipartFormDataContent();
         if (request.Magnet is not null)

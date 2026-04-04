@@ -29,6 +29,11 @@ public sealed class UsenetClient : IUsenetClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        if (request.Link is null && request.File is null)
+        {
+            throw new ArgumentException("Either Link or File must be provided.", nameof(request));
+        }
+
         var content = new MultipartFormDataContent();
         if (request.Link is not null)
         {
@@ -142,6 +147,11 @@ public sealed class UsenetClient : IUsenetClient
     public async Task<TorBoxResponse<UsenetDownload>> AsyncCreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        if (request.Link is null && request.File is null)
+        {
+            throw new ArgumentException("Either Link or File must be provided.", nameof(request));
+        }
 
         var content = new MultipartFormDataContent();
         if (request.Link is not null)

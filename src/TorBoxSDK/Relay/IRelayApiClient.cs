@@ -19,7 +19,8 @@ public interface IRelayApiClient
     /// <param name="torrentId">The unique identifier of the torrent to check.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The inactivity check result.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="authId"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="authId"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="authId"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(string authId, long torrentId, CancellationToken ct = default);
 }

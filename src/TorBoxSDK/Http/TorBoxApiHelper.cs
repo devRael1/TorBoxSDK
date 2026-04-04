@@ -126,29 +126,32 @@ internal static class TorBoxApiHelper
             return TorBoxErrorCode.Unknown;
         }
 
-        return error.ToUpperInvariant().Replace(" ", "").Replace("_", "") switch
+        string normalizedError = error.ToUpperInvariant().Replace(" ", "").Replace("_", "");
+
+        return normalizedError switch
         {
-            "DATABASE_ERROR" or "DATABASEERROR" => TorBoxErrorCode.DatabaseError,
-            "BAD_TOKEN" or "BADTOKEN" => TorBoxErrorCode.BadToken,
-            "NO_AUTH" or "NOAUTH" => TorBoxErrorCode.NoAuth,
-            "INVALID_OPTION" or "INVALIDOPTION" => TorBoxErrorCode.InvalidOption,
-            "PERMISSION_DENIED" or "PERMISSIONDENIED" => TorBoxErrorCode.PermissionDenied,
-            "PLAN_RESTRICTED_FEATURE" or "PLANRESTRICTEDFEATURE" => TorBoxErrorCode.PlanRestrictedFeature,
-            "DUPLICATE_ITEM" or "DUPLICATEITEM" => TorBoxErrorCode.DuplicateItem,
-            "BREACH_OF_TOS" or "BREACHOFTOS" => TorBoxErrorCode.BreachOfTos,
-            "ACTIVE_LIMIT" or "ACTIVELIMIT" => TorBoxErrorCode.ActiveLimit,
-            "SEEDING_LIMIT" or "SEEDINGLIMIT" => TorBoxErrorCode.SeedingLimit,
-            "BANNED_CONTENT_DETECTED" or "BANNEDCONTENTDETECTED" => TorBoxErrorCode.BannedContentDetected,
-            "COULD_NOT_PERFORM_ACTION" or "COULDNOTPERFORMACTION" => TorBoxErrorCode.CouldNotPerformAction,
-            "ITEM_NOT_FOUND" or "ITEMNOTFOUND" => TorBoxErrorCode.ItemNotFound,
-            "INVALID_DEVICE" or "INVALIDDEVICE" => TorBoxErrorCode.InvalidDevice,
-            "DEVICE_ALREADY_AUTHED" or "DEVICEALREADYAUTHED" => TorBoxErrorCode.DeviceAlreadyAuthed,
-            "TOO_MANY_REQUESTS" or "TOOMANYREQUESTS" => TorBoxErrorCode.TooManyRequests,
-            "DOWNLOAD_TOO_LARGE" or "DOWNLOADTOOLARGE" => TorBoxErrorCode.DownloadTooLarge,
-            "MISSING_REQUIRED_OPTION" or "MISSINGREQUIREDOPTION" => TorBoxErrorCode.MissingRequiredOption,
-            "BANNED_USER" or "BANNEDUSER" => TorBoxErrorCode.BannedUser,
-            "SEARCH_ERROR" or "SEARCHERROR" => TorBoxErrorCode.SearchError,
-            "SERVER_ERROR" or "SERVERERROR" => TorBoxErrorCode.ServerError,
+            "UNKNOWNERROR" or "UNKNOWN" => TorBoxErrorCode.UnknownError,
+            "DATABASEERROR" => TorBoxErrorCode.DatabaseError,
+            "BADTOKEN" => TorBoxErrorCode.BadToken,
+            "NOAUTH" => TorBoxErrorCode.NoAuth,
+            "INVALIDOPTION" => TorBoxErrorCode.InvalidOption,
+            "PERMISSIONDENIED" => TorBoxErrorCode.PermissionDenied,
+            "PLANRESTRICTEDFEATURE" => TorBoxErrorCode.PlanRestrictedFeature,
+            "DUPLICATEITEM" => TorBoxErrorCode.DuplicateItem,
+            "BREACHOFTOS" => TorBoxErrorCode.BreachOfTos,
+            "ACTIVELIMIT" => TorBoxErrorCode.ActiveLimit,
+            "SEEDINGLIMIT" => TorBoxErrorCode.SeedingLimit,
+            "BANNEDCONTENTDETECTED" => TorBoxErrorCode.BannedContentDetected,
+            "COULDNOTPERFORMACTION" => TorBoxErrorCode.CouldNotPerformAction,
+            "ITEMNOTFOUND" => TorBoxErrorCode.ItemNotFound,
+            "INVALIDDEVICE" => TorBoxErrorCode.InvalidDevice,
+            "DEVICEALREADYAUTHED" => TorBoxErrorCode.DeviceAlreadyAuthed,
+            "TOOMANYREQUESTS" => TorBoxErrorCode.TooManyRequests,
+            "DOWNLOADTOOLARGE" => TorBoxErrorCode.DownloadTooLarge,
+            "MISSINGREQUIREDOPTION" => TorBoxErrorCode.MissingRequiredOption,
+            "BANNEDUSER" => TorBoxErrorCode.BannedUser,
+            "SEARCHERROR" => TorBoxErrorCode.SearchError,
+            "SERVERERROR" => TorBoxErrorCode.ServerError,
             _ => TorBoxErrorCode.Unknown,
         };
     }

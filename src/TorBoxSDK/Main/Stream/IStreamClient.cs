@@ -13,7 +13,8 @@ public interface IStreamClient
     /// <param name="type">The type of download (e.g., torrent, usenet).</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The stream URL or data as a string.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="type"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="type"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="type"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<string>> CreateStreamAsync(long id, long fileId, string type, CancellationToken ct = default);
 
@@ -23,7 +24,8 @@ public interface IStreamClient
     /// <param name="type">The type of download (e.g., torrent, usenet).</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The stream data.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="type"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="type"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="type"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<object>> GetStreamDataAsync(long id, long fileId, string type, CancellationToken ct = default);
 }

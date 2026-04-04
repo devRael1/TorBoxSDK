@@ -40,7 +40,8 @@ public interface IVendorsClient
     /// <param name="userEmail">The email address of the user to look up.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The vendor account details for the user.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="userEmail"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userEmail"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="userEmail"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<VendorAccount>> GetAccountByEmailAsync(string userEmail, CancellationToken ct = default);
 

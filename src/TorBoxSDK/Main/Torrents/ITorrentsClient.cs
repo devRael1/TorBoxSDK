@@ -74,7 +74,8 @@ public interface ITorrentsClient
     /// <param name="timeout">Optional timeout in seconds for metadata retrieval.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The torrent metadata information.</returns>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="hash"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="hash"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(string hash, int? timeout = null, CancellationToken ct = default);
 

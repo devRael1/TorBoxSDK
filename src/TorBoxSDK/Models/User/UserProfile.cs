@@ -5,7 +5,7 @@ namespace TorBoxSDK.Models.User;
 /// <summary>
 /// Represents a TorBox user account returned by the API.
 /// </summary>
-public sealed record User
+public sealed record UserProfile
 {
     /// <summary>
     /// Gets the unique identifier of the user.

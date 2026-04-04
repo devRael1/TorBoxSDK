@@ -31,7 +31,7 @@ public sealed class AuthHandlerTests
     }
 
     [Fact]
-    public async Task SendAsync_WithEmptyApiKey_SetsEmptyBearerToken()
+    public async Task SendAsync_WithEmptyApiKey_DoesNotAddAuthorizationHeader()
     {
         // Arrange
         var options = Options.Create(new TorBoxClientOptions { ApiKey = string.Empty });

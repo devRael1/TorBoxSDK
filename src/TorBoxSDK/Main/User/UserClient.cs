@@ -44,13 +44,13 @@ public sealed class UserClient : IUserClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<Models.User.User>> GetMeAsync(bool? settings = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<UserProfile>> GetMeAsync(bool? settings = null, CancellationToken ct = default)
     {
         string query = TorBoxApiHelper.BuildQuery(
             ("settings", settings?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/me{query}");
-        return await TorBoxApiHelper.SendAsync<Models.User.User>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<UserProfile>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

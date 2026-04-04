@@ -27,7 +27,7 @@ public interface IUserClient
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The user profile data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<Models.User.User>> GetMeAsync(bool? settings = null, CancellationToken ct = default);
+    Task<TorBoxResponse<UserProfile>> GetMeAsync(bool? settings = null, CancellationToken ct = default);
 
     /// <summary>Adds a referral code to the user's account.</summary>
     /// <param name="request">The referral request.</param>
