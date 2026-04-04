@@ -13,7 +13,6 @@ namespace TorBoxSDK.IntegrationTests.Auth;
 public sealed class AuthFailureIntegrationTests
 {
     [SkippableFact]
-    [Trait("Category", "Integration")]
     public async Task GetMeAsync_WithInvalidApiKey_ThrowsTorBoxException()
     {
         // Skip in environments where outbound HTTP is unavailable.

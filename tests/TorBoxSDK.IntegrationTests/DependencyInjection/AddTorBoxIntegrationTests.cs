@@ -37,7 +37,6 @@ public sealed class AddTorBoxIntegrationTests : IDisposable
     public void Dispose() => _provider.Dispose();
 
     [Fact]
-    [Trait("Category", "Integration")]
     public void AddTorBox_WithValidOptions_ResolvesITorBoxClient()
     {
         // Arrange — provider built in constructor
@@ -50,13 +49,14 @@ public sealed class AddTorBoxIntegrationTests : IDisposable
     }
 
     [Fact]
-    [Trait("Category", "Integration")]
     public void AddTorBox_WithValidOptions_ResolvesAllMainApiResourceClients()
     {
-        // Arrange
+        // Arrange — provider built in constructor
+
+        // Act
         IMainApiClient mainClient = _provider.GetRequiredService<IMainApiClient>();
 
-        // Act & Assert
+        // Assert
         Assert.NotNull(mainClient);
         Assert.NotNull(mainClient.Torrents);
         Assert.NotNull(mainClient.Usenet);
@@ -72,7 +72,6 @@ public sealed class AddTorBoxIntegrationTests : IDisposable
     }
 
     [Fact]
-    [Trait("Category", "Integration")]
     public void AddTorBox_WithValidOptions_ResolvesSearchAndRelayClients()
     {
         // Arrange — provider built in constructor

@@ -14,7 +14,6 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
     private readonly TorBoxIntegrationFixture _fixture = fixture;
 
     [SkippableFact]
-    [Trait("Category", "Integration")]
     public async Task GetMyNotificationsAsync_WithValidApiKey_ReturnsResponse()
     {
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");

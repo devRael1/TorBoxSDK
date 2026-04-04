@@ -20,6 +20,7 @@ public sealed class TorBoxIntegrationFixture : IAsyncLifetime
     /// <summary>
     /// Gets the resolved <see cref="ITorBoxClient"/> from the DI container.
     /// </summary>
+    // Set in constructor — guaranteed non-null before any test accesses it.
     public ITorBoxClient Client { get; private set; } = null!;
 
     public TorBoxIntegrationFixture()
@@ -29,6 +30,7 @@ public sealed class TorBoxIntegrationFixture : IAsyncLifetime
 
         // Use a placeholder key when the real key is unavailable so the DI
         // container still builds.  Tests that hit real APIs skip via HasApiKey.
+        // Non-null because HasApiKey is true only when apiKey is non-empty.
         string effectiveKey = HasApiKey ? apiKey! : "no-api-key-set";
 
         ServiceCollection services = new();

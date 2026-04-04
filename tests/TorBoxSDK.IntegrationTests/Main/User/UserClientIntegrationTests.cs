@@ -14,7 +14,6 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
     private readonly TorBoxIntegrationFixture _fixture = fixture;
 
     [SkippableFact]
-    [Trait("Category", "Integration")]
     public async Task GetMeAsync_WithValidApiKey_ReturnsUserProfile()
     {
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
@@ -34,7 +33,6 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
     }
 
     [SkippableFact]
-    [Trait("Category", "Integration")]
     public async Task GetMeAsync_WithSettings_ReturnsSettings()
     {
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
