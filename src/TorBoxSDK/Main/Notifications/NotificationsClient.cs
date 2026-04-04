@@ -1,3 +1,7 @@
+using TorBoxSDK.Http;
+using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Notifications;
+
 namespace TorBoxSDK.Main.Notifications;
 
 /// <summary>
@@ -18,5 +22,61 @@ public sealed class NotificationsClient : INotificationsClient
     public NotificationsClient(HttpClient httpClient)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> GetNotificationRssAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "notifications/rss");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<IReadOnlyList<Notification>>> GetMyNotificationsAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "notifications/mynotifications");
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<Notification>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> ClearAllNotificationsAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "notifications/clear");
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> ClearNotificationAsync(long notificationId, CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"notifications/clear/{notificationId}");
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> SendTestNotificationAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "notifications/test");
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "intercom/hash");
+        return await TorBoxApiHelper.SendAsync<IntercomHash>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> GetChangelogsRssAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "changelogs/rss");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<IReadOnlyList<Changelog>>> GetChangelogsJsonAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "changelogs/json");
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<Changelog>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 }
