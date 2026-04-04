@@ -121,4 +121,16 @@ public sealed class WebDownloadsClient : IWebDownloadsClient
         };
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<WebDownload>> AsyncCreateWebDownloadAsync(CreateWebDownloadRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "webdl/asynccreatewebdownload")
+        {
+            Content = TorBoxApiHelper.JsonContent(request),
+        };
+        return await TorBoxApiHelper.SendAsync<WebDownload>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
 }

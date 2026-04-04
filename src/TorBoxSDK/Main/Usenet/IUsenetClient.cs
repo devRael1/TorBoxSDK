@@ -67,4 +67,12 @@ public interface IUsenetClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse> EditUsenetDownloadAsync(EditUsenetDownloadRequest request, CancellationToken ct = default);
+
+    /// <summary>Creates a new Usenet download with asynchronous server-side processing.</summary>
+    /// <param name="request">The Usenet download creation request.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The created Usenet download details.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<UsenetDownload>> AsyncCreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken ct = default);
 }

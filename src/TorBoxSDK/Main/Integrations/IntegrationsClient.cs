@@ -132,4 +132,60 @@ public sealed class IntegrationsClient : IIntegrationsClient
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/jobs/{Uri.EscapeDataString(hash)}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<IntegrationJob>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> OAuthRedirectAsync(string provider, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<object>> OAuthCallbackAsync(string provider, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/callback");
+        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/success");
+        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> OAuthRegisterAsync(string provider, OAuthRegisterRequest request, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(provider)}/register")
+        {
+            Content = TorBoxApiHelper.JsonContent(request),
+        };
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> OAuthUnregisterAsync(string provider, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"integration/oauth/{Uri.EscapeDataString(provider)}/unregister");
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles");
+        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
 }

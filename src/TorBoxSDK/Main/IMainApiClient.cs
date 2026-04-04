@@ -1,3 +1,4 @@
+using TorBoxSDK.Main.General;
 using TorBoxSDK.Main.Integrations;
 using TorBoxSDK.Main.Notifications;
 using TorBoxSDK.Main.Queued;
@@ -17,6 +18,11 @@ namespace TorBoxSDK.Main;
 /// </summary>
 public interface IMainApiClient
 {
+    /// <summary>
+    /// Gets the client for general API operations.
+    /// </summary>
+    IGeneralClient General { get; }
+
     /// <summary>
     /// Gets the client for torrent-related operations.
     /// </summary>

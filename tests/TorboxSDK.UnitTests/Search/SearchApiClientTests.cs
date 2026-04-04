@@ -69,13 +69,13 @@ public sealed class SearchApiClientTests
     }
 
     [Fact]
-    public async Task SearchTorrentsAsync_WithNullQuery_ThrowsArgumentException()
+    public async Task SearchTorrentsAsync_WithNullQuery_ThrowsArgumentNullException()
     {
         // Arrange
         var (client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchTorrentsAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchTorrentsAsync(null!));
     }
 
     [Fact]

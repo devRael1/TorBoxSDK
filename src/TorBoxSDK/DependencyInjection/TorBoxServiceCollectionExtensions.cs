@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 
 using TorBoxSDK.Http;
 using TorBoxSDK.Main;
+using TorBoxSDK.Main.General;
 using TorBoxSDK.Main.Integrations;
 using TorBoxSDK.Main.Notifications;
 using TorBoxSDK.Main.Queued;
@@ -81,6 +82,7 @@ public static class TorBoxServiceCollectionExtensions
         services.AddTransient<AuthHandler>();
 
         // --- Main API resource clients (all share the Main API base URL) ---
+        AddMainApiClient<IGeneralClient, GeneralClient>(services);
         AddMainApiClient<ITorrentsClient, TorrentsClient>(services);
         AddMainApiClient<IUsenetClient, UsenetClient>(services);
         AddMainApiClient<IWebDownloadsClient, WebDownloadsClient>(services);

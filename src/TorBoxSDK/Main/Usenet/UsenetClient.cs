@@ -137,4 +137,39 @@ public sealed class UsenetClient : IUsenetClient
         };
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<UsenetDownload>> AsyncCreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var content = new MultipartFormDataContent();
+        if (request.Link is not null)
+        {
+            content.Add(new StringContent(request.Link), "link");
+        }
+
+        if (request.File is not null)
+        {
+            content.Add(new ByteArrayContent(request.File), "file", "download.nzb");
+        }
+
+        if (request.Name is not null)
+        {
+            content.Add(new StringContent(request.Name), "name");
+        }
+
+        if (request.Password is not null)
+        {
+            content.Add(new StringContent(request.Password), "password");
+        }
+
+        if (request.PostProcessing is not null)
+        {
+            content.Add(new StringContent(request.PostProcessing), "post_processing");
+        }
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/asynccreateusenetdownload") { Content = content };
+        return await TorBoxApiHelper.SendAsync<UsenetDownload>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
 }

@@ -89,4 +89,52 @@ public interface IIntegrationsClient
     /// <exception cref="ArgumentException">Thrown when <paramref name="hash"/> is null or empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<IReadOnlyList<IntegrationJob>>> GetJobsByHashAsync(string hash, CancellationToken ct = default);
+
+    /// <summary>Initiates an OAuth redirect for the specified provider.</summary>
+    /// <param name="provider">The OAuth provider name (e.g., "google", "dropbox").</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The redirect URL as a string.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<string>> OAuthRedirectAsync(string provider, CancellationToken ct = default);
+
+    /// <summary>Handles the OAuth callback for the specified provider.</summary>
+    /// <param name="provider">The OAuth provider name.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The callback response data.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<object>> OAuthCallbackAsync(string provider, CancellationToken ct = default);
+
+    /// <summary>Handles the OAuth success endpoint for the specified provider.</summary>
+    /// <param name="provider">The OAuth provider name.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The success response data.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken ct = default);
+
+    /// <summary>Registers an OAuth integration with the specified provider.</summary>
+    /// <param name="provider">The OAuth provider name.</param>
+    /// <param name="request">The registration request containing the authorization code and redirect URI.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The API response.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse> OAuthRegisterAsync(string provider, OAuthRegisterRequest request, CancellationToken ct = default);
+
+    /// <summary>Unregisters an OAuth integration with the specified provider.</summary>
+    /// <param name="provider">The OAuth provider name.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The API response.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse> OAuthUnregisterAsync(string provider, CancellationToken ct = default);
+
+    /// <summary>Retrieves linked Discord roles for the authenticated user.</summary>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The linked Discord roles data.</returns>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(CancellationToken ct = default);
 }

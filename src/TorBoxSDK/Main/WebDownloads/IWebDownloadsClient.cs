@@ -73,4 +73,12 @@ public interface IWebDownloadsClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse> EditWebDownloadAsync(EditWebDownloadRequest request, CancellationToken ct = default);
+
+    /// <summary>Creates a new web download with asynchronous server-side processing.</summary>
+    /// <param name="request">The web download creation request.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The created web download details.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<WebDownload>> AsyncCreateWebDownloadAsync(CreateWebDownloadRequest request, CancellationToken ct = default);
 }

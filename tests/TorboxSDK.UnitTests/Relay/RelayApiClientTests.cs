@@ -64,12 +64,12 @@ public sealed class RelayApiClientTests
     }
 
     [Fact]
-    public async Task CheckForInactiveAsync_WithNullAuthId_ThrowsArgumentException()
+    public async Task CheckForInactiveAsync_WithNullAuthId_ThrowsArgumentNullException()
     {
         // Arrange
         var (client, _) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.CheckForInactiveAsync(null!, 42));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckForInactiveAsync(null!, 42));
     }
 }

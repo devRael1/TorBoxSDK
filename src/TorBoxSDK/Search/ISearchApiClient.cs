@@ -83,4 +83,22 @@ public interface ISearchApiClient
     /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is null or empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<MetaSearchResult>> GetMetaByIdAsync(string id, CancellationToken ct = default);
+
+    /// <summary>Searches the Torznab API for torrents matching the specified query.</summary>
+    /// <param name="query">The search query string.</param>
+    /// <param name="apiKey">Optional API key override for the Torznab endpoint.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The search results as an XML string.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<string>> SearchTorznabAsync(string query, string? apiKey = null, CancellationToken ct = default);
+
+    /// <summary>Searches the Newznab API for usenet articles matching the specified query.</summary>
+    /// <param name="query">The search query string.</param>
+    /// <param name="apiKey">Optional API key override for the Newznab endpoint.</param>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The search results as an XML string.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> is null or empty.</exception>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<string>> SearchNewznabAsync(string query, string? apiKey = null, CancellationToken ct = default);
 }

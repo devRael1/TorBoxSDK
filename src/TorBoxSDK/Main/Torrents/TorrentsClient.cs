@@ -1,5 +1,6 @@
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Queued;
 using TorBoxSDK.Models.Torrents;
 
 namespace TorBoxSDK.Main.Torrents;
@@ -178,5 +179,76 @@ public sealed class TorrentsClient : ITorrentsClient
             Content = TorBoxApiHelper.JsonContent(request),
         };
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<Torrent>> AsyncCreateTorrentAsync(CreateTorrentRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        var content = new MultipartFormDataContent();
+        if (request.Magnet is not null)
+        {
+            content.Add(new StringContent(request.Magnet), "magnet");
+        }
+
+        if (request.File is not null)
+        {
+            content.Add(new ByteArrayContent(request.File), "file", "torrent.torrent");
+        }
+
+        if (request.Name is not null)
+        {
+            content.Add(new StringContent(request.Name), "name");
+        }
+
+        if (request.Seed is not null)
+        {
+            content.Add(new StringContent(((int)request.Seed.Value).ToString()), "seed");
+        }
+
+        if (request.AllowZip is not null)
+        {
+            content.Add(new StringContent(request.AllowZip.Value.ToString().ToLowerInvariant()), "allow_zip");
+        }
+
+        if (request.AsQueued is not null)
+        {
+            content.Add(new StringContent(request.AsQueued.Value.ToString().ToLowerInvariant()), "as_queued");
+        }
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/asynccreatetorrent") { Content = content };
+        return await TorBoxApiHelper.SendAsync<Torrent>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedTorrentsAsync(CancellationToken ct = default)
+    {
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "torrents/getqueued");
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<QueuedDownload>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse> ControlQueuedTorrentsAsync(ControlQueuedRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/controlqueued")
+        {
+            Content = TorBoxApiHelper.JsonContent(request),
+        };
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> MagnetToFileAsync(MagnetToFileRequest request, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/magnettofile")
+        {
+            Content = TorBoxApiHelper.JsonContent(request),
+        };
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 }

@@ -1,3 +1,4 @@
+using TorBoxSDK.Main.General;
 using TorBoxSDK.Main.Integrations;
 using TorBoxSDK.Main.Notifications;
 using TorBoxSDK.Main.Queued;
@@ -21,6 +22,9 @@ namespace TorBoxSDK.Main;
 /// </remarks>
 public sealed class MainApiClient : IMainApiClient
 {
+    /// <inheritdoc />
+    public IGeneralClient General { get; }
+
     /// <inheritdoc />
     public ITorrentsClient Torrents { get; }
 
@@ -54,6 +58,7 @@ public sealed class MainApiClient : IMainApiClient
     /// <summary>
     /// Initializes a new instance of the <see cref="MainApiClient"/> class.
     /// </summary>
+    /// <param name="general">The general client.</param>
     /// <param name="torrents">The torrents client.</param>
     /// <param name="usenet">The usenet client.</param>
     /// <param name="webDownloads">The web downloads client.</param>
@@ -68,6 +73,7 @@ public sealed class MainApiClient : IMainApiClient
     /// Thrown when any parameter is <see langword="null"/>.
     /// </exception>
     public MainApiClient(
+        IGeneralClient general,
         ITorrentsClient torrents,
         IUsenetClient usenet,
         IWebDownloadsClient webDownloads,
@@ -79,6 +85,7 @@ public sealed class MainApiClient : IMainApiClient
         IVendorsClient vendors,
         IQueuedClient queued)
     {
+        General = general ?? throw new ArgumentNullException(nameof(general));
         Torrents = torrents ?? throw new ArgumentNullException(nameof(torrents));
         Usenet = usenet ?? throw new ArgumentNullException(nameof(usenet));
         WebDownloads = webDownloads ?? throw new ArgumentNullException(nameof(webDownloads));

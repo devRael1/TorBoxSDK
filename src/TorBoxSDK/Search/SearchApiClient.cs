@@ -108,4 +108,32 @@ public sealed class SearchApiClient : ISearchApiClient
         using var request = new HttpRequestMessage(HttpMethod.Get, $"meta/{Uri.EscapeDataString(id)}");
         return await TorBoxApiHelper.SendAsync<MetaSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> SearchTorznabAsync(string query, string? apiKey = null, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(query, nameof(query));
+
+        string queryString = TorBoxApiHelper.BuildQuery(
+            ("t", "search"),
+            ("q", query),
+            ("apikey", apiKey));
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"torznab/api{queryString}");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> SearchNewznabAsync(string query, string? apiKey = null, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(query, nameof(query));
+
+        string queryString = TorBoxApiHelper.BuildQuery(
+            ("t", "search"),
+            ("q", query),
+            ("apikey", apiKey));
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"newznab/api{queryString}");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+    }
 }
