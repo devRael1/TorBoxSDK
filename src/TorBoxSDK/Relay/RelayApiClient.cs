@@ -1,3 +1,7 @@
+using TorBoxSDK.Http;
+using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Relay;
+
 namespace TorBoxSDK.Relay;
 
 /// <summary>
@@ -18,5 +22,21 @@ public sealed class RelayApiClient : IRelayApiClient
     public RelayApiClient(HttpClient httpClient)
     {
         _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<RelayStatus>> GetStatusAsync(CancellationToken ct = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "/");
+        return await TorBoxApiHelper.SendAsync<RelayStatus>(_httpClient, request, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(string authId, long torrentId, CancellationToken ct = default)
+    {
+        Guard.ThrowIfNullOrEmpty(authId, nameof(authId));
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"v1/inactivecheck/torrent/{Uri.EscapeDataString(authId)}/{torrentId}");
+        return await TorBoxApiHelper.SendAsync<InactiveCheckResult>(_httpClient, request, ct).ConfigureAwait(false);
     }
 }
