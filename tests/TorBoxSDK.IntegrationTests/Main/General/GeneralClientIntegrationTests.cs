@@ -62,4 +62,21 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Assert.True(response.Success);
         Assert.NotNull(response.Data);
     }
+
+    [SkippableFact]
+    public async Task GetSpeedtestFilesAsync_WithValidApiKey_ReturnsResponse()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        TorBoxResponse<object> response = await _fixture.Client.Main.General
+            .GetSpeedtestFilesAsync(ct: cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
 }

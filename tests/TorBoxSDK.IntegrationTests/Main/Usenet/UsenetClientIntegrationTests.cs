@@ -30,4 +30,22 @@ public sealed class UsenetClientIntegrationTests(TorBoxIntegrationFixture fixtur
         Assert.True(response.Success);
         Assert.NotNull(response.Data);
     }
+
+    [SkippableFact]
+    public async Task CheckCachedAsync_WithDummyHashes_ReturnsResponse()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        IReadOnlyList<string> hashes = ["abc123def456"];
+
+        // Act
+        TorBoxResponse<object> response = await _fixture.Client.Main.Usenet
+            .CheckCachedAsync(hashes, ct: cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
 }

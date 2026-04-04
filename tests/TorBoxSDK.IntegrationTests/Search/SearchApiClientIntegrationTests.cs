@@ -118,4 +118,38 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Assert.True(response.Success);
         Assert.NotNull(response.Data);
     }
+
+    [SkippableFact]
+    public async Task SearchTorznabAsync_WithValidQuery_ReturnsResults()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        TorBoxResponse<string> response = await _fixture.Client.Search
+            .SearchTorznabAsync("ubuntu", ct: cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
+
+    [SkippableFact]
+    public async Task SearchNewznabAsync_WithValidQuery_ReturnsResults()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        TorBoxResponse<string> response = await _fixture.Client.Search
+            .SearchNewznabAsync("ubuntu", ct: cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
 }

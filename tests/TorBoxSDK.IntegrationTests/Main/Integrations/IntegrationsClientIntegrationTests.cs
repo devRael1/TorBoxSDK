@@ -46,4 +46,21 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         Assert.NotNull(response);
         Assert.True(response.Success);
     }
+
+    [SkippableFact]
+    public async Task GetLinkedDiscordRolesAsync_WithValidApiKey_ReturnsResponse()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        TorBoxResponse<object> response = await _fixture.Client.Main.Integrations
+            .GetLinkedDiscordRolesAsync(cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
 }

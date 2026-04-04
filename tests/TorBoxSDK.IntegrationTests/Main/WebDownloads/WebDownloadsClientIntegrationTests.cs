@@ -49,4 +49,22 @@ public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture 
         Assert.NotNull(response.Data);
         Assert.NotEmpty(response.Data);
     }
+
+    [SkippableFact]
+    public async Task CheckCachedAsync_WithDummyHashes_ReturnsResponse()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        IReadOnlyList<string> hashes = ["abc123def456"];
+
+        // Act
+        TorBoxResponse<object> response = await _fixture.Client.Main.WebDownloads
+            .CheckCachedAsync(hashes, ct: cts.Token);
+
+        // Assert
+        Assert.NotNull(response);
+        Assert.True(response.Success);
+    }
 }
