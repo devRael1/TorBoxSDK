@@ -70,20 +70,31 @@ public static class ControlTorrentExample
 
             // ──────────────────────────────────────────────────────
             // Delete a specific torrent.
-            // Use with caution — this is irreversible!
+            // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
-            Console.WriteLine($"Deleting torrent {torrentId}...");
+            Console.WriteLine($"Delete torrent {torrentId}? This action is irreversible.");
+            Console.Write("Type DELETE to confirm, or press Enter to skip: ");
+            string? deleteConfirmation = Console.ReadLine();
 
-            ControlTorrentRequest deleteRequest = new()
+            if (string.Equals(deleteConfirmation, "DELETE", StringComparison.Ordinal))
             {
-                TorrentId = torrentId,
-                Operation = ControlOperation.Delete,
-            };
+                Console.WriteLine($"Deleting torrent {torrentId}...");
 
-            TorBoxResponse deleteResponse =
-                await client.Main.Torrents.ControlTorrentAsync(deleteRequest, cts.Token);
+                ControlTorrentRequest deleteRequest = new()
+                {
+                    TorrentId = torrentId,
+                    Operation = ControlOperation.Delete,
+                };
 
-            Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Success"}");
+                TorBoxResponse deleteResponse =
+                    await client.Main.Torrents.ControlTorrentAsync(deleteRequest, cts.Token);
+
+                Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Success"}");
+            }
+            else
+            {
+                Console.WriteLine("Delete operation skipped.");
+            }
 
             // ──────────────────────────────────────────────────────
             // Bulk operation: pause ALL torrents.

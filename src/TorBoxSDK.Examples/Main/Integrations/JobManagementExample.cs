@@ -89,14 +89,25 @@ public static class JobManagementExample
 
             // ──────────────────────────────────────────────────────
             // Delete an integration job.
+            // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
             Console.WriteLine();
-            Console.WriteLine($"Deleting job {jobId}...");
+            Console.WriteLine($"Ready to delete job {jobId}.");
+            Console.Write("Type DELETE to confirm deletion, or press Enter to skip: ");
 
-            TorBoxResponse deleteResponse =
-                await client.Main.Integrations.DeleteJobAsync(jobId, cts.Token);
+            string? deleteConfirmation = Console.ReadLine();
 
-            Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Job deleted"}");
+            if (string.Equals(deleteConfirmation, "DELETE", StringComparison.Ordinal))
+            {
+                TorBoxResponse deleteResponse =
+                    await client.Main.Integrations.DeleteJobAsync(jobId, cts.Token);
+
+                Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Job deleted"}");
+            }
+            else
+            {
+                Console.WriteLine("  Deletion skipped.");
+            }
         }
         catch (TorBoxException ex)
         {

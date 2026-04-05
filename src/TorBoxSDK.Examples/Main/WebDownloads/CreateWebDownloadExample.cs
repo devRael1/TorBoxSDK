@@ -88,19 +88,31 @@ public static class CreateWebDownloadExample
 
             // ──────────────────────────────────────────────────────
             // Control a web download (delete).
+            // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
-            Console.WriteLine($"Deleting web download {webDownloadId}...");
+            Console.WriteLine($"Delete web download {webDownloadId}? This action is irreversible.");
+            Console.Write("Type DELETE to confirm, or press Enter to skip: ");
+            string? deleteConfirmation = Console.ReadLine();
 
-            ControlWebDownloadRequest controlRequest = new()
+            if (string.Equals(deleteConfirmation, "DELETE", StringComparison.Ordinal))
             {
-                WebdlId = webDownloadId,
-                Operation = ControlOperation.Delete,
-            };
+                Console.WriteLine($"Deleting web download {webDownloadId}...");
 
-            TorBoxResponse controlResponse =
-                await client.Main.WebDownloads.ControlWebDownloadAsync(controlRequest, cts.Token);
+                ControlWebDownloadRequest controlRequest = new()
+                {
+                    WebdlId = webDownloadId,
+                    Operation = ControlOperation.Delete,
+                };
 
-            Console.WriteLine($"  Result: {controlResponse.Detail ?? "Success"}");
+                TorBoxResponse controlResponse =
+                    await client.Main.WebDownloads.ControlWebDownloadAsync(controlRequest, cts.Token);
+
+                Console.WriteLine($"  Result: {controlResponse.Detail ?? "Success"}");
+            }
+            else
+            {
+                Console.WriteLine("Delete operation skipped.");
+            }
         }
         catch (TorBoxException ex)
         {

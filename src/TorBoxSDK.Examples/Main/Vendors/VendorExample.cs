@@ -37,7 +37,7 @@ public static class VendorExample
             {
                 Console.WriteLine($"  Vendor registered - ID: {registerResponse.Data.Id}");
                 Console.WriteLine($"  Name: {registerResponse.Data.VendorName ?? "N/A"}");
-                Console.WriteLine($"  API Key: {registerResponse.Data.ApiKey ?? "N/A"}");
+                Console.WriteLine("  API Key: [omitted from output for security]");
             }
 
             // ──────────────────────────────────────────────────────
@@ -133,19 +133,29 @@ public static class VendorExample
 
             // ──────────────────────────────────────────────────────
             // Remove a user from the vendor.
+            // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
             Console.WriteLine();
-            Console.WriteLine("Removing user from vendor...");
+            Console.WriteLine("Remove a user from vendor...");
+            Console.Write("Type 'yes' to confirm user removal, or press Enter to skip: ");
+            string? removeConfirmation = Console.ReadLine();
 
-            RemoveVendorUserRequest removeRequest = new()
+            if (string.Equals(removeConfirmation, "yes", StringComparison.OrdinalIgnoreCase))
             {
-                UserEmail = "user@example.com", // Replace with actual user email
-            };
+                RemoveVendorUserRequest removeRequest = new()
+                {
+                    UserEmail = "user@example.com", // Replace with actual user email
+                };
 
-            TorBoxResponse removeResponse =
-                await client.Main.Vendors.RemoveUserAsync(removeRequest, cts.Token);
+                TorBoxResponse removeResponse =
+                    await client.Main.Vendors.RemoveUserAsync(removeRequest, cts.Token);
 
-            Console.WriteLine($"  Result: {removeResponse.Detail ?? "User removed"}");
+                Console.WriteLine($"  Result: {removeResponse.Detail ?? "User removed"}");
+            }
+            else
+            {
+                Console.WriteLine("  User removal skipped.");
+            }
 
             // ──────────────────────────────────────────────────────
             // Refresh vendor credentials.
@@ -158,7 +168,7 @@ public static class VendorExample
 
             if (refreshResponse.Data is not null)
             {
-                Console.WriteLine($"  Refreshed API Key: {refreshResponse.Data.ApiKey ?? "N/A"}");
+                Console.WriteLine("  Refreshed API Key: [omitted from output for security]");
             }
         }
         catch (TorBoxException ex)

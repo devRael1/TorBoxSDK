@@ -69,13 +69,25 @@ public static class NotificationsExample
 
             // ──────────────────────────────────────────────────────
             // Clear all notifications.
+            // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
-            Console.WriteLine("Clearing all notifications...");
+            Console.WriteLine("Clear all notifications is a destructive action.");
+            Console.Write("Type YES to clear all notifications, or press Enter to skip: ");
+            string? clearAllConfirmation = Console.ReadLine();
 
-            TorBoxResponse clearAllResponse =
-                await client.Main.Notifications.ClearAllNotificationsAsync(cts.Token);
+            if (string.Equals(clearAllConfirmation, "YES", StringComparison.Ordinal))
+            {
+                Console.WriteLine("Clearing all notifications...");
 
-            Console.WriteLine($"  Result: {clearAllResponse.Detail ?? "All notifications cleared"}");
+                TorBoxResponse clearAllResponse =
+                    await client.Main.Notifications.ClearAllNotificationsAsync(cts.Token);
+
+                Console.WriteLine($"  Result: {clearAllResponse.Detail ?? "All notifications cleared"}");
+            }
+            else
+            {
+                Console.WriteLine("Skipped clearing all notifications.");
+            }
 
             // ──────────────────────────────────────────────────────
             // Get notification RSS feed URL.

@@ -47,11 +47,15 @@ public static class SearchEnginesExample
             Console.WriteLine();
             Console.WriteLine("Adding a custom Torznab search engine...");
 
+            string indexerApiKey = Environment.GetEnvironmentVariable("TORBOX_INDEXER_API_KEY")
+                ?? throw new InvalidOperationException(
+                    "Set the TORBOX_INDEXER_API_KEY environment variable to your external indexer API key.");
+
             AddSearchEnginesRequest addRequest = new()
             {
                 Type = "torznab",
                 Url = "https://my-indexer.example.com/api",  // Replace with actual indexer URL
-                Apikey = "your-indexer-api-key",             // Replace with actual API key
+                Apikey = indexerApiKey,
                 DownloadType = "torrent",
             };
 
@@ -97,20 +101,30 @@ public static class SearchEnginesExample
 
             Console.WriteLine($"  Result: {disableResponse.Detail ?? "Search engine disabled"}");
 
-            // Delete a specific search engine
+            // Delete a specific search engine.
+            // This is a destructive action — requires confirmation.
             Console.WriteLine();
-            Console.WriteLine($"Deleting search engine {engineId}...");
+            Console.WriteLine($"Delete search engine {engineId}? This action is irreversible.");
+            Console.Write("Type DELETE to confirm, or press Enter to skip: ");
+            string? deleteConfirmation = Console.ReadLine();
 
-            ControlSearchEnginesRequest deleteRequest = new()
+            if (string.Equals(deleteConfirmation, "DELETE", StringComparison.Ordinal))
             {
-                Operation = "delete",
-                Id = engineId,
-            };
+                ControlSearchEnginesRequest deleteRequest = new()
+                {
+                    Operation = "delete",
+                    Id = engineId,
+                };
 
-            TorBoxResponse deleteResponse =
-                await client.Main.User.ControlSearchEnginesAsync(deleteRequest, cts.Token);
+                TorBoxResponse deleteResponse =
+                    await client.Main.User.ControlSearchEnginesAsync(deleteRequest, cts.Token);
 
-            Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Search engine deleted"}");
+                Console.WriteLine($"  Result: {deleteResponse.Detail ?? "Search engine deleted"}");
+            }
+            else
+            {
+                Console.WriteLine("  Delete operation skipped.");
+            }
 
             // ──────────────────────────────────────────────────────
             // Get a specific search engine by ID.
