@@ -10,31 +10,45 @@ namespace TorBoxSDK.Examples.Helpers;
 /// </summary>
 public static class ExampleHelper
 {
+    private static ServiceProvider? _provider;
+
     /// <summary>
     /// Creates a configured <see cref="ITorBoxClient"/> using the standard DI pattern.
     /// Reads the API key from the <c>TORBOX_API_KEY</c> environment variable.
     /// </summary>
     /// <remarks>
-    /// This method creates a new <see cref="ServiceProvider"/> each time it is called.
-    /// In a real application, you should manage the <see cref="ServiceProvider"/> lifetime
-    /// centrally (e.g., via host builder) and dispose it on shutdown.
+    /// A single shared <see cref="ServiceProvider"/> is kept for the process lifetime
+    /// so that <see cref="HttpClient"/> handlers and sockets are reused across examples.
+    /// Call <see cref="DisposeProvider"/> on exit to release all resources.
     /// </remarks>
     /// <returns>A fully configured <see cref="ITorBoxClient"/> instance.</returns>
     public static ITorBoxClient CreateClient()
     {
-        ServiceCollection services = new ServiceCollection();
-
-        services.AddTorBox(options =>
+        if (_provider is null)
         {
-            options.ApiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
-                ?? throw new InvalidOperationException(
-                    "Set the TORBOX_API_KEY environment variable before running examples.");
-        });
+            ServiceCollection services = new ServiceCollection();
 
-        ServiceProvider provider = services.BuildServiceProvider();
-        ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
+            services.AddTorBox(options =>
+            {
+                options.ApiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
+                    ?? throw new InvalidOperationException(
+                        "Set the TORBOX_API_KEY environment variable before running examples.");
+            });
 
-        return client;
+            _provider = services.BuildServiceProvider();
+        }
+
+        return _provider.GetRequiredService<ITorBoxClient>();
+    }
+
+    /// <summary>
+    /// Disposes the shared <see cref="ServiceProvider"/> and releases all resources.
+    /// Call this once when the application is shutting down.
+    /// </summary>
+    public static void DisposeProvider()
+    {
+        _provider?.Dispose();
+        _provider = null;
     }
 
     /// <summary>

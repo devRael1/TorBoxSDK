@@ -88,10 +88,8 @@ public static class SearchTorrentsExample
             // ──────────────────────────────────────────────────────
             // Get a specific torrent by ID.
             // ──────────────────────────────────────────────────────
-            if (searchResponse.Data.Count > 0 && searchResponse.Data[0].Hash is not null)
+            if (searchResponse.Data.Count > 0 && searchResponse.Data[0].Hash is { } torrentId)
             {
-                string torrentId = searchResponse.Data[0].Hash!; // Use the hash as ID
-
                 Console.WriteLine($"Getting torrent details for: {torrentId}...");
 
                 TorBoxResponse<TorrentSearchResult> detailResponse =

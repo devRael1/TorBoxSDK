@@ -1,6 +1,7 @@
 using TorBoxSDK.Examples.ErrorHandling;
 using TorBoxSDK.Examples.General;
 using TorBoxSDK.Examples.GettingStarted;
+using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Examples.Integrations;
 using TorBoxSDK.Examples.Notifications;
 using TorBoxSDK.Examples.Rss;
@@ -84,6 +85,12 @@ while (true)
         break;
     }
 
+    if (choice is < 1 or > 22)
+    {
+        Console.WriteLine("Invalid choice. Please enter a number between 0 and 22.");
+        continue;
+    }
+
     try
     {
         await (choice switch
@@ -110,7 +117,7 @@ while (true)
             20 => StreamExample.RunAsync(),
             21 => GeneralExample.RunAsync(),
             22 => ErrorHandlingExample.RunAsync(),
-            _ => Task.Run(() => Console.WriteLine("Invalid choice. Please enter a number between 0 and 22.")),
+            _ => Task.CompletedTask,
         });
     }
     catch (Exception ex)
@@ -122,3 +129,5 @@ while (true)
     Console.WriteLine("Press Enter to return to the menu...");
     Console.ReadLine();
 }
+
+ExampleHelper.DisposeProvider();

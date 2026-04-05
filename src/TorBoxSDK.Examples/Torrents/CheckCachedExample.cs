@@ -66,7 +66,7 @@ public static class CheckCachedExample
 
             if (infoResponse.Data is not null)
             {
-                Console.WriteLine($"  Torrent name: {infoResponse.Data}");
+                Console.WriteLine($"  Torrent name: {infoResponse.Data.Name}");
             }
         }
         catch (TorBoxException ex)
