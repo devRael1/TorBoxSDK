@@ -11,7 +11,7 @@ public sealed class RequestDownloadOptionsTests
     public void Serialize_WithAllNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var options = new RequestDownloadOptions
+        RequestDownloadOptions options = new()
         {
             TorrentId = 42,
             FileId = 5,
@@ -38,7 +38,7 @@ public sealed class RequestDownloadOptionsTests
     public void Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var options = new RequestDownloadOptions
+        RequestDownloadOptions options = new()
         {
             TorrentId = 1,
         };

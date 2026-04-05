@@ -11,7 +11,7 @@ public sealed class WebDownloadRequestTests
     public void CreateWebDownloadRequest_Serialize_WithNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new CreateWebDownloadRequest
+        CreateWebDownloadRequest request = new()
         {
             Link = "https://example.com/file.zip",
             Name = "my-file",
@@ -35,7 +35,7 @@ public sealed class WebDownloadRequestTests
     public void CreateWebDownloadRequest_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var request = new CreateWebDownloadRequest
+        CreateWebDownloadRequest request = new()
         {
             Link = "https://example.com/file.zip",
         };
@@ -54,7 +54,7 @@ public sealed class WebDownloadRequestTests
     public void EditWebDownloadRequest_Serialize_WithAlternativeHashes_ProducesExpectedJson()
     {
         // Arrange
-        var request = new EditWebDownloadRequest
+        EditWebDownloadRequest request = new()
         {
             WebdlId = 77,
             Name = "renamed-download",
@@ -81,7 +81,7 @@ public sealed class WebDownloadRequestTests
     public void EditWebDownloadRequest_Serialize_WithNullAlternativeHashes_OmitsProperty()
     {
         // Arrange
-        var request = new EditWebDownloadRequest
+        EditWebDownloadRequest request = new()
         {
             WebdlId = 5,
         };
@@ -99,7 +99,7 @@ public sealed class WebDownloadRequestTests
     public void RequestWebDownloadOptions_Serialize_WithAllNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var options = new RequestWebDownloadOptions
+        RequestWebDownloadOptions options = new()
         {
             WebId = 42,
             FileId = 2,
@@ -126,7 +126,7 @@ public sealed class WebDownloadRequestTests
     public void RequestWebDownloadOptions_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var options = new RequestWebDownloadOptions
+        RequestWebDownloadOptions options = new()
         {
             WebId = 1,
         };

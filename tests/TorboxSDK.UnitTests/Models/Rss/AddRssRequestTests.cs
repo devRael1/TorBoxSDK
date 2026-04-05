@@ -11,7 +11,7 @@ public sealed class AddRssRequestTests
     public void Serialize_WithRenamedJsonProperties_UsesCorrectNames()
     {
         // Arrange
-        var request = new AddRssRequest
+        AddRssRequest request = new()
         {
             Url = "https://example.com/rss",
             Name = "My Feed",
@@ -37,7 +37,7 @@ public sealed class AddRssRequestTests
     public void Serialize_DoesNotUseOldPropertyNames()
     {
         // Arrange
-        var request = new AddRssRequest
+        AddRssRequest request = new()
         {
             Url = "https://example.com/rss",
             RegexFilter = "test",
@@ -60,7 +60,7 @@ public sealed class AddRssRequestTests
     public void Serialize_WithNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new AddRssRequest
+        AddRssRequest request = new()
         {
             Url = "https://example.com/rss",
             DontOlderThan = 7,
@@ -85,7 +85,7 @@ public sealed class AddRssRequestTests
     public void Serialize_WithNullOptionals_OmitsNullProperties()
     {
         // Arrange
-        var request = new AddRssRequest
+        AddRssRequest request = new()
         {
             Url = "https://example.com/rss",
         };

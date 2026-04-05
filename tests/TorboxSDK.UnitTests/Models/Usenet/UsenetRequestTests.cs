@@ -11,7 +11,7 @@ public sealed class UsenetRequestTests
     public void CreateUsenetDownloadRequest_Serialize_WithNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new CreateUsenetDownloadRequest
+        CreateUsenetDownloadRequest request = new()
         {
             Link = "https://example.com/file.nzb",
             Name = "my-download",
@@ -36,7 +36,7 @@ public sealed class UsenetRequestTests
     public void CreateUsenetDownloadRequest_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var request = new CreateUsenetDownloadRequest
+        CreateUsenetDownloadRequest request = new()
         {
             Link = "https://example.com/file.nzb",
         };
@@ -55,7 +55,7 @@ public sealed class UsenetRequestTests
     public void EditUsenetDownloadRequest_Serialize_WithAlternativeHashes_ProducesExpectedJson()
     {
         // Arrange
-        var request = new EditUsenetDownloadRequest
+        EditUsenetDownloadRequest request = new()
         {
             UsenetDownloadId = 10,
             Name = "updated-name",
@@ -82,7 +82,7 @@ public sealed class UsenetRequestTests
     public void EditUsenetDownloadRequest_Serialize_WithNullAlternativeHashes_OmitsProperty()
     {
         // Arrange
-        var request = new EditUsenetDownloadRequest
+        EditUsenetDownloadRequest request = new()
         {
             UsenetDownloadId = 5,
         };
@@ -100,7 +100,7 @@ public sealed class UsenetRequestTests
     public void RequestUsenetDownloadOptions_Serialize_WithAllNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var options = new RequestUsenetDownloadOptions
+        RequestUsenetDownloadOptions options = new()
         {
             UsenetId = 42,
             FileId = 3,
@@ -127,7 +127,7 @@ public sealed class UsenetRequestTests
     public void RequestUsenetDownloadOptions_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var options = new RequestUsenetDownloadOptions
+        RequestUsenetDownloadOptions options = new()
         {
             UsenetId = 1,
         };

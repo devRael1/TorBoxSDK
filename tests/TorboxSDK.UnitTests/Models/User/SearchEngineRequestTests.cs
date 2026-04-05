@@ -11,7 +11,7 @@ public sealed class SearchEngineRequestTests
     public void AddSearchEnginesRequest_Serialize_ProducesExpectedJson()
     {
         // Arrange
-        var request = new AddSearchEnginesRequest
+        AddSearchEnginesRequest request = new()
         {
             Type = "torznab",
             Url = "https://indexer.example.com/api",
@@ -35,7 +35,7 @@ public sealed class SearchEngineRequestTests
     public void AddSearchEnginesRequest_Serialize_WithNullOptionals_OmitsThem()
     {
         // Arrange
-        var request = new AddSearchEnginesRequest
+        AddSearchEnginesRequest request = new()
         {
             Type = "torznab",
             Url = "https://indexer.example.com",
@@ -57,7 +57,7 @@ public sealed class SearchEngineRequestTests
     public void ModifySearchEnginesRequest_Serialize_IncludesIdAndAllProperties()
     {
         // Arrange
-        var request = new ModifySearchEnginesRequest
+        ModifySearchEnginesRequest request = new()
         {
             Id = 42,
             Type = "newznab",
@@ -83,7 +83,7 @@ public sealed class SearchEngineRequestTests
     public void ModifySearchEnginesRequest_Serialize_WithNullOptionals_OmitsThem()
     {
         // Arrange
-        var request = new ModifySearchEnginesRequest
+        ModifySearchEnginesRequest request = new()
         {
             Id = 10,
         };
@@ -105,7 +105,7 @@ public sealed class SearchEngineRequestTests
     public void ControlSearchEnginesRequest_Serialize_WithAllProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new ControlSearchEnginesRequest
+        ControlSearchEnginesRequest request = new()
         {
             Operation = "delete",
             Id = 42,
@@ -127,7 +127,7 @@ public sealed class SearchEngineRequestTests
     public void ControlSearchEnginesRequest_Serialize_WithAllTrue_ProducesExpectedJson()
     {
         // Arrange
-        var request = new ControlSearchEnginesRequest
+        ControlSearchEnginesRequest request = new()
         {
             Operation = "enable",
             All = true,
@@ -148,7 +148,7 @@ public sealed class SearchEngineRequestTests
     public void ControlSearchEnginesRequest_Serialize_WithNullOptionals_OmitsThem()
     {
         // Arrange
-        var request = new ControlSearchEnginesRequest
+        ControlSearchEnginesRequest request = new()
         {
             Operation = "disable",
         };

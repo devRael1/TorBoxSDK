@@ -11,7 +11,7 @@ public sealed class TorrentInfoRequestTests
     public void Serialize_WithAllProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new TorrentInfoRequest
+        TorrentInfoRequest request = new()
         {
             File = [0x01, 0x02],
             FileName = "test.torrent",
@@ -39,7 +39,7 @@ public sealed class TorrentInfoRequestTests
     public void Serialize_FileAndFileName_AreExcludedFromJson()
     {
         // Arrange
-        var request = new TorrentInfoRequest
+        TorrentInfoRequest request = new()
         {
             File = [0x01, 0x02, 0x03],
             FileName = "my-torrent.torrent",
@@ -61,7 +61,7 @@ public sealed class TorrentInfoRequestTests
     public void Serialize_WithNullOptionals_OmitsNullProperties()
     {
         // Arrange
-        var request = new TorrentInfoRequest
+        TorrentInfoRequest request = new()
         {
             Magnet = "magnet:?xt=urn:btih:abc123",
         };

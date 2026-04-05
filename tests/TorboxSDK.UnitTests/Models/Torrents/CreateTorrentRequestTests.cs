@@ -11,7 +11,7 @@ public sealed class CreateTorrentRequestTests
     public void Serialize_WithNewProperties_ProducesExpectedJson()
     {
         // Arrange
-        var request = new CreateTorrentRequest
+        CreateTorrentRequest request = new()
         {
             Magnet = "magnet:?xt=urn:btih:abc123",
             Name = "ubuntu",
@@ -35,7 +35,7 @@ public sealed class CreateTorrentRequestTests
     public void Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        var request = new CreateTorrentRequest
+        CreateTorrentRequest request = new()
         {
             Magnet = "magnet:?xt=urn:btih:abc123",
         };
@@ -54,7 +54,7 @@ public sealed class CreateTorrentRequestTests
     public void Serialize_FileProperty_IsExcludedFromJson()
     {
         // Arrange
-        var request = new CreateTorrentRequest
+        CreateTorrentRequest request = new()
         {
             File = [0x01, 0x02],
             Magnet = "magnet:?xt=urn:btih:abc123",

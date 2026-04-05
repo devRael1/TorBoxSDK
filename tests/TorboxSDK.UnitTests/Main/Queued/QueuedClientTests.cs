@@ -39,7 +39,7 @@ public sealed class QueuedClientTests
     public async Task GetQueuedAsync_WithNoParams_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
+        (QueuedClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
 
         // Act
         TorBoxResponse<IReadOnlyList<QueuedDownload>> result = await client.GetQueuedAsync();
@@ -57,7 +57,7 @@ public sealed class QueuedClientTests
     public async Task GetQueuedAsync_WithAllParams_IncludesInQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
+        (QueuedClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
 
         // Act
         await client.GetQueuedAsync(id: 42, offset: 10, limit: 50, bypassCache: true, type: "torrent");
@@ -76,7 +76,7 @@ public sealed class QueuedClientTests
     public async Task GetQueuedAsync_WithNullParams_OmitsFromQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
+        (QueuedClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
 
         // Act
         await client.GetQueuedAsync();
@@ -95,8 +95,8 @@ public sealed class QueuedClientTests
     public async Task ControlQueuedAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<QueuedClient>(SuccessJson);
-        var request = new ControlQueuedRequest { QueuedId = 1, Operation = ControlOperation.Delete };
+        (QueuedClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<QueuedClient>(SuccessJson);
+        ControlQueuedRequest request = new() { QueuedId = 1, Operation = ControlOperation.Delete };
 
         // Act
         TorBoxResponse result = await client.ControlQueuedAsync(request);
@@ -112,7 +112,7 @@ public sealed class QueuedClientTests
     public async Task ControlQueuedAsync_WithNullRequest_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<QueuedClient>(SuccessJson);
+        (QueuedClient client, _) = ClientTestBase.CreateClient<QueuedClient>(SuccessJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.ControlQueuedAsync(null!));

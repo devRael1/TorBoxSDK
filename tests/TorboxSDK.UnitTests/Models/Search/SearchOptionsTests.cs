@@ -11,7 +11,7 @@ public sealed class SearchOptionsTests
     public void TorrentSearchOptions_Serialize_WithAllProperties_ProducesExpectedJson()
     {
         // Arrange
-        var options = new TorrentSearchOptions
+        TorrentSearchOptions options = new()
         {
             Metadata = true,
             Season = 3,
@@ -41,7 +41,7 @@ public sealed class SearchOptionsTests
     public void TorrentSearchOptions_Serialize_WithNullProperties_OmitsThem()
     {
         // Arrange
-        var options = new TorrentSearchOptions
+        TorrentSearchOptions options = new()
         {
             CheckCache = true,
         };
@@ -65,7 +65,7 @@ public sealed class SearchOptionsTests
     public void UsenetSearchOptions_Serialize_WithAllProperties_ProducesExpectedJson()
     {
         // Arrange
-        var options = new UsenetSearchOptions
+        UsenetSearchOptions options = new()
         {
             Metadata = false,
             Season = 1,
@@ -95,7 +95,7 @@ public sealed class SearchOptionsTests
     public void UsenetSearchOptions_Serialize_WithNullProperties_OmitsThem()
     {
         // Arrange
-        var options = new UsenetSearchOptions();
+        UsenetSearchOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
@@ -116,7 +116,7 @@ public sealed class SearchOptionsTests
     public void MetaSearchOptions_Serialize_WithType_ProducesExpectedJson()
     {
         // Arrange
-        var options = new MetaSearchOptions
+        MetaSearchOptions options = new()
         {
             Type = "movie",
         };
@@ -134,7 +134,7 @@ public sealed class SearchOptionsTests
     public void MetaSearchOptions_Serialize_WithNullType_OmitsProperty()
     {
         // Arrange
-        var options = new MetaSearchOptions();
+        MetaSearchOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);

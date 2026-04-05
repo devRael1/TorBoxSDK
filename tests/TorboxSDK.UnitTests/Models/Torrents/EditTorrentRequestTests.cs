@@ -11,7 +11,7 @@ public sealed class EditTorrentRequestTests
     public void Serialize_WithAlternativeHashes_ProducesExpectedJson()
     {
         // Arrange
-        var request = new EditTorrentRequest
+        EditTorrentRequest request = new()
         {
             TorrentId = 42,
             Name = "updated-name",
@@ -39,7 +39,7 @@ public sealed class EditTorrentRequestTests
     public void Serialize_WithNullAlternativeHashes_OmitsProperty()
     {
         // Arrange
-        var request = new EditTorrentRequest
+        EditTorrentRequest request = new()
         {
             TorrentId = 42,
         };

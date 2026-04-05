@@ -32,7 +32,7 @@ public sealed class StreamClientTests
     public async Task CreateStreamAsync_WithRequiredParams_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
         TorBoxResponse<string> result = await client.CreateStreamAsync(42, 5, "torrent");
@@ -52,7 +52,7 @@ public sealed class StreamClientTests
     public async Task CreateStreamAsync_WithAllOptionalParams_IncludesInQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
         await client.CreateStreamAsync(1, 2, "usenet", chosenSubtitleIndex: 3, chosenAudioIndex: 1, chosenResolutionIndex: 720);
@@ -69,7 +69,7 @@ public sealed class StreamClientTests
     public async Task CreateStreamAsync_WithNullOptionalParams_OmitsFromQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
         await client.CreateStreamAsync(1, 2, "torrent");
@@ -86,7 +86,7 @@ public sealed class StreamClientTests
     public async Task CreateStreamAsync_WithNullType_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateStreamAsync(1, 2, null!));
@@ -96,7 +96,7 @@ public sealed class StreamClientTests
     public async Task CreateStreamAsync_WithEmptyType_ThrowsArgumentException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => client.CreateStreamAsync(1, 2, string.Empty));
@@ -106,7 +106,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithRequiredParams_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
         TorBoxResponse<object> result = await client.GetStreamDataAsync("pre-signed-token-abc", "auth-token-123");
@@ -125,7 +125,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithAllOptionalParams_IncludesInQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
         await client.GetStreamDataAsync("presigned", "token", chosenSubtitleIndex: 0, chosenAudioIndex: 2, chosenResolutionIndex: 1080);
@@ -142,7 +142,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithNullOptionalParams_OmitsFromQueryString()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
         await client.GetStreamDataAsync("presigned", "token");
@@ -159,7 +159,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithNullPresignedToken_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetStreamDataAsync(null!, "token"));
@@ -169,7 +169,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithNullToken_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetStreamDataAsync("presigned", null!));
@@ -179,7 +179,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithEmptyPresignedToken_ThrowsArgumentException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync(string.Empty, "token"));
@@ -189,7 +189,7 @@ public sealed class StreamClientTests
     public async Task GetStreamDataAsync_WithEmptyToken_ThrowsArgumentException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
+        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync("presigned", string.Empty));

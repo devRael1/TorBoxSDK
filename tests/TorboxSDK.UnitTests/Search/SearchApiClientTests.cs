@@ -55,7 +55,7 @@ public sealed class SearchApiClientTests
     public async Task SearchTorrentsAsync_WithQuery_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act
         TorBoxResponse<IReadOnlyList<TorrentSearchResult>> result = await client.SearchTorrentsAsync("ubuntu");
@@ -72,7 +72,7 @@ public sealed class SearchApiClientTests
     public async Task SearchTorrentsAsync_WithNullQuery_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchTorrentsAsync(null!));
@@ -82,7 +82,7 @@ public sealed class SearchApiClientTests
     public async Task GetTorrentByIdAsync_WithId_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
 
         // Act
         TorBoxResponse<TorrentSearchResult> result = await client.GetTorrentByIdAsync("abc123");
@@ -99,8 +99,8 @@ public sealed class SearchApiClientTests
     public async Task SearchTorrentsAsync_WithOptions_IncludesQueryParams()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
-        var options = new TorrentSearchOptions
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+        TorrentSearchOptions options = new()
         {
             Metadata = true,
             Season = 3,
@@ -131,7 +131,7 @@ public sealed class SearchApiClientTests
     public async Task SearchTorrentsAsync_WithNullOptions_OmitsQueryParams()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act
         await client.SearchTorrentsAsync("ubuntu");
@@ -148,8 +148,8 @@ public sealed class SearchApiClientTests
     public async Task GetTorrentByIdAsync_WithOptions_IncludesQueryParams()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
-        var options = new TorrentSearchOptions
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
+        TorrentSearchOptions options = new()
         {
             CheckCache = true,
             CachedOnly = true,
@@ -178,8 +178,8 @@ public sealed class SearchApiClientTests
                 "data": []
             }
             """;
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(usenetResultsJson);
-        var options = new UsenetSearchOptions
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(usenetResultsJson);
+        UsenetSearchOptions options = new()
         {
             Metadata = false,
             Season = 1,
@@ -212,8 +212,8 @@ public sealed class SearchApiClientTests
                 "data": []
             }
             """;
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(metaResultsJson);
-        var options = new MetaSearchOptions
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(metaResultsJson);
+        MetaSearchOptions options = new()
         {
             Type = "movie",
         };
@@ -240,7 +240,7 @@ public sealed class SearchApiClientTests
                 "data": []
             }
             """;
-        var (client, handler) = ClientTestBase.CreateClient<SearchApiClient>(metaResultsJson);
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(metaResultsJson);
 
         // Act
         await client.SearchMetaAsync("inception");
