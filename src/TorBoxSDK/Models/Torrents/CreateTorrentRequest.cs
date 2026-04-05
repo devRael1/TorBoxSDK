@@ -56,4 +56,11 @@ public sealed record CreateTorrentRequest
     /// </summary>
     [JsonPropertyName("as_queued")]
     public bool? AsQueued { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to only add the torrent if it is already cached,
+    /// or <see langword="null"/> to use the default behavior.
+    /// </summary>
+    [JsonPropertyName("add_only_if_cached")]
+    public bool? AddOnlyIfCached { get; init; }
 }

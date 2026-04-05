@@ -150,25 +150,56 @@ public sealed class TorrentsClient : ITorrentsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(string hash, int? timeout = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(string hash, int? timeout = null, bool? useCacheLookup = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(hash, nameof(hash));
 
         string query = TorBoxApiHelper.BuildQuery(
             ("hash", hash),
-            ("timeout", timeout?.ToString()));
+            ("timeout", timeout?.ToString()),
+            ("use_cache_lookup", useCacheLookup?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/torrentinfo{query}");
         return await TorBoxApiHelper.SendAsync<TorrentInfo>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoByFileAsync(byte[] file, CancellationToken ct = default)
+    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoByFileAsync(TorrentInfoRequest request, CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNull(file);
+        ArgumentNullException.ThrowIfNull(request);
 
         var content = new MultipartFormDataContent();
-        content.Add(new ByteArrayContent(file), "file", "torrent.torrent");
+
+        if (request.File is not null)
+        {
+            string fileName = request.FileName ?? "torrent.torrent";
+            content.Add(new ByteArrayContent(request.File), "file", fileName);
+        }
+
+        if (request.Magnet is not null)
+        {
+            content.Add(new StringContent(request.Magnet), "magnet");
+        }
+
+        if (request.Hash is not null)
+        {
+            content.Add(new StringContent(request.Hash), "hash");
+        }
+
+        if (request.Timeout is not null)
+        {
+            content.Add(new StringContent(request.Timeout.Value.ToString()), "timeout");
+        }
+
+        if (request.UseCacheLookup is not null)
+        {
+            content.Add(new StringContent(request.UseCacheLookup.Value.ToString().ToLowerInvariant()), "use_cache_lookup");
+        }
+
+        if (request.PeersOnly is not null)
+        {
+            content.Add(new StringContent(request.PeersOnly.Value.ToString().ToLowerInvariant()), "peers_only");
+        }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/torrentinfo") { Content = content };
         return await TorBoxApiHelper.SendAsync<TorrentInfo>(_httpClient, httpRequest, ct).ConfigureAwait(false);
