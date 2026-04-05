@@ -7,5 +7,7 @@
     <Project Path="tests/TorBoxSDK.PerformanceTests/TorBoxSDK.PerformanceTests.csproj" Id="eee6f563-4d4e-4626-969f-4c0533c6c171" />
     <Project Path="tests/TorboxSDK.UnitTests/TorboxSDK.UnitTests.csproj" Id="6bd01066-54c3-4b90-9b35-5113c2e081f1" />
   </Folder>
-  <Folder Name="/20-samples/" />
+  <Folder Name="/20-samples/">
+    <Project Path="src/TorBoxSDK.Examples/TorBoxSDK.Examples.csproj" />
+  </Folder>
 </Solution>
