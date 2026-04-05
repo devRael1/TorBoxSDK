@@ -28,6 +28,7 @@ public sealed class VendorsClient : IVendorsClient
     public async Task<TorBoxResponse<VendorAccount>> RegisterAsync(RegisterVendorRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
 
         MultipartFormDataContent content = new();
         content.Add(new StringContent(request.VendorName), "vendor_name");
@@ -53,15 +54,22 @@ public sealed class VendorsClient : IVendorsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
+        if (request.VendorName is null && request.VendorUrl is null)
+        {
+            throw new ArgumentException("At least one of VendorName or VendorUrl must be provided.", nameof(request));
+        }
+
         MultipartFormDataContent content = new();
 
         if (request.VendorName is not null)
         {
+            Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
             content.Add(new StringContent(request.VendorName), "vendor_name");
         }
 
         if (request.VendorUrl is not null)
         {
+            Guard.ThrowIfNullOrEmpty(request.VendorUrl, nameof(request.VendorUrl));
             content.Add(new StringContent(request.VendorUrl), "vendor_url");
         }
 
@@ -92,6 +100,7 @@ public sealed class VendorsClient : IVendorsClient
     public async Task<TorBoxResponse> RegisterUserAsync(RegisterVendorUserRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNullOrEmpty(request.UserEmail, nameof(request.UserEmail));
 
         MultipartFormDataContent content = new();
         content.Add(new StringContent(request.UserEmail), "user_email");

@@ -338,6 +338,8 @@ public sealed class TorrentsClientTests
         string url = handler.LastRequest.RequestUri!.ToString();
         Assert.Contains("torrent_id=42", url);
         Assert.Contains("redirect=false", url);
+        Assert.Contains("token=custom-token", url);
+        Assert.Contains("append_name=true", url);
     }
 
     [Fact]

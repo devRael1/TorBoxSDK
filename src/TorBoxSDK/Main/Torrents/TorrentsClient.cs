@@ -90,8 +90,10 @@ public sealed class TorrentsClient : ITorrentsClient
             ("torrent_id", options.TorrentId.ToString()),
             ("file_id", options.FileId?.ToString()),
             ("zip_link", options.ZipLink?.ToString().ToLowerInvariant()),
+            ("token", options.Token),
             ("user_ip", options.UserIp),
-            ("redirect", options.Redirect?.ToString().ToLowerInvariant()));
+            ("redirect", options.Redirect?.ToString().ToLowerInvariant()),
+            ("append_name", options.AppendName?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/requestdl{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
@@ -167,7 +169,12 @@ public sealed class TorrentsClient : ITorrentsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var content = new MultipartFormDataContent();
+        if (request.File is null && request.Magnet is null && request.Hash is null)
+        {
+            throw new ArgumentException("At least one of File, Magnet, or Hash must be provided.", nameof(request));
+        }
+
+        MultipartFormDataContent content = new();
 
         if (request.File is not null)
         {

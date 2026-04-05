@@ -56,7 +56,7 @@ public sealed class UserClient : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> AddReferralAsync(string referralCode, CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNull(referralCode);
+        Guard.ThrowIfNullOrEmpty(referralCode, nameof(referralCode));
 
         string query = TorBoxApiHelper.BuildQuery(
             ("referral", referralCode));
@@ -134,6 +134,8 @@ public sealed class UserClient : IUserClient
     public async Task<TorBoxResponse> AddSearchEnginesAsync(AddSearchEnginesRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNullOrEmpty(request.Type, nameof(request.Type));
+        Guard.ThrowIfNullOrEmpty(request.Url, nameof(request.Url));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "user/settings/addsearchengines")
         {
@@ -168,6 +170,7 @@ public sealed class UserClient : IUserClient
     public async Task<TorBoxResponse> ControlSearchEnginesAsync(ControlSearchEnginesRequest request, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNullOrEmpty(request.Operation, nameof(request.Operation));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/settings/controlsearchengines")
         {
