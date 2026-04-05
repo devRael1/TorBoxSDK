@@ -1,25 +1,19 @@
 # TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
 [![.NET](https://img.shields.io/badge/.NET-net6.0%20%7C%20net7.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-purple)](#supported-net-versions)
 
-TorBoxSDK is an open-source, MIT-licensed C# SDK for the [TorBox API](https://api-docs.torbox.app/). It provides typed clients for the TorBox Main, Search, and Relay APIs, integrates cleanly with dependency injection and `IHttpClientFactory`, and gives .NET applications a consistent way to work with TorBox responses, authentication, and error handling across 107 endpoints.
+TorBoxSDK is an open-source, MIT-licensed C# SDK for the [TorBox API](https://api-docs.torbox.app/). It gives .NET applications typed access to the TorBox Main, Search, and Relay APIs with dependency injection support, consistent response handling, and a public surface designed to be easy to explore in IntelliSense.
 
-## Features
+## Why TorBoxSDK?
 
-- Covers the full TorBox platform surface across the Main, Search, and Relay APIs
+- Covers the TorBox Main, Search, and Relay APIs through a single root client
+- Organizes the Main API into focused resource clients such as Torrents, Usenet, Web Downloads, User, Notifications, RSS, and Integrations
 - Multi-targets `.NET 6` through `.NET 10`
-- Root `TorBoxClient` with `Main`, `Search`, and `Relay` API families
-- Resource-oriented Main API clients for torrents, usenet, web downloads, user operations, integrations, and more
-- Dependency injection support via `AddTorBox()` with both `Action<TorBoxClientOptions>` and `IConfiguration`
-- Bearer token authentication through an internal `DelegatingHandler`
-- Standard TorBox response envelope via `TorBoxResponse` and `TorBoxResponse<T>`
-- Typed exception handling with `TorBoxException` and `TorBoxErrorCode`
-- `System.Text.Json` serialization with `snake_case` naming
-- `CancellationToken` support on all async methods
-- Library awaits use `ConfigureAwait(false)`
-- SourceLink enabled for package debugging
+- Integrates with `IServiceCollection`, `IHttpClientFactory`, and configuration binding
+- Uses the standard `TorBoxResponse` envelope and surfaces API failures through `TorBoxException`
+- Ships XML documentation, SourceLink metadata, symbols, and package README support for a better open-source consumer experience
 
 ## Supported .NET Versions
 
@@ -47,12 +41,15 @@ Install-Package TorBoxSDK
 
 ## Quick Start
 
-Register the SDK with dependency injection and provide your TorBox API key:
+Register the SDK with dependency injection, resolve `ITorBoxClient`, and make your first request:
 
 ```csharp
 using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK;
 using TorBoxSDK.DependencyInjection;
+using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Search;
+using TorBoxSDK.Models.Torrents;
 
 ServiceCollection services = new();
 
@@ -64,173 +61,114 @@ services.AddTorBox(options =>
 
 using ServiceProvider provider = services.BuildServiceProvider();
 ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
-```
 
-Then call the API through the typed clients:
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
-```csharp
-using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Search;
-using TorBoxSDK.Models.Torrents;
-
-TorBoxResponse<IReadOnlyList<Torrent>> torrents = await client.Main.Torrents.GetMyTorrentListAsync();
-
-if (torrents.Data is not null)
+try
 {
-    foreach (Torrent torrent in torrents.Data)
-    {
-        Console.WriteLine($"{torrent.Name} — {torrent.Progress:P0}");
-    }
-}
+    TorBoxResponse<IReadOnlyList<Torrent>> torrents =
+        await client.Main.Torrents.GetMyTorrentListAsync(ct: cts.Token);
 
-TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResults =
-    await client.Search.SearchTorrentsAsync("ubuntu");
+    TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResults =
+        await client.Search.SearchTorrentsAsync("ubuntu", ct: cts.Token);
+
+    Console.WriteLine($"Torrents returned: {torrents.Data?.Count ?? 0}");
+    Console.WriteLine($"Search results returned: {searchResults.Data?.Count ?? 0}");
+}
+catch (TorBoxException ex)
+{
+    Console.Error.WriteLine($"TorBox API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
+}
 ```
 
-## Architecture
+## Client Hierarchy
 
-The SDK is organized around a single root client that exposes three API families. The Main API is further split into focused resource clients.
+The SDK is structured around a single root client with three API families:
 
 ```text
 TorBoxClient (ITorBoxClient)
 ├── Main (IMainApiClient)
-│   ├── General (IGeneralClient) — 4 endpoints
-│   ├── Torrents (ITorrentsClient) — 14 endpoints
-│   ├── Usenet (IUsenetClient) — 8 endpoints
-│   ├── WebDownloads (IWebDownloadsClient) — 9 endpoints
-│   ├── User (IUserClient) — 16 endpoints
-│   ├── Notifications (INotificationsClient) — 8 endpoints
-│   ├── Rss (IRssClient) — 5 endpoints
-│   ├── Stream (IStreamClient) — 2 endpoints
-│   ├── Integrations (IIntegrationsClient) — 17 endpoints
-│   ├── Vendors (IVendorsClient) — 8 endpoints
-│   └── Queued (IQueuedClient) — 2 endpoints
-├── Search (ISearchApiClient) — 12 endpoints
-└── Relay (IRelayApiClient) — 2 endpoints
+│   ├── General
+│   ├── Torrents
+│   ├── Usenet
+│   ├── WebDownloads
+│   ├── User
+│   ├── Notifications
+│   ├── Rss
+│   ├── Stream
+│   ├── Integrations
+│   ├── Vendors
+│   └── Queued
+├── Search (ISearchApiClient)
+└── Relay (IRelayApiClient)
 ```
 
-## API Coverage
-
-| Area | Interface | API Family | Endpoints |
-|---|---|---|---:|
-| General | `IGeneralClient` | Main | 4 |
-| Torrents | `ITorrentsClient` | Main | 14 |
-| Usenet | `IUsenetClient` | Main | 8 |
-| Web Downloads | `IWebDownloadsClient` | Main | 9 |
-| User | `IUserClient` | Main | 16 |
-| Notifications | `INotificationsClient` | Main | 8 |
-| RSS | `IRssClient` | Main | 5 |
-| Stream | `IStreamClient` | Main | 2 |
-| Integrations | `IIntegrationsClient` | Main | 17 |
-| Vendors | `IVendorsClient` | Main | 8 |
-| Queued | `IQueuedClient` | Main | 2 |
-| Search API | `ISearchApiClient` | Search | 12 |
-| Relay API | `IRelayApiClient` | Relay | 2 |
-| **Total** |  |  | **107** |
+That public shape currently covers 107 endpoints across 13 clients.
 
 ## Configuration
 
-`AddTorBox()` binds to `TorBoxClientOptions`.
+`AddTorBox()` binds `TorBoxClientOptions`.
 
 | Property | Required | Default | Description |
 |---|---|---|---|
 | `ApiKey` | Yes | — | TorBox API key used for Bearer authentication |
-| `MainApiBaseUrl` | No | `https://api.torbox.app/v1/api/` | Base URL for the Main API |
-| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Base URL for the Search API |
-| `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Base URL for the Relay API |
-| `Timeout` | No | `00:00:30` | HTTP timeout applied to SDK clients |
+| `MainApiBaseUrl` | No | `https://api.torbox.app/v1/api/` | Main API base URL. Keep the trailing slash. |
+| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Search API base URL. Keep the trailing slash. |
+| `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Relay API base URL. Keep the trailing slash. |
+| `Timeout` | No | `00:00:30` | HTTP timeout applied to configured clients |
 
-## Error Handling
-
-Successful requests return the standard TorBox response envelope. API failures returned by TorBox are surfaced as `TorBoxException`, which includes a typed `TorBoxErrorCode` and the API-provided detail message. Transport failures from `HttpClient` (for example DNS, connectivity, or timeout issues) can still surface as `HttpRequestException` or `TaskCanceledException`.
+You can also register the SDK from `IConfiguration`:
 
 ```csharp
-using TorBoxSDK.Models.Common;
-
-try
-{
-    await client.Main.Torrents.GetMyTorrentListAsync(ct: cts.Token);
-}
-catch (TorBoxException ex)
-{
-    Console.Error.WriteLine($"[{ex.ErrorCode}] {ex.Detail ?? ex.Message}");
-}
-catch (HttpRequestException ex)
-{
-    Console.Error.WriteLine($"Transport error: {ex.Message}");
-}
-catch (TaskCanceledException ex)
-{
-    Console.Error.WriteLine($"Request timed out or was canceled: {ex.Message}");
-}
-```
-
-TorBoxSDK includes 22 TorBox-specific error codes, plus `Unknown` for unmapped values.
-
-## Advanced Usage
-
-### Bind from `IConfiguration`
-
-```csharp
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using TorBoxSDK.DependencyInjection;
-
 services.AddTorBox(configuration);
 ```
 
-`appsettings.json`:
+## Error Handling
 
-```json
-{
-  "TorBox": {
-    "ApiKey": "your-api-key",
-    "MainApiBaseUrl": "https://api.torbox.app/v1/api/",
-    "SearchApiBaseUrl": "https://search-api.torbox.app/",
-    "RelayApiBaseUrl": "https://relay.torbox.app/",
-    "Timeout": "00:00:30"
-  }
-}
-```
+- Successful calls return `TorBoxResponse` or `TorBoxResponse<T>`
+- API-level failures throw `TorBoxException`
+- Transport issues may still surface as `HttpRequestException` or `TaskCanceledException`
+- All public async methods accept `CancellationToken`
 
-### Direct instantiation for non-DI scenarios
+## Documentation and Examples
 
-For applications that do not use dependency injection, you can instantiate API-family clients directly with an authenticated `HttpClient`:
+- [Getting Started](https://github.com/devRael1/TorBoxSDK/blob/main/docs/getting-started.md)
+- [Architecture Overview](https://github.com/devRael1/TorBoxSDK/blob/main/docs/architecture.md)
+- [API Reference](https://github.com/devRael1/TorBoxSDK/blob/main/docs/api-reference.md)
+- [Configuration Reference](https://github.com/devRael1/TorBoxSDK/blob/main/docs/configuration.md)
+- [Error Handling](https://github.com/devRael1/TorBoxSDK/blob/main/docs/error-handling.md)
+- [Roadmap](https://github.com/devRael1/TorBoxSDK/blob/main/docs/TODO.md)
+- [Examples project](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples) with 37 runnable scenarios across Main, Search, Relay, and error-handling workflows
 
-```csharp
-using System.Net.Http.Headers;
-using TorBoxSDK.Search;
+## Open Source Project Notes
 
-string apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
-    ?? throw new InvalidOperationException("Set the TORBOX_API_KEY environment variable.");
+TorBoxSDK is maintained as a public MIT-licensed SDK:
 
-HttpClient searchHttpClient = new()
-{
-    BaseAddress = new Uri("https://search-api.torbox.app/"),
-    Timeout = TimeSpan.FromSeconds(30),
-};
-
-searchHttpClient.DefaultRequestHeaders.Authorization =
-    new AuthenticationHeaderValue("Bearer", apiKey);
-
-ISearchApiClient searchClient = new SearchApiClient(searchHttpClient);
-```
-
-The same pattern can be used for `RelayApiClient`, individual Main API resource clients, or full manual composition of `TorBoxClient`.
-
-## Documentation
-
-- [Getting Started](docs/getting-started.md)
-- [Architecture Overview](docs/architecture.md)
-- [API Reference](docs/api-reference.md)
-- [Configuration Reference](docs/configuration.md)
-- [Error Handling](docs/error-handling.md)
-- [Roadmap](docs/TODO.md)
+- Use it in personal, commercial, or internal projects under the terms of the [MIT License](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
+- File bugs or request improvements through [GitHub Issues](https://github.com/devRael1/TorBoxSDK/issues)
+- Use pull requests for targeted fixes, API coverage improvements, docs updates, and sample improvements
+- Keep docs and examples aligned with the real public SDK surface
 
 ## Contributing
 
-Contributions are welcome. Please open an issue or pull request for bug fixes, API coverage improvements, documentation updates, or test additions. Keep documentation and examples aligned with the public SDK surface.
+Contributions are welcome from SDK consumers and maintainers alike.
+
+- Read the [contributing guide](https://github.com/devRael1/TorBoxSDK/blob/main/CONTRIBUTING.md)
+- Prefer focused pull requests with matching docs or XML documentation updates when public behavior changes
+- For changes that call live TorBox services, document any environment requirements such as `TORBOX_API_KEY`
+
+## Development Quick Checks
+
+Common local commands:
+
+```bash
+dotnet build
+dotnet test tests/TorboxSDK.UnitTests/
+dotnet test tests/TorBoxSDK.IntegrationTests/
+```
+
+Integration tests are designed to skip gracefully when `TORBOX_API_KEY` is not set.
 
 ## License
 
-TorBoxSDK is released under the MIT License.
+This repository is available under the [MIT License](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE).
