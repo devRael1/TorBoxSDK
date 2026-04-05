@@ -231,6 +231,116 @@ public sealed class TorrentsClientTests
     }
 
     [Fact]
+    public async Task GetTorrentInfoAsync_WithUseCacheLookup_IncludesInQueryString()
+    {
+        // Arrange
+        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act
+        await client.GetTorrentInfoAsync("abc123def456", timeout: 60, useCacheLookup: true);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("hash=abc123def456", url);
+        Assert.Contains("timeout=60", url);
+        Assert.Contains("use_cache_lookup=true", url);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoAsync_WithNullUseCacheLookup_OmitsFromQueryString()
+    {
+        // Arrange
+        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act
+        await client.GetTorrentInfoAsync("abc123def456");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.DoesNotContain("use_cache_lookup", url);
+        Assert.DoesNotContain("timeout", url);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithTorrentInfoRequest_SendsPostRequest()
+    {
+        // Arrange
+        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+        var request = new TorrentInfoRequest
+        {
+            Hash = "abc123def456",
+            Timeout = 30,
+            UseCacheLookup = true,
+        };
+
+        // Act
+        TorBoxResponse<TorrentInfo> result = await client.GetTorrentInfoByFileAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("torrents/torrentinfo", handler.LastRequest.RequestUri!.ToString());
+        Assert.NotNull(result.Data);
+        Assert.Equal("abc123def456", result.Data.Hash);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithFile_SendsMultipartRequest()
+    {
+        // Arrange
+        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+        var request = new TorrentInfoRequest
+        {
+            File = [0x01, 0x02, 0x03],
+            FileName = "my-torrent.torrent",
+            PeersOnly = true,
+        };
+
+        // Act
+        await client.GetTorrentInfoByFileAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var (client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetTorrentInfoByFileAsync(null!));
+    }
+
+    [Fact]
+    public async Task RequestDownloadAsync_WithNewOptions_IncludesInQueryString()
+    {
+        // Arrange
+        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(DownloadJson);
+        var options = new RequestDownloadOptions
+        {
+            TorrentId = 42,
+            Token = "custom-token",
+            AppendName = true,
+            Redirect = false,
+        };
+
+        // Act
+        await client.RequestDownloadAsync(options);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("torrent_id=42", url);
+        Assert.Contains("redirect=false", url);
+    }
+
+    [Fact]
     public async Task ExportDataAsync_WithTorrentId_SendsGetRequest()
     {
         // Arrange
