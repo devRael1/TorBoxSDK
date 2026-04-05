@@ -32,7 +32,7 @@ public static class TransactionsExample
 
                 foreach (Transaction transaction in transactionsResponse.Data)
                 {
-                    Console.WriteLine($"  [{transaction.Id}] {transaction}");
+                    Console.WriteLine($"  [{transaction.Id}] {transaction.Description ?? "N/A"} — {transaction.Amount} {transaction.Currency ?? "N/A"} ({transaction.Status ?? "N/A"})");
                 }
 
                 // ──────────────────────────────────────────────────

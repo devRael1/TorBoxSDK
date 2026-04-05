@@ -56,7 +56,7 @@ public static class SpeedtestExample
 
             SpeedtestOptions ipOptions = new()
             {
-                UserIp = "203.0.113.1", // Replace with actual IP address
+                UserIp = "203.0.113.1", // Documentation IP (RFC 5737) — replace with your actual public IP
             };
 
             TorBoxResponse<object> ipResponse =

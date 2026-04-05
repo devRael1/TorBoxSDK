@@ -33,7 +33,8 @@ public static class OAuthExample
 
                 foreach (OAuthIntegration integration in oauthResponse.Data)
                 {
-                    Console.WriteLine($"    - {integration}");
+                    string connectedIcon = integration.Connected ? "✓" : "✗";
+                    Console.WriteLine($"    [{connectedIcon}] {integration.Provider ?? "N/A"} (since {integration.CreatedAt?.ToString("yyyy-MM-dd") ?? "N/A"})");
                 }
             }
             else
