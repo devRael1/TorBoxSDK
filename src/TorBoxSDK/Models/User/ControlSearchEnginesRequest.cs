@@ -3,20 +3,27 @@ using System.Text.Json.Serialization;
 namespace TorBoxSDK.Models.User;
 
 /// <summary>
-/// Represents a request to control the user's search engine settings.
+/// Represents a request to perform a control operation on the user's search engine settings.
 /// </summary>
 public sealed record ControlSearchEnginesRequest
 {
     /// <summary>
-    /// Gets the operation to perform on the search engines,
-    /// or <see langword="null"/> if not specified.
+    /// Gets the operation to perform on the search engines.
     /// </summary>
     [JsonPropertyName("operation")]
-    public string? Operation { get; init; }
+    public string Operation { get; init; } = string.Empty;
 
     /// <summary>
-    /// Gets the list of search engine names to operate on.
+    /// Gets the identifier of the search engine to operate on,
+    /// or <see langword="null"/> if not specified.
     /// </summary>
-    [JsonPropertyName("search_engines")]
-    public IReadOnlyList<string> SearchEngines { get; init; } = [];
+    [JsonPropertyName("id")]
+    public long? Id { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the operation should apply to all search engines,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("all")]
+    public bool? All { get; init; }
 }

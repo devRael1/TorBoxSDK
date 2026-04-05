@@ -24,28 +24,34 @@ public sealed class StreamClient : IStreamClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> CreateStreamAsync(long id, long fileId, string type, CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> CreateStreamAsync(long id, long fileId, string type, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(type, nameof(type));
 
         string query = TorBoxApiHelper.BuildQuery(
             ("id", id.ToString()),
             ("file_id", fileId.ToString()),
-            ("type", type));
+            ("type", type),
+            ("chosen_subtitle_index", chosenSubtitleIndex?.ToString()),
+            ("chosen_audio_index", chosenAudioIndex?.ToString()),
+            ("chosen_resolution_index", chosenResolutionIndex?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"stream/createstream{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetStreamDataAsync(long id, long fileId, string type, CancellationToken ct = default)
+    public async Task<TorBoxResponse<object>> GetStreamDataAsync(string presignedToken, string token, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken ct = default)
     {
-        Guard.ThrowIfNullOrEmpty(type, nameof(type));
+        Guard.ThrowIfNullOrEmpty(presignedToken, nameof(presignedToken));
+        Guard.ThrowIfNullOrEmpty(token, nameof(token));
 
         string query = TorBoxApiHelper.BuildQuery(
-            ("id", id.ToString()),
-            ("file_id", fileId.ToString()),
-            ("type", type));
+            ("presigned_token", presignedToken),
+            ("token", token),
+            ("chosen_subtitle_index", chosenSubtitleIndex?.ToString()),
+            ("chosen_audio_index", chosenAudioIndex?.ToString()),
+            ("chosen_resolution_index", chosenResolutionIndex?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"stream/getstreamdata{query}");
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, ct).ConfigureAwait(false);

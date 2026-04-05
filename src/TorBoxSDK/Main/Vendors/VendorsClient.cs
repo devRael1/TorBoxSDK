@@ -29,10 +29,15 @@ public sealed class VendorsClient : IVendorsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "vendors/register")
+        var content = new MultipartFormDataContent();
+        content.Add(new StringContent(request.VendorName), "vendor_name");
+
+        if (request.VendorUrl is not null)
         {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
+            content.Add(new StringContent(request.VendorUrl), "vendor_url");
+        }
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "vendors/register") { Content = content };
         return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
@@ -48,10 +53,19 @@ public sealed class VendorsClient : IVendorsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "vendors/updateaccount")
+        var content = new MultipartFormDataContent();
+
+        if (request.VendorName is not null)
         {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
+            content.Add(new StringContent(request.VendorName), "vendor_name");
+        }
+
+        if (request.VendorUrl is not null)
+        {
+            content.Add(new StringContent(request.VendorUrl), "vendor_url");
+        }
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "vendors/updateaccount") { Content = content };
         return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
@@ -63,12 +77,12 @@ public sealed class VendorsClient : IVendorsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> GetAccountByEmailAsync(string userEmail, CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> GetAccountByAuthIdAsync(string userAuthId, CancellationToken ct = default)
     {
-        Guard.ThrowIfNullOrEmpty(userEmail, nameof(userEmail));
+        Guard.ThrowIfNullOrEmpty(userAuthId, nameof(userAuthId));
 
         string query = TorBoxApiHelper.BuildQuery(
-            ("user_email", userEmail));
+            ("user_auth_id", userAuthId));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"vendors/getaccount{query}");
         return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
@@ -79,10 +93,10 @@ public sealed class VendorsClient : IVendorsClient
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "vendors/registeruser")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
+        var content = new MultipartFormDataContent();
+        content.Add(new StringContent(request.UserEmail), "user_email");
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "vendors/registeruser") { Content = content };
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 

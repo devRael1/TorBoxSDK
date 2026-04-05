@@ -40,7 +40,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
 
         // Act
         TorBoxResponse<IReadOnlyList<TorrentSearchResult>> response = await _fixture.Client.Search
-            .SearchTorrentsAsync("ubuntu", cts.Token);
+            .SearchTorrentsAsync("ubuntu", ct: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -76,7 +76,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
 
         // Act
         TorBoxResponse<IReadOnlyList<UsenetSearchResult>> response = await _fixture.Client.Search
-            .SearchUsenetAsync("ubuntu", cts.Token);
+            .SearchUsenetAsync("ubuntu", ct: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -111,7 +111,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
 
         // Act
         TorBoxResponse<IReadOnlyList<MetaSearchResult>> response = await _fixture.Client.Search
-            .SearchMetaAsync("inception", cts.Token);
+            .SearchMetaAsync("inception", ct: cts.Token);
 
         // Assert
         Assert.NotNull(response);

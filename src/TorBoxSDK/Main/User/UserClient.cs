@@ -54,21 +54,24 @@ public sealed class UserClient : IUserClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse> AddReferralAsync(AddReferralRequest request, CancellationToken ct = default)
+    public async Task<TorBoxResponse> AddReferralAsync(string referralCode, CancellationToken ct = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(referralCode);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/addreferral")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
+        string query = TorBoxApiHelper.BuildQuery(
+            ("referral", referralCode));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"user/addreferral{query}");
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(string? app = null, CancellationToken ct = default)
     {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "user/auth/device/start");
+        string query = TorBoxApiHelper.BuildQuery(
+            ("app", app));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/auth/device/start{query}");
         return await TorBoxApiHelper.SendAsync<DeviceCodeResponse>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
@@ -120,7 +123,10 @@ public sealed class UserClient : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> GetTransactionPdfAsync(long transactionId, CancellationToken ct = default)
     {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/transaction/pdf/{transactionId}");
+        string query = TorBoxApiHelper.BuildQuery(
+            ("transaction_id", transactionId.ToString()));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/transaction/pdf{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
@@ -137,9 +143,12 @@ public sealed class UserClient : IUserClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<SearchEngine>>> GetSearchEnginesAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<SearchEngine>>> GetSearchEnginesAsync(long? id = null, CancellationToken ct = default)
     {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "user/settings/searchengines");
+        string query = TorBoxApiHelper.BuildQuery(
+            ("id", id?.ToString()));
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/settings/searchengines{query}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<SearchEngine>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 

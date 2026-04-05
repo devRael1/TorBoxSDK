@@ -32,20 +32,22 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/search/{Uri.EscapeDataString(query)}");
+        string queryString = BuildTorrentSearchQuery(options);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/search/{Uri.EscapeDataString(query)}{queryString}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<TorrentSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, CancellationToken ct = default)
+    public async Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, TorrentSearchOptions? options = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/{Uri.EscapeDataString(id)}");
+        string queryString = BuildTorrentSearchQuery(options);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/{Uri.EscapeDataString(id)}{queryString}");
         return await TorBoxApiHelper.SendAsync<TorrentSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
@@ -57,20 +59,22 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/search/{Uri.EscapeDataString(query)}");
+        string queryString = BuildUsenetSearchQuery(options);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/search/{Uri.EscapeDataString(query)}{queryString}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<UsenetSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, CancellationToken ct = default)
+    public async Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, UsenetSearchOptions? options = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/{Uri.EscapeDataString(id)}");
+        string queryString = BuildUsenetSearchQuery(options);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/{Uri.EscapeDataString(id)}{queryString}");
         return await TorBoxApiHelper.SendAsync<UsenetSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
@@ -92,11 +96,13 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, MetaSearchOptions? options = null, CancellationToken ct = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"meta/search/{Uri.EscapeDataString(query)}");
+        string queryString = TorBoxApiHelper.BuildQuery(
+            ("type", options?.Type));
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"meta/search/{Uri.EscapeDataString(query)}{queryString}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<MetaSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
     }
 
@@ -135,5 +141,39 @@ public sealed class SearchApiClient : ISearchApiClient
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"newznab/api{queryString}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+    }
+
+    private static string BuildTorrentSearchQuery(TorrentSearchOptions? options)
+    {
+        if (options is null)
+        {
+            return string.Empty;
+        }
+
+        return TorBoxApiHelper.BuildQuery(
+            ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
+            ("season", options.Season?.ToString()),
+            ("episode", options.Episode?.ToString()),
+            ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
+            ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
+            ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
+            ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
+    }
+
+    private static string BuildUsenetSearchQuery(UsenetSearchOptions? options)
+    {
+        if (options is null)
+        {
+            return string.Empty;
+        }
+
+        return TorBoxApiHelper.BuildQuery(
+            ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
+            ("season", options.Season?.ToString()),
+            ("episode", options.Episode?.ToString()),
+            ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
+            ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
+            ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
+            ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
     }
 }
