@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK;
 using TorBoxSDK.DependencyInjection;
 using TorBoxSDK.Examples.Helpers;
+using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.User;
 
 namespace TorBoxSDK.Examples.GettingStarted;
 
@@ -21,7 +23,7 @@ public static class BasicSetupExample
         //         AddTorBox() registers all API clients, handlers,
         //         and options needed by the SDK.
         // ──────────────────────────────────────────────────────────
-        ServiceCollection services = new();
+        ServiceCollection services = new ServiceCollection();
 
         services.AddTorBox(options =>
         {
@@ -53,7 +55,7 @@ public static class BasicSetupExample
 
         try
         {
-            TorBoxSDK.Models.Common.TorBoxResponse<Models.User.UserProfile> response =
+            TorBoxResponse<UserProfile> response =
                 await client.Main.User.GetMeAsync(ct: cts.Token);
 
             if (response.Data is not null)
@@ -63,7 +65,7 @@ public static class BasicSetupExample
                 Console.WriteLine($"Premium expires: {response.Data.PremiumExpiresAt?.ToString("yyyy-MM-dd") ?? "N/A"}");
             }
         }
-        catch (Models.Common.TorBoxException ex)
+        catch (TorBoxException ex)
         {
             Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
         }

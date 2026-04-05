@@ -23,12 +23,12 @@ public static class CreateTorrentExample
             // ──────────────────────────────────────────────────────
             string magnetLink = "magnet:?xt=urn:btih:EXAMPLE_HASH"; // Replace with your actual magnet link
 
-            CreateTorrentRequest magnetRequest = new()
+            CreateTorrentRequest magnetRequest = new CreateTorrentRequest()
             {
                 Magnet = magnetLink,
                 Name = "My Custom Torrent Name", // Optional: override the torrent name
-                Seed = SeedPreference.Auto,    // Optional: seeding behavior
-                AllowZip = true,                  // Optional: allow zipping files
+                Seed = SeedPreference.Auto, // Optional: seeding behavior
+                AllowZip = true, // Optional: allow zipping files
             };
 
             TorBoxResponse<Torrent> magnetResponse =

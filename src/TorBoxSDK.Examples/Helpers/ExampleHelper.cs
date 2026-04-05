@@ -14,10 +14,15 @@ public static class ExampleHelper
     /// Creates a configured <see cref="ITorBoxClient"/> using the standard DI pattern.
     /// Reads the API key from the <c>TORBOX_API_KEY</c> environment variable.
     /// </summary>
+    /// <remarks>
+    /// This method creates a new <see cref="ServiceProvider"/> each time it is called.
+    /// In a real application, you should manage the <see cref="ServiceProvider"/> lifetime
+    /// centrally (e.g., via host builder) and dispose it on shutdown.
+    /// </remarks>
     /// <returns>A fully configured <see cref="ITorBoxClient"/> instance.</returns>
     public static ITorBoxClient CreateClient()
     {
-        ServiceCollection services = new();
+        ServiceCollection services = new ServiceCollection();
 
         services.AddTorBox(options =>
         {

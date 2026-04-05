@@ -47,7 +47,7 @@ public static class ConfigurationExample
         // Step 2: Register TorBox using the IConfiguration overload.
         //         This reads settings from the "TorBox" section.
         // ──────────────────────────────────────────────────────────
-        ServiceCollection services = new();
+        ServiceCollection services = new ServiceCollection();
 
         // Check if we have a TorBox section; if not, fall back to env var.
         IConfigurationSection torBoxSection = configuration.GetSection("TorBox");
