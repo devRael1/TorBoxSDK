@@ -89,6 +89,21 @@ public static class NotificationsExample
             {
                 Console.WriteLine($"  RSS Feed URL: {rssResponse.Data}");
             }
+
+            // ──────────────────────────────────────────────────────
+            // Get Intercom identity verification hash.
+            // Used for secure Intercom integration.
+            // ──────────────────────────────────────────────────────
+            Console.WriteLine();
+            Console.WriteLine("Fetching Intercom identity hash...");
+
+            TorBoxResponse<IntercomHash> intercomResponse =
+                await client.Main.Notifications.GetIntercomHashAsync(cts.Token);
+
+            if (intercomResponse.Data is not null)
+            {
+                Console.WriteLine($"  Intercom hash: {intercomResponse.Data.Hash ?? "N/A"}");
+            }
         }
         catch (TorBoxException ex)
         {

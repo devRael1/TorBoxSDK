@@ -67,6 +67,27 @@ public static class StreamExample
             if (customStreamResponse.Data is not null)
             {
                 Console.WriteLine($"  Custom stream URL: {customStreamResponse.Data}");
+
+                // ──────────────────────────────────────────────────
+                // Get detailed stream data using a presigned token.
+                // The token is extracted from the stream URL above.
+                // This returns metadata about available tracks.
+                // ──────────────────────────────────────────────────
+                string presignedToken = "token-from-stream-url"; // Replace with actual presigned token
+                string authToken = "your-auth-token";            // Replace with actual auth token
+
+                Console.WriteLine();
+                Console.WriteLine("Getting stream data with presigned token...");
+
+                TorBoxResponse<object> streamDataResponse =
+                    await client.Main.Stream.GetStreamDataAsync(
+                        presignedToken,
+                        authToken,
+                        chosenSubtitleIndex: subtitleIndex,
+                        chosenAudioIndex: audioIndex,
+                        ct: cts.Token);
+
+                Console.WriteLine($"  Stream data: {streamDataResponse.Detail ?? "Retrieved"}");
             }
         }
         catch (TorBoxException ex)

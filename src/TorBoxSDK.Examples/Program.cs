@@ -4,12 +4,15 @@ using TorBoxSDK.Examples.GettingStarted;
 using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Examples.Integrations;
 using TorBoxSDK.Examples.Notifications;
+using TorBoxSDK.Examples.Queued;
+using TorBoxSDK.Examples.Relay;
 using TorBoxSDK.Examples.Rss;
 using TorBoxSDK.Examples.Search;
 using TorBoxSDK.Examples.Streaming;
 using TorBoxSDK.Examples.Torrents;
 using TorBoxSDK.Examples.Usenet;
 using TorBoxSDK.Examples.User;
+using TorBoxSDK.Examples.Vendors;
 using TorBoxSDK.Examples.WebDownloads;
 
 Console.WriteLine("""
@@ -27,41 +30,62 @@ Console.WriteLine("""
     ║    5.  Control Torrent (pause/resume/delete)             ║
     ║    6.  Download Torrent                                  ║
     ║    7.  Check Cached                                      ║
+    ║    8.  Edit Torrent, Info by File & Magnet-to-File       ║
     ║                                                          ║
     ║  Usenet                                                  ║
-    ║    8.  List Usenet Downloads                             ║
-    ║    9.  Create Usenet Download                            ║
+    ║    9.  List Usenet Downloads                             ║
+    ║   10.  Create Usenet Download                            ║
+    ║   11.  Usenet Advanced (Cache, Edit, Async Create)       ║
     ║                                                          ║
     ║  Web Downloads                                           ║
-    ║   10.  List Web Downloads                                ║
-    ║   11.  Create Web Download & Hosters                     ║
+    ║   12.  List Web Downloads                                ║
+    ║   13.  Create Web Download & Hosters                     ║
+    ║   14.  Web Downloads Advanced (Cache, Edit, Async)       ║
     ║                                                          ║
     ║  Search                                                  ║
-    ║   12.  Search Torrents                                   ║
-    ║   13.  Search Usenet                                     ║
-    ║   14.  Search Meta (Movies, TV)                          ║
+    ║   15.  Search Torrents                                   ║
+    ║   16.  Search Usenet                                     ║
+    ║   17.  Search Meta (Movies, TV)                          ║
+    ║   18.  Search Tutorials                                  ║
+    ║   19.  Download Search Results & Get by ID               ║
     ║                                                          ║
     ║  User                                                    ║
-    ║   15.  Profile & Account Info                            ║
-    ║   16.  Manage Settings                                   ║
+    ║   20.  Profile & Account Info                            ║
+    ║   21.  Manage Settings                                   ║
+    ║   22.  Authentication & Device Auth                      ║
+    ║   23.  Search Engines Management                         ║
+    ║   24.  Transactions & PDF Export                         ║
     ║                                                          ║
     ║  Notifications                                           ║
-    ║   17.  Manage Notifications                              ║
+    ║   25.  Manage Notifications                              ║
     ║                                                          ║
     ║  RSS                                                     ║
-    ║   18.  RSS Feeds                                         ║
+    ║   26.  RSS Feeds                                         ║
     ║                                                          ║
     ║  Integrations                                            ║
-    ║   19.  Cloud Storage Integration                         ║
+    ║   27.  Cloud Storage Integration (Google Drive)          ║
+    ║   28.  All Cloud Providers (Dropbox, OneDrive, etc.)     ║
+    ║   29.  OAuth & Discord Integration                       ║
+    ║   30.  Job Management                                    ║
+    ║                                                          ║
+    ║  Vendors                                                 ║
+    ║   31.  Vendor Account Management                         ║
+    ║                                                          ║
+    ║  Queued                                                  ║
+    ║   32.  Queued Downloads                                  ║
     ║                                                          ║
     ║  Streaming                                               ║
-    ║   20.  Stream Media Files                                ║
+    ║   33.  Stream Media Files                                ║
+    ║                                                          ║
+    ║  Relay                                                   ║
+    ║   34.  Relay Status & Inactivity Check                   ║
     ║                                                          ║
     ║  General                                                 ║
-    ║   21.  Service Status & Stats                            ║
+    ║   35.  Service Status & Stats                            ║
+    ║   36.  Speedtest Files                                   ║
     ║                                                          ║
     ║  Error Handling                                           ║
-    ║   22.  Comprehensive Error Handling Patterns             ║
+    ║   37.  Comprehensive Error Handling Patterns             ║
     ║                                                          ║
     ║    0.  Exit                                              ║
     ║                                                          ║
@@ -70,12 +94,12 @@ Console.WriteLine("""
 
 while (true)
 {
-    Console.Write("Select an example (0-22): ");
+    Console.Write("Select an example (0-37): ");
     string? input = Console.ReadLine();
 
     if (!int.TryParse(input, out int choice))
     {
-        Console.WriteLine("Invalid input. Please enter a number between 0 and 22.");
+        Console.WriteLine("Invalid input. Please enter a number between 0 and 37.");
         continue;
     }
 
@@ -85,9 +109,9 @@ while (true)
         break;
     }
 
-    if (choice is < 1 or > 22)
+    if (choice is < 1 or > 37)
     {
-        Console.WriteLine("Invalid choice. Please enter a number between 0 and 22.");
+        Console.WriteLine("Invalid choice. Please enter a number between 0 and 37.");
         continue;
     }
 
@@ -102,21 +126,36 @@ while (true)
             5 => ControlTorrentExample.RunAsync(),
             6 => DownloadTorrentExample.RunAsync(),
             7 => CheckCachedExample.RunAsync(),
-            8 => ListUsenetExample.RunAsync(),
-            9 => CreateUsenetExample.RunAsync(),
-            10 => ListWebDownloadsExample.RunAsync(),
-            11 => CreateWebDownloadExample.RunAsync(),
-            12 => SearchTorrentsExample.RunAsync(),
-            13 => SearchUsenetExample.RunAsync(),
-            14 => SearchMetaExample.RunAsync(),
-            15 => GetProfileExample.RunAsync(),
-            16 => ManageSettingsExample.RunAsync(),
-            17 => NotificationsExample.RunAsync(),
-            18 => RssFeedsExample.RunAsync(),
-            19 => CloudIntegrationExample.RunAsync(),
-            20 => StreamExample.RunAsync(),
-            21 => GeneralExample.RunAsync(),
-            22 => ErrorHandlingExample.RunAsync(),
+            8 => EditTorrentExample.RunAsync(),
+            9 => ListUsenetExample.RunAsync(),
+            10 => CreateUsenetExample.RunAsync(),
+            11 => UsenetAdvancedExample.RunAsync(),
+            12 => ListWebDownloadsExample.RunAsync(),
+            13 => CreateWebDownloadExample.RunAsync(),
+            14 => WebDownloadsAdvancedExample.RunAsync(),
+            15 => SearchTorrentsExample.RunAsync(),
+            16 => SearchUsenetExample.RunAsync(),
+            17 => SearchMetaExample.RunAsync(),
+            18 => SearchTutorialsExample.RunAsync(),
+            19 => DownloadSearchResultsExample.RunAsync(),
+            20 => GetProfileExample.RunAsync(),
+            21 => ManageSettingsExample.RunAsync(),
+            22 => AuthenticationExample.RunAsync(),
+            23 => SearchEnginesExample.RunAsync(),
+            24 => TransactionsExample.RunAsync(),
+            25 => NotificationsExample.RunAsync(),
+            26 => RssFeedsExample.RunAsync(),
+            27 => CloudIntegrationExample.RunAsync(),
+            28 => AllCloudProvidersExample.RunAsync(),
+            29 => OAuthExample.RunAsync(),
+            30 => JobManagementExample.RunAsync(),
+            31 => VendorExample.RunAsync(),
+            32 => QueuedDownloadsExample.RunAsync(),
+            33 => StreamExample.RunAsync(),
+            34 => RelayExample.RunAsync(),
+            35 => GeneralExample.RunAsync(),
+            36 => SpeedtestExample.RunAsync(),
+            37 => ErrorHandlingExample.RunAsync(),
             _ => Task.CompletedTask,
         });
     }
