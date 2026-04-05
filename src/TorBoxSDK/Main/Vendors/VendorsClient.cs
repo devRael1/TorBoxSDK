@@ -61,15 +61,13 @@ public sealed class VendorsClient : IVendorsClient
 
         MultipartFormDataContent content = new();
 
-        if (request.VendorName is not null)
+        if (!string.IsNullOrEmpty(request.VendorName))
         {
-            Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
             content.Add(new StringContent(request.VendorName), "vendor_name");
         }
 
-        if (request.VendorUrl is not null)
+        if (!string.IsNullOrEmpty(request.VendorUrl))
         {
-            Guard.ThrowIfNullOrEmpty(request.VendorUrl, nameof(request.VendorUrl));
             content.Add(new StringContent(request.VendorUrl), "vendor_url");
         }
 

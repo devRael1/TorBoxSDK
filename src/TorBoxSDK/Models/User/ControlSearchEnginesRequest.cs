@@ -11,7 +11,7 @@ public sealed record ControlSearchEnginesRequest
     /// Gets the operation to perform on the search engines.
     /// </summary>
     [JsonPropertyName("operation")]
-    public string? Operation { get; init; }
+    public string Operation { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets the identifier of the search engine to operate on,
