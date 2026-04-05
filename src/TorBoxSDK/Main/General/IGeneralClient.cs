@@ -34,4 +34,16 @@ public interface IGeneralClient
     /// <returns>The speedtest file data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<object>> GetSpeedtestFilesAsync(SpeedtestOptions? options = null, CancellationToken ct = default);
+
+    /// <summary>Gets the changelogs RSS feed URL.</summary>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>The RSS feed URL as a string.</returns>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<string>> GetChangelogsRssAsync(CancellationToken ct = default);
+
+    /// <summary>Gets the changelogs as structured JSON data.</summary>
+    /// <param name="ct">Cancellation token.</param>
+    /// <returns>A list of changelog entries.</returns>
+    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
+    Task<TorBoxResponse<IReadOnlyList<Changelog>>> GetChangelogsJsonAsync(CancellationToken ct = default);
 }

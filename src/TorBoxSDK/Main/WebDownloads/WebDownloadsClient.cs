@@ -57,7 +57,10 @@ public sealed class WebDownloadsClient : IWebDownloadsClient
             ("web_id", options.WebId.ToString()),
             ("file_id", options.FileId?.ToString()),
             ("zip_link", options.ZipLink?.ToString().ToLowerInvariant()),
-            ("user_ip", options.UserIp));
+            ("token", options.Token),
+            ("user_ip", options.UserIp),
+            ("redirect", options.Redirect?.ToString().ToLowerInvariant()),
+            ("append_name", options.AppendName?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"webdl/requestdl{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);

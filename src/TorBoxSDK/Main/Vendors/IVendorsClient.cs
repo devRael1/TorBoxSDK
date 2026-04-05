@@ -36,14 +36,14 @@ public interface IVendorsClient
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<IReadOnlyList<VendorAccount>>> GetAccountsAsync(CancellationToken ct = default);
 
-    /// <summary>Retrieves a specific user account by email.</summary>
-    /// <param name="userEmail">The email address of the user to look up.</param>
+    /// <summary>Retrieves a specific user account by auth ID.</summary>
+    /// <param name="userAuthId">The auth ID of the user to look up.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The vendor account details for the user.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userEmail"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="userEmail"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="userAuthId"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="userAuthId"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<VendorAccount>> GetAccountByEmailAsync(string userEmail, CancellationToken ct = default);
+    Task<TorBoxResponse<VendorAccount>> GetAccountByAuthIdAsync(string userAuthId, CancellationToken ct = default);
 
     /// <summary>Registers a new user under the vendor's account.</summary>
     /// <param name="request">The user registration request.</param>

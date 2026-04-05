@@ -17,21 +17,23 @@ public interface ISearchApiClient
 
     /// <summary>Searches for torrents matching the specified query.</summary>
     /// <param name="query">The search query string.</param>
+    /// <param name="options">Optional search options to filter and customize results.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A list of matching torrent search results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken ct = default);
 
     /// <summary>Retrieves a specific torrent by its unique identifier.</summary>
     /// <param name="id">The unique identifier of the torrent.</param>
+    /// <param name="options">Optional search options to filter and customize results.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The torrent search result.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, CancellationToken ct = default);
+    Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, TorrentSearchOptions? options = null, CancellationToken ct = default);
 
     /// <summary>Retrieves the usenet search tutorial and information page.</summary>
     /// <param name="ct">Cancellation token.</param>
@@ -41,21 +43,23 @@ public interface ISearchApiClient
 
     /// <summary>Searches for usenet articles matching the specified query.</summary>
     /// <param name="query">The search query string.</param>
+    /// <param name="options">Optional search options to filter and customize results.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A list of matching usenet search results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken ct = default);
 
     /// <summary>Retrieves a specific usenet article by its unique identifier.</summary>
     /// <param name="id">The unique identifier of the usenet article.</param>
+    /// <param name="options">Optional search options to filter and customize results.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The usenet search result.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="id"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, CancellationToken ct = default);
+    Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, UsenetSearchOptions? options = null, CancellationToken ct = default);
 
     /// <summary>Downloads an NZB file for a usenet article.</summary>
     /// <param name="id">The unique identifier of the usenet article.</param>
@@ -75,12 +79,13 @@ public interface ISearchApiClient
 
     /// <summary>Searches for metadata entries matching the specified query.</summary>
     /// <param name="query">The search query string.</param>
+    /// <param name="options">Optional search options to filter and customize results.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A list of matching metadata search results.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="query"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="query"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, MetaSearchOptions? options = null, CancellationToken ct = default);
 
     /// <summary>Retrieves a specific metadata entry by its unique identifier.</summary>
     /// <param name="id">The unique identifier of the metadata entry.</param>

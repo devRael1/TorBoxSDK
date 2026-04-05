@@ -49,4 +49,18 @@ public sealed record CreateUsenetDownloadRequest
     /// </summary>
     [JsonPropertyName("post_processing")]
     public string? PostProcessing { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to add the download as a queued download,
+    /// or <see langword="null"/> to start immediately.
+    /// </summary>
+    [JsonPropertyName("as_queued")]
+    public bool? AsQueued { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to only add the download if it is already cached,
+    /// or <see langword="null"/> to use the default behavior.
+    /// </summary>
+    [JsonPropertyName("add_only_if_cached")]
+    public bool? AddOnlyIfCached { get; init; }
 }

@@ -58,4 +58,18 @@ public sealed class GeneralClient : IGeneralClient
         using var request = new HttpRequestMessage(HttpMethod.Get, $"speedtest{query}");
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, request, ct).ConfigureAwait(false);
     }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<string>> GetChangelogsRssAsync(CancellationToken ct = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "changelogs/rss");
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<TorBoxResponse<IReadOnlyList<Changelog>>> GetChangelogsJsonAsync(CancellationToken ct = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, "changelogs/json");
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<Changelog>>(_httpClient, request, ct).ConfigureAwait(false);
+    }
 }

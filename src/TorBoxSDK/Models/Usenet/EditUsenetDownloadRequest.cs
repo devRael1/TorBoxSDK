@@ -26,4 +26,11 @@ public sealed record EditUsenetDownloadRequest
     /// </summary>
     [JsonPropertyName("tags")]
     public IReadOnlyList<string>? Tags { get; init; }
+
+    /// <summary>
+    /// Gets the alternative hashes for the download,
+    /// or <see langword="null"/> to leave alternative hashes unchanged.
+    /// </summary>
+    [JsonPropertyName("alternative_hashes")]
+    public IReadOnlyList<string>? AlternativeHashes { get; init; }
 }

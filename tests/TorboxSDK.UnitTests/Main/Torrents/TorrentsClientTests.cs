@@ -104,7 +104,7 @@ public sealed class TorrentsClientTests
     public async Task GetMyTorrentListAsync_WithValidResponse_ReturnsTorrentList()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
 
         // Act
         TorBoxResponse<IReadOnlyList<Torrent>> result = await client.GetMyTorrentListAsync();
@@ -122,7 +122,7 @@ public sealed class TorrentsClientTests
     public async Task GetMyTorrentListAsync_WithId_SendsIdParameter()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
 
         // Act
         await client.GetMyTorrentListAsync(id: 42);
@@ -136,7 +136,7 @@ public sealed class TorrentsClientTests
     public async Task CreateTorrentAsync_WithNullRequest_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateTorrentAsync(null!));
@@ -146,8 +146,8 @@ public sealed class TorrentsClientTests
     public async Task CreateTorrentAsync_WithMagnet_SendsMultipartRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
-        var request = new CreateTorrentRequest { Magnet = "magnet:?xt=urn:btih:abc123" };
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123" };
 
         // Act
         TorBoxResponse<Torrent> result = await client.CreateTorrentAsync(request);
@@ -164,8 +164,8 @@ public sealed class TorrentsClientTests
     public async Task ControlTorrentAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
-        var request = new ControlTorrentRequest { TorrentId = 1, Operation = ControlOperation.Delete };
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+        ControlTorrentRequest request = new() { TorrentId = 1, Operation = ControlOperation.Delete };
 
         // Act
         TorBoxResponse result = await client.ControlTorrentAsync(request);
@@ -181,8 +181,8 @@ public sealed class TorrentsClientTests
     public async Task RequestDownloadAsync_WithValidOptions_SendsGetRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(DownloadJson);
-        var options = new RequestDownloadOptions { TorrentId = 1 };
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(DownloadJson);
+        RequestDownloadOptions options = new() { TorrentId = 1 };
 
         // Act
         TorBoxResponse<string> result = await client.RequestDownloadAsync(options);
@@ -199,8 +199,8 @@ public sealed class TorrentsClientTests
     public async Task EditTorrentAsync_WithValidRequest_SendsPutRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
-        var request = new EditTorrentRequest { TorrentId = 1, Name = "new-name" };
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+        EditTorrentRequest request = new() { TorrentId = 1, Name = "new-name" };
 
         // Act
         TorBoxResponse result = await client.EditTorrentAsync(request);
@@ -216,7 +216,7 @@ public sealed class TorrentsClientTests
     public async Task GetTorrentInfoAsync_WithHash_SendsGetRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
 
         // Act
         TorBoxResponse<TorrentInfo> result = await client.GetTorrentInfoAsync("abc123def456");
@@ -231,10 +231,122 @@ public sealed class TorrentsClientTests
     }
 
     [Fact]
+    public async Task GetTorrentInfoAsync_WithUseCacheLookup_IncludesInQueryString()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act
+        await client.GetTorrentInfoAsync("abc123def456", timeout: 60, useCacheLookup: true);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("hash=abc123def456", url);
+        Assert.Contains("timeout=60", url);
+        Assert.Contains("use_cache_lookup=true", url);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoAsync_WithNullUseCacheLookup_OmitsFromQueryString()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act
+        await client.GetTorrentInfoAsync("abc123def456");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.DoesNotContain("use_cache_lookup", url);
+        Assert.DoesNotContain("timeout", url);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithTorrentInfoRequest_SendsPostRequest()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+        TorrentInfoRequest request = new()
+        {
+            Hash = "abc123def456",
+            Timeout = 30,
+            UseCacheLookup = true,
+        };
+
+        // Act
+        TorBoxResponse<TorrentInfo> result = await client.GetTorrentInfoByFileAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("torrents/torrentinfo", handler.LastRequest.RequestUri!.ToString());
+        Assert.NotNull(result.Data);
+        Assert.Equal("abc123def456", result.Data.Hash);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithFile_SendsMultipartRequest()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+        TorrentInfoRequest request = new()
+        {
+            File = [0x01, 0x02, 0x03],
+            FileName = "my-torrent.torrent",
+            PeersOnly = true,
+        };
+
+        // Act
+        await client.GetTorrentInfoByFileAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoByFileAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetTorrentInfoByFileAsync(null!));
+    }
+
+    [Fact]
+    public async Task RequestDownloadAsync_WithNewOptions_IncludesInQueryString()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(DownloadJson);
+        RequestDownloadOptions options = new()
+        {
+            TorrentId = 42,
+            Token = "custom-token",
+            AppendName = true,
+            Redirect = false,
+        };
+
+        // Act
+        await client.RequestDownloadAsync(options);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("torrent_id=42", url);
+        Assert.Contains("redirect=false", url);
+        Assert.Contains("token=custom-token", url);
+        Assert.Contains("append_name=true", url);
+    }
+
+    [Fact]
     public async Task ExportDataAsync_WithTorrentId_SendsGetRequest()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<TorrentsClient>(ExportDataJson);
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(ExportDataJson);
 
         // Act
         TorBoxResponse<string> result = await client.ExportDataAsync(42);

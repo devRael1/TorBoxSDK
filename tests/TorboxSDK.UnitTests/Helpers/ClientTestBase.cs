@@ -22,8 +22,8 @@ internal static class ClientTestBase
         string resolvedBaseAddress = baseAddress
             ?? (BaseAddresses.TryGetValue(typeof(TClient), out string? mapped) ? mapped : "https://api.torbox.app/v1/api/");
 
-        var handler = new MockHttpMessageHandler(json, statusCode);
-        var httpClient = new HttpClient(handler) { BaseAddress = new Uri(resolvedBaseAddress) };
+        MockHttpMessageHandler handler = new(json, statusCode);
+        HttpClient httpClient = new(handler) { BaseAddress = new Uri(resolvedBaseAddress) };
 
         TClient client = (TClient?)Activator.CreateInstance(typeof(TClient), httpClient)
             ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}. Ensure it has a public constructor accepting HttpClient.");

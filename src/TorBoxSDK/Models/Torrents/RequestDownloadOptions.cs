@@ -45,4 +45,18 @@ public sealed record RequestDownloadOptions
     /// </summary>
     [JsonPropertyName("redirect")]
     public bool? Redirect { get; init; }
+
+    /// <summary>
+    /// Gets the API token to use for authentication,
+    /// or <see langword="null"/> to use the client's default token.
+    /// </summary>
+    [JsonPropertyName("token")]
+    public string? Token { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to append the file name to the download URL,
+    /// or <see langword="null"/> to use the default behavior.
+    /// </summary>
+    [JsonPropertyName("append_name")]
+    public bool? AppendName { get; init; }
 }

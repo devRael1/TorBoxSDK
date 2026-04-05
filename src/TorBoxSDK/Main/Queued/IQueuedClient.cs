@@ -9,10 +9,15 @@ namespace TorBoxSDK.Main.Queued;
 public interface IQueuedClient
 {
     /// <summary>Retrieves the authenticated user's queued downloads.</summary>
+    /// <param name="id">Optional queued download ID to retrieve a single item.</param>
+    /// <param name="offset">Optional offset for pagination.</param>
+    /// <param name="limit">Optional limit for pagination.</param>
+    /// <param name="bypassCache">Optional flag to bypass the cache.</param>
+    /// <param name="type">Optional type filter for queued downloads.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A list of queued downloads.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(long? id = null, int? offset = null, int? limit = null, bool? bypassCache = null, string? type = null, CancellationToken ct = default);
 
     /// <summary>Performs a control operation on queued downloads.</summary>
     /// <param name="request">The control operation request.</param>

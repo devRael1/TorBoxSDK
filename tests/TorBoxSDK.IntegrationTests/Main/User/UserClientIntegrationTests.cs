@@ -128,7 +128,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
 
         // Act
         TorBoxResponse<IReadOnlyList<SearchEngine>> response = await _fixture.Client.Main.User
-            .GetSearchEnginesAsync(cts.Token);
+            .GetSearchEnginesAsync(ct: cts.Token);
 
         // Assert
         Assert.NotNull(response);

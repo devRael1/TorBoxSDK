@@ -65,18 +65,4 @@ public sealed class NotificationsClient : INotificationsClient
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "intercom/hash");
         return await TorBoxApiHelper.SendAsync<IntercomHash>(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
-
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetChangelogsRssAsync(CancellationToken ct = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "changelogs/rss");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<Changelog>>> GetChangelogsJsonAsync(CancellationToken ct = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "changelogs/json");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<Changelog>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
-    }
 }

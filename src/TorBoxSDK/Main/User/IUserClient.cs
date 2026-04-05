@@ -30,18 +30,19 @@ public interface IUserClient
     Task<TorBoxResponse<UserProfile>> GetMeAsync(bool? settings = null, CancellationToken ct = default);
 
     /// <summary>Adds a referral code to the user's account.</summary>
-    /// <param name="request">The referral request.</param>
+    /// <param name="referralCode">The referral code to apply.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The API response.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="referralCode"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> AddReferralAsync(AddReferralRequest request, CancellationToken ct = default);
+    Task<TorBoxResponse> AddReferralAsync(string referralCode, CancellationToken ct = default);
 
     /// <summary>Starts the device authorization flow.</summary>
+    /// <param name="app">The application identifier, or <see langword="null"/> to omit.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>The device code response containing a user code and verification URL.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(string? app = null, CancellationToken ct = default);
 
     /// <summary>Exchanges a device code for an access token.</summary>
     /// <param name="request">The device token request.</param>
@@ -93,10 +94,11 @@ public interface IUserClient
     Task<TorBoxResponse> AddSearchEnginesAsync(AddSearchEnginesRequest request, CancellationToken ct = default);
 
     /// <summary>Retrieves the user's configured search engines.</summary>
+    /// <param name="id">An optional search engine identifier to filter by.</param>
     /// <param name="ct">Cancellation token.</param>
     /// <returns>A list of configured search engines.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<SearchEngine>>> GetSearchEnginesAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<SearchEngine>>> GetSearchEnginesAsync(long? id = null, CancellationToken ct = default);
 
     /// <summary>Modifies the user's search engine configuration.</summary>
     /// <param name="request">The modification request.</param>

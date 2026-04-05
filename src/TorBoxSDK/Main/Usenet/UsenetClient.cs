@@ -85,7 +85,10 @@ public sealed class UsenetClient : IUsenetClient
             ("usenet_id", options.UsenetId.ToString()),
             ("file_id", options.FileId?.ToString()),
             ("zip_link", options.ZipLink?.ToString().ToLowerInvariant()),
-            ("user_ip", options.UserIp));
+            ("token", options.Token),
+            ("user_ip", options.UserIp),
+            ("redirect", options.Redirect?.ToString().ToLowerInvariant()),
+            ("append_name", options.AppendName?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"usenet/requestdl{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
