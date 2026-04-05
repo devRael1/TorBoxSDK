@@ -72,10 +72,10 @@ public static class NotificationsExample
             // This is a destructive action — requires confirmation.
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Clear all notifications is a destructive action.");
-            Console.Write("Type YES to clear all notifications, or press Enter to skip: ");
+            Console.Write("Type DELETE to clear all notifications, or press Enter to skip: ");
             string? clearAllConfirmation = Console.ReadLine();
 
-            if (string.Equals(clearAllConfirmation, "YES", StringComparison.Ordinal))
+            if (string.Equals(clearAllConfirmation, "DELETE", StringComparison.Ordinal))
             {
                 Console.WriteLine("Clearing all notifications...");
 

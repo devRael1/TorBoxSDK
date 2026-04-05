@@ -84,6 +84,7 @@ public static class QueuedDownloadsExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine();
             Console.WriteLine("Type DELETE to confirm deleting this queued download, or press Enter to skip:");
+            Console.Write("> ");
             string? deleteConfirmation = Console.ReadLine();
 
             if (string.Equals(deleteConfirmation, "DELETE", StringComparison.Ordinal))
@@ -110,6 +111,7 @@ public static class QueuedDownloadsExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine();
             Console.WriteLine("Type DELETE ALL to confirm deleting all queued downloads, or press Enter to skip:");
+            Console.Write("> ");
             string? deleteAllConfirmation = Console.ReadLine();
 
             if (string.Equals(deleteAllConfirmation, "DELETE ALL", StringComparison.Ordinal))
