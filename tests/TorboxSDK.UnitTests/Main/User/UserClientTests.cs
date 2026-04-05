@@ -161,7 +161,7 @@ public sealed class UserClientTests
         Assert.NotNull(result);
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Equal("user@example.com", result.Data!.Email);
+        Assert.Equal("user@example.com", result.Data.Email);
     }
 
     [Fact]
