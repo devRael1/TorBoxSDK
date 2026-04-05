@@ -24,14 +24,14 @@ public sealed record AddRssRequest
     /// Gets the regex pattern to filter included items,
     /// or <see langword="null"/> for no include filter.
     /// </summary>
-    [JsonPropertyName("regex_filter")]
+    [JsonPropertyName("do_regex")]
     public string? RegexFilter { get; init; }
 
     /// <summary>
     /// Gets the regex pattern to exclude items,
     /// or <see langword="null"/> for no exclude filter.
     /// </summary>
-    [JsonPropertyName("regex_filter_exclude")]
+    [JsonPropertyName("dont_regex")]
     public string? RegexFilterExclude { get; init; }
 
     /// <summary>
@@ -47,4 +47,25 @@ public sealed record AddRssRequest
     /// </summary>
     [JsonPropertyName("rss_type")]
     public string? RssType { get; init; }
+
+    /// <summary>
+    /// Gets the maximum age in days for included items,
+    /// or <see langword="null"/> for no age restriction.
+    /// </summary>
+    [JsonPropertyName("dont_older_than")]
+    public int? DontOlderThan { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether to pass the check,
+    /// or <see langword="null"/> to use the default behavior.
+    /// </summary>
+    [JsonPropertyName("pass_check")]
+    public bool? PassCheck { get; init; }
+
+    /// <summary>
+    /// Gets the torrent seeding preference,
+    /// or <see langword="null"/> to use the default seeding behavior.
+    /// </summary>
+    [JsonPropertyName("torrent_seeding")]
+    public int? TorrentSeeding { get; init; }
 }
