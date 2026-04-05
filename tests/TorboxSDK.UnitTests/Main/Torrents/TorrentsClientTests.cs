@@ -358,4 +358,178 @@ public sealed class TorrentsClientTests
         Assert.Contains("torrent_id=42", handler.LastRequest.RequestUri!.ToString());
         Assert.Equal("magnet:?xt=urn:btih:abc123def456", result.Data);
     }
+
+    // --- CheckCachedAsync ---
+
+    [Fact]
+    public async Task CheckCachedAsync_WithHashes_SendsGetRequest()
+    {
+        // Arrange
+        string cachedJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": {}
+            }
+            """;
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(cachedJson);
+
+        // Act
+        await client.CheckCachedAsync(["hash1", "hash2"]);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.Contains("torrents/checkcached", handler.LastRequest.RequestUri!.ToString());
+        Assert.Contains("hash=hash1%2Chash2", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task CheckCachedAsync_WithAllParams_IncludesInQueryString()
+    {
+        // Arrange
+        string cachedJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": {}
+            }
+            """;
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(cachedJson);
+
+        // Act
+        await client.CheckCachedAsync(["hash1"], format: "object", listFiles: true);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("format=object", url);
+        Assert.Contains("list_files=true", url);
+    }
+
+    [Fact]
+    public async Task CheckCachedAsync_WithNullHashes_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
+    }
+
+    // --- CheckCachedByPostAsync ---
+
+    [Fact]
+    public async Task CheckCachedByPostAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        string cachedJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": {}
+            }
+            """;
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(cachedJson);
+        CheckCachedRequest request = new();
+
+        // Act
+        await client.CheckCachedByPostAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("torrents/checkcached", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task CheckCachedByPostAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedByPostAsync(null!));
+    }
+
+    // --- AsyncCreateTorrentAsync ---
+
+    [Fact]
+    public async Task AsyncCreateTorrentAsync_WithMagnet_SendsMultipartPost()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123" };
+
+        // Act
+        TorBoxResponse<Torrent> result = await client.AsyncCreateTorrentAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("torrents/asynccreatetorrent", handler.LastRequest.RequestUri!.ToString());
+        Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task AsyncCreateTorrentAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateTorrentAsync(null!));
+    }
+
+    [Fact]
+    public async Task AsyncCreateTorrentAsync_WithNoMagnetOrFile_ThrowsArgumentException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.AsyncCreateTorrentAsync(request));
+    }
+
+    // --- MagnetToFileAsync ---
+
+    [Fact]
+    public async Task MagnetToFileAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        string magnetFileJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "base64-torrent-file-content"
+            }
+            """;
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(magnetFileJson);
+        MagnetToFileRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123" };
+
+        // Act
+        TorBoxResponse<string> result = await client.MagnetToFileAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("torrents/magnettofile", handler.LastRequest.RequestUri!.ToString());
+        Assert.Equal("base64-torrent-file-content", result.Data);
+    }
+
+    [Fact]
+    public async Task MagnetToFileAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.MagnetToFileAsync(null!));
+    }
 }

@@ -251,4 +251,341 @@ public sealed class SearchApiClientTests
         Assert.Contains("meta/search/inception", url);
         Assert.DoesNotContain("type=", url);
     }
+
+    // --- GetTorrentSearchTutorialAsync ---
+
+    [Fact]
+    public async Task GetTorrentSearchTutorialAsync_SendsGetRequest()
+    {
+        // Arrange
+        string tutorialJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "Welcome to the torrent search API."
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(tutorialJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.GetTorrentSearchTutorialAsync();
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.EndsWith("torrents", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    // --- GetUsenetSearchTutorialAsync ---
+
+    [Fact]
+    public async Task GetUsenetSearchTutorialAsync_SendsGetRequest()
+    {
+        // Arrange
+        string tutorialJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "Welcome to the usenet search API."
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(tutorialJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.GetUsenetSearchTutorialAsync();
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.EndsWith("usenet", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    // --- GetMetaSearchTutorialAsync ---
+
+    [Fact]
+    public async Task GetMetaSearchTutorialAsync_SendsGetRequest()
+    {
+        // Arrange
+        string tutorialJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "Welcome to the meta search API."
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(tutorialJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.GetMetaSearchTutorialAsync();
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.EndsWith("meta", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    // --- GetUsenetByIdAsync ---
+
+    [Fact]
+    public async Task GetUsenetByIdAsync_WithId_SendsGetRequest()
+    {
+        // Arrange
+        string usenetSingleJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": {
+                    "id": "usenet-abc123",
+                    "name": "test.nzb"
+                }
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(usenetSingleJson);
+
+        // Act
+        await client.GetUsenetByIdAsync("usenet-abc123");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.Contains("usenet/usenet-abc123", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task GetUsenetByIdAsync_WithNullId_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetUsenetByIdAsync(null!));
+    }
+
+    // --- DownloadUsenetAsync ---
+
+    [Fact]
+    public async Task DownloadUsenetAsync_WithIdAndGuid_SendsGetRequest()
+    {
+        // Arrange
+        string downloadJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "https://download.example.com/nzb"
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(downloadJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.DownloadUsenetAsync("nzb-id-123", "guid-456");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.Contains("usenet/download/nzb-id-123/guid-456", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task DownloadUsenetAsync_WithNullId_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.DownloadUsenetAsync(null!, "guid"));
+    }
+
+    [Fact]
+    public async Task DownloadUsenetAsync_WithNullGuid_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.DownloadUsenetAsync("id", null!));
+    }
+
+    // --- GetMetaByIdAsync ---
+
+    [Fact]
+    public async Task GetMetaByIdAsync_WithId_SendsGetRequest()
+    {
+        // Arrange
+        string metaSingleJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": {
+                    "id": "meta-abc123",
+                    "name": "Inception"
+                }
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(metaSingleJson);
+
+        // Act
+        await client.GetMetaByIdAsync("meta-abc123");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        Assert.Contains("meta/meta-abc123", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task GetMetaByIdAsync_WithNullId_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetMetaByIdAsync(null!));
+    }
+
+    // --- SearchTorznabAsync ---
+
+    [Fact]
+    public async Task SearchTorznabAsync_WithQuery_SendsGetRequest()
+    {
+        // Arrange
+        string torznabJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "<xml>torznab results</xml>"
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(torznabJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.SearchTorznabAsync("ubuntu");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("torznab/api", url);
+        Assert.Contains("t=search", url);
+        Assert.Contains("q=ubuntu", url);
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task SearchTorznabAsync_WithApiKey_IncludesInQueryString()
+    {
+        // Arrange
+        string torznabJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "<xml/>"
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(torznabJson);
+
+        // Act
+        await client.SearchTorznabAsync("ubuntu", apiKey: "my-key");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("apikey=my-key", url);
+    }
+
+    [Fact]
+    public async Task SearchTorznabAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchTorznabAsync(null!));
+    }
+
+    // --- SearchNewznabAsync ---
+
+    [Fact]
+    public async Task SearchNewznabAsync_WithQuery_SendsGetRequest()
+    {
+        // Arrange
+        string newznabJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "<xml>newznab results</xml>"
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(newznabJson);
+
+        // Act
+        TorBoxResponse<string> result = await client.SearchNewznabAsync("ubuntu");
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("newznab/api", url);
+        Assert.Contains("t=search", url);
+        Assert.Contains("q=ubuntu", url);
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task SearchNewznabAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchNewznabAsync(null!));
+    }
+
+    // --- GetTorrentByIdAsync null validation ---
+
+    [Fact]
+    public async Task GetTorrentByIdAsync_WithNullId_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetTorrentByIdAsync(null!));
+    }
+
+    // --- SearchUsenetAsync null validation ---
+
+    [Fact]
+    public async Task SearchUsenetAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchUsenetAsync(null!));
+    }
+
+    // --- SearchMetaAsync null validation ---
+
+    [Fact]
+    public async Task SearchMetaAsync_WithNullQuery_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchMetaAsync(null!));
+    }
 }
