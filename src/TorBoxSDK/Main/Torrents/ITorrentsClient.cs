@@ -1,5 +1,4 @@
 using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Queued;
 using TorBoxSDK.Models.Torrents;
 
 namespace TorBoxSDK.Main.Torrents;
@@ -103,20 +102,6 @@ public interface ITorrentsClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<Torrent>> AsyncCreateTorrentAsync(CreateTorrentRequest request, CancellationToken ct = default);
-
-    /// <summary>Retrieves the list of queued torrent downloads.</summary>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>A list of queued downloads.</returns>
-    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedTorrentsAsync(CancellationToken ct = default);
-
-    /// <summary>Performs a control operation on queued torrent downloads.</summary>
-    /// <param name="request">The control operation request.</param>
-    /// <param name="ct">Cancellation token.</param>
-    /// <returns>The API response.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
-    /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> ControlQueuedTorrentsAsync(ControlQueuedRequest request, CancellationToken ct = default);
 
     /// <summary>Converts a magnet link to a torrent file.</summary>
     /// <param name="request">The request containing the magnet link to convert.</param>

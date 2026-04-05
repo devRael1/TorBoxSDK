@@ -1,6 +1,5 @@
 using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Queued;
 using TorBoxSDK.Models.Torrents;
 
 namespace TorBoxSDK.IntegrationTests.Main.Torrents;
@@ -71,20 +70,4 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
         Assert.NotNull(response.Data);
     }
 
-    [SkippableFact]
-    public async Task GetQueuedTorrentsAsync_WithValidApiKey_ReturnsResponse()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
-
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
-
-        // Act
-        TorBoxResponse<IReadOnlyList<QueuedDownload>> response = await _fixture.Client.Main.Torrents
-            .GetQueuedTorrentsAsync(cts.Token);
-
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-    }
 }

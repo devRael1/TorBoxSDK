@@ -1,6 +1,5 @@
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Queued;
 using TorBoxSDK.Models.Torrents;
 
 namespace TorBoxSDK.Main.Torrents;
@@ -260,25 +259,6 @@ public sealed class TorrentsClient : ITorrentsClient
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/asynccreatetorrent") { Content = content };
         return await TorBoxApiHelper.SendAsync<Torrent>(_httpClient, httpRequest, ct).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedTorrentsAsync(CancellationToken ct = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "torrents/getqueued");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<QueuedDownload>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
-    }
-
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> ControlQueuedTorrentsAsync(ControlQueuedRequest request, CancellationToken ct = default)
-    {
-        ArgumentNullException.ThrowIfNull(request);
-
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/controlqueued")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
