@@ -120,8 +120,8 @@ Authentication, account profile, referrals, subscriptions, transactions, search 
 | `RefreshTokenAsync` | `request: RefreshTokenRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Refreshes a session token. |
 | `GetConfirmationAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets confirmation-related account data. |
 | `GetMeAsync` | `settings: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UserProfile>` | Gets the authenticated user's profile, optionally including settings. |
-| `AddReferralAsync` | `request: AddReferralRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a referral code to the authenticated user. |
-| `StartDeviceAuthAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<DeviceCodeResponse>` | Starts the device authorization flow. |
+| `AddReferralAsync` | `referralCode: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a referral code to the authenticated user. |
+| `StartDeviceAuthAsync` | `app: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<DeviceCodeResponse>` | Starts the device authorization flow. |
 | `GetDeviceTokenAsync` | `request: DeviceTokenRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Exchanges a device code for token data. |
 | `DeleteMeAsync` | `request: DeleteAccountRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Deletes the authenticated user's account. |
 | `GetReferralDataAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<ReferralData>` | Gets referral totals and referral code data. |
@@ -173,8 +173,8 @@ Stream creation and stream metadata retrieval for downloadable files.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `CreateStreamAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Creates a stream and returns stream URL/data. |
-| `GetStreamDataAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets stream metadata or untyped stream data. |
+| `CreateStreamAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`chosenSubtitleIndex: int? = null`<br>`chosenAudioIndex: int? = null`<br>`chosenResolutionIndex: int? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Creates a stream and returns stream URL/data. |
+| `GetStreamDataAsync` | `presignedToken: string`<br>`token: string`<br>`chosenSubtitleIndex: int? = null`<br>`chosenAudioIndex: int? = null`<br>`chosenResolutionIndex: int? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets stream metadata or untyped stream data. |
 
 ### Integrations Client
 
@@ -214,7 +214,7 @@ Vendor registration, vendor account management, and vendor user lifecycle operat
 | `GetAccountAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets the authenticated vendor account. |
 | `UpdateAccountAsync` | `request: UpdateVendorAccountRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Updates vendor account details. |
 | `GetAccountsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<VendorAccount>>` | Gets vendor-managed accounts. |
-| `GetAccountByEmailAsync` | `userEmail: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets an account by user email. |
+| `GetAccountByAuthIdAsync` | `userAuthId: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets an account by user auth ID. |
 | `RegisterUserAsync` | `request: RegisterVendorUserRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Registers a user under the vendor account. |
 | `RemoveUserAsync` | `request: RemoveVendorUserRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Removes a user from the vendor account. |
 | `RefreshAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Refreshes vendor credentials. |

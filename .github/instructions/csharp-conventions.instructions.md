@@ -127,8 +127,8 @@ IReadOnlyList<Torrent> empty = new List<Torrent>();
 ## Async/Await
 
 - Always suffix async methods with `Async`
-- Always accept `CancellationToken ct = default` as the last parameter
-- Always propagate `ct` to every inner async call — never drop it silently
+- Always accept `CancellationToken cancellationToken = default` as the last parameter
+- Always propagate `cancellationToken` to every inner async call — never drop it silently
 - Never use `.Result`, `.Wait()`, or `.GetAwaiter().GetResult()` — always `await`
 - Use `ConfigureAwait(false)` on every `await` in library code (`src/`)
 - Elide `async`/`await` when the method is a single `return` with no try/catch
@@ -137,11 +137,11 @@ IReadOnlyList<Torrent> empty = new List<Torrent>();
 // REJECT — deadlock risk
 string json = _httpClient.GetStringAsync(url).Result;
 
-// REJECT — missing ConfigureAwait and ct
+// REJECT — missing ConfigureAwait and cancellationToken
 HttpResponseMessage response = await _httpClient.GetAsync(url);
 
 // ACCEPT
-HttpResponseMessage response = await _httpClient.GetAsync(url, ct).ConfigureAwait(false);
+HttpResponseMessage response = await _httpClient.GetAsync(url, cancellationToken).ConfigureAwait(false);
 ```
 
 ## File Organization
@@ -181,7 +181,7 @@ Reject if:
 await _httpClient.GetAsync("https://api.torbox.app/v1/api/torrents/mylist");
 
 // ACCEPT — relative path, BaseAddress set at registration
-await _httpClient.GetAsync("/torrents/mylist", ct).ConfigureAwait(false);
+await _httpClient.GetAsync("/torrents/mylist", cancellationToken).ConfigureAwait(false);
 ```
 
 ## Authentication
@@ -258,10 +258,10 @@ All `public` members must have complete XML doc:
 ```csharp
 /// <summary>Retrieves the authenticated user's torrent list.</summary>
 /// <param name="id">Optional torrent ID to retrieve a single torrent.</param>
-/// <param name="ct">Cancellation token.</param>
+/// <param name="cancellationToken">Cancellation token.</param>
 /// <returns>A list of torrents, or a single torrent if <paramref name="id"/> is provided.</returns>
 /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-Task<IReadOnlyList<Torrent>> GetMyListAsync(long? id = null, CancellationToken ct = default);
+Task<IReadOnlyList<Torrent>> GetMyListAsync(long? id = null, CancellationToken cancellationToken = default);
 ```
 
 Reject if: `public` method, property, or type has no `<summary>`, `<param>` is absent for non-obvious parameters, or `<returns>` is missing on `Task<T>` methods.
@@ -366,7 +366,7 @@ Request models are dumb data containers. Validation happens in the client method
 public CreateTorrentRequest(string magnet) { if (string.IsNullOrEmpty(magnet)) throw ...; }
 
 // ACCEPT — validation at boundary
-public async Task<TorBoxResponse<Torrent>> CreateTorrentAsync(CreateTorrentRequest request, CancellationToken ct = default)
+public async Task<TorBoxResponse<Torrent>> CreateTorrentAsync(CreateTorrentRequest request, CancellationToken cancellationToken = default)
 {
     ArgumentNullException.ThrowIfNull(request);
     ArgumentException.ThrowIfNullOrEmpty(request.Magnet);
