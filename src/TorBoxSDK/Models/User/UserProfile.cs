@@ -41,7 +41,7 @@ public sealed record UserProfile
     public int Plan { get; init; }
 
     /// <summary>
-    /// Gets the total number of downloads by the user.
+    /// Gets the total bytes downloaded by the user.
     /// </summary>
     [JsonPropertyName("total_downloaded")]
     public long TotalDownloaded { get; init; }

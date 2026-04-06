@@ -150,7 +150,7 @@ public sealed class NotificationsClientTests
     // --- GetIntercomHashAsync ---
 
     [Fact]
-    public async Task GetIntercomHashAsync_WithNoParameters_SendsGetRequest()
+    public async Task GetIntercomHashAsync_WithAuthIdAndEmail_SendsGetRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
