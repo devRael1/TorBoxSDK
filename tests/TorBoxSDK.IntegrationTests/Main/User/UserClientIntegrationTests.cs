@@ -22,7 +22,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<UserProfile> response = await _fixture.Client.Main.User.GetMeAsync(ct: cts.Token);
+        TorBoxResponse<UserProfile> response = await _fixture.Client.Main.User.GetMeAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -43,7 +43,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         // Act
         TorBoxResponse<UserProfile> response = await _fixture.Client.Main.User.GetMeAsync(
             settings: true,
-            ct: cts.Token);
+            cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -128,7 +128,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
 
         // Act
         TorBoxResponse<IReadOnlyList<SearchEngine>> response = await _fixture.Client.Main.User
-            .GetSearchEnginesAsync(ct: cts.Token);
+            .GetSearchEnginesAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

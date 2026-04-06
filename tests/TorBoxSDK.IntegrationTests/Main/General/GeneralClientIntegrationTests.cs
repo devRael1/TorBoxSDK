@@ -73,7 +73,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.General
-            .GetSpeedtestFilesAsync(ct: cts.Token);
+            .GetSpeedtestFilesAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

@@ -22,7 +22,7 @@ public static class ListWebDownloadsExample
             // Retrieve the full web download list.
             // ──────────────────────────────────────────────────────
             TorBoxResponse<IReadOnlyList<WebDownload>> response =
-                await client.Main.WebDownloads.GetMyWebDownloadListAsync(ct: cts.Token);
+                await client.Main.WebDownloads.GetMyWebDownloadListAsync(cancellationToken: cts.Token);
 
             if (response.Data is null || response.Data.Count == 0)
             {

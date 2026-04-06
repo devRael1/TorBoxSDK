@@ -27,7 +27,7 @@ public static class DownloadSearchResultsExample
             Console.WriteLine($"Searching Usenet for: \"{query}\"...");
 
             TorBoxResponse<IReadOnlyList<UsenetSearchResult>> searchResponse =
-                await client.Search.SearchUsenetAsync(query, ct: cts.Token);
+                await client.Search.SearchUsenetAsync(query, cancellationToken: cts.Token);
 
             if (searchResponse.Data is not null && searchResponse.Data.Count > 0)
             {
@@ -42,7 +42,7 @@ public static class DownloadSearchResultsExample
                     Console.WriteLine($"Getting Usenet result details for ID: {resultId}...");
 
                     TorBoxResponse<UsenetSearchResult> detailResponse =
-                        await client.Search.GetUsenetByIdAsync(resultId, ct: cts.Token);
+                        await client.Search.GetUsenetByIdAsync(resultId, cancellationToken: cts.Token);
 
                     if (detailResponse.Data is not null)
                     {
@@ -83,7 +83,7 @@ public static class DownloadSearchResultsExample
             Console.WriteLine($"Searching meta for: \"{metaQuery}\"...");
 
             TorBoxResponse<IReadOnlyList<MetaSearchResult>> metaResponse =
-                await client.Search.SearchMetaAsync(metaQuery, ct: cts.Token);
+                await client.Search.SearchMetaAsync(metaQuery, cancellationToken: cts.Token);
 
             if (metaResponse.Data is not null && metaResponse.Data.Count > 0)
             {

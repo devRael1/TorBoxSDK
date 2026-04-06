@@ -30,7 +30,7 @@ The standard TorBox envelope includes:
 ```csharp
 try
 {
-    await client.Main.Torrents.GetMyTorrentListAsync(ct: cancellationToken);
+    await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cancellationToken);
 }
 catch (TorBoxException ex)
 {

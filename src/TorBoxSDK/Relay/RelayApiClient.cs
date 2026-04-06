@@ -25,19 +25,19 @@ public sealed class RelayApiClient : IRelayApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<RelayStatus>> GetStatusAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<RelayStatus>> GetStatusAsync(CancellationToken cancellationToken = default)
     {
         // An empty relative URI resolves to the relay base address itself (GET /).
         using var request = new HttpRequestMessage(HttpMethod.Get, string.Empty);
-        return await TorBoxApiHelper.SendAsync<RelayStatus>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<RelayStatus>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(string authId, long torrentId, CancellationToken ct = default)
+    public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(string authId, long torrentId, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(authId, nameof(authId));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"v1/inactivecheck/torrent/{Uri.EscapeDataString(authId)}/{torrentId}");
-        return await TorBoxApiHelper.SendAsync<InactiveCheckResult>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<InactiveCheckResult>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 }

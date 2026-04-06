@@ -33,7 +33,7 @@ public sealed class AuthFailureIntegrationTests
 
         // Act & Assert
         TorBoxException exception = await Assert.ThrowsAsync<TorBoxException>(
-            () => client.Main.User.GetMeAsync(ct: cts.Token));
+            () => client.Main.User.GetMeAsync(cancellationToken: cts.Token));
 
         Assert.Equal(TorBoxErrorCode.BadToken, exception.ErrorCode);
     }

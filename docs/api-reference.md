@@ -1,6 +1,6 @@
 # API Reference
 
-This reference documents the full TorBoxSDK public API surface across the Main, Search, and Relay API families. All methods return the standard `TorBoxResponse` envelope, all async methods accept `CancellationToken ct = default`, and API failures may throw `TorBoxException`.
+This reference documents the full TorBoxSDK public API surface across the Main, Search, and Relay API families. All methods return the standard `TorBoxResponse` envelope, all async methods accept `CancellationToken cancellationToken = default`, and API failures may throw `TorBoxException`.
 
 ## Table of Contents
 
@@ -46,10 +46,10 @@ General service endpoints for root status, platform statistics, and speedtest fi
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetUpStatusAsync` | `ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets Main API status data. |
-| `GetStatsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets current aggregate TorBox statistics. |
-| `Get30DayStatsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets statistics for the last 30 days. |
-| `GetSpeedtestFilesAsync` | `options: SpeedtestOptions? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets speedtest file data using optional region, IP, and test length options. |
+| `GetUpStatusAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets Main API status data. |
+| `GetStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets current aggregate TorBox statistics. |
+| `Get30DayStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets statistics for the last 30 days. |
+| `GetSpeedtestFilesAsync` | `options: SpeedtestOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets speedtest file data using optional region, IP, and test length options. |
 
 ### Torrents Client
 
@@ -59,20 +59,20 @@ Torrent lifecycle operations including creation, listing, cache checks, metadata
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `CreateTorrentAsync` | `request: CreateTorrentRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<Torrent>` | Creates a torrent from a magnet link or torrent file. |
-| `AsyncCreateTorrentAsync` | `request: CreateTorrentRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<Torrent>` | Creates a torrent using asynchronous server-side processing. |
-| `ControlTorrentAsync` | `request: ControlTorrentRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation such as pause, resume, delete, or recheck. |
-| `RequestDownloadAsync` | `options: RequestDownloadOptions`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Requests a torrent download URL. |
-| `GetMyTorrentListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Torrent>>` | Gets the authenticated user's torrent list or a single torrent when `id` is supplied. |
-| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks torrent cache availability using query parameters. |
-| `CheckCachedByPostAsync` | `request: CheckCachedRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks torrent cache availability using a request body. |
-| `ExportDataAsync` | `torrentId: long`<br>`type: string? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Exports torrent data in a requested format. |
-| `GetTorrentInfoAsync` | `hash: string`<br>`timeout: int? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<TorrentInfo>` | Gets torrent metadata from an info hash. |
-| `GetTorrentInfoByFileAsync` | `file: byte[]`<br>`ct: CancellationToken = default` | `TorBoxResponse<TorrentInfo>` | Gets torrent metadata from raw torrent file bytes. |
-| `EditTorrentAsync` | `request: EditTorrentRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Updates torrent properties such as name, tags, or alternative hashes. |
-| `GetQueuedTorrentsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<QueuedDownload>>` | Gets queued torrent downloads. |
-| `ControlQueuedTorrentsAsync` | `request: ControlQueuedRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to queued torrent downloads. |
-| `MagnetToFileAsync` | `request: MagnetToFileRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Converts a magnet link to torrent file content. |
+| `CreateTorrentAsync` | `request: CreateTorrentRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<Torrent>` | Creates a torrent from a magnet link or torrent file. |
+| `AsyncCreateTorrentAsync` | `request: CreateTorrentRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<Torrent>` | Creates a torrent using asynchronous server-side processing. |
+| `ControlTorrentAsync` | `request: ControlTorrentRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation such as pause, resume, delete, or recheck. |
+| `RequestDownloadAsync` | `options: RequestDownloadOptions`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Requests a torrent download URL. |
+| `GetMyTorrentListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Torrent>>` | Gets the authenticated user's torrent list or a single torrent when `id` is supplied. |
+| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks torrent cache availability using query parameters. |
+| `CheckCachedByPostAsync` | `request: CheckCachedRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks torrent cache availability using a request body. |
+| `ExportDataAsync` | `torrentId: long`<br>`type: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Exports torrent data in a requested format. |
+| `GetTorrentInfoAsync` | `hash: string`<br>`timeout: int? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentInfo>` | Gets torrent metadata from an info hash. |
+| `GetTorrentInfoByFileAsync` | `file: byte[]`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentInfo>` | Gets torrent metadata from raw torrent file bytes. |
+| `EditTorrentAsync` | `request: EditTorrentRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Updates torrent properties such as name, tags, or alternative hashes. |
+| `GetQueuedTorrentsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<QueuedDownload>>` | Gets queued torrent downloads. |
+| `ControlQueuedTorrentsAsync` | `request: ControlQueuedRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to queued torrent downloads. |
+| `MagnetToFileAsync` | `request: MagnetToFileRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Converts a magnet link to torrent file content. |
 
 ### Usenet Client
 
@@ -82,14 +82,14 @@ Usenet download management, cache checks, editing, and download URL requests.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `CreateUsenetDownloadAsync` | `request: CreateUsenetDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<UsenetDownload>` | Creates a Usenet download from a link or NZB file. |
-| `AsyncCreateUsenetDownloadAsync` | `request: CreateUsenetDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<UsenetDownload>` | Creates a Usenet download using asynchronous server-side processing. |
-| `ControlUsenetDownloadAsync` | `request: ControlUsenetDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to a Usenet download. |
-| `RequestDownloadAsync` | `options: RequestUsenetDownloadOptions`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Requests a Usenet download URL. |
-| `GetMyUsenetListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<UsenetDownload>>` | Gets the authenticated user's Usenet downloads or a single item when `id` is supplied. |
-| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks Usenet cache availability using query parameters. |
-| `CheckCachedByPostAsync` | `request: CheckUsenetCachedRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks Usenet cache availability using a request body. |
-| `EditUsenetDownloadAsync` | `request: EditUsenetDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Updates Usenet download properties. |
+| `CreateUsenetDownloadAsync` | `request: CreateUsenetDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetDownload>` | Creates a Usenet download from a link or NZB file. |
+| `AsyncCreateUsenetDownloadAsync` | `request: CreateUsenetDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetDownload>` | Creates a Usenet download using asynchronous server-side processing. |
+| `ControlUsenetDownloadAsync` | `request: ControlUsenetDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to a Usenet download. |
+| `RequestDownloadAsync` | `options: RequestUsenetDownloadOptions`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Requests a Usenet download URL. |
+| `GetMyUsenetListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<UsenetDownload>>` | Gets the authenticated user's Usenet downloads or a single item when `id` is supplied. |
+| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks Usenet cache availability using query parameters. |
+| `CheckCachedByPostAsync` | `request: CheckUsenetCachedRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks Usenet cache availability using a request body. |
+| `EditUsenetDownloadAsync` | `request: EditUsenetDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Updates Usenet download properties. |
 
 ### Web Downloads Client
 
@@ -99,15 +99,15 @@ Direct-download and hoster operations including creation, cache checks, hoster d
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `CreateWebDownloadAsync` | `request: CreateWebDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<WebDownload>` | Creates a web download from a direct URL. |
-| `AsyncCreateWebDownloadAsync` | `request: CreateWebDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<WebDownload>` | Creates a web download using asynchronous server-side processing. |
-| `ControlWebDownloadAsync` | `request: ControlWebDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to a web download. |
-| `RequestDownloadAsync` | `options: RequestWebDownloadOptions`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Requests a web download URL. |
-| `GetMyWebDownloadListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<WebDownload>>` | Gets the authenticated user's web downloads or a single item when `id` is supplied. |
-| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks web-download cache availability using query parameters. |
-| `CheckCachedByPostAsync` | `request: CheckWebCachedRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Checks web-download cache availability using a request body. |
-| `GetHostersAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Hoster>>` | Gets supported hosters and current bandwidth status. |
-| `EditWebDownloadAsync` | `request: EditWebDownloadRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Updates web download properties. |
+| `CreateWebDownloadAsync` | `request: CreateWebDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<WebDownload>` | Creates a web download from a direct URL. |
+| `AsyncCreateWebDownloadAsync` | `request: CreateWebDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<WebDownload>` | Creates a web download using asynchronous server-side processing. |
+| `ControlWebDownloadAsync` | `request: ControlWebDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to a web download. |
+| `RequestDownloadAsync` | `options: RequestWebDownloadOptions`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Requests a web download URL. |
+| `GetMyWebDownloadListAsync` | `id: long? = null`<br>`offset: int? = null`<br>`limit: int? = null`<br>`bypassCache: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<WebDownload>>` | Gets the authenticated user's web downloads or a single item when `id` is supplied. |
+| `CheckCachedAsync` | `hashes: IReadOnlyList<string>`<br>`format: string? = null`<br>`listFiles: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks web-download cache availability using query parameters. |
+| `CheckCachedByPostAsync` | `request: CheckWebCachedRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Checks web-download cache availability using a request body. |
+| `GetHostersAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Hoster>>` | Gets supported hosters and current bandwidth status. |
+| `EditWebDownloadAsync` | `request: EditWebDownloadRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Updates web download properties. |
 
 ### User Client
 
@@ -117,22 +117,22 @@ Authentication, account profile, referrals, subscriptions, transactions, search 
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `RefreshTokenAsync` | `request: RefreshTokenRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Refreshes a session token. |
-| `GetConfirmationAsync` | `ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets confirmation-related account data. |
-| `GetMeAsync` | `settings: bool? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<UserProfile>` | Gets the authenticated user's profile, optionally including settings. |
-| `AddReferralAsync` | `request: AddReferralRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a referral code to the authenticated user. |
-| `StartDeviceAuthAsync` | `ct: CancellationToken = default` | `TorBoxResponse<DeviceCodeResponse>` | Starts the device authorization flow. |
-| `GetDeviceTokenAsync` | `request: DeviceTokenRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Exchanges a device code for token data. |
-| `DeleteMeAsync` | `request: DeleteAccountRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Deletes the authenticated user's account. |
-| `GetReferralDataAsync` | `ct: CancellationToken = default` | `TorBoxResponse<ReferralData>` | Gets referral totals and referral code data. |
-| `GetSubscriptionsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Subscription>>` | Gets the user's subscriptions. |
-| `GetTransactionsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Transaction>>` | Gets the user's transactions. |
-| `GetTransactionPdfAsync` | `transactionId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets PDF data or a PDF link for a transaction. |
-| `AddSearchEnginesAsync` | `request: AddSearchEnginesRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Adds search engines to the user's configuration. |
-| `GetSearchEnginesAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<SearchEngine>>` | Gets configured search engines. |
-| `ModifySearchEnginesAsync` | `request: ModifySearchEnginesRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Replaces or updates the configured search engine list. |
-| `ControlSearchEnginesAsync` | `request: ControlSearchEnginesRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control-style operation to search engine settings. |
-| `EditSettingsAsync` | `request: EditSettingsRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Updates account settings. |
+| `RefreshTokenAsync` | `request: RefreshTokenRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Refreshes a session token. |
+| `GetConfirmationAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets confirmation-related account data. |
+| `GetMeAsync` | `settings: bool? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UserProfile>` | Gets the authenticated user's profile, optionally including settings. |
+| `AddReferralAsync` | `referralCode: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a referral code to the authenticated user. |
+| `StartDeviceAuthAsync` | `app: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<DeviceCodeResponse>` | Starts the device authorization flow. |
+| `GetDeviceTokenAsync` | `request: DeviceTokenRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Exchanges a device code for token data. |
+| `DeleteMeAsync` | `request: DeleteAccountRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Deletes the authenticated user's account. |
+| `GetReferralDataAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<ReferralData>` | Gets referral totals and referral code data. |
+| `GetSubscriptionsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Subscription>>` | Gets the user's subscriptions. |
+| `GetTransactionsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Transaction>>` | Gets the user's transactions. |
+| `GetTransactionPdfAsync` | `transactionId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets PDF data or a PDF link for a transaction. |
+| `AddSearchEnginesAsync` | `request: AddSearchEnginesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Adds search engines to the user's configuration. |
+| `GetSearchEnginesAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<SearchEngine>>` | Gets configured search engines. |
+| `ModifySearchEnginesAsync` | `request: ModifySearchEnginesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Replaces or updates the configured search engine list. |
+| `ControlSearchEnginesAsync` | `request: ControlSearchEnginesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control-style operation to search engine settings. |
+| `EditSettingsAsync` | `request: EditSettingsRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Updates account settings. |
 
 ### Notifications Client
 
@@ -142,14 +142,14 @@ Notification feeds, notification management, test notifications, and changelog r
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetNotificationRssAsync` | `ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets the notifications RSS feed URL or content reference. |
-| `GetMyNotificationsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Notification>>` | Gets the authenticated user's notifications. |
-| `ClearAllNotificationsAsync` | `ct: CancellationToken = default` | `TorBoxResponse` | Clears all notifications. |
-| `ClearNotificationAsync` | `notificationId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Clears a specific notification by ID. |
-| `SendTestNotificationAsync` | `ct: CancellationToken = default` | `TorBoxResponse` | Sends a test notification. |
-| `GetIntercomHashAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IntercomHash>` | Gets the authenticated user's Intercom hash. |
-| `GetChangelogsRssAsync` | `ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets the changelog RSS feed URL or content reference. |
-| `GetChangelogsJsonAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Changelog>>` | Gets changelog entries as JSON data. |
+| `GetNotificationRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the notifications RSS feed URL or content reference. |
+| `GetMyNotificationsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Notification>>` | Gets the authenticated user's notifications. |
+| `ClearAllNotificationsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse` | Clears all notifications. |
+| `ClearNotificationAsync` | `notificationId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Clears a specific notification by ID. |
+| `SendTestNotificationAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse` | Sends a test notification. |
+| `GetIntercomHashAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IntercomHash>` | Gets the authenticated user's Intercom hash. |
+| `GetChangelogsRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the changelog RSS feed URL or content reference. |
+| `GetChangelogsJsonAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Changelog>>` | Gets changelog entries as JSON data. |
 
 ### RSS Client
 
@@ -159,11 +159,11 @@ RSS feed creation, control, modification, listing, and feed item retrieval.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `AddRssAsync` | `request: AddRssRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Adds a new RSS feed. |
-| `ControlRssAsync` | `request: ControlRssRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to an RSS feed. |
-| `ModifyRssAsync` | `request: ModifyRssRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Updates RSS feed properties. |
-| `GetFeedsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<RssFeed>>` | Gets configured RSS feeds. |
-| `GetFeedItemsAsync` | `rssFeedId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<RssFeedItem>>` | Gets items for a specific RSS feed. |
+| `AddRssAsync` | `request: AddRssRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Adds a new RSS feed. |
+| `ControlRssAsync` | `request: ControlRssRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to an RSS feed. |
+| `ModifyRssAsync` | `request: ModifyRssRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Updates RSS feed properties. |
+| `GetFeedsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<RssFeed>>` | Gets configured RSS feeds. |
+| `GetFeedItemsAsync` | `rssFeedId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<RssFeedItem>>` | Gets items for a specific RSS feed. |
 
 ### Stream Client
 
@@ -173,8 +173,8 @@ Stream creation and stream metadata retrieval for downloadable files.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `CreateStreamAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Creates a stream and returns stream URL/data. |
-| `GetStreamDataAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets stream metadata or untyped stream data. |
+| `CreateStreamAsync` | `id: long`<br>`fileId: long`<br>`type: string`<br>`chosenSubtitleIndex: int? = null`<br>`chosenAudioIndex: int? = null`<br>`chosenResolutionIndex: int? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Creates a stream and returns stream URL/data. |
+| `GetStreamDataAsync` | `presignedToken: string`<br>`token: string`<br>`chosenSubtitleIndex: int? = null`<br>`chosenAudioIndex: int? = null`<br>`chosenResolutionIndex: int? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets stream metadata or untyped stream data. |
 
 ### Integrations Client
 
@@ -184,23 +184,23 @@ OAuth integration management and third-party job creation for cloud and file-hos
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetOAuthMeAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<OAuthIntegration>>` | Gets connected OAuth integrations. |
-| `CreateGoogleDriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Google Drive integration job. |
-| `CreateDropboxJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Dropbox integration job. |
-| `CreateOnedriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a OneDrive integration job. |
-| `CreateGofileJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a GoFile integration job. |
-| `CreateOneFichierJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a 1Fichier integration job. |
-| `CreatePixeldrainJobAsync` | `request: CreateIntegrationJobRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Pixeldrain integration job. |
-| `GetJobAsync` | `jobId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Gets a specific integration job. |
-| `DeleteJobAsync` | `jobId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Deletes an integration job. |
-| `GetJobsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<IntegrationJob>>` | Gets all integration jobs for the authenticated user. |
-| `GetJobsByHashAsync` | `hash: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<IntegrationJob>>` | Gets integration jobs associated with a specific hash. |
-| `OAuthRedirectAsync` | `provider: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets the OAuth redirect URL for a provider. |
-| `OAuthCallbackAsync` | `provider: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Handles OAuth callback data for a provider. |
-| `OAuthSuccessAsync` | `provider: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets OAuth success data for a provider. |
-| `OAuthRegisterAsync` | `provider: string`<br>`request: OAuthRegisterRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Registers an OAuth integration for a provider. |
-| `OAuthUnregisterAsync` | `provider: string`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Unregisters an OAuth integration for a provider. |
-| `GetLinkedDiscordRolesAsync` | `ct: CancellationToken = default` | `TorBoxResponse<object>` | Gets linked Discord role data. |
+| `GetOAuthMeAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<OAuthIntegration>>` | Gets connected OAuth integrations. |
+| `CreateGoogleDriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Google Drive integration job. |
+| `CreateDropboxJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Dropbox integration job. |
+| `CreateOnedriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a OneDrive integration job. |
+| `CreateGofileJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a GoFile integration job. |
+| `CreateOneFichierJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a 1Fichier integration job. |
+| `CreatePixeldrainJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Pixeldrain integration job. |
+| `GetJobAsync` | `jobId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Gets a specific integration job. |
+| `DeleteJobAsync` | `jobId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Deletes an integration job. |
+| `GetJobsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<IntegrationJob>>` | Gets all integration jobs for the authenticated user. |
+| `GetJobsByHashAsync` | `hash: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<IntegrationJob>>` | Gets integration jobs associated with a specific hash. |
+| `OAuthRedirectAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the OAuth redirect URL for a provider. |
+| `OAuthCallbackAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Handles OAuth callback data for a provider. |
+| `OAuthSuccessAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets OAuth success data for a provider. |
+| `OAuthRegisterAsync` | `provider: string`<br>`request: OAuthRegisterRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Registers an OAuth integration for a provider. |
+| `OAuthUnregisterAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Unregisters an OAuth integration for a provider. |
+| `GetLinkedDiscordRolesAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets linked Discord role data. |
 
 ### Vendors Client
 
@@ -210,14 +210,14 @@ Vendor registration, vendor account management, and vendor user lifecycle operat
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `RegisterAsync` | `request: RegisterVendorRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Registers a vendor account. |
-| `GetAccountAsync` | `ct: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets the authenticated vendor account. |
-| `UpdateAccountAsync` | `request: UpdateVendorAccountRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Updates vendor account details. |
-| `GetAccountsAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<VendorAccount>>` | Gets vendor-managed accounts. |
-| `GetAccountByEmailAsync` | `userEmail: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets an account by user email. |
-| `RegisterUserAsync` | `request: RegisterVendorUserRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Registers a user under the vendor account. |
-| `RemoveUserAsync` | `request: RemoveVendorUserRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Removes a user from the vendor account. |
-| `RefreshAsync` | `ct: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Refreshes vendor credentials. |
+| `RegisterAsync` | `request: RegisterVendorRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Registers a vendor account. |
+| `GetAccountAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets the authenticated vendor account. |
+| `UpdateAccountAsync` | `request: UpdateVendorAccountRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Updates vendor account details. |
+| `GetAccountsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<VendorAccount>>` | Gets vendor-managed accounts. |
+| `GetAccountByAuthIdAsync` | `userAuthId: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Gets an account by user auth ID. |
+| `RegisterUserAsync` | `request: RegisterVendorUserRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Registers a user under the vendor account. |
+| `RemoveUserAsync` | `request: RemoveVendorUserRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Removes a user from the vendor account. |
+| `RefreshAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<VendorAccount>` | Refreshes vendor credentials. |
 
 ### Queued Client
 
@@ -227,8 +227,8 @@ Generic queued-download listing and control operations.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetQueuedAsync` | `ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<QueuedDownload>>` | Gets queued downloads. |
-| `ControlQueuedAsync` | `request: ControlQueuedRequest`<br>`ct: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to queued downloads. |
+| `GetQueuedAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<QueuedDownload>>` | Gets queued downloads. |
+| `ControlQueuedAsync` | `request: ControlQueuedRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Applies a control operation to queued downloads. |
 
 ## Search API
 
@@ -238,18 +238,18 @@ The Search API covers tutorials, torrent search, Usenet search, metadata search,
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetTorrentSearchTutorialAsync` | `ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets torrent search tutorial content. |
-| `SearchTorrentsAsync` | `query: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<TorrentSearchResult>>` | Searches torrent indexers. |
-| `GetTorrentByIdAsync` | `id: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<TorrentSearchResult>` | Gets a torrent search result by ID. |
-| `GetUsenetSearchTutorialAsync` | `ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets Usenet search tutorial content. |
-| `SearchUsenetAsync` | `query: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<UsenetSearchResult>>` | Searches Usenet indexers. |
-| `GetUsenetByIdAsync` | `id: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<UsenetSearchResult>` | Gets a Usenet search result by ID. |
-| `DownloadUsenetAsync` | `id: string`<br>`guid: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Downloads NZB data for a Usenet result. |
-| `GetMetaSearchTutorialAsync` | `ct: CancellationToken = default` | `TorBoxResponse<string>` | Gets metadata search tutorial content. |
-| `SearchMetaAsync` | `query: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<MetaSearchResult>>` | Searches metadata entries. |
-| `GetMetaByIdAsync` | `id: string`<br>`ct: CancellationToken = default` | `TorBoxResponse<MetaSearchResult>` | Gets a metadata search result by ID. |
-| `SearchTorznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Torznab-compatible endpoint and returns XML. |
-| `SearchNewznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`ct: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Newznab-compatible endpoint and returns XML. |
+| `GetTorrentSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets torrent search tutorial content. |
+| `SearchTorrentsAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<TorrentSearchResult>>` | Searches torrent indexers. |
+| `GetTorrentByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentSearchResult>` | Gets a torrent search result by ID. |
+| `GetUsenetSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets Usenet search tutorial content. |
+| `SearchUsenetAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<UsenetSearchResult>>` | Searches Usenet indexers. |
+| `GetUsenetByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetSearchResult>` | Gets a Usenet search result by ID. |
+| `DownloadUsenetAsync` | `id: string`<br>`guid: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Downloads NZB data for a Usenet result. |
+| `GetMetaSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets metadata search tutorial content. |
+| `SearchMetaAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<MetaSearchResult>>` | Searches metadata entries. |
+| `GetMetaByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<MetaSearchResult>` | Gets a metadata search result by ID. |
+| `SearchTorznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Torznab-compatible endpoint and returns XML. |
+| `SearchNewznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Newznab-compatible endpoint and returns XML. |
 
 ## Relay API
 
@@ -259,8 +259,8 @@ The Relay API provides relay health and torrent inactivity checking.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetStatusAsync` | `ct: CancellationToken = default` | `TorBoxResponse<RelayStatus>` | Gets relay service status. |
-| `CheckForInactiveAsync` | `authId: string`<br>`torrentId: long`<br>`ct: CancellationToken = default` | `TorBoxResponse<InactiveCheckResult>` | Checks whether a torrent is inactive on the relay. |
+| `GetStatusAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<RelayStatus>` | Gets relay service status. |
+| `CheckForInactiveAsync` | `authId: string`<br>`torrentId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<InactiveCheckResult>` | Checks whether a torrent is inactive on the relay. |
 
 ## Models
 

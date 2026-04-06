@@ -25,7 +25,7 @@ public static class SpeedtestExample
             Console.WriteLine("Getting speedtest files (default settings)...");
 
             TorBoxResponse<object> defaultResponse =
-                await client.Main.General.GetSpeedtestFilesAsync(ct: cts.Token);
+                await client.Main.General.GetSpeedtestFilesAsync(cancellationToken: cts.Token);
 
             Console.WriteLine($"  Result: {defaultResponse.Detail ?? "Speedtest files retrieved"}");
 

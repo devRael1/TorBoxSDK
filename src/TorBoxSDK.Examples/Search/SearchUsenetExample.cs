@@ -26,7 +26,7 @@ public static class SearchUsenetExample
             Console.WriteLine($"Searching Usenet for: \"{query}\"...");
 
             TorBoxResponse<IReadOnlyList<UsenetSearchResult>> searchResponse =
-                await client.Search.SearchUsenetAsync(query, ct: cts.Token);
+                await client.Search.SearchUsenetAsync(query, cancellationToken: cts.Token);
 
             if (searchResponse.Data is null || searchResponse.Data.Count == 0)
             {

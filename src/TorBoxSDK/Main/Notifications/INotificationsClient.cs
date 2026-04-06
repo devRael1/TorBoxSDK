@@ -9,39 +9,39 @@ namespace TorBoxSDK.Main.Notifications;
 public interface INotificationsClient
 {
     /// <summary>Gets the notifications RSS feed URL.</summary>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The RSS feed URL as a string.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<string>> GetNotificationRssAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<string>> GetNotificationRssAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the authenticated user's notifications.</summary>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A list of notifications.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<Notification>>> GetMyNotificationsAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<IReadOnlyList<Notification>>> GetMyNotificationsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Clears all notifications for the authenticated user.</summary>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API response.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> ClearAllNotificationsAsync(CancellationToken ct = default);
+    Task<TorBoxResponse> ClearAllNotificationsAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Clears a specific notification by its identifier.</summary>
     /// <param name="notificationId">The unique identifier of the notification to clear.</param>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API response.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> ClearNotificationAsync(long notificationId, CancellationToken ct = default);
+    Task<TorBoxResponse> ClearNotificationAsync(long notificationId, CancellationToken cancellationToken = default);
 
     /// <summary>Sends a test notification to the authenticated user.</summary>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API response.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> SendTestNotificationAsync(CancellationToken ct = default);
+    Task<TorBoxResponse> SendTestNotificationAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Gets the Intercom identity verification hash for the authenticated user.</summary>
-    /// <param name="ct">Cancellation token.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The Intercom hash data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(CancellationToken ct = default);
+    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(CancellationToken cancellationToken = default);
 }

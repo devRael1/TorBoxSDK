@@ -28,7 +28,7 @@ public static class ErrorHandlingExample
         try
         {
             TorBoxResponse<IReadOnlyList<Torrent>> response =
-                await client.Main.Torrents.GetMyTorrentListAsync(ct: cts1.Token);
+                await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cts1.Token);
 
             Console.WriteLine($"  Success: {response.Data?.Count ?? 0} torrents retrieved.");
         }
@@ -75,7 +75,7 @@ public static class ErrorHandlingExample
         try
         {
             TorBoxResponse<IReadOnlyList<Torrent>> response =
-                await client.Main.Torrents.GetMyTorrentListAsync(ct: cts2.Token);
+                await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cts2.Token);
 
             Console.WriteLine($"  Success: retrieved {response.Data?.Count ?? 0} torrents.");
         }
@@ -105,7 +105,7 @@ public static class ErrorHandlingExample
         {
             // This will likely time out with the very short timeout.
             TorBoxResponse<IReadOnlyList<Torrent>> response =
-                await client.Main.Torrents.GetMyTorrentListAsync(ct: shortCts.Token);
+                await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: shortCts.Token);
 
             Console.WriteLine("  (Request completed before timeout)");
         }
@@ -135,7 +135,7 @@ public static class ErrorHandlingExample
         try
         {
             TorBoxResponse<IReadOnlyList<Torrent>> response =
-                await client.Main.Torrents.GetMyTorrentListAsync(ct: cts4.Token);
+                await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cts4.Token);
 
             if (response.Data is not null)
             {

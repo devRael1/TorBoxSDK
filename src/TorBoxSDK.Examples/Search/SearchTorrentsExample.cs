@@ -26,7 +26,7 @@ public static class SearchTorrentsExample
             Console.WriteLine($"Searching for torrents: \"{query}\"...");
 
             TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResponse =
-                await client.Search.SearchTorrentsAsync(query, ct: cts.Token);
+                await client.Search.SearchTorrentsAsync(query, cancellationToken: cts.Token);
 
             if (searchResponse.Data is null || searchResponse.Data.Count == 0)
             {
@@ -93,7 +93,7 @@ public static class SearchTorrentsExample
                 Console.WriteLine($"Getting torrent details for: {torrentId}...");
 
                 TorBoxResponse<TorrentSearchResult> detailResponse =
-                    await client.Search.GetTorrentByIdAsync(torrentId, ct: cts.Token);
+                    await client.Search.GetTorrentByIdAsync(torrentId, cancellationToken: cts.Token);
 
                 if (detailResponse.Data is not null)
                 {

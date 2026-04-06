@@ -26,7 +26,7 @@ public static class SearchMetaExample
             Console.WriteLine($"Meta searching for: \"{query}\"...");
 
             TorBoxResponse<IReadOnlyList<MetaSearchResult>> searchResponse =
-                await client.Search.SearchMetaAsync(query, ct: cts.Token);
+                await client.Search.SearchMetaAsync(query, cancellationToken: cts.Token);
 
             if (searchResponse.Data is null || searchResponse.Data.Count == 0)
             {
@@ -64,7 +64,7 @@ public static class SearchMetaExample
             Console.WriteLine("Using Torznab search...");
 
             TorBoxResponse<string> torznabResponse =
-                await client.Search.SearchTorznabAsync(query, ct: cts.Token);
+                await client.Search.SearchTorznabAsync(query, cancellationToken: cts.Token);
 
             if (torznabResponse.Data is not null)
             {
@@ -74,7 +74,7 @@ public static class SearchMetaExample
             Console.WriteLine("Using Newznab search...");
 
             TorBoxResponse<string> newznabResponse =
-                await client.Search.SearchNewznabAsync(query, ct: cts.Token);
+                await client.Search.SearchNewznabAsync(query, cancellationToken: cts.Token);
 
             if (newznabResponse.Data is not null)
             {

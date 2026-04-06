@@ -24,7 +24,7 @@ public sealed class StreamClient : IStreamClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> CreateStreamAsync(long id, long fileId, string type, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> CreateStreamAsync(long id, long fileId, string type, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(type, nameof(type));
 
@@ -37,11 +37,11 @@ public sealed class StreamClient : IStreamClient
             ("chosen_resolution_index", chosenResolutionIndex?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"stream/createstream{query}");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetStreamDataAsync(string presignedToken, string token, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<object>> GetStreamDataAsync(string presignedToken, string token, int? chosenSubtitleIndex = null, int? chosenAudioIndex = null, int? chosenResolutionIndex = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(presignedToken, nameof(presignedToken));
         Guard.ThrowIfNullOrEmpty(token, nameof(token));
@@ -54,6 +54,6 @@ public sealed class StreamClient : IStreamClient
             ("chosen_resolution_index", chosenResolutionIndex?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"stream/getstreamdata{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 }

@@ -23,7 +23,7 @@ public sealed class UsenetClientIntegrationTests(TorBoxIntegrationFixture fixtur
 
         // Act
         TorBoxResponse<IReadOnlyList<UsenetDownload>> response = await _fixture.Client.Main.Usenet
-            .GetMyUsenetListAsync(ct: cts.Token);
+            .GetMyUsenetListAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -42,7 +42,7 @@ public sealed class UsenetClientIntegrationTests(TorBoxIntegrationFixture fixtur
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.Usenet
-            .CheckCachedAsync(hashes, ct: cts.Token);
+            .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

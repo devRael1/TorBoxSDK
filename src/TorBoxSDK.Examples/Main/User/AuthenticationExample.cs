@@ -54,7 +54,7 @@ public static class AuthenticationExample
             Console.WriteLine("Starting device authorization flow...");
 
             TorBoxResponse<DeviceCodeResponse> deviceCodeResponse =
-                await client.Main.User.StartDeviceAuthAsync(app: "my-app", ct: cts.Token);
+                await client.Main.User.StartDeviceAuthAsync(app: "my-app", cancellationToken: cts.Token);
 
             if (deviceCodeResponse.Data is not null)
             {

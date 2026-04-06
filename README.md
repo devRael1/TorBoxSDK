@@ -67,10 +67,10 @@ using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 try
 {
     TorBoxResponse<IReadOnlyList<Torrent>> torrents =
-        await client.Main.Torrents.GetMyTorrentListAsync(ct: cts.Token);
+        await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cts.Token);
 
     TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResults =
-        await client.Search.SearchTorrentsAsync("ubuntu", ct: cts.Token);
+        await client.Search.SearchTorrentsAsync("ubuntu", cancellationToken: cts.Token);
 
     Console.WriteLine($"Torrents returned: {torrents.Data?.Count ?? 0}");
     Console.WriteLine($"Search results returned: {searchResults.Data?.Count ?? 0}");

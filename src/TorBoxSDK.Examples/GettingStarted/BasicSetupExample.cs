@@ -56,7 +56,7 @@ public static class BasicSetupExample
         try
         {
             TorBoxResponse<UserProfile> response =
-                await client.Main.User.GetMeAsync(ct: cts.Token);
+                await client.Main.User.GetMeAsync(cancellationToken: cts.Token);
 
             if (response.Data is not null)
             {
