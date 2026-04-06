@@ -25,19 +25,19 @@ public static class SearchUsenetExample
 
             Console.WriteLine($"Searching Usenet for: \"{query}\"...");
 
-            TorBoxResponse<IReadOnlyList<UsenetSearchResult>> searchResponse =
+            TorBoxResponse<UsenetSearchResponse> searchResponse =
                 await client.Search.SearchUsenetAsync(query, cancellationToken: cts.Token);
 
-            if (searchResponse.Data is null || searchResponse.Data.Count == 0)
+            if (searchResponse.Data is null || searchResponse.Data.Nzbs.Count == 0)
             {
                 Console.WriteLine("No Usenet results found.");
                 return;
             }
 
-            Console.WriteLine($"Found {searchResponse.Data.Count} Usenet result(s):");
+            Console.WriteLine($"Found {searchResponse.Data.Nzbs.Count} Usenet result(s):");
             Console.WriteLine();
 
-            foreach (UsenetSearchResult result in searchResponse.Data)
+            foreach (UsenetSearchResult result in searchResponse.Data.Nzbs)
             {
                 Console.WriteLine($"  {result.Name}");
                 Console.WriteLine($"    Size: {ExampleHelper.FormatBytes(result.Size)}");
@@ -61,10 +61,10 @@ public static class SearchUsenetExample
                 CheckCache = true,
             };
 
-            TorBoxResponse<IReadOnlyList<UsenetSearchResult>> advancedResponse =
+            TorBoxResponse<UsenetSearchResponse> advancedResponse =
                 await client.Search.SearchUsenetAsync(tvQuery, usenetOptions, cts.Token);
 
-            Console.WriteLine($"Advanced results: {advancedResponse.Data?.Count ?? 0}");
+            Console.WriteLine($"Advanced results: {advancedResponse.Data?.Nzbs.Count ?? 0}");
         }
         catch (TorBoxException ex)
         {

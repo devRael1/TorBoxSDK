@@ -57,7 +57,7 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
 
         // Act
         TorBoxResponse<IntercomHash> response = await _fixture.Client.Main.Notifications
-            .GetIntercomHashAsync(cts.Token);
+            .GetIntercomHashAsync("auth-id", "test@test.com", cts.Token);
 
         // Assert
         Assert.NotNull(response);

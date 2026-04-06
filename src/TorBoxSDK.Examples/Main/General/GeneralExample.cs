@@ -1,6 +1,6 @@
 using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Notifications;
+using TorBoxSDK.Models.General;
 
 namespace TorBoxSDK.Examples.Main.General;
 
@@ -48,12 +48,12 @@ public static class GeneralExample
             Console.WriteLine();
             Console.WriteLine("Fetching 30-day stats...");
 
-            TorBoxResponse<Stats> stats30DayResponse =
+            TorBoxResponse<IReadOnlyList<DailyStats>> stats30DayResponse =
                 await client.Main.General.Get30DayStatsAsync(cts.Token);
 
             if (stats30DayResponse.Data is not null)
             {
-                Console.WriteLine($"  30-day stats: {stats30DayResponse.Data}");
+                Console.WriteLine($"  30-day stats: {stats30DayResponse.Data.Count} snapshots");
             }
 
             // ──────────────────────────────────────────────────────

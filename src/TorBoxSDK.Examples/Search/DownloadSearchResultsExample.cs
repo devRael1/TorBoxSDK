@@ -26,13 +26,13 @@ public static class DownloadSearchResultsExample
 
             Console.WriteLine($"Searching Usenet for: \"{query}\"...");
 
-            TorBoxResponse<IReadOnlyList<UsenetSearchResult>> searchResponse =
+            TorBoxResponse<UsenetSearchResponse> searchResponse =
                 await client.Search.SearchUsenetAsync(query, cancellationToken: cts.Token);
 
-            if (searchResponse.Data is not null && searchResponse.Data.Count > 0)
+            if (searchResponse.Data is not null && searchResponse.Data.Nzbs.Count > 0)
             {
-                UsenetSearchResult firstResult = searchResponse.Data[0];
-                Console.WriteLine($"  Found {searchResponse.Data.Count} result(s)");
+                UsenetSearchResult firstResult = searchResponse.Data.Nzbs[0];
+                Console.WriteLine($"  Found {searchResponse.Data.Nzbs.Count} result(s)");
                 Console.WriteLine($"  First: {firstResult.Name}");
 
                 // Get full details for a specific Usenet result by ID
@@ -89,7 +89,7 @@ public static class DownloadSearchResultsExample
             {
                 MetaSearchResult firstMeta = metaResponse.Data[0];
                 Console.WriteLine($"  Found {metaResponse.Data.Count} result(s)");
-                Console.WriteLine($"  First: {firstMeta.Name} ({firstMeta.Year?.ToString() ?? "N/A"})");
+                Console.WriteLine($"  First: {firstMeta.Title} ({firstMeta.ReleaseYears?.ToString() ?? "N/A"})");
 
                 // Get full details for a specific meta result by ID
                 if (firstMeta.Id is { } metaId)
@@ -102,14 +102,14 @@ public static class DownloadSearchResultsExample
 
                     if (metaDetailResponse.Data is not null)
                     {
-                        Console.WriteLine($"  Name: {metaDetailResponse.Data.Name}");
-                        Console.WriteLine($"  Type: {metaDetailResponse.Data.Type ?? "N/A"}");
-                        Console.WriteLine($"  Year: {metaDetailResponse.Data.Year?.ToString() ?? "N/A"}");
+                        Console.WriteLine($"  Title: {metaDetailResponse.Data.Title}");
+                        Console.WriteLine($"  Type: {metaDetailResponse.Data.MediaType ?? "N/A"}");
+                        Console.WriteLine($"  Year: {metaDetailResponse.Data.ReleaseYears?.ToString() ?? "N/A"}");
                         Console.WriteLine($"  IMDB: {metaDetailResponse.Data.ImdbId ?? "N/A"}");
 
-                        if (metaDetailResponse.Data.Overview is { } overview)
+                        if (metaDetailResponse.Data.Description is { } description)
                         {
-                            Console.WriteLine($"  Overview: {overview[..Math.Min(100, overview.Length)]}...");
+                            Console.WriteLine($"  Description: {description[..Math.Min(100, description.Length)]}...");
                         }
                     }
                 }

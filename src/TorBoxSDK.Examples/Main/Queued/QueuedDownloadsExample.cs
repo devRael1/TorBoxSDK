@@ -35,8 +35,8 @@ public static class QueuedDownloadsExample
                 foreach (QueuedDownload item in queuedResponse.Data)
                 {
                     Console.WriteLine($"  [{item.Id}] {item.Name ?? "N/A"}");
-                    Console.WriteLine($"       Type: {item.DownloadType ?? "N/A"} | Size: {ExampleHelper.FormatBytes(item.Size)}");
-                    Console.WriteLine($"       Status: {item.Status ?? "N/A"} | Created: {item.CreatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}");
+                    Console.WriteLine($"       Type: {item.Type ?? "N/A"} | Hash: {item.Hash ?? "N/A"}");
+                    Console.WriteLine($"       Created: {item.CreatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}");
                     Console.WriteLine();
                 }
             }

@@ -39,14 +39,14 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<IReadOnlyList<TorrentSearchResult>> response = await _fixture.Client.Search
+        TorBoxResponse<TorrentSearchResponse> response = await _fixture.Client.Search
             .SearchTorrentsAsync("ubuntu", cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
         Assert.True(response.Success);
         Assert.NotNull(response.Data);
-        Assert.NotEmpty(response.Data);
+        Assert.NotEmpty(response.Data.Torrents);
     }
 
     [SkippableFact]
@@ -75,7 +75,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<IReadOnlyList<UsenetSearchResult>> response = await _fixture.Client.Search
+        TorBoxResponse<UsenetSearchResponse> response = await _fixture.Client.Search
             .SearchUsenetAsync("ubuntu", cancellationToken: cts.Token);
 
         // Assert

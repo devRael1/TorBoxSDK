@@ -11,14 +11,14 @@ public sealed record CreateIntegrationJobRequest
     /// Gets the identifier of the download to integrate,
     /// or <see langword="null"/> if not applicable.
     /// </summary>
-    [JsonPropertyName("download_id")]
+    [JsonPropertyName("id")]
     public long? DownloadId { get; init; }
 
     /// <summary>
     /// Gets the type of download to integrate (e.g., "torrent", "usenet"),
     /// or <see langword="null"/> if not applicable.
     /// </summary>
-    [JsonPropertyName("download_type")]
+    [JsonPropertyName("type")]
     public string? DownloadType { get; init; }
 
     /// <summary>

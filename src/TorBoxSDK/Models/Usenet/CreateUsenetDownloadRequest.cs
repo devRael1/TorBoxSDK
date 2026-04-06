@@ -44,11 +44,11 @@ public sealed record CreateUsenetDownloadRequest
     public string? Password { get; init; }
 
     /// <summary>
-    /// Gets the post-processing option for the download,
-    /// or <see langword="null"/> to use the default behavior.
+    /// Gets the post-processing flag for the download,
+    /// or <see langword="null"/> to use the default behavior (defaults to -1).
     /// </summary>
     [JsonPropertyName("post_processing")]
-    public string? PostProcessing { get; init; }
+    public int? PostProcessing { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to add the download as a queued download,

@@ -14,7 +14,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
     private readonly TorBoxIntegrationFixture _fixture = fixture;
 
     [SkippableFact]
-    public async Task GetOAuthMeAsync_WithValidApiKey_ReturnsOAuthIntegrations()
+    public async Task GetOAuthMeAsync_WithValidApiKey_ReturnsConnectedProviders()
     {
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
@@ -22,7 +22,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<IReadOnlyList<OAuthIntegration>> response = await _fixture.Client.Main.Integrations
+        TorBoxResponse<IReadOnlyDictionary<string, bool>> response = await _fixture.Client.Main.Integrations
             .GetOAuthMeAsync(cts.Token);
 
         // Assert
@@ -57,7 +57,9 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.Integrations
-            .GetLinkedDiscordRolesAsync(cts.Token);
+            .GetLinkedDiscordRolesAsync(
+                new LinkedRolesRequest { DiscordToken = "test" },
+                cts.Token);
 
         // Assert
         Assert.NotNull(response);

@@ -159,4 +159,88 @@ public sealed record Torrent
     /// </summary>
     [JsonPropertyName("files")]
     public IReadOnlyList<DownloadFile> Files { get; init; } = [];
+
+    /// <summary>
+    /// Gets the download path identifier for this torrent, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("download_path")]
+    public string? DownloadPath { get; init; }
+
+    /// <summary>
+    /// Gets the tracker URL for this torrent, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("tracker")]
+    public string? Tracker { get; init; }
+
+    /// <summary>
+    /// Gets the total number of bytes uploaded for this torrent.
+    /// </summary>
+    [JsonPropertyName("total_uploaded")]
+    public long TotalUploaded { get; init; }
+
+    /// <summary>
+    /// Gets the total number of bytes downloaded for this torrent.
+    /// </summary>
+    [JsonPropertyName("total_downloaded")]
+    public long TotalDownloaded { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether this torrent is cached on the server.
+    /// </summary>
+    [JsonPropertyName("cached")]
+    public bool Cached { get; init; }
+
+    /// <summary>
+    /// Gets the owner identifier (UUID) of this torrent, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("owner")]
+    public string? Owner { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether this torrent should be seeded after completion.
+    /// </summary>
+    [JsonPropertyName("seed_torrent")]
+    public bool SeedTorrent { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether zipped downloads are allowed for this torrent.
+    /// </summary>
+    [JsonPropertyName("allow_zipped")]
+    public bool AllowZipped { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether long-term seeding is enabled for this torrent.
+    /// </summary>
+    [JsonPropertyName("long_term_seeding")]
+    public bool LongTermSeeding { get; init; }
+
+    /// <summary>
+    /// Gets the tracker message for this torrent, or <see langword="null"/> if none.
+    /// </summary>
+    [JsonPropertyName("tracker_message")]
+    public string? TrackerMessage { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the torrent was cached, or <see langword="null"/> if not cached.
+    /// </summary>
+    [JsonPropertyName("cached_at")]
+    public DateTimeOffset? CachedAt { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether this torrent uses a private tracker.
+    /// </summary>
+    [JsonPropertyName("private")]
+    public bool IsPrivate { get; init; }
+
+    /// <summary>
+    /// Gets the list of alternative hashes for this torrent.
+    /// </summary>
+    [JsonPropertyName("alternative_hashes")]
+    public IReadOnlyList<string> AlternativeHashes { get; init; } = [];
+
+    /// <summary>
+    /// Gets the list of tags associated with this torrent.
+    /// </summary>
+    [JsonPropertyName("tags")]
+    public IReadOnlyList<string> Tags { get; init; } = [];
 }

@@ -26,10 +26,8 @@ public static class ManageSettingsExample
 
             EditSettingsRequest settingsRequest = new()
             {
-                EnableNotifications = true,
                 EmailNotifications = true,
                 WebNotifications = true,
-                SaveMagnetHistory = true,
             };
 
             TorBoxResponse settingsResponse =

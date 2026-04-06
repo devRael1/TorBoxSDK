@@ -121,10 +121,12 @@ public sealed class UserClient : IUserClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetTransactionPdfAsync(long transactionId, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> GetTransactionPdfAsync(string transactionId, CancellationToken cancellationToken = default)
     {
+        Guard.ThrowIfNullOrEmpty(transactionId, nameof(transactionId));
+
         string query = TorBoxApiHelper.BuildQuery(
-            ("transaction_id", transactionId.ToString()));
+            ("transaction_id", transactionId));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/transaction/pdf{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

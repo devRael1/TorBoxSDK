@@ -24,23 +24,24 @@ public static class CloudIntegrationExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Fetching connected integrations...");
 
-            TorBoxResponse<IReadOnlyList<OAuthIntegration>> oauthResponse =
+            TorBoxResponse<IReadOnlyDictionary<string, bool>> oauthResponse =
                 await client.Main.Integrations.GetOAuthMeAsync(cts.Token);
 
             if (oauthResponse.Data is not null && oauthResponse.Data.Count > 0)
             {
                 Console.WriteLine($"Connected integrations ({oauthResponse.Data.Count}):");
 
-                foreach (OAuthIntegration integration in oauthResponse.Data)
+                foreach (KeyValuePair<string, bool> entry in oauthResponse.Data)
                 {
-                    Console.WriteLine($"  - {integration}");
+                    string status = entry.Value ? "connected" : "not connected";
+                    Console.WriteLine($"  - {entry.Key}: {status}");
                 }
 
                 Console.WriteLine();
             }
             else
             {
-                Console.WriteLine("No OAuth integrations connected.");
+                Console.WriteLine("No OAuth integrations found.");
                 Console.WriteLine("  Connect via: client.Main.Integrations.OAuthRedirectAsync(provider)");
                 Console.WriteLine();
             }

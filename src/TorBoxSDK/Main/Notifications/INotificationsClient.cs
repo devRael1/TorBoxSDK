@@ -40,8 +40,10 @@ public interface INotificationsClient
     Task<TorBoxResponse> SendTestNotificationAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Gets the Intercom identity verification hash for the authenticated user.</summary>
+    /// <param name="authId">The user's auth identifier.</param>
+    /// <param name="email">The user's email address.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The Intercom hash data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(string authId, string email, CancellationToken cancellationToken = default);
 }

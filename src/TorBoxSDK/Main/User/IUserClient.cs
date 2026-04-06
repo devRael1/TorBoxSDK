@@ -83,7 +83,7 @@ public interface IUserClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The PDF data as a string (typically a download URL).</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<string>> GetTransactionPdfAsync(long transactionId, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<string>> GetTransactionPdfAsync(string transactionId, CancellationToken cancellationToken = default);
 
     /// <summary>Adds search engines to the user's settings.</summary>
     /// <param name="request">The request containing search engines to add.</param>

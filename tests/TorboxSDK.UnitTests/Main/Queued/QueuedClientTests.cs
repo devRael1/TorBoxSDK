@@ -15,13 +15,14 @@ public sealed class QueuedClientTests
             "data": [
                 {
                     "id": 1,
-                    "auth_id": "user-123",
-                    "name": "queued-download",
-                    "download_type": "torrent",
+                    "created_at": "2024-01-01T00:00:00Z",
                     "magnet": "magnet:?xt=urn:btih:abc123",
+                    "torrent_file": null,
                     "hash": "abc123",
-                    "size": 1073741824,
-                    "status": "pending"
+                    "name": "queued-download",
+                    "type": "torrent",
+                    "name_override": null,
+                    "seed_torrent_override": 2
                 }
             ]
         }

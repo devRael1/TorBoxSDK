@@ -48,4 +48,34 @@ public sealed record DownloadFile
     /// </summary>
     [JsonPropertyName("size")]
     public long Size { get; init; }
+
+    /// <summary>
+    /// Gets the torrent hash this file belongs to, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("hash")]
+    public string? Hash { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether this file is zipped.
+    /// </summary>
+    [JsonPropertyName("zipped")]
+    public bool Zipped { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether this file has been flagged as infected.
+    /// </summary>
+    [JsonPropertyName("infected")]
+    public bool Infected { get; init; }
+
+    /// <summary>
+    /// Gets the absolute path of the file on the server, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("absolute_path")]
+    public string? AbsolutePath { get; init; }
+
+    /// <summary>
+    /// Gets the OpenSubtitles hash for the file, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("opensubtitles_hash")]
+    public string? OpensubtitlesHash { get; init; }
 }

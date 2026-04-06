@@ -18,8 +18,8 @@ public sealed record DeviceCodeResponse
     /// Gets the user-facing code to enter on the verification page,
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("user_code")]
-    public string? UserCode { get; init; }
+    [JsonPropertyName("code")]
+    public string? Code { get; init; }
 
     /// <summary>
     /// Gets the URL where the user should enter the code,
@@ -29,10 +29,18 @@ public sealed record DeviceCodeResponse
     public string? VerificationUrl { get; init; }
 
     /// <summary>
-    /// Gets the number of seconds before the device code expires.
+    /// Gets the user-friendly short verification URL,
+    /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("expires_in")]
-    public int ExpiresIn { get; init; }
+    [JsonPropertyName("friendly_verification_url")]
+    public string? FriendlyVerificationUrl { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the device code expires,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("expires_at")]
+    public DateTimeOffset? ExpiresAt { get; init; }
 
     /// <summary>
     /// Gets the polling interval in seconds for checking authorization status.

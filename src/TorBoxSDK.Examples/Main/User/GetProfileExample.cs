@@ -36,7 +36,7 @@ public static class GetProfileExample
                 Console.WriteLine($"  Premium expires: {profile.PremiumExpiresAt?.ToString("yyyy-MM-dd") ?? "N/A"}");
                 Console.WriteLine($"  Total downloaded: {ExampleHelper.FormatBytes(profile.TotalDownloaded)}");
                 Console.WriteLine($"  Account created: {profile.CreatedAt?.ToString("yyyy-MM-dd") ?? "N/A"}");
-                Console.WriteLine($"  Referral code: {profile.UserReferralCode ?? "N/A"}");
+                Console.WriteLine($"  Referral: {profile.UserReferral ?? "N/A"}");
 
                 if (profile.Settings is not null)
                 {

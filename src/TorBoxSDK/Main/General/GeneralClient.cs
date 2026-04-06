@@ -1,7 +1,6 @@
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
-using TorBoxSDK.Models.Notifications;
 
 namespace TorBoxSDK.Main.General;
 
@@ -41,22 +40,22 @@ public sealed class GeneralClient : IGeneralClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<Stats>> Get30DayStatsAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<IReadOnlyList<DailyStats>>> Get30DayStatsAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "stats/30days");
-        return await TorBoxApiHelper.SendAsync<Stats>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<DailyStats>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetSpeedtestFilesAsync(SpeedtestOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<IReadOnlyList<SpeedtestServer>>> GetSpeedtestFilesAsync(SpeedtestOptions? options = null, CancellationToken cancellationToken = default)
     {
         string query = TorBoxApiHelper.BuildQuery(
             ("user_ip", options?.UserIp),
             ("region", options?.Region),
-            ("test_length", options?.TestLength?.ToString()));
+            ("test_length", options?.TestLength));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"speedtest{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<SpeedtestServer>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

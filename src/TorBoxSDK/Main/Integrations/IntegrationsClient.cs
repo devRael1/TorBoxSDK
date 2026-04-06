@@ -25,10 +25,10 @@ public sealed class IntegrationsClient : IIntegrationsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<OAuthIntegration>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)
     {
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "integration/oauth/me");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<OAuthIntegration>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyDictionary<string, bool>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -183,9 +183,14 @@ public sealed class IntegrationsClient : IIntegrationsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
     {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles");
+        ArgumentNullException.ThrowIfNull(request);
+
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles")
+        {
+            Content = TorBoxApiHelper.JsonContent(request),
+        };
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 }

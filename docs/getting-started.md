@@ -35,7 +35,7 @@ using TorBoxSDK.Models.Search;
 using TorBoxSDK.Models.Torrents;
 
 TorBoxResponse<IReadOnlyList<Torrent>> torrents = await client.Main.Torrents.GetMyTorrentListAsync();
-TorBoxResponse<IReadOnlyList<TorrentSearchResult>> results =
+TorBoxResponse<TorrentSearchResponse> results =
     await client.Search.SearchTorrentsAsync("ubuntu");
 ```
 

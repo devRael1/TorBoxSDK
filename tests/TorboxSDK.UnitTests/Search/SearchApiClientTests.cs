@@ -12,21 +12,27 @@ public sealed class SearchApiClientTests
             "success": true,
             "error": null,
             "detail": "Found.",
-            "data": [
-                {
-                    "hash": "abc123def456",
-                    "name": "ubuntu-24.04-desktop-amd64.iso",
-                    "size": 4700000000,
-                    "seeders": 1500,
-                    "leechers": 50,
-                    "source": "torbox",
-                    "category": "software",
-                    "magnet": "magnet:?xt=urn:btih:abc123def456",
-                    "last_known_seeders": 1500,
-                    "last_known_leechers": 50,
-                    "updated_at": "2024-01-15T12:00:00Z"
-                }
-            ]
+            "data": {
+                "metadata": {
+                    "title": "Ubuntu",
+                    "mediaType": "software"
+                },
+                "torrents": [
+                    {
+                        "hash": "abc123def456",
+                        "name": "ubuntu-24.04-desktop-amd64.iso",
+                        "size": 4700000000,
+                        "seeders": 1500,
+                        "leechers": 50,
+                        "source": "torbox",
+                        "category": "software",
+                        "magnet": "magnet:?xt=urn:btih:abc123def456",
+                        "last_known_seeders": 1500,
+                        "last_known_leechers": 50,
+                        "updated_at": "2024-01-15T12:00:00Z"
+                    }
+                ]
+            }
         }
         """;
 
@@ -58,14 +64,14 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act
-        TorBoxResponse<IReadOnlyList<TorrentSearchResult>> result = await client.SearchTorrentsAsync("ubuntu");
+        TorBoxResponse<TorrentSearchResponse> result = await client.SearchTorrentsAsync("ubuntu");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.Contains("torrents/search/ubuntu", handler.LastRequest.RequestUri!.ToString());
         Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
+        Assert.NotEmpty(result.Data.Torrents);
     }
 
     [Fact]
@@ -185,7 +191,10 @@ public sealed class SearchApiClientTests
                 "success": true,
                 "error": null,
                 "detail": "Found.",
-                "data": []
+                "data": {
+                    "metadata": null,
+                    "nzbs": []
+                }
             }
             """;
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(usenetResultsJson);

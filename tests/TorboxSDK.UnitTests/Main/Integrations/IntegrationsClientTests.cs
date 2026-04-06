@@ -33,17 +33,17 @@ public sealed class IntegrationsClientTests
         }
         """;
 
-    private const string OAuthListJson = """
+    private const string OAuthDictJson = """
         {
             "success": true,
             "error": null,
-            "detail": "Found.",
-            "data": [
-                {
-                    "provider": "googledrive",
-                    "status": "active"
-                }
-            ]
+            "detail": "OAuth integrations retrieved successfully.",
+            "data": {
+                "trakt": false,
+                "mal": false,
+                "anilist": false,
+                "simkl": false
+            }
         }
         """;
 
@@ -85,7 +85,7 @@ public sealed class IntegrationsClientTests
     public async Task GetOAuthMeAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
-        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(OAuthListJson);
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(OAuthDictJson);
 
         // Act
         await client.GetOAuthMeAsync();
@@ -451,17 +451,28 @@ public sealed class IntegrationsClientTests
     // --- GetLinkedDiscordRolesAsync ---
 
     [Fact]
-    public async Task GetLinkedDiscordRolesAsync_WithNoParameters_SendsPostRequest()
+    public async Task GetLinkedDiscordRolesAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(ObjectJson);
+        LinkedRolesRequest request = new() { DiscordToken = "test-token" };
 
         // Act
-        await client.GetLinkedDiscordRolesAsync();
+        await client.GetLinkedDiscordRolesAsync(request);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
         Assert.Contains("integration/oauth/discord/linked_roles", handler.LastRequest.RequestUri!.ToString());
+    }
+
+    [Fact]
+    public async Task GetLinkedDiscordRolesAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(ObjectJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetLinkedDiscordRolesAsync(null!));
     }
 }

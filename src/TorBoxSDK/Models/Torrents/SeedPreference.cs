@@ -1,11 +1,8 @@
-using System.Text.Json.Serialization;
-
 namespace TorBoxSDK.Models.Torrents;
 
 /// <summary>
 /// Specifies the seeding behavior for a torrent after download completion.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SeedPreference
 {
     /// <summary>An unknown or unmapped seed preference was returned.</summary>

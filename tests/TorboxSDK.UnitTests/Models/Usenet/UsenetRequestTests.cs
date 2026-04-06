@@ -16,7 +16,7 @@ public sealed class UsenetRequestTests
             Link = "https://example.com/file.nzb",
             Name = "my-download",
             Password = "secret",
-            PostProcessing = "unpack",
+            PostProcessing = -1,
             AsQueued = true,
             AddOnlyIfCached = false,
         };

@@ -69,11 +69,11 @@ try
     TorBoxResponse<IReadOnlyList<Torrent>> torrents =
         await client.Main.Torrents.GetMyTorrentListAsync(cancellationToken: cts.Token);
 
-    TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResults =
+    TorBoxResponse<TorrentSearchResponse> searchResults =
         await client.Search.SearchTorrentsAsync("ubuntu", cancellationToken: cts.Token);
 
     Console.WriteLine($"Torrents returned: {torrents.Data?.Count ?? 0}");
-    Console.WriteLine($"Search results returned: {searchResults.Data?.Count ?? 0}");
+    Console.WriteLine($"Search results returned: {searchResults.Data?.Torrents?.Count ?? 0}");
 }
 catch (TorBoxException ex)
 {

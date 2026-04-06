@@ -10,9 +10,9 @@ public interface IIntegrationsClient
 {
     /// <summary>Retrieves the authenticated user's connected OAuth integrations.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>A list of connected OAuth integrations.</returns>
+    /// <returns>A dictionary of provider names to connection status.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<OAuthIntegration>>> GetOAuthMeAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Creates a Google Drive integration job.</summary>
     /// <param name="request">The integration job request.</param>
@@ -138,8 +138,10 @@ public interface IIntegrationsClient
     Task<TorBoxResponse> OAuthUnregisterAsync(string provider, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves linked Discord roles for the authenticated user.</summary>
+    /// <param name="request">The linked roles request containing the Discord token.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The linked Discord roles data.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default);
 }

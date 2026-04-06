@@ -32,24 +32,27 @@ public static class TransactionsExample
 
                 foreach (Transaction transaction in transactionsResponse.Data)
                 {
-                    Console.WriteLine($"  [{transaction.Id}] {transaction.Description ?? "N/A"} — {transaction.Amount} {transaction.Currency ?? "N/A"} ({transaction.Status ?? "N/A"})");
+                    Console.WriteLine($"  [{transaction.TransactionId ?? "N/A"}] {transaction.Type ?? "N/A"} — {transaction.Amount} ({transaction.At?.ToString("o") ?? "N/A"})");
                 }
 
                 // ──────────────────────────────────────────────────
                 // Download a specific transaction as PDF.
                 // ──────────────────────────────────────────────────
-                long transactionId = transactionsResponse.Data[0].Id;
+                string? transactionId = transactionsResponse.Data[0].TransactionId;
 
-                Console.WriteLine();
-                Console.WriteLine($"Downloading PDF for transaction {transactionId}...");
-
-                TorBoxResponse<string> pdfResponse =
-                    await client.Main.User.GetTransactionPdfAsync(transactionId, cts.Token);
-
-                if (pdfResponse.Data is not null)
+                if (transactionId is not null)
                 {
-                    Console.WriteLine($"  PDF URL/data length: {pdfResponse.Data.Length} chars");
-                    Console.WriteLine("  Use this URL to download or display the transaction receipt.");
+                    Console.WriteLine();
+                    Console.WriteLine($"Downloading PDF for transaction {transactionId}...");
+
+                    TorBoxResponse<string> pdfResponse =
+                        await client.Main.User.GetTransactionPdfAsync(transactionId, cts.Token);
+
+                    if (pdfResponse.Data is not null)
+                    {
+                        Console.WriteLine($"  PDF URL/data length: {pdfResponse.Data.Length} chars");
+                        Console.WriteLine("  Use this URL to download or display the transaction receipt.");
+                    }
                 }
             }
             else
@@ -57,7 +60,7 @@ public static class TransactionsExample
                 Console.WriteLine("  No transactions found.");
 
                 // Demo with a sample transaction ID
-                long sampleTransactionId = 12345; // Replace with actual transaction ID
+                string sampleTransactionId = "12345"; // Replace with actual transaction ID
 
                 Console.WriteLine();
                 Console.WriteLine($"Downloading PDF for transaction {sampleTransactionId}...");

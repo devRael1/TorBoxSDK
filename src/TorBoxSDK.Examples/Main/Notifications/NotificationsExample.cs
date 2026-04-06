@@ -37,10 +37,9 @@ public static class NotificationsExample
 
                 foreach (Notification notification in notificationsResponse.Data)
                 {
-                    string readIcon = notification.Read ? "✓" : "•";
-                    Console.WriteLine($"  [{readIcon}] {notification.Title}");
+                    Console.WriteLine($"  [{notification.Id}] {notification.Title}");
                     Console.WriteLine($"      {notification.Message}");
-                    Console.WriteLine($"      Date: {notification.CreatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}");
+                    Console.WriteLine($"      Action: {notification.Action ?? "N/A"} | Date: {notification.CreatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}");
                     Console.WriteLine();
                 }
             }
@@ -110,7 +109,7 @@ public static class NotificationsExample
             Console.WriteLine("Fetching Intercom identity hash...");
 
             TorBoxResponse<IntercomHash> intercomResponse =
-                await client.Main.Notifications.GetIntercomHashAsync(cts.Token);
+                await client.Main.Notifications.GetIntercomHashAsync("your-auth-id", "your@email.com", cts.Token);
 
             if (intercomResponse.Data is not null)
             {

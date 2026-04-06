@@ -66,10 +66,11 @@ public sealed class UserClientTests
             "error": null,
             "detail": "Found.",
             "data": {
-                "user_code": "ABCD-1234",
                 "device_code": "device-abc",
+                "code": "ABCD-1234",
                 "verification_url": "https://torbox.app/verify",
-                "expires_in": 900,
+                "friendly_verification_url": "https://tor.box/link",
+                "expires_at": "2026-04-06T14:58:34Z",
                 "interval": 5
             }
         }
@@ -81,7 +82,9 @@ public sealed class UserClientTests
             "error": null,
             "detail": "Found.",
             "data": {
-                "total_referrals": 5
+                "referred_accounts": 5,
+                "referral_code": "abc-123",
+                "purchases_referred": 2
             }
         }
         """;
@@ -383,7 +386,7 @@ public sealed class UserClientTests
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(StringDataJson);
 
         // Act
-        TorBoxResponse<string> result = await client.GetTransactionPdfAsync(42);
+        TorBoxResponse<string> result = await client.GetTransactionPdfAsync("42");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
