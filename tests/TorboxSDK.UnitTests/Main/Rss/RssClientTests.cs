@@ -135,7 +135,7 @@ public sealed class RssClientTests
     // --- GetFeedsAsync ---
 
     [Fact]
-    public async Task GetFeedsAsync_SendsGetRequest()
+    public async Task GetFeedsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (RssClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<RssClient>(FeedsJson);

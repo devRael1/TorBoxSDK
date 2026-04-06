@@ -63,7 +63,7 @@ public sealed class GeneralClientTests
     // --- GetUpStatusAsync ---
 
     [Fact]
-    public async Task GetUpStatusAsync_SendsGetRequest()
+    public async Task GetUpStatusAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
@@ -80,7 +80,7 @@ public sealed class GeneralClientTests
     // --- GetStatsAsync ---
 
     [Fact]
-    public async Task GetStatsAsync_SendsGetRequest()
+    public async Task GetStatsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StatsJson);
@@ -98,7 +98,7 @@ public sealed class GeneralClientTests
     // --- Get30DayStatsAsync ---
 
     [Fact]
-    public async Task Get30DayStatsAsync_SendsGetRequest()
+    public async Task Get30DayStatsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StatsJson);
@@ -168,7 +168,7 @@ public sealed class GeneralClientTests
     // --- GetChangelogsRssAsync ---
 
     [Fact]
-    public async Task GetChangelogsRssAsync_SendsGetRequest()
+    public async Task GetChangelogsRssAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StringDataJson);
@@ -186,7 +186,7 @@ public sealed class GeneralClientTests
     // --- GetChangelogsJsonAsync ---
 
     [Fact]
-    public async Task GetChangelogsJsonAsync_SendsGetRequest()
+    public async Task GetChangelogsJsonAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsJson);

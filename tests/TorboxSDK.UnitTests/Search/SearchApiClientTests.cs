@@ -79,6 +79,16 @@ public sealed class SearchApiClientTests
     }
 
     [Fact]
+    public async Task SearchTorrentsAsync_WithEmptyQuery_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchTorrentsAsync(""));
+    }
+
+    [Fact]
     public async Task GetTorrentByIdAsync_WithId_SendsCorrectUrl()
     {
         // Arrange
@@ -255,7 +265,7 @@ public sealed class SearchApiClientTests
     // --- GetTorrentSearchTutorialAsync ---
 
     [Fact]
-    public async Task GetTorrentSearchTutorialAsync_SendsGetRequest()
+    public async Task GetTorrentSearchTutorialAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         string tutorialJson = """
@@ -281,7 +291,7 @@ public sealed class SearchApiClientTests
     // --- GetUsenetSearchTutorialAsync ---
 
     [Fact]
-    public async Task GetUsenetSearchTutorialAsync_SendsGetRequest()
+    public async Task GetUsenetSearchTutorialAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         string tutorialJson = """
@@ -307,7 +317,7 @@ public sealed class SearchApiClientTests
     // --- GetMetaSearchTutorialAsync ---
 
     [Fact]
-    public async Task GetMetaSearchTutorialAsync_SendsGetRequest()
+    public async Task GetMetaSearchTutorialAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         string tutorialJson = """
@@ -368,6 +378,16 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetUsenetByIdAsync(null!));
     }
 
+    [Fact]
+    public async Task GetUsenetByIdAsync_WithEmptyId_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetUsenetByIdAsync(""));
+    }
+
     // --- DownloadUsenetAsync ---
 
     [Fact]
@@ -414,6 +434,26 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.DownloadUsenetAsync("id", null!));
     }
 
+    [Fact]
+    public async Task DownloadUsenetAsync_WithEmptyId_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync("", "guid"));
+    }
+
+    [Fact]
+    public async Task DownloadUsenetAsync_WithEmptyGuid_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync("id", ""));
+    }
+
     // --- GetMetaByIdAsync ---
 
     [Fact]
@@ -450,6 +490,16 @@ public sealed class SearchApiClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetMetaByIdAsync(null!));
+    }
+
+    [Fact]
+    public async Task GetMetaByIdAsync_WithEmptyId_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetMetaByIdAsync(""));
     }
 
     // --- SearchTorznabAsync ---
@@ -514,6 +564,16 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchTorznabAsync(null!));
     }
 
+    [Fact]
+    public async Task SearchTorznabAsync_WithEmptyQuery_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchTorznabAsync(""));
+    }
+
     // --- SearchNewznabAsync ---
 
     [Fact]
@@ -553,6 +613,16 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchNewznabAsync(null!));
     }
 
+    [Fact]
+    public async Task SearchNewznabAsync_WithEmptyQuery_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchNewznabAsync(""));
+    }
+
     // --- GetTorrentByIdAsync null validation ---
 
     [Fact]
@@ -563,6 +633,16 @@ public sealed class SearchApiClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetTorrentByIdAsync(null!));
+    }
+
+    [Fact]
+    public async Task GetTorrentByIdAsync_WithEmptyId_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SingleResultJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetTorrentByIdAsync(""));
     }
 
     // --- SearchUsenetAsync null validation ---
@@ -577,6 +657,16 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchUsenetAsync(null!));
     }
 
+    [Fact]
+    public async Task SearchUsenetAsync_WithEmptyQuery_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchUsenetAsync(""));
+    }
+
     // --- SearchMetaAsync null validation ---
 
     [Fact]
@@ -587,5 +677,15 @@ public sealed class SearchApiClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.SearchMetaAsync(null!));
+    }
+
+    [Fact]
+    public async Task SearchMetaAsync_WithEmptyQuery_ThrowsArgumentException()
+    {
+        // Arrange
+        (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchMetaAsync(""));
     }
 }

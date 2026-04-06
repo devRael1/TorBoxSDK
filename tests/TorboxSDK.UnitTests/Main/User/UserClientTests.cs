@@ -132,7 +132,7 @@ public sealed class UserClientTests
     // --- GetConfirmationAsync ---
 
     [Fact]
-    public async Task GetConfirmationAsync_SendsGetRequest()
+    public async Task GetConfirmationAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ObjectJson);
@@ -186,7 +186,7 @@ public sealed class UserClientTests
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(UserProfileJson);
 
         // Act
-        await client.GetMeAsync();
+        await client.GetMeAsync(settings: null);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -323,7 +323,7 @@ public sealed class UserClientTests
     // --- GetReferralDataAsync ---
 
     [Fact]
-    public async Task GetReferralDataAsync_SendsGetRequest()
+    public async Task GetReferralDataAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ReferralJson);
@@ -341,7 +341,7 @@ public sealed class UserClientTests
     // --- GetSubscriptionsAsync ---
 
     [Fact]
-    public async Task GetSubscriptionsAsync_SendsGetRequest()
+    public async Task GetSubscriptionsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ListJson);
@@ -359,7 +359,7 @@ public sealed class UserClientTests
     // --- GetTransactionsAsync ---
 
     [Fact]
-    public async Task GetTransactionsAsync_SendsGetRequest()
+    public async Task GetTransactionsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ListJson);

@@ -82,7 +82,7 @@ public sealed class IntegrationsClientTests
     // --- GetOAuthMeAsync ---
 
     [Fact]
-    public async Task GetOAuthMeAsync_SendsGetRequest()
+    public async Task GetOAuthMeAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(OAuthListJson);
@@ -98,35 +98,105 @@ public sealed class IntegrationsClientTests
 
     // --- Create*JobAsync (all 6 providers) ---
 
-    [Theory]
-    [InlineData("googledrive", "integration/googledrive")]
-    [InlineData("dropbox", "integration/dropbox")]
-    [InlineData("onedrive", "integration/onedrive")]
-    [InlineData("gofile", "integration/gofile")]
-    [InlineData("1fichier", "integration/1fichier")]
-    [InlineData("pixeldrain", "integration/pixeldrain")]
-    public async Task CreateJobAsync_ForProvider_SendsPostRequest(string provider, string expectedUrl)
+    [Fact]
+    public async Task CreateGoogleDriveJobAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
         CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
 
         // Act
-        TorBoxResponse<IntegrationJob> result = provider switch
-        {
-            "googledrive" => await client.CreateGoogleDriveJobAsync(request),
-            "dropbox" => await client.CreateDropboxJobAsync(request),
-            "onedrive" => await client.CreateOnedriveJobAsync(request),
-            "gofile" => await client.CreateGofileJobAsync(request),
-            "1fichier" => await client.CreateOneFichierJobAsync(request),
-            "pixeldrain" => await client.CreatePixeldrainJobAsync(request),
-            _ => throw new ArgumentException($"Unknown provider: {provider}"),
-        };
+        TorBoxResponse<IntegrationJob> result = await client.CreateGoogleDriveJobAsync(request);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains(expectedUrl, handler.LastRequest.RequestUri!.ToString());
+        Assert.Contains("integration/googledrive", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateDropboxJobAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
+        CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
+
+        // Act
+        TorBoxResponse<IntegrationJob> result = await client.CreateDropboxJobAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("integration/dropbox", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateOnedriveJobAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
+        CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
+
+        // Act
+        TorBoxResponse<IntegrationJob> result = await client.CreateOnedriveJobAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("integration/onedrive", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateGofileJobAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
+        CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
+
+        // Act
+        TorBoxResponse<IntegrationJob> result = await client.CreateGofileJobAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("integration/gofile", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task CreateOneFichierJobAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
+        CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
+
+        // Act
+        TorBoxResponse<IntegrationJob> result = await client.CreateOneFichierJobAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("integration/1fichier", handler.LastRequest.RequestUri!.ToString());
+        Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task CreatePixeldrainJobAsync_WithValidRequest_SendsPostRequest()
+    {
+        // Arrange
+        (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobJson);
+        CreateIntegrationJobRequest request = new() { DownloadId = 1, DownloadType = "torrent" };
+
+        // Act
+        TorBoxResponse<IntegrationJob> result = await client.CreatePixeldrainJobAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+        Assert.Contains("integration/pixeldrain", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
     }
 
@@ -179,7 +249,7 @@ public sealed class IntegrationsClientTests
     // --- GetJobsAsync ---
 
     [Fact]
-    public async Task GetJobsAsync_SendsGetRequest()
+    public async Task GetJobsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(JobsListJson);
@@ -381,7 +451,7 @@ public sealed class IntegrationsClientTests
     // --- GetLinkedDiscordRolesAsync ---
 
     [Fact]
-    public async Task GetLinkedDiscordRolesAsync_SendsPostRequest()
+    public async Task GetLinkedDiscordRolesAsync_WithNoParameters_SendsPostRequest()
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(ObjectJson);

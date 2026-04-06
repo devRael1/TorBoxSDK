@@ -91,7 +91,7 @@ public sealed class VendorsClientTests
     // --- GetAccountAsync ---
 
     [Fact]
-    public async Task GetAccountAsync_SendsGetRequest()
+    public async Task GetAccountAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(VendorAccountJson);
@@ -150,7 +150,7 @@ public sealed class VendorsClientTests
     // --- GetAccountsAsync ---
 
     [Fact]
-    public async Task GetAccountsAsync_SendsGetRequest()
+    public async Task GetAccountsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(VendorAccountsListJson);
@@ -276,7 +276,7 @@ public sealed class VendorsClientTests
     // --- RefreshAsync ---
 
     [Fact]
-    public async Task RefreshAsync_SendsPatchRequest()
+    public async Task RefreshAsync_WithNoParameters_SendsPatchRequest()
     {
         // Arrange
         (VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(VendorAccountJson);

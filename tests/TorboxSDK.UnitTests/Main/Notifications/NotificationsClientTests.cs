@@ -55,7 +55,7 @@ public sealed class NotificationsClientTests
     // --- GetNotificationRssAsync ---
 
     [Fact]
-    public async Task GetNotificationRssAsync_SendsGetRequest()
+    public async Task GetNotificationRssAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(StringDataJson);
@@ -73,7 +73,7 @@ public sealed class NotificationsClientTests
     // --- GetMyNotificationsAsync ---
 
     [Fact]
-    public async Task GetMyNotificationsAsync_SendsGetRequest()
+    public async Task GetMyNotificationsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationsJson);
@@ -93,7 +93,7 @@ public sealed class NotificationsClientTests
     // --- ClearAllNotificationsAsync ---
 
     [Fact]
-    public async Task ClearAllNotificationsAsync_SendsPostRequest()
+    public async Task ClearAllNotificationsAsync_WithNoParameters_SendsPostRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
@@ -129,7 +129,7 @@ public sealed class NotificationsClientTests
     // --- SendTestNotificationAsync ---
 
     [Fact]
-    public async Task SendTestNotificationAsync_SendsPostRequest()
+    public async Task SendTestNotificationAsync_WithNoParameters_SendsPostRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
@@ -147,7 +147,7 @@ public sealed class NotificationsClientTests
     // --- GetIntercomHashAsync ---
 
     [Fact]
-    public async Task GetIntercomHashAsync_SendsGetRequest()
+    public async Task GetIntercomHashAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
