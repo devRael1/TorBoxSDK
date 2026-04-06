@@ -24,7 +24,7 @@ public static class GetProfileExample
             Console.WriteLine("Fetching user profile...");
 
             TorBoxResponse<UserProfile> profileResponse =
-                await client.Main.User.GetMeAsync(settings: true, ct: cts.Token);
+                await client.Main.User.GetMeAsync(settings: true, cancellationToken: cts.Token);
 
             if (profileResponse.Data is not null)
             {

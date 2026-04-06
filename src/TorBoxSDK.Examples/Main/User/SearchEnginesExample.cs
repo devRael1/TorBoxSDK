@@ -24,7 +24,7 @@ public static class SearchEnginesExample
             Console.WriteLine("Fetching search engines...");
 
             TorBoxResponse<IReadOnlyList<SearchEngine>> listResponse =
-                await client.Main.User.GetSearchEnginesAsync(ct: cts.Token);
+                await client.Main.User.GetSearchEnginesAsync(cancellationToken: cts.Token);
 
             if (listResponse.Data is not null && listResponse.Data.Count > 0)
             {
@@ -133,7 +133,7 @@ public static class SearchEnginesExample
             Console.WriteLine($"Fetching search engine {engineId}...");
 
             TorBoxResponse<IReadOnlyList<SearchEngine>> singleResponse =
-                await client.Main.User.GetSearchEnginesAsync(id: engineId, ct: cts.Token);
+                await client.Main.User.GetSearchEnginesAsync(id: engineId, cancellationToken: cts.Token);
 
             if (singleResponse.Data is not null && singleResponse.Data.Count > 0)
             {

@@ -25,98 +25,98 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetTorrentSearchTutorialAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> GetTorrentSearchTutorialAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "torrents");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
         string queryString = BuildTorrentSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/search/{Uri.EscapeDataString(query)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<TorrentSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<TorrentSearchResult>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, TorrentSearchOptions? options = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<TorrentSearchResult>> GetTorrentByIdAsync(string id, TorrentSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
 
         string queryString = BuildTorrentSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/{Uri.EscapeDataString(id)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<TorrentSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<TorrentSearchResult>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetUsenetSearchTutorialAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> GetUsenetSearchTutorialAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "usenet");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
         string queryString = BuildUsenetSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/search/{Uri.EscapeDataString(query)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<UsenetSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<UsenetSearchResult>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, UsenetSearchOptions? options = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<UsenetSearchResult>> GetUsenetByIdAsync(string id, UsenetSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
 
         string queryString = BuildUsenetSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/{Uri.EscapeDataString(id)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<UsenetSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<UsenetSearchResult>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> DownloadUsenetAsync(string id, string guid, CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> DownloadUsenetAsync(string id, string guid, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
         Guard.ThrowIfNullOrEmpty(guid, nameof(guid));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/download/{Uri.EscapeDataString(id)}/{Uri.EscapeDataString(guid)}");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetMetaSearchTutorialAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> GetMetaSearchTutorialAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "meta");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, MetaSearchOptions? options = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<MetaSearchResult>>> SearchMetaAsync(string query, MetaSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
         string queryString = TorBoxApiHelper.BuildQuery(
             ("type", options?.Type));
         using var request = new HttpRequestMessage(HttpMethod.Get, $"meta/search/{Uri.EscapeDataString(query)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<MetaSearchResult>>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<MetaSearchResult>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<MetaSearchResult>> GetMetaByIdAsync(string id, CancellationToken ct = default)
+    public async Task<TorBoxResponse<MetaSearchResult>> GetMetaByIdAsync(string id, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(id, nameof(id));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"meta/{Uri.EscapeDataString(id)}");
-        return await TorBoxApiHelper.SendAsync<MetaSearchResult>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<MetaSearchResult>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> SearchTorznabAsync(string query, string? apiKey = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> SearchTorznabAsync(string query, string? apiKey = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
@@ -126,11 +126,11 @@ public sealed class SearchApiClient : ISearchApiClient
             ("apikey", apiKey));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"torznab/api{queryString}");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> SearchNewznabAsync(string query, string? apiKey = null, CancellationToken ct = default)
+    public async Task<TorBoxResponse<string>> SearchNewznabAsync(string query, string? apiKey = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
@@ -140,7 +140,7 @@ public sealed class SearchApiClient : ISearchApiClient
             ("apikey", apiKey));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"newznab/api{queryString}");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     private static string BuildTorrentSearchQuery(TorrentSearchOptions? options)

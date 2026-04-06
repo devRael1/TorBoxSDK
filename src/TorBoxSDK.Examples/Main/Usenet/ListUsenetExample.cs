@@ -22,7 +22,7 @@ public static class ListUsenetExample
             // Retrieve the full Usenet download list.
             // ──────────────────────────────────────────────────────
             TorBoxResponse<IReadOnlyList<UsenetDownload>> response =
-                await client.Main.Usenet.GetMyUsenetListAsync(ct: cts.Token);
+                await client.Main.Usenet.GetMyUsenetListAsync(cancellationToken: cts.Token);
 
             if (response.Data is null || response.Data.Count == 0)
             {
@@ -49,7 +49,7 @@ public static class ListUsenetExample
             long downloadId = response.Data[0].Id; // Replace with your actual download ID
 
             TorBoxResponse<IReadOnlyList<UsenetDownload>> singleResponse =
-                await client.Main.Usenet.GetMyUsenetListAsync(id: downloadId, ct: cts.Token);
+                await client.Main.Usenet.GetMyUsenetListAsync(id: downloadId, cancellationToken: cts.Token);
 
             if (singleResponse.Data is not null && singleResponse.Data.Count > 0)
             {

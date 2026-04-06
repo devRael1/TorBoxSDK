@@ -13,13 +13,13 @@ internal static class TorBoxApiHelper
     internal static async Task<TorBoxResponse<T>> SendAsync<T>(
         HttpClient httpClient,
         HttpRequestMessage request,
-        CancellationToken ct)
+        CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
+        using HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         string json = await response.Content.ReadAsStringAsync(
 #if NET7_0_OR_GREATER
-            ct
+            cancellationToken
 #endif
         ).ConfigureAwait(false);
 
@@ -57,13 +57,13 @@ internal static class TorBoxApiHelper
     internal static async Task<TorBoxResponse> SendAsync(
         HttpClient httpClient,
         HttpRequestMessage request,
-        CancellationToken ct)
+        CancellationToken cancellationToken)
     {
-        using HttpResponseMessage response = await httpClient.SendAsync(request, ct).ConfigureAwait(false);
+        using HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
 
         string json = await response.Content.ReadAsStringAsync(
 #if NET7_0_OR_GREATER
-            ct
+            cancellationToken
 #endif
         ).ConfigureAwait(false);
 

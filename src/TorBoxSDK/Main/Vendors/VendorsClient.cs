@@ -25,7 +25,7 @@ public sealed class VendorsClient : IVendorsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> RegisterAsync(RegisterVendorRequest request, CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> RegisterAsync(RegisterVendorRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
@@ -39,18 +39,18 @@ public sealed class VendorsClient : IVendorsClient
         }
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/register") { Content = content };
-        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> GetAccountAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> GetAccountAsync(CancellationToken cancellationToken = default)
     {
         using HttpRequestMessage httpRequest = new(HttpMethod.Get, "vendors/account");
-        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> UpdateAccountAsync(UpdateVendorAccountRequest request, CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> UpdateAccountAsync(UpdateVendorAccountRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -72,18 +72,18 @@ public sealed class VendorsClient : IVendorsClient
         }
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Put, "vendors/updateaccount") { Content = content };
-        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<VendorAccount>>> GetAccountsAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<IReadOnlyList<VendorAccount>>> GetAccountsAsync(CancellationToken cancellationToken = default)
     {
         using HttpRequestMessage httpRequest = new(HttpMethod.Get, "vendors/getaccounts");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<VendorAccount>>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<IReadOnlyList<VendorAccount>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> GetAccountByAuthIdAsync(string userAuthId, CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> GetAccountByAuthIdAsync(string userAuthId, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(userAuthId, nameof(userAuthId));
 
@@ -91,11 +91,11 @@ public sealed class VendorsClient : IVendorsClient
             ("user_auth_id", userAuthId));
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Get, $"vendors/getaccount{query}");
-        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse> RegisterUserAsync(RegisterVendorUserRequest request, CancellationToken ct = default)
+    public async Task<TorBoxResponse> RegisterUserAsync(RegisterVendorUserRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.UserEmail, nameof(request.UserEmail));
@@ -104,11 +104,11 @@ public sealed class VendorsClient : IVendorsClient
         content.Add(new StringContent(request.UserEmail), "user_email");
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/registeruser") { Content = content };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse> RemoveUserAsync(RemoveVendorUserRequest request, CancellationToken ct = default)
+    public async Task<TorBoxResponse> RemoveUserAsync(RemoveVendorUserRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -116,13 +116,13 @@ public sealed class VendorsClient : IVendorsClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<VendorAccount>> RefreshAsync(CancellationToken ct = default)
+    public async Task<TorBoxResponse<VendorAccount>> RefreshAsync(CancellationToken cancellationToken = default)
     {
         using HttpRequestMessage httpRequest = new(HttpMethod.Patch, "vendors/refresh");
-        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, ct).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 }

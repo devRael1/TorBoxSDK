@@ -23,7 +23,7 @@ public sealed class QueuedClientIntegrationTests(TorBoxIntegrationFixture fixtur
 
         // Act
         TorBoxResponse<IReadOnlyList<QueuedDownload>> response = await _fixture.Client.Main.Queued
-            .GetQueuedAsync(ct: cts.Token);
+            .GetQueuedAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

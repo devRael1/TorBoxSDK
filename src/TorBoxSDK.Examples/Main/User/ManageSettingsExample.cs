@@ -44,7 +44,7 @@ public static class ManageSettingsExample
             Console.WriteLine("Fetching search engines...");
 
             TorBoxResponse<IReadOnlyList<SearchEngine>> enginesResponse =
-                await client.Main.User.GetSearchEnginesAsync(ct: cts.Token);
+                await client.Main.User.GetSearchEnginesAsync(cancellationToken: cts.Token);
 
             if (enginesResponse.Data is not null && enginesResponse.Data.Count > 0)
             {

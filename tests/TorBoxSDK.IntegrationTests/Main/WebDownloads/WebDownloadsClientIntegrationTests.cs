@@ -23,7 +23,7 @@ public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture 
 
         // Act
         TorBoxResponse<IReadOnlyList<WebDownload>> response = await _fixture.Client.Main.WebDownloads
-            .GetMyWebDownloadListAsync(ct: cts.Token);
+            .GetMyWebDownloadListAsync(cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -61,7 +61,7 @@ public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture 
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.WebDownloads
-            .CheckCachedAsync(hashes, ct: cts.Token);
+            .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

@@ -36,7 +36,7 @@ public static class StreamExample
                     downloadId,
                     fileId,
                     type,
-                    ct: cts.Token);
+                    cancellationToken: cts.Token);
 
             if (streamResponse.Data is not null)
             {
@@ -62,7 +62,7 @@ public static class StreamExample
                     type,
                     chosenSubtitleIndex: subtitleIndex,
                     chosenAudioIndex: audioIndex,
-                    ct: cts.Token);
+                    cancellationToken: cts.Token);
 
             if (customStreamResponse.Data is not null)
             {
@@ -87,7 +87,7 @@ public static class StreamExample
                         authToken,
                         chosenSubtitleIndex: subtitleIndex,
                         chosenAudioIndex: audioIndex,
-                        ct: cts.Token);
+                        cancellationToken: cts.Token);
 
                 Console.WriteLine($"  Stream data: {streamDataResponse.Detail ?? "Retrieved"}");
             }
