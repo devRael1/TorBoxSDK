@@ -1,5 +1,6 @@
 using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Stream;
 
 namespace TorBoxSDK.Examples.Main.Stream;
 
@@ -33,9 +34,7 @@ public static class StreamExample
 
             TorBoxResponse<string> streamResponse =
                 await client.Main.Stream.CreateStreamAsync(
-                    downloadId,
-                    fileId,
-                    type,
+                    new CreateStreamOptions { Id = downloadId, FileId = fileId, Type = type },
                     cancellationToken: cts.Token);
 
             if (streamResponse.Data is not null)
@@ -57,11 +56,14 @@ public static class StreamExample
 
             TorBoxResponse<string> customStreamResponse =
                 await client.Main.Stream.CreateStreamAsync(
-                    downloadId,
-                    fileId,
-                    type,
-                    chosenSubtitleIndex: subtitleIndex,
-                    chosenAudioIndex: audioIndex,
+                    new CreateStreamOptions
+                    {
+                        Id = downloadId,
+                        FileId = fileId,
+                        Type = type,
+                        ChosenSubtitleIndex = subtitleIndex,
+                        ChosenAudioIndex = audioIndex,
+                    },
                     cancellationToken: cts.Token);
 
             if (customStreamResponse.Data is not null)
@@ -73,20 +75,27 @@ public static class StreamExample
                 // The token is extracted from the stream URL above.
                 // This returns metadata about available tracks.
                 // ──────────────────────────────────────────────────
+                // The presigned token is a short-lived token extracted from the stream URL returned above.
+                // In production, parse the stream URL to extract this value.
                 string presignedToken = "token-from-stream-url"; // Extract from the stream URL path or query string
-                string authToken = Environment.GetEnvironmentVariable("TORBOX_AUTH_TOKEN")
+
+                // The auth token is your TorBox API key (same as TORBOX_API_KEY used to initialize the client).
+                string authToken = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
                     ?? throw new InvalidOperationException(
-                        "Set the TORBOX_AUTH_TOKEN environment variable to your TorBox auth token.");
+                        "Set the TORBOX_API_KEY environment variable.");
 
                 Console.WriteLine();
                 Console.WriteLine("Getting stream data with presigned token...");
 
                 TorBoxResponse<object> streamDataResponse =
                     await client.Main.Stream.GetStreamDataAsync(
-                        presignedToken,
-                        authToken,
-                        chosenSubtitleIndex: subtitleIndex,
-                        chosenAudioIndex: audioIndex,
+                        new GetStreamDataOptions
+                        {
+                            PresignedToken = presignedToken,
+                            Token = authToken,
+                            ChosenSubtitleIndex = subtitleIndex,
+                            ChosenAudioIndex = audioIndex,
+                        },
                         cancellationToken: cts.Token);
 
                 Console.WriteLine($"  Stream data: {streamDataResponse.Detail ?? "Retrieved"}");

@@ -55,13 +55,13 @@ public static class DownloadSearchResultsExample
                     // Download the NZB file for a Usenet result.
                     // Returns a URL to the NZB file.
                     // ──────────────────────────────────────────────
-                    string guid = resultId; // GUID is typically the result ID
+                    string guid = resultId; // The NZB GUID from the search result (often matches the result ID)
 
                     Console.WriteLine();
                     Console.WriteLine($"Downloading NZB for result: {resultId}...");
 
                     TorBoxResponse<string> downloadResponse =
-                        await client.Search.DownloadUsenetAsync(resultId, guid, cts.Token);
+                        await client.Search.DownloadUsenetAsync(new DownloadUsenetOptions { Id = resultId, Guid = guid }, cts.Token);
 
                     if (downloadResponse.Data is not null)
                     {

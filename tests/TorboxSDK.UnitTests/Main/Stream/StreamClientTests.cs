@@ -1,5 +1,6 @@
 using TorBoxSDK.Main.Stream;
 using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Stream;
 using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.Stream;
@@ -35,7 +36,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
-        TorBoxResponse<string> result = await client.CreateStreamAsync(42, 5, "torrent");
+        TorBoxResponse<string> result = await client.CreateStreamAsync(new CreateStreamOptions { Id = 42, FileId = 5, Type = "torrent" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -55,7 +56,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
-        await client.CreateStreamAsync(1, 2, "usenet", chosenSubtitleIndex: 3, chosenAudioIndex: 1, chosenResolutionIndex: 720);
+        await client.CreateStreamAsync(new CreateStreamOptions { Id = 1, FileId = 2, Type = "usenet", ChosenSubtitleIndex = 3, ChosenAudioIndex = 1, ChosenResolutionIndex = 720 });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -72,7 +73,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act
-        await client.CreateStreamAsync(1, 2, "torrent");
+        await client.CreateStreamAsync(new CreateStreamOptions { Id = 1, FileId = 2, Type = "torrent" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -83,13 +84,13 @@ public sealed class StreamClientTests
     }
 
     [Fact]
-    public async Task CreateStreamAsync_WithNullType_ThrowsArgumentNullException()
+    public async Task CreateStreamAsync_WithNullOptions_ThrowsArgumentNullException()
     {
         // Arrange
         (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateStreamAsync(1, 2, null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateStreamAsync(null!));
     }
 
     [Fact]
@@ -99,7 +100,7 @@ public sealed class StreamClientTests
         (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamUrlJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.CreateStreamAsync(1, 2, string.Empty));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.CreateStreamAsync(new CreateStreamOptions { Id = 1, FileId = 2, Type = string.Empty }));
     }
 
     [Fact]
@@ -109,7 +110,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
-        TorBoxResponse<object> result = await client.GetStreamDataAsync("pre-signed-token-abc", "auth-token-123");
+        TorBoxResponse<object> result = await client.GetStreamDataAsync(new GetStreamDataOptions { PresignedToken = "pre-signed-token-abc", Token = "auth-token-123" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -128,7 +129,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
-        await client.GetStreamDataAsync("presigned", "token", chosenSubtitleIndex: 0, chosenAudioIndex: 2, chosenResolutionIndex: 1080);
+        await client.GetStreamDataAsync(new GetStreamDataOptions { PresignedToken = "presigned", Token = "token", ChosenSubtitleIndex = 0, ChosenAudioIndex = 2, ChosenResolutionIndex = 1080 });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -145,7 +146,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
-        await client.GetStreamDataAsync("presigned", "token");
+        await client.GetStreamDataAsync(new GetStreamDataOptions { PresignedToken = "presigned", Token = "token" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -156,23 +157,13 @@ public sealed class StreamClientTests
     }
 
     [Fact]
-    public async Task GetStreamDataAsync_WithNullPresignedToken_ThrowsArgumentNullException()
+    public async Task GetStreamDataAsync_WithNullOptions_ThrowsArgumentNullException()
     {
         // Arrange
         (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetStreamDataAsync(null!, "token"));
-    }
-
-    [Fact]
-    public async Task GetStreamDataAsync_WithNullToken_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
-
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetStreamDataAsync("presigned", null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetStreamDataAsync(null!));
     }
 
     [Fact]
@@ -182,7 +173,7 @@ public sealed class StreamClientTests
         (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync(string.Empty, "token"));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync(new GetStreamDataOptions { PresignedToken = string.Empty, Token = "token" }));
     }
 
     [Fact]
@@ -192,6 +183,6 @@ public sealed class StreamClientTests
         (StreamClient client, _) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync("presigned", string.Empty));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetStreamDataAsync(new GetStreamDataOptions { PresignedToken = "presigned", Token = string.Empty }));
     }
 }

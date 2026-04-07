@@ -328,6 +328,16 @@ public sealed class IntegrationsClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthRedirectAsync(null!));
     }
 
+    [Fact]
+    public async Task OAuthRedirectAsync_WithEmptyProvider_ThrowsArgumentException()
+    {
+        // Arrange
+        (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(StringDataJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.OAuthRedirectAsync(""));
+    }
+
     // --- OAuthCallbackAsync ---
 
     [Fact]
@@ -353,6 +363,16 @@ public sealed class IntegrationsClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthCallbackAsync(null!));
+    }
+
+    [Fact]
+    public async Task OAuthCallbackAsync_WithEmptyProvider_ThrowsArgumentException()
+    {
+        // Arrange
+        (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(ObjectJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.OAuthCallbackAsync(""));
     }
 
     // --- OAuthSuccessAsync ---
@@ -382,6 +402,16 @@ public sealed class IntegrationsClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthSuccessAsync(null!));
     }
 
+    [Fact]
+    public async Task OAuthSuccessAsync_WithEmptyProvider_ThrowsArgumentException()
+    {
+        // Arrange
+        (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(ObjectJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.OAuthSuccessAsync(""));
+    }
+
     // --- OAuthRegisterAsync ---
 
     [Fact]
@@ -389,10 +419,10 @@ public sealed class IntegrationsClientTests
     {
         // Arrange
         (IntegrationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<IntegrationsClient>(SuccessJson);
-        OAuthRegisterRequest request = new();
+        OAuthRegisterRequest request = new() { Provider = "googledrive" };
 
         // Act
-        await client.OAuthRegisterAsync("googledrive", request);
+        await client.OAuthRegisterAsync(request);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -401,14 +431,14 @@ public sealed class IntegrationsClientTests
     }
 
     [Fact]
-    public async Task OAuthRegisterAsync_WithNullProvider_ThrowsArgumentNullException()
+    public async Task OAuthRegisterAsync_WithEmptyProvider_ThrowsArgumentException()
     {
         // Arrange
         (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(SuccessJson);
-        OAuthRegisterRequest request = new();
+        OAuthRegisterRequest request = new() { Provider = "" };
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthRegisterAsync(null!, request));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.OAuthRegisterAsync(request));
     }
 
     [Fact]
@@ -418,7 +448,7 @@ public sealed class IntegrationsClientTests
         (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(SuccessJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthRegisterAsync("googledrive", null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthRegisterAsync(null!));
     }
 
     // --- OAuthUnregisterAsync ---
@@ -446,6 +476,16 @@ public sealed class IntegrationsClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.OAuthUnregisterAsync(null!));
+    }
+
+    [Fact]
+    public async Task OAuthUnregisterAsync_WithEmptyProvider_ThrowsArgumentException()
+    {
+        // Arrange
+        (IntegrationsClient client, _) = ClientTestBase.CreateClient<IntegrationsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.OAuthUnregisterAsync(""));
     }
 
     // --- GetLinkedDiscordRolesAsync ---

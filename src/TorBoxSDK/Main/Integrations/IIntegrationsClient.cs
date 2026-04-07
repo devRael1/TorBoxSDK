@@ -119,14 +119,13 @@ public interface IIntegrationsClient
     Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default);
 
     /// <summary>Registers an OAuth integration with the specified provider.</summary>
-    /// <param name="provider">The OAuth provider name.</param>
-    /// <param name="request">The registration request containing the authorization code and redirect URI.</param>
+    /// <param name="request">The registration request containing the provider, authorization code and redirect URI.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API response.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="provider"/> is <see langword="null"/> or <paramref name="request"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>, or when the provider in <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when the provider in <paramref name="request"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse> OAuthRegisterAsync(string provider, OAuthRegisterRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Unregisters an OAuth integration with the specified provider.</summary>
     /// <param name="provider">The OAuth provider name.</param>

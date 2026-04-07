@@ -33,24 +33,19 @@ public interface IWebDownloadsClient
     Task<TorBoxResponse<string>> RequestDownloadAsync(RequestWebDownloadOptions options, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the authenticated user's web download list.</summary>
-    /// <param name="id">Optional download ID to retrieve a single download.</param>
-    /// <param name="offset">Optional offset for pagination.</param>
-    /// <param name="limit">Optional limit for pagination.</param>
-    /// <param name="bypassCache">Optional flag to bypass the cache.</param>
+    /// <param name="options">Optional query parameters for filtering and pagination.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>A list of web downloads.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IReadOnlyList<WebDownload>>> GetMyWebDownloadListAsync(long? id = null, int? offset = null, int? limit = null, bool? bypassCache = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IReadOnlyList<WebDownload>>> GetMyWebDownloadListAsync(GetMyListOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more web download hashes are cached on TorBox (GET).</summary>
-    /// <param name="hashes">The list of hashes to check.</param>
-    /// <param name="format">Optional response format.</param>
-    /// <param name="listFiles">Optional flag to include file listings.</param>
+    /// <param name="options">The cache check options containing hashes and optional parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The cache status data as a dynamic object.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="hashes"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the hashes collection in <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, string? format = null, bool? listFiles = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more web download hashes are cached on TorBox (POST).</summary>
     /// <param name="request">The cache check request containing hashes and options.</param>

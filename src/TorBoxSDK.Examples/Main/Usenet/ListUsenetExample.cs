@@ -49,7 +49,7 @@ public static class ListUsenetExample
             long downloadId = response.Data[0].Id; // Replace with your actual download ID
 
             TorBoxResponse<IReadOnlyList<UsenetDownload>> singleResponse =
-                await client.Main.Usenet.GetMyUsenetListAsync(id: downloadId, cancellationToken: cts.Token);
+                await client.Main.Usenet.GetMyUsenetListAsync(new GetMyListOptions { Id = downloadId }, cancellationToken: cts.Token);
 
             if (singleResponse.Data is not null && singleResponse.Data.Count > 0)
             {

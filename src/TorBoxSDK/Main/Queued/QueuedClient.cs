@@ -25,14 +25,14 @@ public sealed class QueuedClient : IQueuedClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(long? id = null, int? offset = null, int? limit = null, bool? bypassCache = null, string? type = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(GetQueuedOptions? options = null, CancellationToken cancellationToken = default)
     {
         string query = TorBoxApiHelper.BuildQuery(
-            ("id", id?.ToString()),
-            ("offset", offset?.ToString()),
-            ("limit", limit?.ToString()),
-            ("bypass_cache", bypassCache?.ToString().ToLowerInvariant()),
-            ("type", type));
+            ("id", options?.Id?.ToString()),
+            ("offset", options?.Offset?.ToString()),
+            ("limit", options?.Limit?.ToString()),
+            ("bypass_cache", options?.BypassCache?.ToString().ToLowerInvariant()),
+            ("type", options?.Type));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"queued/getqueued{query}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<QueuedDownload>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

@@ -55,7 +55,7 @@ public static class ListTorrentsExample
             // ──────────────────────────────────────────────────────
             long torrentId = response.Data[0].Id; // Replace with your actual torrent ID
             TorBoxResponse<IReadOnlyList<Torrent>> singleResponse =
-                await client.Main.Torrents.GetMyTorrentListAsync(id: torrentId, cancellationToken: cts.Token);
+                await client.Main.Torrents.GetMyTorrentListAsync(new GetMyListOptions { Id = torrentId }, cancellationToken: cts.Token);
 
             if (singleResponse.Data is not null && singleResponse.Data.Count > 0)
             {
@@ -75,8 +75,7 @@ public static class ListTorrentsExample
 
             TorBoxResponse<IReadOnlyList<Torrent>> pagedResponse =
                 await client.Main.Torrents.GetMyTorrentListAsync(
-                    offset: offset,
-                    limit: limit,
+                    new GetMyListOptions { Offset = offset, Limit = limit },
                     cancellationToken: cts.Token);
 
             Console.WriteLine($"Paginated response: {pagedResponse.Data?.Count ?? 0} torrent(s) returned.");

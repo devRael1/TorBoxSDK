@@ -156,7 +156,7 @@ public sealed class NotificationsClientTests
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act
-        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync("auth-id", "test@test.com");
+        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = "test@test.com" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -165,5 +165,35 @@ public sealed class NotificationsClientTests
         Assert.Contains("auth_id=auth-id", handler.LastRequest.RequestUri!.ToString());
         Assert.Contains("email=test%40test.com", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithNullOptions_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!));
+    }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithEmptyAuthId_ThrowsArgumentException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = string.Empty, Email = "test@test.com" }));
+    }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithEmptyEmail_ThrowsArgumentException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = string.Empty }));
     }
 }

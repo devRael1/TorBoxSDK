@@ -48,7 +48,7 @@ public static class RelayExample
             Console.WriteLine($"Checking inactivity for torrent {torrentId} (auth: {authId})...");
 
             TorBoxResponse<InactiveCheckResult> inactiveResponse =
-                await client.Relay.CheckForInactiveAsync(authId, torrentId, cts.Token);
+                await client.Relay.CheckForInactiveAsync(new CheckInactiveOptions { AuthId = authId, TorrentId = torrentId }, cts.Token);
 
             if (inactiveResponse.Data is not null)
             {

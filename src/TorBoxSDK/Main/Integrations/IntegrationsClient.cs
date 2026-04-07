@@ -161,12 +161,12 @@ public sealed class IntegrationsClient : IIntegrationsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse> OAuthRegisterAsync(string provider, OAuthRegisterRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
         ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNullOrEmpty(request.Provider, nameof(request.Provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(provider)}/register")
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(request.Provider)}/register")
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };

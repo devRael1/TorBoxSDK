@@ -40,10 +40,18 @@ public interface INotificationsClient
     Task<TorBoxResponse> SendTestNotificationAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Gets the Intercom identity verification hash for the authenticated user.</summary>
-    /// <param name="authId">The user's auth identifier.</param>
-    /// <param name="email">The user's email address.</param>
+    /// <param name="options">The options containing the auth ID and email.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The Intercom hash data.</returns>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="options"/> is <see langword="null"/>, or when
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.AuthId"/> or
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.Email"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="options"/>.<see cref="GetIntercomHashOptions.AuthId"/> or
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.Email"/> is empty.
+    /// </exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(string authId, string email, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(GetIntercomHashOptions options, CancellationToken cancellationToken = default);
 }
