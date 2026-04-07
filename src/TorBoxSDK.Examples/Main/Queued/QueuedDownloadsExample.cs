@@ -53,9 +53,7 @@ public static class QueuedDownloadsExample
 
             TorBoxResponse<IReadOnlyList<QueuedDownload>> filteredResponse =
                 await client.Main.Queued.GetQueuedAsync(
-                    offset: 0,
-                    limit: 10,
-                    type: "torrent",
+                    new GetQueuedOptions { Offset = 0, Limit = 10, Type = "torrent" },
                     cancellationToken: cts.Token);
 
             Console.WriteLine($"  Queued torrents: {filteredResponse.Data?.Count ?? 0}");
@@ -69,7 +67,7 @@ public static class QueuedDownloadsExample
             Console.WriteLine($"Fetching queued download {queuedId}...");
 
             TorBoxResponse<IReadOnlyList<QueuedDownload>> singleResponse =
-                await client.Main.Queued.GetQueuedAsync(id: queuedId, cancellationToken: cts.Token);
+                await client.Main.Queued.GetQueuedAsync(new GetQueuedOptions { Id = queuedId }, cancellationToken: cts.Token);
 
             if (singleResponse.Data is not null && singleResponse.Data.Count > 0)
             {

@@ -54,7 +54,7 @@ public sealed class RelayApiClientTests
         var (client, handler) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
 
         // Act
-        TorBoxResponse<InactiveCheckResult> result = await client.CheckForInactiveAsync("auth-id-123", 42);
+        TorBoxResponse<InactiveCheckResult> result = await client.CheckForInactiveAsync(new CheckInactiveOptions { AuthId = "auth-id-123", TorrentId = 42 });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -70,6 +70,6 @@ public sealed class RelayApiClientTests
         var (client, _) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckForInactiveAsync(null!, 42));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckForInactiveAsync(null!));
     }
 }

@@ -81,7 +81,7 @@ public static class DownloadTorrentExample
             Console.WriteLine($"Exporting data for torrent {torrentId}...");
 
             TorBoxResponse<string> exportResponse =
-                await client.Main.Torrents.ExportDataAsync(torrentId, cancellationToken: cts.Token);
+                await client.Main.Torrents.ExportDataAsync(new ExportDataOptions { TorrentId = torrentId }, cancellationToken: cts.Token);
 
             if (exportResponse.Data is not null)
             {

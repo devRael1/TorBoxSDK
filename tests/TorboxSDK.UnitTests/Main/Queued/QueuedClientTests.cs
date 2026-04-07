@@ -61,7 +61,7 @@ public sealed class QueuedClientTests
         (QueuedClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<QueuedClient>(QueuedListJson);
 
         // Act
-        await client.GetQueuedAsync(id: 42, offset: 10, limit: 50, bypassCache: true, type: "torrent");
+        await client.GetQueuedAsync(new GetQueuedOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true, Type = "torrent" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);

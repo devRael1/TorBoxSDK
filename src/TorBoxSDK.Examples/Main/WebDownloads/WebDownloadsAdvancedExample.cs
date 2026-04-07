@@ -26,7 +26,7 @@ public static class WebDownloadsAdvancedExample
             Console.WriteLine($"Checking cache for {hashes.Count} web download hash(es) (GET)...");
 
             TorBoxResponse<object> cacheResponse =
-                await client.Main.WebDownloads.CheckCachedAsync(hashes, format: "object", listFiles: true, cancellationToken: cts.Token);
+                await client.Main.WebDownloads.CheckCachedAsync(new CheckCachedOptions { Hashes = hashes, Format = "object", ListFiles = true }, cancellationToken: cts.Token);
 
             Console.WriteLine($"  Cache check result: {cacheResponse.Detail ?? "Completed"}");
 

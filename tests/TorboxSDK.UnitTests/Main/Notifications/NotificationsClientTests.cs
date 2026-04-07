@@ -156,7 +156,7 @@ public sealed class NotificationsClientTests
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act
-        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync("auth-id", "test@test.com");
+        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = "test@test.com" });
 
         // Assert
         Assert.NotNull(handler.LastRequest);

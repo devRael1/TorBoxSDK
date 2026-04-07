@@ -241,7 +241,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(UsenetListJson);
 
         // Act
-        await client.GetMyUsenetListAsync(id: 42, offset: 10, limit: 50, bypassCache: true);
+        await client.GetMyUsenetListAsync(new GetMyListOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -280,7 +280,7 @@ public sealed class UsenetClientTests
         IReadOnlyList<string> hashes = ["hash1", "hash2"];
 
         // Act
-        await client.CheckCachedAsync(hashes);
+        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = hashes });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -296,7 +296,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act
-        await client.CheckCachedAsync(["hash1"], format: "object", listFiles: true);
+        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = ["hash1"], Format = "object", ListFiles = true });
 
         // Assert
         Assert.NotNull(handler.LastRequest);

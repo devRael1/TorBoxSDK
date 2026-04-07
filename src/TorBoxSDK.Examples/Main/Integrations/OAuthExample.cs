@@ -92,12 +92,13 @@ public static class OAuthExample
 
             OAuthRegisterRequest registerRequest = new()
             {
+                Provider = provider,
                 Token = "oauth-access-token",         // Replace with actual OAuth access token
                 RefreshToken = "oauth-refresh-token",  // Replace with actual OAuth refresh token
             };
 
             TorBoxResponse registerResponse =
-                await client.Main.Integrations.OAuthRegisterAsync(provider, registerRequest, cts.Token);
+                await client.Main.Integrations.OAuthRegisterAsync(registerRequest, cts.Token);
 
             Console.WriteLine($"  Result: {registerResponse.Detail ?? "Registered"}");
 

@@ -230,7 +230,7 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
 
         // Act
-        await client.GetMyWebDownloadListAsync(id: 42, offset: 10, limit: 50, bypassCache: true);
+        await client.GetMyWebDownloadListAsync(new GetMyListOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -268,7 +268,7 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
         // Act
-        await client.CheckCachedAsync(["hash1", "hash2"]);
+        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = ["hash1", "hash2"] });
 
         // Assert
         Assert.NotNull(handler.LastRequest);

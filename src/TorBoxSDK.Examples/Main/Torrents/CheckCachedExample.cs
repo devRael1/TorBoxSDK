@@ -32,7 +32,7 @@ public static class CheckCachedExample
             Console.WriteLine($"Checking cache for {hashes.Count} hash(es) via GET...");
 
             TorBoxResponse<object> cacheResponse =
-                await client.Main.Torrents.CheckCachedAsync(hashes, cancellationToken: cts.Token);
+                await client.Main.Torrents.CheckCachedAsync(new CheckCachedOptions { Hashes = hashes }, cancellationToken: cts.Token);
 
             Console.WriteLine($"  Response: {cacheResponse.Detail ?? "Check completed"}");
 
@@ -62,7 +62,7 @@ public static class CheckCachedExample
             Console.WriteLine($"Getting torrent info for hash: {torrentHash}...");
 
             TorBoxResponse<TorrentInfo> infoResponse =
-                await client.Main.Torrents.GetTorrentInfoAsync(torrentHash, cancellationToken: cts.Token);
+                await client.Main.Torrents.GetTorrentInfoAsync(new GetTorrentInfoOptions { Hash = torrentHash }, cancellationToken: cts.Token);
 
             if (infoResponse.Data is not null)
             {

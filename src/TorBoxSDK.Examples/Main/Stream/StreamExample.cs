@@ -1,5 +1,6 @@
 using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Stream;
 
 namespace TorBoxSDK.Examples.Main.Stream;
 
@@ -33,9 +34,7 @@ public static class StreamExample
 
             TorBoxResponse<string> streamResponse =
                 await client.Main.Stream.CreateStreamAsync(
-                    downloadId,
-                    fileId,
-                    type,
+                    new CreateStreamOptions { Id = downloadId, FileId = fileId, Type = type },
                     cancellationToken: cts.Token);
 
             if (streamResponse.Data is not null)
@@ -57,11 +56,14 @@ public static class StreamExample
 
             TorBoxResponse<string> customStreamResponse =
                 await client.Main.Stream.CreateStreamAsync(
-                    downloadId,
-                    fileId,
-                    type,
-                    chosenSubtitleIndex: subtitleIndex,
-                    chosenAudioIndex: audioIndex,
+                    new CreateStreamOptions
+                    {
+                        Id = downloadId,
+                        FileId = fileId,
+                        Type = type,
+                        ChosenSubtitleIndex = subtitleIndex,
+                        ChosenAudioIndex = audioIndex,
+                    },
                     cancellationToken: cts.Token);
 
             if (customStreamResponse.Data is not null)
@@ -83,10 +85,13 @@ public static class StreamExample
 
                 TorBoxResponse<object> streamDataResponse =
                     await client.Main.Stream.GetStreamDataAsync(
-                        presignedToken,
-                        authToken,
-                        chosenSubtitleIndex: subtitleIndex,
-                        chosenAudioIndex: audioIndex,
+                        new GetStreamDataOptions
+                        {
+                            PresignedToken = presignedToken,
+                            Token = authToken,
+                            ChosenSubtitleIndex = subtitleIndex,
+                            ChosenAudioIndex = audioIndex,
+                        },
                         cancellationToken: cts.Token);
 
                 Console.WriteLine($"  Stream data: {streamDataResponse.Detail ?? "Retrieved"}");

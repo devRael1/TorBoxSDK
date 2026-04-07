@@ -43,7 +43,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.Torrents
-            .CheckCachedAsync(hashes, cancellationToken: cts.Token);
+            .CheckCachedAsync(new CheckCachedOptions { Hashes = hashes }, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -62,7 +62,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
 
         // Act
         TorBoxResponse<TorrentInfo> response = await _fixture.Client.Main.Torrents
-            .GetTorrentInfoAsync(hash, cancellationToken: cts.Token);
+            .GetTorrentInfoAsync(new GetTorrentInfoOptions { Hash = hash }, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

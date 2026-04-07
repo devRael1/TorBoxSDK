@@ -129,7 +129,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
-            .SearchTorznabAsync("ubuntu", cancellationToken: cts.Token);
+            .SearchTorznabAsync(new SearchTorznabOptions { Query = "ubuntu" }, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -146,7 +146,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
-            .SearchNewznabAsync("ubuntu", cancellationToken: cts.Token);
+            .SearchNewznabAsync(new SearchNewznabOptions { Query = "ubuntu" }, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);
