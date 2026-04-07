@@ -9,6 +9,7 @@ public sealed record OAuthRegisterRequest
 {
     /// <summary>
     /// Gets the OAuth provider name (e.g., "google", "dropbox").
+    /// This property is used in the endpoint URL path and is not serialized in the request body.
     /// </summary>
     [JsonIgnore]
     public string Provider { get; init; } = string.Empty;
