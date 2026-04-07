@@ -178,6 +178,16 @@ public sealed class TorrentsClientTests
     }
 
     [Fact]
+    public async Task ControlTorrentAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.ControlTorrentAsync(null!));
+    }
+
+    [Fact]
     public async Task RequestDownloadAsync_WithValidOptions_SendsGetRequest()
     {
         // Arrange
@@ -196,6 +206,16 @@ public sealed class TorrentsClientTests
     }
 
     [Fact]
+    public async Task RequestDownloadAsync_WithNullOptions_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(DownloadJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.RequestDownloadAsync(null!));
+    }
+
+    [Fact]
     public async Task EditTorrentAsync_WithValidRequest_SendsPutRequest()
     {
         // Arrange
@@ -210,6 +230,16 @@ public sealed class TorrentsClientTests
         Assert.Equal(HttpMethod.Put, handler.LastRequest.Method);
         Assert.Contains("torrents/edittorrent", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
+    }
+
+    [Fact]
+    public async Task EditTorrentAsync_WithNullRequest_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(SuccessJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.EditTorrentAsync(null!));
     }
 
     [Fact]
@@ -245,6 +275,26 @@ public sealed class TorrentsClientTests
         Assert.Contains("hash=abc123def456", url);
         Assert.Contains("timeout=60", url);
         Assert.Contains("use_cache_lookup=true", url);
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoAsync_WithNullOptions_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetTorrentInfoAsync(null!));
+    }
+
+    [Fact]
+    public async Task GetTorrentInfoAsync_WithEmptyHash_ThrowsArgumentException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(TorrentInfoJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetTorrentInfoAsync(new GetTorrentInfoOptions { Hash = string.Empty }));
     }
 
     [Fact]
@@ -357,6 +407,16 @@ public sealed class TorrentsClientTests
         Assert.Contains("torrents/exportdata", handler.LastRequest.RequestUri!.ToString());
         Assert.Contains("torrent_id=42", handler.LastRequest.RequestUri!.ToString());
         Assert.Equal("magnet:?xt=urn:btih:abc123def456", result.Data);
+    }
+
+    [Fact]
+    public async Task ExportDataAsync_WithNullOptions_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (TorrentsClient client, _) = ClientTestBase.CreateClient<TorrentsClient>(ExportDataJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.ExportDataAsync(null!));
     }
 
     // --- CheckCachedAsync ---

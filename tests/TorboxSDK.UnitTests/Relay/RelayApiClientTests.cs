@@ -35,7 +35,7 @@ public sealed class RelayApiClientTests
     public async Task GetStatusAsync_WithValidResponse_ReturnsStatus()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<RelayApiClient>(StatusJson);
+        (RelayApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<RelayApiClient>(StatusJson);
 
         // Act
         TorBoxResponse<RelayStatus> result = await client.GetStatusAsync();
@@ -51,7 +51,7 @@ public sealed class RelayApiClientTests
     public async Task CheckForInactiveAsync_WithValidParams_SendsCorrectUrl()
     {
         // Arrange
-        var (client, handler) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
+        (RelayApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
 
         // Act
         TorBoxResponse<InactiveCheckResult> result = await client.CheckForInactiveAsync(new CheckInactiveOptions { AuthId = "auth-id-123", TorrentId = 42 });
@@ -67,9 +67,19 @@ public sealed class RelayApiClientTests
     public async Task CheckForInactiveAsync_WithNullAuthId_ThrowsArgumentNullException()
     {
         // Arrange
-        var (client, _) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
+        (RelayApiClient client, _) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckForInactiveAsync(null!));
+    }
+
+    [Fact]
+    public async Task CheckForInactiveAsync_WithEmptyAuthId_ThrowsArgumentException()
+    {
+        // Arrange
+        (RelayApiClient client, _) = ClientTestBase.CreateClient<RelayApiClient>(InactiveCheckJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.CheckForInactiveAsync(new CheckInactiveOptions { AuthId = string.Empty, TorrentId = 1 }));
     }
 }

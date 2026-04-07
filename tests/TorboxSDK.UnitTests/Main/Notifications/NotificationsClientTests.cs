@@ -166,4 +166,34 @@ public sealed class NotificationsClientTests
         Assert.Contains("email=test%40test.com", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
     }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithNullOptions_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!));
+    }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithEmptyAuthId_ThrowsArgumentException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = string.Empty, Email = "test@test.com" }));
+    }
+
+    [Fact]
+    public async Task GetIntercomHashAsync_WithEmptyEmail_ThrowsArgumentException()
+    {
+        // Arrange
+        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = string.Empty }));
+    }
 }
