@@ -42,14 +42,16 @@ The Main API is exposed through 11 resource-oriented clients under `ITorBoxClien
 
 Interface: `IGeneralClient`
 
-General service endpoints for root status, platform statistics, and speedtest file discovery.
+General service endpoints for root status, platform statistics, speedtest file discovery, and changelog retrieval.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
 | `GetUpStatusAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets Main API status data. |
 | `GetStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets current aggregate TorBox statistics. |
-| `Get30DayStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets statistics for the last 30 days. |
-| `GetSpeedtestFilesAsync` | `options: SpeedtestOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets speedtest file data using optional region, IP, and test length options. |
+| `Get30DayStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<DailyStats>>` | Gets daily statistics snapshots for the last 30 days. |
+| `GetSpeedtestFilesAsync` | `options: SpeedtestOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<SpeedtestServer>>` | Gets speedtest server data using optional region, IP, and test length options. |
+| `GetChangelogsRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the changelog RSS feed URL or content reference. |
+| `GetChangelogsJsonAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Changelog>>` | Gets changelog entries as JSON data. |
 
 ### Torrents Client
 
@@ -127,7 +129,7 @@ Authentication, account profile, referrals, subscriptions, transactions, search 
 | `GetReferralDataAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<ReferralData>` | Gets referral totals and referral code data. |
 | `GetSubscriptionsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Subscription>>` | Gets the user's subscriptions. |
 | `GetTransactionsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Transaction>>` | Gets the user's transactions. |
-| `GetTransactionPdfAsync` | `transactionId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets PDF data or a PDF link for a transaction. |
+| `GetTransactionPdfAsync` | `transactionId: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets PDF data or a PDF link for a transaction. |
 | `AddSearchEnginesAsync` | `request: AddSearchEnginesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Adds search engines to the user's configuration. |
 | `GetSearchEnginesAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<SearchEngine>>` | Gets configured search engines. |
 | `ModifySearchEnginesAsync` | `request: ModifySearchEnginesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Replaces or updates the configured search engine list. |
@@ -138,7 +140,7 @@ Authentication, account profile, referrals, subscriptions, transactions, search 
 
 Interface: `INotificationsClient`
 
-Notification feeds, notification management, test notifications, and changelog retrieval.
+Notification feeds, notification management, and test notifications.
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
@@ -147,9 +149,7 @@ Notification feeds, notification management, test notifications, and changelog r
 | `ClearAllNotificationsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse` | Clears all notifications. |
 | `ClearNotificationAsync` | `notificationId: long`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Clears a specific notification by ID. |
 | `SendTestNotificationAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse` | Sends a test notification. |
-| `GetIntercomHashAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IntercomHash>` | Gets the authenticated user's Intercom hash. |
-| `GetChangelogsRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the changelog RSS feed URL or content reference. |
-| `GetChangelogsJsonAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Changelog>>` | Gets changelog entries as JSON data. |
+| `GetIntercomHashAsync` | `authId: string`<br>`email: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntercomHash>` | Gets the authenticated user's Intercom hash. |
 
 ### RSS Client
 
@@ -184,7 +184,7 @@ OAuth integration management and third-party job creation for cloud and file-hos
 
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
-| `GetOAuthMeAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<OAuthIntegration>>` | Gets connected OAuth integrations. |
+| `GetOAuthMeAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyDictionary<string, bool>>` | Gets connected OAuth providers keyed by provider name. |
 | `CreateGoogleDriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Google Drive integration job. |
 | `CreateDropboxJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a Dropbox integration job. |
 | `CreateOnedriveJobAsync` | `request: CreateIntegrationJobRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IntegrationJob>` | Creates a OneDrive integration job. |
@@ -200,7 +200,7 @@ OAuth integration management and third-party job creation for cloud and file-hos
 | `OAuthSuccessAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets OAuth success data for a provider. |
 | `OAuthRegisterAsync` | `provider: string`<br>`request: OAuthRegisterRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Registers an OAuth integration for a provider. |
 | `OAuthUnregisterAsync` | `provider: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse` | Unregisters an OAuth integration for a provider. |
-| `GetLinkedDiscordRolesAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets linked Discord role data. |
+| `GetLinkedDiscordRolesAsync` | `request: LinkedRolesRequest`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<object>` | Gets linked Discord role data. |
 
 ### Vendors Client
 
@@ -239,14 +239,14 @@ The Search API covers tutorials, torrent search, Usenet search, metadata search,
 | Method | Parameters | Return type | Description |
 |---|---|---|---|
 | `GetTorrentSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets torrent search tutorial content. |
-| `SearchTorrentsAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<TorrentSearchResult>>` | Searches torrent indexers. |
-| `GetTorrentByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentSearchResult>` | Gets a torrent search result by ID. |
+| `SearchTorrentsAsync` | `query: string`<br>`options: TorrentSearchOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentSearchResponse>` | Searches torrent indexers and returns metadata plus matching torrents. |
+| `GetTorrentByIdAsync` | `id: string`<br>`options: TorrentSearchOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<TorrentSearchResult>` | Gets a torrent search result by ID. |
 | `GetUsenetSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets Usenet search tutorial content. |
-| `SearchUsenetAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<UsenetSearchResult>>` | Searches Usenet indexers. |
-| `GetUsenetByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetSearchResult>` | Gets a Usenet search result by ID. |
+| `SearchUsenetAsync` | `query: string`<br>`options: UsenetSearchOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetSearchResponse>` | Searches Usenet indexers and returns metadata plus matching NZBs. |
+| `GetUsenetByIdAsync` | `id: string`<br>`options: UsenetSearchOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<UsenetSearchResult>` | Gets a Usenet search result by ID. |
 | `DownloadUsenetAsync` | `id: string`<br>`guid: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Downloads NZB data for a Usenet result. |
 | `GetMetaSearchTutorialAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets metadata search tutorial content. |
-| `SearchMetaAsync` | `query: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<MetaSearchResult>>` | Searches metadata entries. |
+| `SearchMetaAsync` | `query: string`<br>`options: MetaSearchOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<MetaSearchResult>>` | Searches metadata entries. |
 | `GetMetaByIdAsync` | `id: string`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<MetaSearchResult>` | Gets a metadata search result by ID. |
 | `SearchTorznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Torznab-compatible endpoint and returns XML. |
 | `SearchNewznabAsync` | `query: string`<br>`apiKey: string? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Queries the Newznab-compatible endpoint and returns XML. |
@@ -341,6 +341,11 @@ Type: `record`
 | `S3Path` | `string?` | Backing S3 path, when available. |
 | `ShortName` | `string?` | Short display name. |
 | `Size` | `long` | File size in bytes. |
+| `Hash` | `string?` | Torrent or content hash for the file, when available. |
+| `Zipped` | `bool` | Whether the file is provided as a zip payload. |
+| `Infected` | `bool` | Whether the file has been flagged as infected. |
+| `AbsolutePath` | `string?` | Absolute server-side path, when available. |
+| `OpensubtitlesHash` | `string?` | OpenSubtitles hash, when available. |
 
 ### TorBoxSDK.Models.Torrents
 
@@ -375,6 +380,20 @@ Type: `record`
 | `InactiveCheck` | `long` | Inactive check interval in seconds. |
 | `Server` | `int` | Hosting server identifier. |
 | `Files` | `IReadOnlyList<DownloadFile>` | Files contained in the torrent. |
+| `DownloadPath` | `string?` | Download path identifier, when available. |
+| `Tracker` | `string?` | Tracker URL, when available. |
+| `TotalUploaded` | `long` | Total bytes uploaded. |
+| `TotalDownloaded` | `long` | Total bytes downloaded. |
+| `Cached` | `bool` | Whether the torrent is cached on the server. |
+| `Owner` | `string?` | Owner UUID, when available. |
+| `SeedTorrent` | `bool` | Whether the torrent should seed after completion. |
+| `AllowZipped` | `bool` | Whether zipped downloads are allowed. |
+| `LongTermSeeding` | `bool` | Whether long-term seeding is enabled. |
+| `TrackerMessage` | `string?` | Tracker status message, when available. |
+| `CachedAt` | `DateTimeOffset?` | Timestamp when the torrent was cached. |
+| `IsPrivate` | `bool` | Whether the torrent uses a private tracker. |
+| `AlternativeHashes` | `IReadOnlyList<string>` | Alternative hashes associated with the torrent. |
+| `Tags` | `IReadOnlyList<string>` | Tags associated with the torrent. |
 
 #### `TorrentFile`
 
@@ -411,6 +430,7 @@ Type: `record`
 | `Seed` | `SeedPreference?` | Preferred seeding behavior. |
 | `AllowZip` | `bool?` | Whether zip downloads should be allowed. |
 | `AsQueued` | `bool?` | Whether to add as queued instead of starting immediately. |
+| `AddOnlyIfCached` | `bool?` | Whether to only add if cached. |
 
 #### `ControlTorrentRequest`
 
@@ -519,7 +539,9 @@ Type: `record`
 | `File` | `byte[]?` | Raw NZB file bytes; sent separately from JSON. |
 | `Name` | `string?` | Optional override name. |
 | `Password` | `string?` | Archive password, if required. |
-| `PostProcessing` | `string?` | Post-processing mode. |
+| `PostProcessing` | `int?` | Post-processing mode flag (-1 = default). |
+| `AsQueued` | `bool?` | Whether to add as queued. |
+| `AddOnlyIfCached` | `bool?` | Whether to only add if cached. |
 
 #### `ControlUsenetDownloadRequest`
 
@@ -601,6 +623,8 @@ Type: `record`
 | `Link` | `string?` | Direct URL to download. |
 | `Password` | `string?` | Password required by the hoster, if any. |
 | `Name` | `string?` | Optional override name. |
+| `AsQueued` | `bool?` | Whether to add as queued. |
+| `AddOnlyIfCached` | `bool?` | Whether to only add if cached. |
 
 #### `ControlWebDownloadRequest`
 
@@ -649,10 +673,21 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
+| `Id` | `int` | Hoster identifier. |
 | `Name` | `string` | Hoster name. |
+| `Domains` | `IReadOnlyList<string>` | Domains handled by the hoster. |
+| `Url` | `string?` | Hoster website URL. |
+| `Icon` | `string?` | Hoster icon URL. |
 | `DailyBandwidthLimit` | `long?` | Daily bandwidth limit in bytes. |
 | `DailyBandwidthUsed` | `long?` | Daily bandwidth already used in bytes. |
+| `DailyLinkLimit` | `int` | Daily link limit. |
+| `DailyLinkUsed` | `int` | Daily links already used. |
+| `PerLinkSizeLimit` | `long?` | Per-link size limit in bytes. |
 | `Status` | `bool` | Whether the hoster is operational. |
+| `Type` | `string?` | Hoster type string. |
+| `Note` | `string?` | Hoster note, when provided. |
+| `Nsfw` | `bool` | Whether the hoster is marked NSFW. |
+| `Regex` | `string?` | URL-matching regex, when available. |
 
 ### TorBoxSDK.Models.User
 
@@ -663,17 +698,29 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `Id` | `long` | User identifier. |
-| `Email` | `string?` | User email address. |
-| `Plan` | `int` | Numeric plan identifier. |
-| `TotalDownloaded` | `long` | Total bytes downloaded. |
+| `AuthId` | `string?` | User auth identifier. |
 | `CreatedAt` | `DateTimeOffset?` | Account creation timestamp. |
 | `UpdatedAt` | `DateTimeOffset?` | Last update timestamp. |
+| `Plan` | `int` | Numeric plan identifier. |
+| `TotalDownloaded` | `long` | Total bytes downloaded. |
+| `Customer` | `string?` | Payment-provider customer identifier. |
 | `IsSubscribed` | `bool` | Whether the user has an active subscription. |
 | `PremiumExpiresAt` | `DateTimeOffset?` | Premium expiration timestamp. |
 | `CooldownUntil` | `DateTimeOffset?` | Cooldown expiration timestamp. |
-| `AuthId` | `string?` | User auth identifier. |
-| `UserReferralCode` | `string?` | User referral code. |
+| `Email` | `string?` | User email address. |
+| `UserReferral` | `string?` | User referral code or identifier. |
 | `BaseEmail` | `string?` | Base email without aliases. |
+| `TotalBytesDownloaded` | `long` | Total bytes downloaded by the user. |
+| `TotalBytesUploaded` | `long` | Total bytes uploaded by the user. |
+| `TorrentsDownloaded` | `long` | Number of torrent downloads completed. |
+| `WebDownloadsDownloaded` | `long` | Number of web downloads completed. |
+| `UsenetDownloadsDownloaded` | `long` | Number of Usenet downloads completed. |
+| `AdditionalConcurrentSlots` | `int` | Additional concurrent download slots. |
+| `LongTermSeeding` | `bool` | Whether long-term seeding is enabled. |
+| `LongTermStorage` | `bool` | Whether long-term storage is enabled. |
+| `IsVendor` | `bool` | Whether the user is a vendor. |
+| `VendorId` | `string?` | Vendor identifier, when applicable. |
+| `PurchasesReferred` | `int` | Number of purchases referred by the user. |
 | `Settings` | `UserSettings?` | Included user settings, if requested. |
 
 #### `UserSettings`
@@ -682,11 +729,58 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `SaveMagnetHistory` | `bool?` | Whether magnet history is saved. |
-| `DownloadBehavior` | `string?` | Default download behavior. |
-| `TorrentSeedPreference` | `int?` | Numeric torrent seed preference. |
-| `DefaultTorrentName` | `string?` | Default torrent name. |
-| `EnableNotifications` | `bool?` | Whether notifications are enabled. |
+| `EmailNotifications` | `bool?` | Whether email notifications are enabled. |
+| `WebNotifications` | `bool?` | Whether web notifications are enabled. |
+| `MobileNotifications` | `bool?` | Whether mobile notifications are enabled. |
+| `RssNotifications` | `bool?` | Whether RSS notifications are enabled. |
+| `DiscordNotifications` | `bool?` | Whether Discord notifications are enabled. |
+| `JdownloaderNotifications` | `bool?` | Whether JDownloader notifications are enabled. |
+| `WebhookNotifications` | `bool?` | Whether webhook notifications are enabled. |
+| `TelegramNotifications` | `bool?` | Whether Telegram notifications are enabled. |
+| `WebhookUrl` | `string?` | Webhook URL, when configured. |
+| `TelegramId` | `string?` | Telegram identifier, when configured. |
+| `DiscordId` | `string?` | Discord identifier, when configured. |
+| `StremioQuality` | `IReadOnlyList<int>?` | Preferred Stremio quality filters. |
+| `StremioResolution` | `IReadOnlyList<int>?` | Preferred Stremio resolution filters. |
+| `StremioLanguage` | `IReadOnlyList<int>?` | Preferred Stremio language filters. |
+| `StremioCache` | `IReadOnlyList<int>?` | Preferred Stremio cache filters. |
+| `StremioSizeLower` | `long?` | Minimum Stremio size filter in bytes. |
+| `StremioSizeUpper` | `long?` | Maximum Stremio size filter in bytes. |
+| `StremioAllowAdult` | `bool?` | Whether adult content is allowed in Stremio. |
+| `StremioSeedTorrents` | `int?` | Stremio torrent seeding preference. |
+| `StremioSort` | `string?` | Stremio sort preference. |
+| `StremioUseCustomSearchEngines` | `bool?` | Whether Stremio uses custom search engines. |
+| `StremioResultSort` | `string?` | Stremio result sort preference. |
+| `StremioLegacyYourMedia` | `bool?` | Whether legacy "your media" behavior is enabled. |
+| `StremioOnlyYourMediaStreams` | `bool?` | Whether only "your media" streams are shown. |
+| `StremioDisableYourMediaStreams` | `bool?` | Whether "your media" streams are disabled. |
+| `StremioLimitPerResolutionTorrent` | `int?` | Torrent result limit per resolution in Stremio. |
+| `StremioLimitPerResolutionUsenet` | `int?` | Usenet result limit per resolution in Stremio. |
+| `StremioTorrentSeedersCutoff` | `int?` | Seeder cutoff used by Stremio torrent results. |
+| `StremioWaitForDownloadUsenet` | `bool?` | Whether Stremio waits for Usenet downloads. |
+| `StremioWaitForDownloadTorrent` | `bool?` | Whether Stremio waits for torrent downloads. |
+| `StremioDisableFilteredNote` | `bool?` | Whether the filtered-note banner is disabled. |
+| `StremioEmojiInDescription` | `bool?` | Whether emoji is shown in Stremio descriptions. |
+| `StremioAllowZipped` | `bool?` | Whether Stremio allows zipped downloads. |
+| `SeedTorrents` | `int?` | Torrent seeding preference. |
+| `AllowZipped` | `bool?` | Whether zipped downloads are allowed. |
+| `CdnSelection` | `string?` | Preferred CDN selection. |
+| `GoogleDriveFolderId` | `string?` | Google Drive folder ID. |
+| `OnedriveSavePath` | `string?` | OneDrive save path. |
+| `OnefichierFolderId` | `string?` | 1Fichier folder ID. |
+| `GofileFolderId` | `string?` | GoFile folder ID. |
+| `PixeldrainApiKey` | `string?` | Pixeldrain API key. |
+| `OnefichierApiKey` | `string?` | 1Fichier API key. |
+| `GofileApiKey` | `string?` | GoFile API key. |
+| `MegaEmail` | `string?` | MEGA email address. |
+| `MegaPassword` | `string?` | MEGA password. |
+| `PatreonId` | `string?` | Patreon identifier. |
+| `DownloadSpeedInTab` | `bool?` | Whether download speed is shown in the browser tab. |
+| `ShowTrackerInTorrents` | `bool?` | Whether tracker information is shown in torrent details. |
+| `DashboardFilter` | `DashboardFilter?` | Saved dashboard filter configuration. |
+| `WebdavUseLocalFiles` | `bool?` | Whether WebDAV uses local files. |
+| `WebdavUseFolderView` | `bool?` | Whether WebDAV uses folder view. |
+| `WebdavFlatten` | `bool?` | Whether WebDAV paths are flattened. |
 
 #### `Subscription`
 
@@ -708,12 +802,10 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `Id` | `long` | Transaction identifier. |
+| `At` | `DateTimeOffset?` | Transaction timestamp. |
+| `Type` | `string?` | Payment-provider or transaction type. |
 | `Amount` | `double` | Transaction amount. |
-| `Currency` | `string?` | Currency code. |
-| `Description` | `string?` | Transaction description. |
-| `Status` | `string?` | Transaction status. |
-| `CreatedAt` | `DateTimeOffset?` | Creation timestamp. |
+| `TransactionId` | `string?` | External transaction identifier. |
 
 #### `ReferralData`
 
@@ -721,8 +813,9 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `TotalReferrals` | `int` | Number of referrals. |
+| `ReferredAccounts` | `int` | Number of referred accounts. |
 | `ReferralCode` | `string?` | Referral code. |
+| `PurchasesReferred` | `int` | Number of purchases made by referred accounts. |
 
 #### `DeviceCodeResponse`
 
@@ -731,10 +824,23 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `DeviceCode` | `string?` | Device code used for polling. |
-| `UserCode` | `string?` | User-facing verification code. |
+| `Code` | `string?` | User-facing verification code. |
 | `VerificationUrl` | `string?` | URL where the user completes auth. |
-| `ExpiresIn` | `int` | Device code lifetime in seconds. |
+| `FriendlyVerificationUrl` | `string?` | Short verification URL, when available. |
+| `ExpiresAt` | `DateTimeOffset?` | Device code expiration timestamp. |
 | `Interval` | `int` | Polling interval in seconds. |
+
+#### `DashboardFilter`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Active` | `bool?` | Whether active items are shown. |
+| `Cached` | `bool?` | Whether cached items are shown. |
+| `Queued` | `bool?` | Whether queued items are shown. |
+| `Private` | `bool?` | Whether private items are shown. |
+| `Borrowed` | `bool?` | Whether borrowed items are shown. |
 
 #### `RefreshTokenRequest`
 
@@ -758,7 +864,8 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `Confirmation` | `string?` | Confirmation text required for deletion. |
+| `SessionToken` | `string` | Session token from the website. |
+| `ConfirmationCode` | `int` | Confirmation code sent to email. |
 
 #### `AddReferralRequest`
 
@@ -783,7 +890,10 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `SearchEngines` | `IReadOnlyList<string>` | Search engines to add. |
+| `Type` | `string?` | Search engine type (e.g., "prowlarr", "jackett"). |
+| `Url` | `string?` | Search engine URL. |
+| `Apikey` | `string?` | API key. |
+| `DownloadType` | `string?` | Download type ("torrents" or "usenet"). |
 
 #### `ModifySearchEnginesRequest`
 
@@ -791,7 +901,11 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `SearchEngines` | `IReadOnlyList<string>` | Search engines to set. |
+| `Id` | `long` | Search engine ID. |
+| `Type` | `string?` | Search engine type. |
+| `Url` | `string?` | Search engine URL. |
+| `Apikey` | `string?` | API key. |
+| `DownloadType` | `string?` | Download type. |
 
 #### `ControlSearchEnginesRequest`
 
@@ -799,8 +913,9 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `Operation` | `string?` | Operation to perform. |
-| `SearchEngines` | `IReadOnlyList<string>` | Search engines the operation applies to. |
+| `Operation` | `string` | Operation to perform ("delete", "enable", "disable", "check"). |
+| `Id` | `long?` | Search engine ID. |
+| `All` | `bool?` | Whether to apply to all. |
 
 #### `EditSettingsRequest`
 
@@ -808,11 +923,7 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `SaveMagnetHistory` | `bool?` | Updated magnet-history setting. |
-| `DownloadBehavior` | `string?` | Updated download behavior. |
-| `TorrentSeedPreference` | `int?` | Updated numeric seed preference. |
-| `DefaultTorrentName` | `string?` | Updated default torrent name. |
-| `EnableNotifications` | `bool?` | Updated notifications setting. |
+| `DashboardFilter` | `DashboardFilter?` | Saved dashboard filter configuration. |
 
 ### TorBoxSDK.Models.Notifications
 
@@ -823,25 +934,13 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `Id` | `long` | Notification identifier. |
+| `AuthId` | `string?` | Owning user auth identifier. |
 | `Title` | `string?` | Notification title. |
 | `Message` | `string?` | Notification body. |
 | `CreatedAt` | `DateTimeOffset?` | Creation timestamp. |
-| `Read` | `bool` | Whether the notification has been read. |
-
-#### `Stats`
-
-Type: `record`
-
-| Property | Type | Description |
-|---|---|---|
-| `ActiveTorrents` | `int` | Number of active torrents. |
-| `ActiveUsenet` | `int` | Number of active Usenet downloads. |
-| `ActiveWebDownloads` | `int` | Number of active web downloads. |
-| `TotalTorrentsDownloaded` | `long` | Total completed torrents. |
-| `TotalUsenetDownloaded` | `long` | Total completed Usenet downloads. |
-| `TotalWebDownloadsDownloaded` | `long` | Total completed web downloads. |
-| `TotalBytesDownloaded` | `long` | Total bytes downloaded. |
-| `TotalBytesUploaded` | `long` | Total bytes uploaded. |
+| `Action` | `string?` | Action type associated with the notification. |
+| `ActionData` | `string?` | Action payload, such as a URL. |
+| `ActionCta` | `string?` | Call-to-action label, when available. |
 
 #### `IntercomHash`
 
@@ -850,17 +949,6 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `Hash` | `string?` | Intercom identity hash. |
-
-#### `Changelog`
-
-Type: `record`
-
-| Property | Type | Description |
-|---|---|---|
-| `Id` | `long` | Changelog identifier. |
-| `Title` | `string?` | Changelog title. |
-| `Body` | `string?` | Changelog body. |
-| `CreatedAt` | `DateTimeOffset?` | Creation timestamp. |
 
 ### TorBoxSDK.Models.Rss
 
@@ -922,22 +1010,15 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `RssFeedId` | `long` | RSS feed ID to modify. |
-| `Name` | `string?` | Updated name. |
-| `RegexFilter` | `string?` | Updated include filter. |
-| `RegexFilterExclude` | `string?` | Updated exclude filter. |
-| `ScanInterval` | `int?` | Updated poll interval in minutes. |
+| `Name` | `string?` | New name. |
+| `DoRegex` | `string?` | Include regex filter. |
+| `DontRegex` | `string?` | Exclude regex filter. |
+| `ScanInterval` | `int?` | Scan interval in minutes. |
+| `DontOlderThan` | `int?` | Max age in days. |
+| `RssType` | `string?` | RSS type. |
+| `TorrentSeeding` | `int?` | Seeding preference. |
 
 ### TorBoxSDK.Models.Integrations
-
-#### `OAuthIntegration`
-
-Type: `record`
-
-| Property | Type | Description |
-|---|---|---|
-| `Provider` | `string?` | OAuth provider name. |
-| `Connected` | `bool` | Whether the integration is connected. |
-| `CreatedAt` | `DateTimeOffset?` | Connection timestamp. |
 
 #### `IntegrationJob`
 
@@ -962,8 +1043,8 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `DownloadId` | `long?` | Download ID to export or sync. |
-| `DownloadType` | `string?` | Download type string. |
+| `DownloadId` | `long?` | Download identifier (serialized as `id`). |
+| `DownloadType` | `string?` | Download type string (serialized as `type`). |
 | `FileId` | `long?` | Specific file ID. |
 | `Zip` | `bool?` | Whether to zip before integration. |
 
@@ -973,9 +1054,8 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
-| `Provider` | `string?` | Provider name. |
-| `Code` | `string?` | OAuth authorization code. |
-| `RedirectUri` | `string?` | Redirect URI used during auth. |
+| `Token` | `string` | OAuth access token. |
+| `RefreshToken` | `string` | OAuth refresh token. |
 
 ### TorBoxSDK.Models.Vendors
 
@@ -1034,14 +1114,14 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `Id` | `long` | Queued download identifier. |
-| `AuthId` | `string?` | Owning user auth identifier. |
-| `Name` | `string?` | Queued item name. |
-| `DownloadType` | `string?` | Queued download type string. |
-| `Magnet` | `string?` | Magnet URI, when applicable. |
-| `Hash` | `string?` | Content hash. |
-| `Size` | `long` | Size in bytes. |
 | `CreatedAt` | `DateTimeOffset?` | Queue timestamp. |
-| `Status` | `string?` | Queue status string. |
+| `Magnet` | `string?` | Magnet URI, when applicable. |
+| `TorrentFile` | `string?` | Torrent-file path, when applicable. |
+| `Hash` | `string?` | Content hash. |
+| `Name` | `string?` | Queued item name. |
+| `Type` | `string?` | Queued download type string. |
+| `NameOverride` | `string?` | Name override applied to the queued item. |
+| `SeedTorrentOverride` | `int?` | Seed-torrent override value. |
 
 #### `ControlQueuedRequest`
 
@@ -1072,6 +1152,21 @@ Type: `record`
 | `LastKnownSeeders` | `int?` | Last recorded seeder count. |
 | `LastKnownLeechers` | `int?` | Last recorded leecher count. |
 | `UpdatedAt` | `DateTimeOffset?` | Last update timestamp. |
+| `Owned` | `bool?` | Whether the torrent is already owned by the user. |
+| `Cached` | `bool?` | Whether the torrent is cached. |
+| `Website` | `string?` | Website URL of the source indexer. |
+| `Id` | `string?` | Result identifier. |
+| `Quality` | `string?` | Quality label, when available. |
+| `RawTitle` | `string?` | Raw unparsed title from the indexer. |
+
+#### `TorrentSearchResponse`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Metadata` | `MetaSearchResult?` | Metadata associated with the search query. |
+| `Torrents` | `IReadOnlyList<TorrentSearchResult>` | Matching torrent results. |
 
 #### `UsenetSearchResult`
 
@@ -1094,14 +1189,51 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
+| `GlobalId` | `string?` | Global metadata identifier. |
 | `Id` | `string?` | Metadata identifier. |
-| `Name` | `string?` | Media title. |
-| `Type` | `string?` | Media type string. |
-| `Year` | `int?` | Release year. |
 | `ImdbId` | `string?` | IMDb identifier. |
 | `TmdbId` | `long?` | TMDb identifier. |
-| `Poster` | `string?` | Poster image URL. |
-| `Overview` | `string?` | Media overview or synopsis. |
+| `TvdbId` | `long?` | TVDb identifier. |
+| `TvmazeId` | `long?` | TVmaze identifier. |
+| `TraktId` | `long?` | Trakt identifier. |
+| `MalId` | `long?` | MyAnimeList identifier. |
+| `AnilistId` | `long?` | AniList identifier. |
+| `KitsuId` | `long?` | Kitsu identifier. |
+| `SimklId` | `long?` | Simkl identifier. |
+| `Title` | `string?` | Media title. |
+| `Titles` | `IReadOnlyList<string>` | Alternate titles. |
+| `Keywords` | `IReadOnlyList<string>` | Keywords associated with the media item. |
+| `Genres` | `IReadOnlyList<string>` | Media genres. |
+| `Actors` | `IReadOnlyList<string>` | Featured actors. |
+| `ReleaseYears` | `int?` | Release year. |
+| `MediaType` | `string?` | Media type string. |
+| `Characters` | `IReadOnlyList<string>` | Character names. |
+| `Link` | `string?` | External metadata link. |
+| `Description` | `string?` | Media overview or synopsis. |
+| `Rating` | `double?` | Rating value, when available. |
+| `Languages` | `IReadOnlyList<string>` | Available languages. |
+| `ContentRating` | `string?` | Content rating, when available. |
+| `Trailer` | `MetaTrailer?` | Trailer metadata, when available. |
+| `Image` | `string?` | Poster or cover image URL. |
+
+#### `MetaTrailer`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `YoutubeId` | `string?` | YouTube video identifier. |
+| `FullUrl` | `string?` | Full trailer URL. |
+| `Thumbnail` | `string?` | Trailer thumbnail URL. |
+
+#### `UsenetSearchResponse`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Metadata` | `MetaSearchResult?` | Metadata associated with the search query. |
+| `Nzbs` | `IReadOnlyList<UsenetSearchResult>` | Matching Usenet results. |
 
 #### `MediaType`
 
@@ -1128,6 +1260,16 @@ Type: `record`
 | Property | Type | Description |
 |---|---|---|
 | `Status` | `string?` | Relay status string. |
+| `Data` | `RelayData?` | Relay worker and connection metrics. |
+
+#### `RelayData`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `CurrentOnline` | `int` | Number of currently online relay connections. |
+| `CurrentWorkers` | `int` | Number of currently active relay workers. |
 
 #### `InactiveCheckResult`
 
@@ -1140,6 +1282,61 @@ Type: `record`
 | `LastActive` | `DateTimeOffset?` | Last active timestamp. |
 
 ### TorBoxSDK.Models.General
+
+#### `Stats`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `TotalUsers` | `long` | Total registered users on the platform. |
+| `TotalServers` | `int` | Total available servers. |
+
+#### `Changelog`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Name` | `string` | Changelog version or entry name. |
+| `Html` | `string?` | HTML content of the changelog entry. |
+
+#### `DailyStats`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `TotalDownloads` | `long` | Total downloads for the snapshot. |
+| `TotalUsers` | `long` | Total users for the snapshot. |
+| `TotalBytesDownloaded` | `long` | Total bytes downloaded for the snapshot. |
+| `TotalBytesUploaded` | `long` | Total bytes uploaded for the snapshot. |
+| `TotalBytesEgressed` | `long` | Total bytes egressed for the snapshot. |
+| `TotalServers` | `int` | Total servers for the snapshot. |
+| `CreatedAt` | `DateTimeOffset?` | Snapshot timestamp. |
+
+#### `SpeedtestServer`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Region` | `string?` | Server region identifier. |
+| `Name` | `string?` | Server display name. |
+| `Domain` | `string?` | Server base domain. |
+| `Path` | `string?` | Relative path to the test file. |
+| `Url` | `string?` | Full speedtest URL. |
+| `Closest` | `bool` | Whether this is the closest server. |
+| `Coordinates` | `ServerCoordinates?` | Geographic coordinates, when available. |
+
+#### `ServerCoordinates`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Lat` | `double` | Latitude. |
+| `Lng` | `double` | Longitude. |
 
 #### `SpeedtestOptions`
 

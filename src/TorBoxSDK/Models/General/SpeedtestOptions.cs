@@ -22,9 +22,9 @@ public sealed record SpeedtestOptions
     public string? Region { get; init; }
 
     /// <summary>
-    /// Gets the test length in seconds,
+    /// Gets the test length value (e.g. "short", "long"),
     /// or <see langword="null"/> to use the default.
     /// </summary>
     [JsonPropertyName("test_length")]
-    public int? TestLength { get; init; }
+    public string? TestLength { get; init; }
 }

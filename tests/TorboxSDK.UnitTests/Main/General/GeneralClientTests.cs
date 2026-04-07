@@ -1,7 +1,6 @@
 using TorBoxSDK.Main.General;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
-using TorBoxSDK.Models.Notifications;
 using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.General;
@@ -23,14 +22,8 @@ public sealed class GeneralClientTests
             "error": null,
             "detail": "Found.",
             "data": {
-                "active_torrents": 5,
-                "active_usenet": 2,
-                "active_web_downloads": 1,
-                "total_torrents_downloaded": 100,
-                "total_usenet_downloaded": 50,
-                "total_web_downloads_downloaded": 25,
-                "total_bytes_downloaded": 107374182400,
-                "total_bytes_uploaded": 53687091200
+                "total_users": 479317,
+                "total_servers": 59
             }
         }
         """;
@@ -44,6 +37,47 @@ public sealed class GeneralClientTests
         }
         """;
 
+    private const string DailyStatsJson = """
+        {
+            "success": true,
+            "error": null,
+            "detail": "Found.",
+            "data": [
+                {
+                    "total_downloads": 17639196,
+                    "total_users": 431645,
+                    "total_bytes_downloaded": 41726332351147853,
+                    "total_bytes_uploaded": 41013999126964857,
+                    "total_bytes_egressed": 322387277112545389,
+                    "total_servers": 59,
+                    "created_at": "2026-03-07T21:11:13Z"
+                }
+            ]
+        }
+        """;
+
+    private const string SpeedtestJson = """
+        {
+            "success": true,
+            "error": null,
+            "detail": "Found.",
+            "data": [
+                {
+                    "region": "ceur",
+                    "name": "nexus-067",
+                    "domain": "https://nexus-067.ceur.tb-cdn.st",
+                    "path": "/dld/100MB.bin",
+                    "url": "https://nexus-067.ceur.tb-cdn.st/dld/100MB.bin",
+                    "closest": true,
+                    "coordinates": {
+                        "lat": 48.5833,
+                        "lng": 7.75
+                    }
+                }
+            ]
+        }
+        """;
+
     private const string ChangelogsJson = """
         {
             "success": true,
@@ -51,10 +85,8 @@ public sealed class GeneralClientTests
             "detail": "Found.",
             "data": [
                 {
-                    "id": 1,
-                    "title": "v2.0 Release",
-                    "body": "Major update",
-                    "created_at": "2024-01-01T00:00:00Z"
+                    "name": "v8.4.3",
+                    "html": "Major update"
                 }
             ]
         }
@@ -101,16 +133,18 @@ public sealed class GeneralClientTests
     public async Task Get30DayStatsAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StatsJson);
+        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(DailyStatsJson);
 
         // Act
-        TorBoxResponse<Stats> result = await client.Get30DayStatsAsync();
+        TorBoxResponse<IReadOnlyList<DailyStats>> result = await client.Get30DayStatsAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.Contains("stats/30days", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.NotEmpty(result.Data);
     }
 
     // --- GetSpeedtestFilesAsync ---
@@ -119,23 +153,25 @@ public sealed class GeneralClientTests
     public async Task GetSpeedtestFilesAsync_WithNoOptions_SendsGetRequest()
     {
         // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
+        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
 
         // Act
-        await client.GetSpeedtestFilesAsync();
+        TorBoxResponse<IReadOnlyList<SpeedtestServer>> result = await client.GetSpeedtestFilesAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.Contains("speedtest", handler.LastRequest.RequestUri!.ToString());
+        Assert.NotNull(result.Data);
+        Assert.NotEmpty(result.Data);
     }
 
     [Fact]
     public async Task GetSpeedtestFilesAsync_WithOptions_IncludesInQueryString()
     {
         // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
-        SpeedtestOptions options = new() { UserIp = "1.2.3.4", Region = "us-east", TestLength = 10 };
+        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
+        SpeedtestOptions options = new() { UserIp = "1.2.3.4", Region = "us-east", TestLength = "short" };
 
         // Act
         await client.GetSpeedtestFilesAsync(options);
@@ -145,14 +181,14 @@ public sealed class GeneralClientTests
         string url = handler.LastRequest.RequestUri!.ToString();
         Assert.Contains("user_ip=1.2.3.4", url);
         Assert.Contains("region=us-east", url);
-        Assert.Contains("test_length=10", url);
+        Assert.Contains("test_length=short", url);
     }
 
     [Fact]
     public async Task GetSpeedtestFilesAsync_WithNullOptions_OmitsQueryParams()
     {
         // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
+        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
 
         // Act
         await client.GetSpeedtestFilesAsync(null);

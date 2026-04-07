@@ -12,4 +12,11 @@ public sealed record RelayStatus
     /// </summary>
     [JsonPropertyName("status")]
     public string? Status { get; init; }
+
+    /// <summary>
+    /// Gets the relay data containing worker and connection information,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("data")]
+    public RelayData? Data { get; init; }
 }

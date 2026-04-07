@@ -8,10 +8,18 @@ namespace TorBoxSDK.Models.User;
 public sealed record Transaction
 {
     /// <summary>
-    /// Gets the unique identifier of the transaction.
+    /// Gets the date and time when the transaction occurred,
+    /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("id")]
-    public long Id { get; init; }
+    [JsonPropertyName("at")]
+    public DateTimeOffset? At { get; init; }
+
+    /// <summary>
+    /// Gets the payment provider type (e.g. sellix, nowpayments),
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("type")]
+    public string? Type { get; init; }
 
     /// <summary>
     /// Gets the transaction amount.
@@ -20,30 +28,9 @@ public sealed record Transaction
     public double Amount { get; init; }
 
     /// <summary>
-    /// Gets the currency code for the transaction amount,
+    /// Gets the external reference ID for the transaction,
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("currency")]
-    public string? Currency { get; init; }
-
-    /// <summary>
-    /// Gets the description of the transaction,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("description")]
-    public string? Description { get; init; }
-
-    /// <summary>
-    /// Gets the current status of the transaction,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
-
-    /// <summary>
-    /// Gets the date and time when the transaction was created,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("created_at")]
-    public DateTimeOffset? CreatedAt { get; init; }
+    [JsonPropertyName("transaction_id")]
+    public string? TransactionId { get; init; }
 }

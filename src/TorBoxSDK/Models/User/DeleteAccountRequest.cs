@@ -8,9 +8,14 @@ namespace TorBoxSDK.Models.User;
 public sealed record DeleteAccountRequest
 {
     /// <summary>
-    /// Gets the confirmation string required to delete the account,
-    /// or <see langword="null"/> if not required.
+    /// Gets the user's session token from the website, required for account deletion.
     /// </summary>
-    [JsonPropertyName("confirmation")]
-    public string? Confirmation { get; init; }
+    [JsonPropertyName("session_token")]
+    public string SessionToken { get; init; } = string.Empty;
+
+    /// <summary>
+    /// Gets the confirmation code sent to the user's email.
+    /// </summary>
+    [JsonPropertyName("confirmation_code")]
+    public int ConfirmationCode { get; init; }
 }

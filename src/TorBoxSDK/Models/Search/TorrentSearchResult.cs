@@ -73,4 +73,40 @@ public sealed record TorrentSearchResult
     /// </summary>
     [JsonPropertyName("updated_at")]
     public DateTimeOffset? UpdatedAt { get; init; }
+
+    /// <summary>
+    /// Gets whether the torrent is already owned by the user, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("owned")]
+    public bool? Owned { get; init; }
+
+    /// <summary>
+    /// Gets whether the torrent is cached, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("cached")]
+    public bool? Cached { get; init; }
+
+    /// <summary>
+    /// Gets the website URL of the source indexer, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("website")]
+    public string? Website { get; init; }
+
+    /// <summary>
+    /// Gets the unique identifier of the torrent, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("id")]
+    public string? Id { get; init; }
+
+    /// <summary>
+    /// Gets the quality tag of the torrent (e.g. "1080p"), or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("quality")]
+    public string? Quality { get; init; }
+
+    /// <summary>
+    /// Gets the raw unparsed title of the torrent, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("raw_title")]
+    public string? RawTitle { get; init; }
 }

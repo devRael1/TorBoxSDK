@@ -1,6 +1,6 @@
 using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
-using TorBoxSDK.Models.Notifications;
+using TorBoxSDK.Models.General;
 
 namespace TorBoxSDK.IntegrationTests.Main.General;
 
@@ -55,7 +55,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<Stats> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
+        TorBoxResponse<IReadOnlyList<DailyStats>> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);
@@ -72,7 +72,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.General
+        TorBoxResponse<IReadOnlyList<SpeedtestServer>> response = await _fixture.Client.Main.General
             .GetSpeedtestFilesAsync(cancellationToken: cts.Token);
 
         // Assert

@@ -32,13 +32,13 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<TorrentSearchResult>>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<TorrentSearchResponse>> SearchTorrentsAsync(string query, TorrentSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
         string queryString = BuildTorrentSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"torrents/search/{Uri.EscapeDataString(query)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<TorrentSearchResult>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<TorrentSearchResponse>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -59,13 +59,13 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<UsenetSearchResult>>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<UsenetSearchResponse>> SearchUsenetAsync(string query, UsenetSearchOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(query, nameof(query));
 
         string queryString = BuildUsenetSearchQuery(options);
         using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/search/{Uri.EscapeDataString(query)}{queryString}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<UsenetSearchResult>>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<UsenetSearchResponse>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

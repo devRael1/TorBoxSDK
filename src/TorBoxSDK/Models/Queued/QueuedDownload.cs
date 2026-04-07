@@ -14,25 +14,11 @@ public sealed record QueuedDownload
     public long Id { get; init; }
 
     /// <summary>
-    /// Gets the authentication identifier of the user who owns this download,
+    /// Gets the date and time when the download was queued,
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("auth_id")]
-    public string? AuthId { get; init; }
-
-    /// <summary>
-    /// Gets the display name of the queued download,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; init; }
-
-    /// <summary>
-    /// Gets the type of download (e.g., torrent, usenet, web_download),
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("download_type")]
-    public string? DownloadType { get; init; }
+    [JsonPropertyName("created_at")]
+    public DateTimeOffset? CreatedAt { get; init; }
 
     /// <summary>
     /// Gets the magnet URI for the queued download,
@@ -42,28 +28,43 @@ public sealed record QueuedDownload
     public string? Magnet { get; init; }
 
     /// <summary>
+    /// Gets the path to the torrent file for the queued download,
+    /// or <see langword="null"/> if not applicable.
+    /// </summary>
+    [JsonPropertyName("torrent_file")]
+    public string? TorrentFile { get; init; }
+
+    /// <summary>
     /// Gets the hash of the queued download, or <see langword="null"/> if not available.
     /// </summary>
     [JsonPropertyName("hash")]
     public string? Hash { get; init; }
 
     /// <summary>
-    /// Gets the size of the download in bytes.
-    /// </summary>
-    [JsonPropertyName("size")]
-    public long Size { get; init; }
-
-    /// <summary>
-    /// Gets the date and time when the download was queued,
+    /// Gets the display name of the queued download,
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("created_at")]
-    public DateTimeOffset? CreatedAt { get; init; }
+    [JsonPropertyName("name")]
+    public string? Name { get; init; }
 
     /// <summary>
-    /// Gets the current status of the queued download,
+    /// Gets the type of download (e.g., "torrent", "usenet", "web_download"),
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
+    [JsonPropertyName("type")]
+    public string? Type { get; init; }
+
+    /// <summary>
+    /// Gets the name override for the queued download,
+    /// or <see langword="null"/> if not set.
+    /// </summary>
+    [JsonPropertyName("name_override")]
+    public string? NameOverride { get; init; }
+
+    /// <summary>
+    /// Gets the seed torrent override value,
+    /// or <see langword="null"/> if not set.
+    /// </summary>
+    [JsonPropertyName("seed_torrent_override")]
+    public int? SeedTorrentOverride { get; init; }
 }

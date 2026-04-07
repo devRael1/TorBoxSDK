@@ -59,9 +59,10 @@ public static class AuthenticationExample
             if (deviceCodeResponse.Data is not null)
             {
                 DeviceCodeResponse deviceCode = deviceCodeResponse.Data;
-                Console.WriteLine($"  User code: {deviceCode.UserCode ?? "N/A"}");
+                Console.WriteLine($"  Code: {deviceCode.Code ?? "N/A"}");
                 Console.WriteLine($"  Verification URL: {deviceCode.VerificationUrl ?? "N/A"}");
-                Console.WriteLine($"  Expires in: {deviceCode.ExpiresIn} seconds");
+                Console.WriteLine($"  Friendly URL: {deviceCode.FriendlyVerificationUrl ?? "N/A"}");
+                Console.WriteLine($"  Expires at: {deviceCode.ExpiresAt?.ToString("o") ?? "N/A"}");
                 Console.WriteLine($"  Poll interval: {deviceCode.Interval} seconds");
 
                 // ──────────────────────────────────────────────────
@@ -95,7 +96,8 @@ public static class AuthenticationExample
             //
             // DeleteAccountRequest deleteRequest = new()
             // {
-            //     Confirmation = "DELETE",
+            //     SessionToken = "your-session-token",
+            //     ConfirmationCode = 123456,
             // };
             //
             // TorBoxResponse deleteResponse =

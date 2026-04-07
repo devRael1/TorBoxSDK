@@ -57,7 +57,7 @@ public sealed class UsenetClient : IUsenetClient
 
         if (request.PostProcessing is not null)
         {
-            content.Add(new StringContent(request.PostProcessing), "post_processing");
+            content.Add(new StringContent(request.PostProcessing.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)), "post_processing");
         }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/createusenetdownload") { Content = content };
@@ -179,7 +179,7 @@ public sealed class UsenetClient : IUsenetClient
 
         if (request.PostProcessing is not null)
         {
-            content.Add(new StringContent(request.PostProcessing), "post_processing");
+            content.Add(new StringContent(request.PostProcessing.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)), "post_processing");
         }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/asynccreateusenetdownload") { Content = content };

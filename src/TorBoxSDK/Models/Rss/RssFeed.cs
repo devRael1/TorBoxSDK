@@ -55,13 +55,13 @@ public sealed record RssFeed
     /// Gets the regex pattern used to filter included items,
     /// or <see langword="null"/> if no include filter is set.
     /// </summary>
-    [JsonPropertyName("regex_filter")]
+    [JsonPropertyName("do_regex")]
     public string? RegexFilter { get; init; }
 
     /// <summary>
     /// Gets the regex pattern used to exclude items,
     /// or <see langword="null"/> if no exclude filter is set.
     /// </summary>
-    [JsonPropertyName("regex_filter_exclude")]
+    [JsonPropertyName("dont_regex")]
     public string? RegexFilterExclude { get; init; }
 }

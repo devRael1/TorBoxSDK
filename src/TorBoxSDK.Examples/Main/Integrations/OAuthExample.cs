@@ -24,22 +24,22 @@ public static class OAuthExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Fetching connected OAuth integrations...");
 
-            TorBoxResponse<IReadOnlyList<OAuthIntegration>> oauthResponse =
+            TorBoxResponse<IReadOnlyDictionary<string, bool>> oauthResponse =
                 await client.Main.Integrations.GetOAuthMeAsync(cts.Token);
 
             if (oauthResponse.Data is not null && oauthResponse.Data.Count > 0)
             {
-                Console.WriteLine($"  Connected: {oauthResponse.Data.Count} integration(s)");
+                Console.WriteLine($"  Found {oauthResponse.Data.Count} provider(s):");
 
-                foreach (OAuthIntegration integration in oauthResponse.Data)
+                foreach (KeyValuePair<string, bool> entry in oauthResponse.Data)
                 {
-                    string connectedIcon = integration.Connected ? "✓" : "✗";
-                    Console.WriteLine($"    [{connectedIcon}] {integration.Provider ?? "N/A"} (since {integration.CreatedAt?.ToString("yyyy-MM-dd") ?? "N/A"})");
+                    string connectedIcon = entry.Value ? "✓" : "✗";
+                    Console.WriteLine($"    [{connectedIcon}] {entry.Key}");
                 }
             }
             else
             {
-                Console.WriteLine("  No integrations connected.");
+                Console.WriteLine("  No integrations found.");
             }
 
             // ──────────────────────────────────────────────────────
@@ -92,9 +92,8 @@ public static class OAuthExample
 
             OAuthRegisterRequest registerRequest = new()
             {
-                Provider = provider,
-                Code = "authorization-code",                   // Replace with actual OAuth code
-                RedirectUri = "https://your-app.com/callback", // Replace with your redirect URI
+                Token = "oauth-access-token",         // Replace with actual OAuth access token
+                RefreshToken = "oauth-refresh-token",  // Replace with actual OAuth refresh token
             };
 
             TorBoxResponse registerResponse =
@@ -121,7 +120,9 @@ public static class OAuthExample
             Console.WriteLine("Fetching linked Discord roles...");
 
             TorBoxResponse<object> discordResponse =
-                await client.Main.Integrations.GetLinkedDiscordRolesAsync(cts.Token);
+                await client.Main.Integrations.GetLinkedDiscordRolesAsync(
+                    new LinkedRolesRequest { DiscordToken = "your-discord-token" },
+                    cts.Token);
 
             Console.WriteLine($"  Discord roles: {discordResponse.Detail ?? "Retrieved"}");
         }

@@ -8,14 +8,20 @@ namespace TorBoxSDK.Models.User;
 public sealed record ReferralData
 {
     /// <summary>
-    /// Gets the total number of referrals made by the user.
+    /// Gets the number of accounts referred by the user.
     /// </summary>
-    [JsonPropertyName("total_referrals")]
-    public int TotalReferrals { get; init; }
+    [JsonPropertyName("referred_accounts")]
+    public int ReferredAccounts { get; init; }
 
     /// <summary>
     /// Gets the user's referral code, or <see langword="null"/> if not available.
     /// </summary>
     [JsonPropertyName("referral_code")]
     public string? ReferralCode { get; init; }
+
+    /// <summary>
+    /// Gets the number of purchases made by referred accounts.
+    /// </summary>
+    [JsonPropertyName("purchases_referred")]
+    public int PurchasesReferred { get; init; }
 }

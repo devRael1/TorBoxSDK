@@ -1,6 +1,5 @@
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
-using TorBoxSDK.Models.Notifications;
 
 namespace TorBoxSDK.Main.General;
 
@@ -24,16 +23,16 @@ public interface IGeneralClient
 
     /// <summary>Retrieves TorBox service statistics for the last 30 days.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The 30-day statistics.</returns>
+    /// <returns>A list of daily statistics snapshots.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<Stats>> Get30DayStatsAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IReadOnlyList<DailyStats>>> Get30DayStatsAsync(CancellationToken cancellationToken = default);
 
-    /// <summary>Retrieves speedtest file URLs for connection testing.</summary>
+    /// <summary>Retrieves speedtest server URLs for connection testing.</summary>
     /// <param name="options">Optional speedtest parameters, or <see langword="null"/> for defaults.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The speedtest file data.</returns>
+    /// <returns>A list of speedtest servers.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetSpeedtestFilesAsync(SpeedtestOptions? options = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<IReadOnlyList<SpeedtestServer>>> GetSpeedtestFilesAsync(SpeedtestOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Gets the changelogs RSS feed URL.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>

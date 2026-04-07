@@ -14,6 +14,20 @@ public sealed record Notification
     public long Id { get; init; }
 
     /// <summary>
+    /// Gets the authentication identifier of the user who owns this notification,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("auth_id")]
+    public string? AuthId { get; init; }
+
+    /// <summary>
+    /// Gets the date and time when the notification was created,
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("created_at")]
+    public DateTimeOffset? CreatedAt { get; init; }
+
+    /// <summary>
     /// Gets the title of the notification, or <see langword="null"/> if not available.
     /// </summary>
     [JsonPropertyName("title")]
@@ -26,15 +40,23 @@ public sealed record Notification
     public string? Message { get; init; }
 
     /// <summary>
-    /// Gets the date and time when the notification was created,
+    /// Gets the action type for the notification (e.g., "url"),
     /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("created_at")]
-    public DateTimeOffset? CreatedAt { get; init; }
+    [JsonPropertyName("action")]
+    public string? Action { get; init; }
 
     /// <summary>
-    /// Gets a value indicating whether the notification has been read.
+    /// Gets the action data associated with the notification (e.g., a URL),
+    /// or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("read")]
-    public bool Read { get; init; }
+    [JsonPropertyName("action_data")]
+    public string? ActionData { get; init; }
+
+    /// <summary>
+    /// Gets the call-to-action text for the notification (e.g., "Download Now"),
+    /// or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("action_cta")]
+    public string? ActionCta { get; init; }
 }

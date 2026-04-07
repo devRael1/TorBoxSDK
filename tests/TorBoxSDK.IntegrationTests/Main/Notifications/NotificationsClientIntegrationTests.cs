@@ -1,6 +1,7 @@
 using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
+using TorBoxSDK.Models.User;
 
 namespace TorBoxSDK.IntegrationTests.Main.Notifications;
 
@@ -55,9 +56,16 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
         // Arrange
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
+        TorBoxResponse<UserProfile> meResponse = await _fixture.Client.Main.User
+            .GetMeAsync(cancellationToken: cts.Token);
+        string? authId = meResponse.Data?.AuthId;
+        string? email = meResponse.Data?.Email;
+        Skip.If(string.IsNullOrEmpty(authId) || string.IsNullOrEmpty(email),
+            "User auth_id or email not available from GetMeAsync.");
+
         // Act
         TorBoxResponse<IntercomHash> response = await _fixture.Client.Main.Notifications
-            .GetIntercomHashAsync(cts.Token);
+            .GetIntercomHashAsync(authId, email, cts.Token);
 
         // Assert
         Assert.NotNull(response);

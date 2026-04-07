@@ -25,19 +25,19 @@ public static class SearchTorrentsExample
 
             Console.WriteLine($"Searching for torrents: \"{query}\"...");
 
-            TorBoxResponse<IReadOnlyList<TorrentSearchResult>> searchResponse =
+            TorBoxResponse<TorrentSearchResponse> searchResponse =
                 await client.Search.SearchTorrentsAsync(query, cancellationToken: cts.Token);
 
-            if (searchResponse.Data is null || searchResponse.Data.Count == 0)
+            if (searchResponse.Data is null || searchResponse.Data.Torrents.Count == 0)
             {
                 Console.WriteLine("No results found.");
                 return;
             }
 
-            Console.WriteLine($"Found {searchResponse.Data.Count} result(s):");
+            Console.WriteLine($"Found {searchResponse.Data.Torrents.Count} result(s):");
             Console.WriteLine();
 
-            foreach (TorrentSearchResult result in searchResponse.Data)
+            foreach (TorrentSearchResult result in searchResponse.Data.Torrents)
             {
                 Console.WriteLine($"  {result.Name}");
                 Console.WriteLine($"    Size: {ExampleHelper.FormatBytes(result.Size)}");
@@ -59,10 +59,10 @@ public static class SearchTorrentsExample
                 CachedOnly = true,     // Only return cached results
             };
 
-            TorBoxResponse<IReadOnlyList<TorrentSearchResult>> advancedResponse =
+            TorBoxResponse<TorrentSearchResponse> advancedResponse =
                 await client.Search.SearchTorrentsAsync(query, searchOptions, cts.Token);
 
-            Console.WriteLine($"Cached results: {advancedResponse.Data?.Count ?? 0}");
+            Console.WriteLine($"Cached results: {advancedResponse.Data?.Torrents.Count ?? 0}");
 
             // ──────────────────────────────────────────────────────
             // Search for TV show episodes.
@@ -80,15 +80,15 @@ public static class SearchTorrentsExample
                 Metadata = true,
             };
 
-            TorBoxResponse<IReadOnlyList<TorrentSearchResult>> tvResponse =
+            TorBoxResponse<TorrentSearchResponse> tvResponse =
                 await client.Search.SearchTorrentsAsync(tvQuery, tvOptions, cts.Token);
 
-            Console.WriteLine($"TV results: {tvResponse.Data?.Count ?? 0}");
+            Console.WriteLine($"TV results: {tvResponse.Data?.Torrents.Count ?? 0}");
 
             // ──────────────────────────────────────────────────────
             // Get a specific torrent by ID.
             // ──────────────────────────────────────────────────────
-            if (searchResponse.Data.Count > 0 && searchResponse.Data[0].Hash is { } torrentId)
+            if (searchResponse.Data.Torrents.Count > 0 && searchResponse.Data.Torrents[0].Hash is { } torrentId)
             {
                 Console.WriteLine($"Getting torrent details for: {torrentId}...");
 
