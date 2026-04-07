@@ -43,7 +43,7 @@ public interface IUsenetClient
     /// <param name="options">The cache check options containing hashes and optional parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The cache status data as a dynamic object.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the hashes collection in <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default);
 

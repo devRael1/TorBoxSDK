@@ -111,6 +111,7 @@ public sealed class UsenetClient : IUsenetClient
     public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
 
         string hashParam = string.Join(",", options.Hashes);
         string query = TorBoxApiHelper.BuildQuery(

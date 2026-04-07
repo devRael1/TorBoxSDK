@@ -122,7 +122,7 @@ public interface IIntegrationsClient
     /// <param name="request">The registration request containing the provider, authorization code and redirect URI.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API response.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>, or when the provider in <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the provider in <paramref name="request"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default);

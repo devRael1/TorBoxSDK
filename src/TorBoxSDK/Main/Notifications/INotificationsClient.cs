@@ -43,8 +43,15 @@ public interface INotificationsClient
     /// <param name="options">The options containing the auth ID and email.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The Intercom hash data.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when the auth ID or email in <paramref name="options"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="options"/> is <see langword="null"/>, or when
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.AuthId"/> or
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.Email"/> is <see langword="null"/>.
+    /// </exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="options"/>.<see cref="GetIntercomHashOptions.AuthId"/> or
+    /// <paramref name="options"/>.<see cref="GetIntercomHashOptions.Email"/> is empty.
+    /// </exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(GetIntercomHashOptions options, CancellationToken cancellationToken = default);
 }

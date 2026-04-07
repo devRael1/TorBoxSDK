@@ -65,7 +65,7 @@ public interface ISearchApiClient
     /// <param name="options">The download options containing the article ID and GUID.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The NZB download data as a string.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the ID or GUID in <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the ID or GUID in <paramref name="options"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<string>> DownloadUsenetAsync(DownloadUsenetOptions options, CancellationToken cancellationToken = default);
@@ -99,7 +99,7 @@ public interface ISearchApiClient
     /// <param name="options">The search options containing the query and optional API key.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The search results as an XML string.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the query in <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the query in <paramref name="options"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<string>> SearchTorznabAsync(SearchTorznabOptions options, CancellationToken cancellationToken = default);
@@ -108,7 +108,7 @@ public interface ISearchApiClient
     /// <param name="options">The search options containing the query and optional API key.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The search results as an XML string.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the query in <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when the query in <paramref name="options"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
     Task<TorBoxResponse<string>> SearchNewznabAsync(SearchNewznabOptions options, CancellationToken cancellationToken = default);

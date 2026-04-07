@@ -306,13 +306,23 @@ public sealed class UsenetClientTests
     }
 
     [Fact]
-    public async Task CheckCachedAsync_WithNullHashes_ThrowsArgumentNullException()
+    public async Task CheckCachedAsync_WithNullOptions_ThrowsArgumentNullException()
     {
         // Arrange
         (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
+    }
+
+    [Fact]
+    public async Task CheckCachedAsync_WithNullHashes_ThrowsArgumentNullException()
+    {
+        // Arrange
+        (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
+
+        // Act & Assert
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(new CheckCachedOptions { Hashes = null! }));
     }
 
     // --- CheckCachedByPostAsync ---
