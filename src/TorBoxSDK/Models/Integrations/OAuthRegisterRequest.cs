@@ -8,6 +8,12 @@ namespace TorBoxSDK.Models.Integrations;
 public sealed record OAuthRegisterRequest
 {
     /// <summary>
+    /// Gets the OAuth provider name (e.g., "google", "dropbox").
+    /// </summary>
+    [JsonIgnore]
+    public string Provider { get; init; } = string.Empty;
+
+    /// <summary>
     /// Gets the OAuth access token for the provider.
     /// </summary>
     [JsonPropertyName("token")]

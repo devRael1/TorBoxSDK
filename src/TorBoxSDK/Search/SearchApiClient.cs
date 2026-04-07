@@ -79,12 +79,13 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> DownloadUsenetAsync(string id, string guid, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> DownloadUsenetAsync(DownloadUsenetOptions options, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNullOrEmpty(id, nameof(id));
-        Guard.ThrowIfNullOrEmpty(guid, nameof(guid));
+        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNullOrEmpty(options.Id, nameof(options.Id));
+        Guard.ThrowIfNullOrEmpty(options.Guid, nameof(options.Guid));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/download/{Uri.EscapeDataString(id)}/{Uri.EscapeDataString(guid)}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"usenet/download/{Uri.EscapeDataString(options.Id)}/{Uri.EscapeDataString(options.Guid)}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
@@ -116,28 +117,30 @@ public sealed class SearchApiClient : ISearchApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> SearchTorznabAsync(string query, string? apiKey = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> SearchTorznabAsync(SearchTorznabOptions options, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNullOrEmpty(query, nameof(query));
+        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNullOrEmpty(options.Query, nameof(options.Query));
 
         string queryString = TorBoxApiHelper.BuildQuery(
             ("t", "search"),
-            ("q", query),
-            ("apikey", apiKey));
+            ("q", options.Query),
+            ("apikey", options.ApiKey));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"torznab/api{queryString}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> SearchNewznabAsync(string query, string? apiKey = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> SearchNewznabAsync(SearchNewznabOptions options, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNullOrEmpty(query, nameof(query));
+        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNullOrEmpty(options.Query, nameof(options.Query));
 
         string queryString = TorBoxApiHelper.BuildQuery(
             ("t", "search"),
-            ("q", query),
-            ("apikey", apiKey));
+            ("q", options.Query),
+            ("apikey", options.ApiKey));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"newznab/api{queryString}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
