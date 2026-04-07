@@ -622,6 +622,29 @@ public sealed class SearchApiClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.SearchNewznabAsync(new SearchNewznabOptions { Query = "" }));
     }
 
+    [Fact]
+    public async Task SearchNewznabAsync_WithApiKey_IncludesInQueryString()
+    {
+        // Arrange
+        string newznabJson = """
+            {
+                "success": true,
+                "error": null,
+                "detail": "Found.",
+                "data": "<xml/>"
+            }
+            """;
+        (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(newznabJson);
+
+        // Act
+        await client.SearchNewznabAsync(new SearchNewznabOptions { Query = "ubuntu", ApiKey = "my-key" });
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("apikey=my-key", url);
+    }
+
     // --- GetTorrentByIdAsync null validation ---
 
     [Fact]

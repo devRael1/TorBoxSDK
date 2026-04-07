@@ -133,6 +133,42 @@ public sealed class TorrentsClientTests
     }
 
     [Fact]
+    public async Task GetMyTorrentListAsync_WithAllParams_IncludesInQueryString()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
+
+        // Act
+        await client.GetMyTorrentListAsync(new GetMyListOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true });
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.Contains("id=42", url);
+        Assert.Contains("offset=10", url);
+        Assert.Contains("limit=50", url);
+        Assert.Contains("bypass_cache=true", url);
+    }
+
+    [Fact]
+    public async Task GetMyTorrentListAsync_WithNullParams_OmitsFromQueryString()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(TorrentListJson);
+
+        // Act
+        await client.GetMyTorrentListAsync();
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        string url = handler.LastRequest.RequestUri!.ToString();
+        Assert.DoesNotContain("id=", url);
+        Assert.DoesNotContain("offset=", url);
+        Assert.DoesNotContain("limit=", url);
+        Assert.DoesNotContain("bypass_cache", url);
+    }
+
+    [Fact]
     public async Task CreateTorrentAsync_WithNullRequest_ThrowsArgumentNullException()
     {
         // Arrange

@@ -75,10 +75,14 @@ public static class StreamExample
                 // The token is extracted from the stream URL above.
                 // This returns metadata about available tracks.
                 // ──────────────────────────────────────────────────
+                // The presigned token is a short-lived token extracted from the stream URL returned above.
+                // In production, parse the stream URL to extract this value.
                 string presignedToken = "token-from-stream-url"; // Extract from the stream URL path or query string
-                string authToken = Environment.GetEnvironmentVariable("TORBOX_AUTH_TOKEN")
+
+                // The auth token is your TorBox API key (same as TORBOX_API_KEY used to initialize the client).
+                string authToken = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
                     ?? throw new InvalidOperationException(
-                        "Set the TORBOX_AUTH_TOKEN environment variable to your TorBox auth token.");
+                        "Set the TORBOX_API_KEY environment variable.");
 
                 Console.WriteLine();
                 Console.WriteLine("Getting stream data with presigned token...");
