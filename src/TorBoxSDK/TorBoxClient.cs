@@ -23,8 +23,9 @@ namespace TorBoxSDK;
 /// </para>
 /// <para>
 /// Register the client through dependency injection using
-/// <see cref="DependencyInjection.TorBoxServiceCollectionExtensions.AddTorBox(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action{TorBoxClientOptions})"/>
-/// or construct it directly for non-DI scenarios.
+/// <see cref="DependencyInjection.TorBoxServiceCollectionExtensions.AddTorBox(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Action{TorBoxClientOptions})"/>.
+/// This class cannot be instantiated directly — it is created internally
+/// by the DI container.
 /// </para>
 /// </remarks>
 public sealed class TorBoxClient : ITorBoxClient
