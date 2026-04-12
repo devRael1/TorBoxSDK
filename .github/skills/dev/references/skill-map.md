@@ -1,96 +1,96 @@
-# Skill Map — Quel skill pour quel travail
+# Skill Map — Which Skill for Which Job
 
-Référence rapide pour savoir quel skill charger selon la nature du travail.
+Quick reference to determine which skill to load based on the nature of the work.
 
-> Règle par défaut : entrer via `/dev` quand la demande couvre plusieurs étapes, quand le prochain job n'est pas clair, ou quand un handoff entre skills devra être orchestré.
+> Default rule: enter via `/dev` when the request covers multiple steps, when the next job is unclear, or when a handoff between skills needs to be orchestrated.
 
 ---
 
-## Vue d'ensemble
+## Overview
 
 ```
-dev (skill orchestrateur)
-├── architecture       → structure client, DI, namespaces
-├── J2 endpoint workflow → modèles + méthode client + câblage HTTP
-├── tests              → tests unitaires, intégration, perf
-├── code-review        → audit et validation avant merge
-└── docs               → README, docs pages, samples, XML doc, diagrammes, NuGet
+dev (orchestrator skill)
+├── architecture       → client structure, DI, namespaces
+├── J2 endpoint workflow → models + client method + HTTP wiring
+├── tests              → unit tests, integration, perf
+├── code-review        → audit and validation before merge
+└── docs               → README, docs pages, samples, XML doc, diagrams, NuGet
 ```
 
-Le skill `dev` ne remplace pas ces skills. Il choisit lequel lancer, dans quel ordre, et quand faire passer le travail au skill suivant.
+The `dev` skill does not replace these skills. It chooses which one to launch, in what order, and when to hand off work to the next skill.
 
 ---
 
-## Tableau de décision
+## Decision Table
 
-| Demande | Skill | Fichier |
-|---------|-------|---------|
-| "Concevoir la hiérarchie client" | `architecture` | `.github/skills/architecture/SKILL.md` |
-| "Refactorer le DI" | `architecture` | `.github/skills/architecture/SKILL.md` |
-| "Définir un nouveau namespace" | `architecture` | `.github/skills/architecture/SKILL.md` |
-| "Implémenter l'endpoint X" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
-| "Ajouter un modèle request/response" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
-| "Étendre une interface de resource client" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
-| "Écrire des tests unitaires" | `tests` | `.github/skills/tests/SKILL.md` |
-| "Écrire des tests d'intégration" | `tests` | `.github/skills/tests/SKILL.md` |
-| "Ajouter des benchmarks" | `tests` | `.github/skills/tests/SKILL.md` |
-| "Relire ce fichier" | `code-review` | `.github/skills/code-review/SKILL.md` |
-| "Auditer src/ avant merge" | `code-review` | `.github/skills/code-review/SKILL.md` |
-| "Améliorer le README" | `docs` | `.github/skills/docs/SKILL.md` |
-| "Créer un sample" | `docs` | `.github/skills/docs/SKILL.md` |
-| "Préparer la release NuGet" | `docs` | `.github/skills/docs/SKILL.md` |
-| "Ajouter des XML docs" | `docs` | `.github/skills/docs/SKILL.md` |
-| "Créer un diagramme Mermaid" | `docs` | `.github/skills/docs/SKILL.md` |
-| "Scaffolder la Phase 1" | `dev` (J6) | `.github/skills/dev/references/dev-jobs.md#j6` |
-| "Que faire ensuite ?" | `dev` | `.github/skills/dev/SKILL.md` |
-| "Planifier la prochaine tranche de travail" | `dev` | `.github/skills/dev/SKILL.md` |
-| "Enchaîner implémentation + tests + review" | `dev` | `.github/skills/dev/references/development-playbooks.md` |
+| Request | Skill | File |
+|---------|-------|------|
+| "Design the client hierarchy" | `architecture` | `.github/skills/architecture/SKILL.md` |
+| "Refactor the DI" | `architecture` | `.github/skills/architecture/SKILL.md` |
+| "Define a new namespace" | `architecture` | `.github/skills/architecture/SKILL.md` |
+| "Implement endpoint X" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
+| "Add a request/response model" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
+| "Extend a resource client interface" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
+| "Write unit tests" | `tests` | `.github/skills/tests/SKILL.md` |
+| "Write integration tests" | `tests` | `.github/skills/tests/SKILL.md` |
+| "Add benchmarks" | `tests` | `.github/skills/tests/SKILL.md` |
+| "Review this file" | `code-review` | `.github/skills/code-review/SKILL.md` |
+| "Audit src/ before merge" | `code-review` | `.github/skills/code-review/SKILL.md` |
+| "Improve the README" | `docs` | `.github/skills/docs/SKILL.md` |
+| "Create a sample" | `docs` | `.github/skills/docs/SKILL.md` |
+| "Prepare the NuGet release" | `docs` | `.github/skills/docs/SKILL.md` |
+| "Add XML docs" | `docs` | `.github/skills/docs/SKILL.md` |
+| "Create a Mermaid diagram" | `docs` | `.github/skills/docs/SKILL.md` |
+| "Scaffold Phase 1" | `dev` (J6) | `.github/skills/dev/references/dev-jobs.md#j6` |
+| "What should I do next?" | `dev` | `.github/skills/dev/SKILL.md` |
+| "Plan the next batch of work" | `dev` | `.github/skills/dev/SKILL.md` |
+| "Chain implementation + tests + review" | `dev` | `.github/skills/dev/references/development-playbooks.md` |
 
 ---
 
-## Règles de priorité en cas de chevauchement
+## Priority Rules for Overlapping Concerns
 
 ### J2 endpoint workflow vs architecture
-- L'implémentation d'un endpoint qui nécessite un **nouveau resource client** → charger `architecture` **d'abord**, puis exécuter `J2` dans `/dev`.
-- L'implémentation d'un endpoint dans un client existant → exécuter `J2` dans `/dev` directement.
+- Implementing an endpoint that requires a **new resource client** → load `architecture` **first**, then run `J2` in `/dev`.
+- Implementing an endpoint in an existing client → run `J2` in `/dev` directly.
 
 ### tests vs code-review
-- Écriture de nouveaux tests → `tests`.
-- Revue de tests existants pour qualité/conformité → `code-review` (Part 4 de l'instruction file).
-- Les deux peuvent s'enchaîner : `tests` pour écrire, `code-review` pour valider.
+- Writing new tests → `tests`.
+- Reviewing existing tests for quality/compliance → `code-review` (Part 4 of the instruction file).
+- Both can be chained: `tests` to write, `code-review` to validate.
 
 ### J2 endpoint workflow vs tests
-- Toujours enchaîner : `J2` dans `/dev` → `tests` → `code-review`.
-- Ne pas considérer un endpoint comme terminé sans avoir exécuté les trois.
+- Always chain: `J2` in `/dev` → `tests` → `code-review`.
+- Do not consider an endpoint complete without running all three.
 
-### dev vs tous les autres
-- Si la demande contient plusieurs verbes d'action ou plusieurs livrables, commencer par `dev`.
-- Si la demande correspond exactement à un seul skill spécialisé et sans ambiguïté, le skill spécialisé peut être invoqué directement.
-- Si `/dev` a déjà classé le job, les skills spécialisés prennent le relais pour l'exécution détaillée.
+### dev vs all others
+- If the request contains multiple action verbs or multiple deliverables, start with `dev`.
+- If the request maps exactly to a single specialized skill without ambiguity, the specialized skill can be invoked directly.
+- If `/dev` has already classified the job, the specialized skills take over for detailed execution.
 
 ### docs vs J2 endpoint workflow
-- Les samples (`docs`) doivent refléter des endpoints déjà implémentés et stables.
-- Ne pas écrire de sample avant que le resource client correspondant soit validé par `code-review`.
+- Samples (`docs`) must reflect endpoints that are already implemented and stable.
+- Do not write a sample before the corresponding resource client has been validated by `code-review`.
 
 ---
 
-## Agents disponibles
+## Available Agents
 
-Les agents suivants sont configurés pour orchestrer directement ces skills :
+The following agents are configured to directly orchestrate these skills:
 
-| Agent | Rôle | Fichier |
-|-------|------|---------|
-| `Dev` | Développement SDK et orchestration des jobs | `.github/agents/dev.agent.md` |
-| `Tests` | Écriture de tests (J3) | `.github/agents/tests.agent.md` |
-| `Code Reviewer` | Review et audit (J4) | `.github/agents/code-reviewer.agent.md` |
-| `Docs` | Documentation et packaging (J5) | `.github/agents/docs.agent.md` |
+| Agent | Role | File |
+|-------|------|------|
+| `Dev` | SDK development and job orchestration | `.github/agents/dev.agent.md` |
+| `Tests` | Test writing (J3) | `.github/agents/tests.agent.md` |
+| `Code Reviewer` | Review and audit (J4) | `.github/agents/code-reviewer.agent.md` |
+| `Docs` | Documentation and packaging (J5) | `.github/agents/docs.agent.md` |
 
 ---
 
-## Fichiers de référence
+## Reference Files
 
-| Fichier | Rôle |
-|---------|------|
-| `.github/instructions/csharp-conventions.instructions.md` | Source de vérité des règles C# (5 Parts) |
-| `.github/skills/dev/references/dev-jobs.md` | Définition et checklists des 6 job types |
-| `docs/TODO.md` | Roadmap complète par phase (Phase 1→8) |
+| File | Role |
+|------|------|
+| `.github/instructions/csharp-conventions.instructions.md` | Source of truth for C# rules (5 Parts) |
+| `.github/skills/dev/references/dev-jobs.md` | Definition and checklists for the 6 job types |
+| `docs/TODO.md` | Complete roadmap by phase (Phase 1→8) |
