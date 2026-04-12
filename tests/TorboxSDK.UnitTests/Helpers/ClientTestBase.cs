@@ -1,4 +1,5 @@
 using System.Net;
+using System.Reflection;
 
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;
@@ -25,7 +26,12 @@ internal static class ClientTestBase
         MockHttpMessageHandler handler = new(json, statusCode);
         HttpClient httpClient = new(handler) { BaseAddress = new Uri(resolvedBaseAddress) };
 
-        TClient client = (TClient?)Activator.CreateInstance(typeof(TClient), httpClient)
+        TClient client = (TClient?)Activator.CreateInstance(
+                typeof(TClient),
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                binder: null,
+                args: [httpClient],
+                culture: null)
             ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}. Ensure it has an internal constructor accepting HttpClient.");
 
         return (client, handler);
