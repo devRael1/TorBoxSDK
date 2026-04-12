@@ -59,10 +59,13 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported by opening an issue on the
-[GitHub Issues](https://github.com/devRael1/TorBoxSDK/issues) page.
+reported privately to the community leaders at
+[devrael1@protonmail.com](mailto:devrael1@protonmail.com).
+Please do not report incidents by opening a public GitHub issue.
 
 All complaints will be reviewed and investigated promptly and fairly.
+Reports will be handled as confidentially as possible, and information will be
+shared only with those who need it to investigate and respond.
 
 All community leaders are obligated to respect the privacy and security of the
 reporter of any incident.
