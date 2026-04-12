@@ -2,17 +2,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using TorBoxSDK.DependencyInjection;
 using TorBoxSDK.Main;
-using TorBoxSDK.Main.General;
-using TorBoxSDK.Main.Integrations;
-using TorBoxSDK.Main.Notifications;
-using TorBoxSDK.Main.Queued;
-using TorBoxSDK.Main.Rss;
-using TorBoxSDK.Main.Stream;
-using TorBoxSDK.Main.Torrents;
-using TorBoxSDK.Main.Usenet;
-using TorBoxSDK.Main.User;
-using TorBoxSDK.Main.Vendors;
-using TorBoxSDK.Main.WebDownloads;
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;
 
@@ -20,8 +9,12 @@ namespace TorBoxSDK.IntegrationTests.DependencyInjection;
 
 /// <summary>
 /// Integration tests that verify the <see cref="TorBoxServiceCollectionExtensions.AddTorBox"/>
-/// dependency-injection wiring resolves all expected SDK services.
+/// dependency-injection wiring resolves the expected SDK services.
 /// </summary>
+/// <remarks>
+/// Sub-clients are <see langword="internal"/> and are not registered in the DI
+/// container. They are only accessible through <see cref="ITorBoxClient"/>.
+/// </remarks>
 [Trait("Category", "Integration")]
 public sealed class AddTorBoxIntegrationTests : IDisposable
 {
@@ -54,7 +47,8 @@ public sealed class AddTorBoxIntegrationTests : IDisposable
         // Arrange — provider built in constructor
 
         // Act
-        IMainApiClient mainClient = _provider.GetRequiredService<IMainApiClient>();
+        ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
+        IMainApiClient mainClient = torBoxClient.Main;
 
         // Assert
         Assert.NotNull(mainClient);
@@ -77,11 +71,23 @@ public sealed class AddTorBoxIntegrationTests : IDisposable
         // Arrange — provider built in constructor
 
         // Act
-        ISearchApiClient searchClient = _provider.GetRequiredService<ISearchApiClient>();
-        IRelayApiClient relayClient = _provider.GetRequiredService<IRelayApiClient>();
+        ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
+        ISearchApiClient searchClient = torBoxClient.Search;
+        IRelayApiClient relayClient = torBoxClient.Relay;
 
         // Assert
         Assert.NotNull(searchClient);
         Assert.NotNull(relayClient);
+    }
+
+    [Fact]
+    public void AddTorBox_WithValidOptions_SubClientsNotDirectlyRegistered()
+    {
+        // Arrange — provider built in constructor
+
+        // Act & Assert — sub-clients should not be resolvable directly
+        Assert.Null(_provider.GetService<IMainApiClient>());
+        Assert.Null(_provider.GetService<ISearchApiClient>());
+        Assert.Null(_provider.GetService<IRelayApiClient>());
     }
 }

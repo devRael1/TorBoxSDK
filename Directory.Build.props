@@ -4,9 +4,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <Version>0.1.0</Version>
+    <Version>1.0.0</Version>
     <Authors>devRael1</Authors>
     <Company>TorBox</Company>
-    <Copyright>Copyright © 2024-2026 devRael1</Copyright>
+    <Copyright>Copyright © 2026 devRael1</Copyright>
   </PropertyGroup>
 </Project>

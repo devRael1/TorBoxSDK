@@ -15,7 +15,7 @@ namespace TorBoxSDK.Main.Queued;
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-public sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
+internal sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

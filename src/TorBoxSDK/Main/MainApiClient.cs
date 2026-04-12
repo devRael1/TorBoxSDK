@@ -17,69 +17,67 @@ namespace TorBoxSDK.Main;
 /// all Main API resource clients.
 /// </summary>
 /// <remarks>
-/// This class is registered as a scoped service by
-/// <see cref="DependencyInjection.TorBoxServiceCollectionExtensions"/>.
+/// All resource clients are instantiated internally using the shared
+/// <see cref="HttpClient"/> configured for the Main API. They are not
+/// registered in the DI container and are only accessible through
+/// <see cref="ITorBoxClient.Main"/>.
 /// </remarks>
-/// <remarks>
-/// Initializes a new instance of the <see cref="MainApiClient"/> class.
-/// </remarks>
-/// <param name="general">The general client.</param>
-/// <param name="torrents">The torrents client.</param>
-/// <param name="usenet">The usenet client.</param>
-/// <param name="webDownloads">The web downloads client.</param>
-/// <param name="user">The user client.</param>
-/// <param name="notifications">The notifications client.</param>
-/// <param name="rss">The RSS client.</param>
-/// <param name="stream">The stream client.</param>
-/// <param name="integrations">The integrations client.</param>
-/// <param name="vendors">The vendors client.</param>
-/// <param name="queued">The queued client.</param>
-/// <exception cref="ArgumentNullException">
-/// Thrown when any parameter is <see langword="null"/>.
-/// </exception>
-public sealed class MainApiClient(
-    IGeneralClient general,
-    ITorrentsClient torrents,
-    IUsenetClient usenet,
-    IWebDownloadsClient webDownloads,
-    IUserClient user,
-    INotificationsClient notifications,
-    IRssClient rss,
-    IStreamClient stream,
-    IIntegrationsClient integrations,
-    IVendorsClient vendors,
-    IQueuedClient queued) : IMainApiClient
+internal sealed class MainApiClient : IMainApiClient
 {
     /// <inheritdoc />
-    public IGeneralClient General { get; } = general ?? throw new ArgumentNullException(nameof(general));
+    public IGeneralClient General { get; }
 
     /// <inheritdoc />
-    public ITorrentsClient Torrents { get; } = torrents ?? throw new ArgumentNullException(nameof(torrents));
+    public ITorrentsClient Torrents { get; }
 
     /// <inheritdoc />
-    public IUsenetClient Usenet { get; } = usenet ?? throw new ArgumentNullException(nameof(usenet));
+    public IUsenetClient Usenet { get; }
 
     /// <inheritdoc />
-    public IWebDownloadsClient WebDownloads { get; } = webDownloads ?? throw new ArgumentNullException(nameof(webDownloads));
+    public IWebDownloadsClient WebDownloads { get; }
 
     /// <inheritdoc />
-    public IUserClient User { get; } = user ?? throw new ArgumentNullException(nameof(user));
+    public IUserClient User { get; }
 
     /// <inheritdoc />
-    public INotificationsClient Notifications { get; } = notifications ?? throw new ArgumentNullException(nameof(notifications));
+    public INotificationsClient Notifications { get; }
 
     /// <inheritdoc />
-    public IRssClient Rss { get; } = rss ?? throw new ArgumentNullException(nameof(rss));
+    public IRssClient Rss { get; }
 
     /// <inheritdoc />
-    public IStreamClient Stream { get; } = stream ?? throw new ArgumentNullException(nameof(stream));
+    public IStreamClient Stream { get; }
 
     /// <inheritdoc />
-    public IIntegrationsClient Integrations { get; } = integrations ?? throw new ArgumentNullException(nameof(integrations));
+    public IIntegrationsClient Integrations { get; }
 
     /// <inheritdoc />
-    public IVendorsClient Vendors { get; } = vendors ?? throw new ArgumentNullException(nameof(vendors));
+    public IVendorsClient Vendors { get; }
 
     /// <inheritdoc />
-    public IQueuedClient Queued { get; } = queued ?? throw new ArgumentNullException(nameof(queued));
+    public IQueuedClient Queued { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MainApiClient"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+    /// </exception>
+    internal MainApiClient(HttpClient httpClient)
+    {
+        ArgumentNullException.ThrowIfNull(httpClient);
+
+        General = new GeneralClient(httpClient);
+        Torrents = new TorrentsClient(httpClient);
+        Usenet = new UsenetClient(httpClient);
+        WebDownloads = new WebDownloadsClient(httpClient);
+        User = new UserClient(httpClient);
+        Notifications = new NotificationsClient(httpClient);
+        Rss = new RssClient(httpClient);
+        Stream = new StreamClient(httpClient);
+        Integrations = new IntegrationsClient(httpClient);
+        Vendors = new VendorsClient(httpClient);
+        Queued = new QueuedClient(httpClient);
+    }
 }

@@ -1,141 +1,141 @@
 # Development Playbooks
 
-Playbooks standardisent les séquences multi-skills les plus fréquentes dans TorBoxSDK. Ils évitent de décider la chaîne de travail à chaque demande.
+Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They avoid having to decide the workflow chain on every request.
 
-> Les règles métier et techniques restent dans les skills spécialisés. Ce fichier définit uniquement l'ordre, les handoffs et les critères de sortie.
+> Business and technical rules remain in the specialized skills. This file defines only the order, handoffs, and exit criteria.
 
 ---
 
-## Playbook A — Implémenter un endpoint dans un client existant
+## Playbook A — Implement an endpoint in an existing client
 
-**Quand l'utiliser :** un endpoint doit être ajouté dans un resource client déjà en place.
+**When to use:** an endpoint needs to be added to an already existing resource client.
 
-**Séquence :**
-1. `/dev` exécute J2 avec [endpoint-placement-and-naming.md](./endpoint-placement-and-naming.md) et [endpoint-implementation-checklist.md](./endpoint-implementation-checklist.md)
+**Sequence:**
+1. `/dev` executes J2 with [endpoint-placement-and-naming.md](./endpoint-placement-and-naming.md) and [endpoint-implementation-checklist.md](./endpoint-implementation-checklist.md)
 2. `tests`
 3. `code-review`
-4. `docs` si l'endpoint est user-facing ou mérite un sample/README update
+4. `docs` if the endpoint is user-facing or warrants a sample/README update
 
-**Entrées attendues :**
-- contrat d'API ou doc TorBox
-- resource client cible déjà identifié
+**Expected inputs:**
+- API contract or TorBox doc
+- target resource client already identified
 
-**Sorties attendues :**
-- modèles request/response
-- méthode d'interface et implémentation du client
-- tests unitaires de succès/échec/mapping
-- review sans finding CRITICAL ou MAJOR
+**Expected outputs:**
+- request/response models
+- interface method and client implementation
+- unit tests for success/failure/mapping
+- review with no CRITICAL or MAJOR finding
 
-**Critères de sortie :**
+**Exit criteria:**
 - build OK
 - tests OK
-- verdict review: `APPROVED` ou `APPROVED WITH MINOR ISSUES`
+- review verdict: `APPROVED` or `APPROVED WITH MINOR ISSUES`
 
 ---
 
-## Playbook B — Ajouter une nouvelle tranche de ressource
+## Playbook B — Add a new resource slice
 
-**Quand l'utiliser :** une nouvelle famille de capacité nécessite structure + modèles + endpoints + tests.
+**When to use:** a new capability family requires structure + models + endpoints + tests.
 
-**Séquence :**
+**Sequence:**
 1. `architecture`
-2. `/dev` exécute J2 endpoint workflow
+2. `/dev` executes J2 endpoint workflow
 3. `tests`
 4. `code-review`
 5. `docs`
 
-**Entrées attendues :**
-- besoins fonctionnels de la ressource
-- endpoints concernés
+**Expected inputs:**
+- functional requirements of the resource
+- relevant endpoints
 
-**Sorties attendues :**
-- surface publique validée (`Main`/`Search`/`Relay` + resource client)
-- modèles regroupés au bon endroit
-- endpoints implémentés dans la bonne hiérarchie
-- tests de non-régression
-- documentation ou sample si la capacité est exposée au public
+**Expected outputs:**
+- validated public surface (`Main`/`Search`/`Relay` + resource client)
+- models grouped in the correct location
+- endpoints implemented in the correct hierarchy
+- non-regression tests
+- documentation or sample if the capability is publicly exposed
 
-**Handoff clé :**
-- ne pas lancer `docs` tant que `code-review` n'a pas validé la tranche
+**Key handoff:**
+- do not launch `docs` until `code-review` has validated the slice
 
 ---
 
-## Playbook C — Refactorer une zone existante
+## Playbook C — Refactor an existing area
 
-**Quand l'utiliser :** changement de structure, de conventions, de DI, ou de hiérarchie sans ajout majeur d'endpoint.
+**When to use:** change of structure, conventions, DI, or hierarchy without a major endpoint addition.
 
-**Séquence :**
+**Sequence:**
 1. `architecture`
-2. `tests` (mise à jour / ajout de tests de protection)
+2. `tests` (update / add protective tests)
 3. `code-review`
-4. `docs` si l'API publique ou les samples changent
+4. `docs` if the public API or samples change
 
-**Sorties attendues :**
-- structure clarifiée
-- compatibilité de surface publique préservée ou rupture explicitée
-- tests couvrant les comportements sensibles
-
----
-
-## Playbook D — Stabiliser une phase du roadmap
-
-**Quand l'utiliser :** fin d'une phase dans `docs/TODO.md`.
-
-**Séquence :**
-1. `/dev` classe les jobs restants de la phase
-2. `tests` pour compléter la couverture manquante
-3. `code-review` sur les fichiers modifiés ou le dossier concerné
-4. `docs` pour aligner README, samples, XML docs
-
-**Sorties attendues :**
-- phase techniquement terminée
-- couverture minimale présente
-- documentation alignée sur le code réel
+**Expected outputs:**
+- clarified structure
+- public surface compatibility preserved or breaking change made explicit
+- tests covering sensitive behaviors
 
 ---
 
-## Playbook E — Préparer une release NuGet
+## Playbook D — Stabilize a roadmap phase
 
-**Quand l'utiliser :** avant publication ou gel d'une version.
+**When to use:** end of a phase in `docs/TODO.md`.
 
-**Séquence :**
+**Sequence:**
+1. `/dev` triages the remaining jobs of the phase
+2. `tests` to fill in missing coverage
+3. `code-review` on modified files or the relevant directory
+4. `docs` to align README, samples, XML docs
+
+**Expected outputs:**
+- phase technically complete
+- minimum coverage present
+- documentation aligned with actual code
+
+---
+
+## Playbook E — Prepare a NuGet release
+
+**When to use:** before publishing or freezing a version.
+
+**Sequence:**
 1. `tests`
 2. `code-review`
 3. `docs`
 
-**Vérifications obligatoires :**
+**Mandatory checks:**
 - `dotnet build` warning-clean
 - `dotnet test` OK
-- XML docs générées
-- métadonnées NuGet complètes
-- README et samples à jour
+- XML docs generated
+- NuGet metadata complete
+- README and samples up to date
 
 ---
 
-## Playbook F — Construire les fondations du projet
+## Playbook F — Build the project foundations
 
-**Quand l'utiliser :** Phase 1 ou restructuration profonde de l'infrastructure.
+**When to use:** Phase 1 or deep infrastructure restructuring.
 
-**Séquence :**
-1. suivre `J6` dans [dev-jobs.md](./dev-jobs.md)
-2. `architecture` pour valider la hiérarchie globale
-3. `tests` pour la couverture minimale du bootstrap si pertinent
+**Sequence:**
+1. follow `J6` in [dev-jobs.md](./dev-jobs.md)
+2. `architecture` to validate the overall hierarchy
+3. `tests` for minimum bootstrap coverage if relevant
 4. `code-review`
-5. `docs` si le bootstrap change la façon d'utiliser le SDK
+5. `docs` if the bootstrap changes how the SDK is used
 
-**Sorties attendues :**
-- solution buildable sur tous les targets
-- client racine et DI utilisables
-- conventions de base posées
+**Expected outputs:**
+- solution buildable on all targets
+- root client and DI usable
+- baseline conventions established
 
 ---
 
-## Règles de handoff entre skills
+## Skill handoff rules
 
-- `architecture` remet une structure cible et des contraintes de placement.
-- `/dev` en J2 remet du code endpoint compilable, des modèles typés, et le placement correct dans la hiérarchie client.
-- `tests` remet des tests qui verrouillent le comportement public.
-- `code-review` remet un verdict exploitable pour décider merge ou rework.
-- `docs` remet une surface utilisateur cohérente avec le code réellement livré.
+- `architecture` delivers a target structure and placement constraints.
+- `/dev` in J2 delivers compilable endpoint code, typed models, and correct placement in the client hierarchy.
+- `tests` delivers tests that lock down public behavior.
+- `code-review` delivers an actionable verdict to decide merge or rework.
+- `docs` delivers a user-facing surface consistent with the actually shipped code.
 
-Si un skill ne peut pas produire sa sortie minimale, revenir au skill précédent au lieu d'avancer.
+If a skill cannot produce its minimum output, return to the previous skill instead of moving forward.

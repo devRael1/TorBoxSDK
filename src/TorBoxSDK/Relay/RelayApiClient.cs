@@ -15,7 +15,7 @@ namespace TorBoxSDK.Relay;
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-public sealed class RelayApiClient(HttpClient httpClient) : IRelayApiClient
+internal sealed class RelayApiClient(HttpClient httpClient) : IRelayApiClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

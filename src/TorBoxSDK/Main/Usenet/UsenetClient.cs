@@ -15,7 +15,7 @@ namespace TorBoxSDK.Main.Usenet;
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-public sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
+internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

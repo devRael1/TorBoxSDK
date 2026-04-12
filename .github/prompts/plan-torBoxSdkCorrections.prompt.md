@@ -1,222 +1,222 @@
-# Plan : Correction et enrichissement du SDK TorBox
+# Plan: TorBox SDK Corrections and Enhancements
 
 ## TL;DR
-L'analyse complète des 4 collections Postman (Main, Search, Relay, Vendors) param par param révèle **zéro endpoint manquant** mais **de nombreux paramètres absents**, **des modèles sous-dimensionnés**, **un écart organisationnel**, **des doublons**, et **des query params manquants sur 3 clients**. Ce plan corrige tout en 5 phases.
+A complete parameter-by-parameter analysis of the 4 Postman collections (Main, Search, Relay, Vendors) reveals **zero missing endpoints** but **many missing parameters**, **undersized models**, **an organizational discrepancy**, **duplicates**, and **missing query params across 3 clients**. This plan addresses everything in 5 phases.
 
 ---
 
-## Phase 1 — Paramètres manquants sur les modèles existants (priorité critique)
+## Phase 1 — Missing Parameters on Existing Models (critical priority)
 
-### Step 1.1 — `CreateTorrentRequest` : ajouter `add_only_if_cached`
-- **Écart** : Postman `Create Torrent` et `Async Create Torrent` ont le champ `add_only_if_cached` (bool). Le SDK `CreateTorrentRequest` ne l'a pas.
-- **Fichier** : `src/TorBoxSDK/Models/Torrents/CreateTorrentRequest.cs`
-  - Ajouter propriété `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
+### Step 1.1 — `CreateTorrentRequest`: add `add_only_if_cached`
+- **Gap**: Postman `Create Torrent` and `Async Create Torrent` have the `add_only_if_cached` field (bool). The SDK `CreateTorrentRequest` does not have it.
+- **File**: `src/TorBoxSDK/Models/Torrents/CreateTorrentRequest.cs`
+  - Add property `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
 
-### Step 1.2 — `RequestDownloadOptions` (Torrents) : ajouter `token` et `append_name`
-- **Écart** : Postman `Request Download Link` (Torrents) envoie `token`, `redirect`, `append_name` en query. Le SDK a `redirect` mais manque `token` et `append_name`.
-- **Fichier** : `src/TorBoxSDK/Models/Torrents/RequestDownloadOptions.cs`
-  - Ajouter `Token` (string?, JSON: `"token"`)
-  - Ajouter `AppendName` (bool?, JSON: `"append_name"`)
+### Step 1.2 — `RequestDownloadOptions` (Torrents): add `token` and `append_name`
+- **Gap**: Postman `Request Download Link` (Torrents) sends `token`, `redirect`, `append_name` as query params. The SDK has `redirect` but is missing `token` and `append_name`.
+- **File**: `src/TorBoxSDK/Models/Torrents/RequestDownloadOptions.cs`
+  - Add `Token` (string?, JSON: `"token"`)
+  - Add `AppendName` (bool?, JSON: `"append_name"`)
 
-### Step 1.3 — `RequestUsenetDownloadOptions` : ajouter `token`, `redirect`, `append_name`
-- **Écart** : Postman Usenet `Request Download Link` a `token`, `redirect`, `append_name`. Le SDK n'a ni l'un ni l'autre.
-- **Fichier** : `src/TorBoxSDK/Models/Usenet/RequestUsenetDownloadOptions.cs`
-  - Ajouter `Token` (string?, JSON: `"token"`)
-  - Ajouter `Redirect` (bool?, JSON: `"redirect"`)
-  - Ajouter `AppendName` (bool?, JSON: `"append_name"`)
+### Step 1.3 — `RequestUsenetDownloadOptions`: add `token`, `redirect`, `append_name`
+- **Gap**: Postman Usenet `Request Download Link` has `token`, `redirect`, `append_name`. The SDK has none of them.
+- **File**: `src/TorBoxSDK/Models/Usenet/RequestUsenetDownloadOptions.cs`
+  - Add `Token` (string?, JSON: `"token"`)
+  - Add `Redirect` (bool?, JSON: `"redirect"`)
+  - Add `AppendName` (bool?, JSON: `"append_name"`)
 
-### Step 1.4 — `RequestWebDownloadOptions` : ajouter `token`, `redirect`, `append_name`
-- **Écart** : Postman Web Downloads `Request Download Link` a `token`, `redirect`, `append_name`. Le SDK n'a aucun des trois.
-- **Fichier** : `src/TorBoxSDK/Models/WebDownloads/RequestWebDownloadOptions.cs`
-  - Ajouter `Token` (string?, JSON: `"token"`)
-  - Ajouter `Redirect` (bool?, JSON: `"redirect"`)
-  - Ajouter `AppendName` (bool?, JSON: `"append_name"`)
+### Step 1.4 — `RequestWebDownloadOptions`: add `token`, `redirect`, `append_name`
+- **Gap**: Postman Web Downloads `Request Download Link` has `token`, `redirect`, `append_name`. The SDK has none of the three.
+- **File**: `src/TorBoxSDK/Models/WebDownloads/RequestWebDownloadOptions.cs`
+  - Add `Token` (string?, JSON: `"token"`)
+  - Add `Redirect` (bool?, JSON: `"redirect"`)
+  - Add `AppendName` (bool?, JSON: `"append_name"`)
 
-### Step 1.5 — `CreateUsenetDownloadRequest` : ajouter `as_queued` et `add_only_if_cached`
-- **Écart** : Postman `Create Usenet Download` a `as_queued` et `add_only_if_cached`. SDK n'a ni l'un ni l'autre.
-- **Fichier** : `src/TorBoxSDK/Models/Usenet/CreateUsenetDownloadRequest.cs`
-  - Ajouter `AsQueued` (bool?, JSON: `"as_queued"`)
-  - Ajouter `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
+### Step 1.5 — `CreateUsenetDownloadRequest`: add `as_queued` and `add_only_if_cached`
+- **Gap**: Postman `Create Usenet Download` has `as_queued` and `add_only_if_cached`. The SDK has neither.
+- **File**: `src/TorBoxSDK/Models/Usenet/CreateUsenetDownloadRequest.cs`
+  - Add `AsQueued` (bool?, JSON: `"as_queued"`)
+  - Add `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
 
-### Step 1.6 — `CreateWebDownloadRequest` : ajouter `as_queued` et `add_only_if_cached`
-- **Écart** : Postman `Create Web Download` a `as_queued` et `add_only_if_cached`. SDK n'a ni l'un ni l'autre.
-- **Fichier** : `src/TorBoxSDK/Models/WebDownloads/CreateWebDownloadRequest.cs`
-  - Ajouter `AsQueued` (bool?, JSON: `"as_queued"`)
-  - Ajouter `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
+### Step 1.6 — `CreateWebDownloadRequest`: add `as_queued` and `add_only_if_cached`
+- **Gap**: Postman `Create Web Download` has `as_queued` and `add_only_if_cached`. The SDK has neither.
+- **File**: `src/TorBoxSDK/Models/WebDownloads/CreateWebDownloadRequest.cs`
+  - Add `AsQueued` (bool?, JSON: `"as_queued"`)
+  - Add `AddOnlyIfCached` (bool?, JSON: `"add_only_if_cached"`)
 
-### Step 1.7 — `EditUsenetDownloadRequest` : ajouter `alternative_hashes`
-- **Écart** : Postman `Edit Usenet Item` envoie `{ usenet_download_id, name, tags, alternative_hashes }`. Le SDK n'a pas `alternative_hashes`.
-- **Fichier** : `src/TorBoxSDK/Models/Usenet/EditUsenetDownloadRequest.cs`
-  - Ajouter `AlternativeHashes` (IReadOnlyList<string>?, JSON: `"alternative_hashes"`)
+### Step 1.7 — `EditUsenetDownloadRequest`: add `alternative_hashes`
+- **Gap**: Postman `Edit Usenet Item` sends `{ usenet_download_id, name, tags, alternative_hashes }`. The SDK does not have `alternative_hashes`.
+- **File**: `src/TorBoxSDK/Models/Usenet/EditUsenetDownloadRequest.cs`
+  - Add `AlternativeHashes` (IReadOnlyList<string>?, JSON: `"alternative_hashes"`)
 
-### Step 1.8 — `EditWebDownloadRequest` : ajouter `alternative_hashes`
-- **Écart** : Postman `Edit Web Download Item` envoie `{ webdl_id, name, tags, alternative_hashes }`. Le SDK n'a pas `alternative_hashes`.
-- **Fichier** : `src/TorBoxSDK/Models/WebDownloads/EditWebDownloadRequest.cs`
-  - Ajouter `AlternativeHashes` (IReadOnlyList<string>?, JSON: `"alternative_hashes"`)
+### Step 1.8 — `EditWebDownloadRequest`: add `alternative_hashes`
+- **Gap**: Postman `Edit Web Download Item` sends `{ webdl_id, name, tags, alternative_hashes }`. The SDK does not have `alternative_hashes`.
+- **File**: `src/TorBoxSDK/Models/WebDownloads/EditWebDownloadRequest.cs`
+  - Add `AlternativeHashes` (IReadOnlyList<string>?, JSON: `"alternative_hashes"`)
 
-### Step 1.9 — `GetTorrentInfoAsync` (GET) : ajouter `use_cache_lookup`
-- **Écart** : Postman a le param `use_cache_lookup` (bool). SDK n'a que `hash` et `timeout`.
-- **Fichier** : `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface
-  - Ajouter paramètre `bool? useCacheLookup = null` à la signature
-  - Ajouter en query string `use_cache_lookup`
+### Step 1.9 — `GetTorrentInfoAsync` (GET): add `use_cache_lookup`
+- **Gap**: Postman has the `use_cache_lookup` param (bool). The SDK only has `hash` and `timeout`.
+- **File**: `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface
+  - Add parameter `bool? useCacheLookup = null` to the signature
+  - Add `use_cache_lookup` to the query string
 
-### Step 1.10 — `GetTorrentInfoByFileAsync` (POST) : refactorer en `TorrentInfoRequest`
-- **Écart** : Postman POST `/torrents/torrentinfo` accepte 6 champs form-data : `magnet`, `file`, `hash`, `timeout`, `use_cache_lookup`, `peers_only`. Le SDK n'accepte que `byte[] file`.
-- **Nouveau fichier** : `src/TorBoxSDK/Models/Torrents/TorrentInfoRequest.cs`
+### Step 1.10 — `GetTorrentInfoByFileAsync` (POST): refactor into `TorrentInfoRequest`
+- **Gap**: Postman POST `/torrents/torrentinfo` accepts 6 form-data fields: `magnet`, `file`, `hash`, `timeout`, `use_cache_lookup`, `peers_only`. The SDK only accepts `byte[] file`.
+- **New file**: `src/TorBoxSDK/Models/Torrents/TorrentInfoRequest.cs`
   - `File` (byte[]?, multipart)
   - `Magnet` (string?, form field)
   - `Hash` (string?, form field)
   - `Timeout` (int?, form field)
   - `UseCacheLookup` (bool?, form field `"use_cache_lookup"`)
   - `PeersOnly` (bool?, form field `"peers_only"`)
-- **Fichier** : `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface — remplacer `byte[] file` par `TorrentInfoRequest request`
+- **File**: `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface — replace `byte[] file` with `TorrentInfoRequest request`
 
 ---
 
-## Phase 2 — Paramètres manquants sur les clients (query params / signatures)
+## Phase 2 — Missing Parameters on Clients (query params / signatures)
 
-### Step 2.1 — `StreamClient` : ajouter les paramètres de stream
-- **Écart CRITIQUE** : Postman `Create Stream` a 6 query params : `id`, `file_id`, `type`, `chosen_subtitle_index`, `chosen_audio_index`, `chosen_resolution_index`. Le SDK n'en a que 3.
-- **Fichier** : `src/TorBoxSDK/Main/Stream/StreamClient.cs` + interface
-  - `CreateStreamAsync` : ajouter `int? chosenSubtitleIndex`, `int? chosenAudioIndex`, `int? chosenResolutionIndex`
-- **Écart CRITIQUE** : Postman `Get Stream Data` a 5 query params complètement différents du SDK : `presigned_token`, `token`, `chosen_subtitle_index`, `chosen_audio_index`, `chosen_resolution_index`. Le SDK envoie `id`, `file_id`, `type` qui sont les params de Create, pas de GetStreamData.
-- **Fichier** : `src/TorBoxSDK/Main/Stream/StreamClient.cs` + interface
-  - `GetStreamDataAsync` : remplacer les params par `string presignedToken`, `string token`, `int? chosenSubtitleIndex`, `int? chosenAudioIndex`, `int? chosenResolutionIndex`
+### Step 2.1 — `StreamClient`: add stream parameters
+- **CRITICAL Gap**: Postman `Create Stream` has 6 query params: `id`, `file_id`, `type`, `chosen_subtitle_index`, `chosen_audio_index`, `chosen_resolution_index`. The SDK only has 3.
+- **File**: `src/TorBoxSDK/Main/Stream/StreamClient.cs` + interface
+  - `CreateStreamAsync`: add `int? chosenSubtitleIndex`, `int? chosenAudioIndex`, `int? chosenResolutionIndex`
+- **CRITICAL Gap**: Postman `Get Stream Data` has 5 query params completely different from the SDK: `presigned_token`, `token`, `chosen_subtitle_index`, `chosen_audio_index`, `chosen_resolution_index`. The SDK sends `id`, `file_id`, `type` which are the Create params, not GetStreamData params.
+- **File**: `src/TorBoxSDK/Main/Stream/StreamClient.cs` + interface
+  - `GetStreamDataAsync`: replace the params with `string presignedToken`, `string token`, `int? chosenSubtitleIndex`, `int? chosenAudioIndex`, `int? chosenResolutionIndex`
 
-### Step 2.2 — `QueuedClient.GetQueuedAsync` : ajouter les query params
-- **Écart** : Postman `Get Queued Downloads` accepte 5 query params : `bypass_cache`, `id`, `offset`, `limit`, `type`. Le SDK n'a aucun paramètre.
-- **Fichier** : `src/TorBoxSDK/Main/Queued/QueuedClient.cs` + interface
+### Step 2.2 — `QueuedClient.GetQueuedAsync`: add query params
+- **Gap**: Postman `Get Queued Downloads` accepts 5 query params: `bypass_cache`, `id`, `offset`, `limit`, `type`. The SDK has no parameters.
+- **File**: `src/TorBoxSDK/Main/Queued/QueuedClient.cs` + interface
   - `GetQueuedAsync(long? id, int? offset, int? limit, bool? bypassCache, string? type, CancellationToken)`
 
-### Step 2.3 — Créer les modèles Options pour la Search API
-- **Écart** : Les 4 endpoints principaux Search API n'acceptent aucun query param dans le SDK, alors que Postman en documente 7 : `metadata`, `season`, `episode`, `check_cache`, `check_owned`, `search_user_engines`, `cached_only`.
-- **Nouveau fichier** : `src/TorBoxSDK/Models/Search/TorrentSearchOptions.cs`
+### Step 2.3 — Create Options models for the Search API
+- **Gap**: The 4 main Search API endpoints accept no query params in the SDK, while Postman documents 7: `metadata`, `season`, `episode`, `check_cache`, `check_owned`, `search_user_engines`, `cached_only`.
+- **New file**: `src/TorBoxSDK/Models/Search/TorrentSearchOptions.cs`
   - `Metadata` (bool?), `Season` (int?), `Episode` (int?), `CheckCache` (bool?), `CheckOwned` (bool?), `SearchUserEngines` (bool?), `CachedOnly` (bool?)
-- **Nouveau fichier** : `src/TorBoxSDK/Models/Search/UsenetSearchOptions.cs` — mêmes propriétés
-- **Nouveau fichier** : `src/TorBoxSDK/Models/Search/MetaSearchOptions.cs` — `Type` (string?)
+- **New file**: `src/TorBoxSDK/Models/Search/UsenetSearchOptions.cs` — same properties
+- **New file**: `src/TorBoxSDK/Models/Search/MetaSearchOptions.cs` — `Type` (string?)
 
-### Step 2.4 — Mettre à jour `SearchApiClient` pour utiliser les Options (*depends on 2.3*)
-- **Fichier** : `src/TorBoxSDK/Search/SearchApiClient.cs` + interface
+### Step 2.4 — Update `SearchApiClient` to use Options (*depends on 2.3*)
+- **File**: `src/TorBoxSDK/Search/SearchApiClient.cs` + interface
   - `SearchTorrentsAsync(string query, TorrentSearchOptions? options, CancellationToken)`
   - `GetTorrentByIdAsync(string id, TorrentSearchOptions? options, CancellationToken)`
   - `SearchUsenetAsync(string query, UsenetSearchOptions? options, CancellationToken)`
   - `GetUsenetByIdAsync(string id, UsenetSearchOptions? options, CancellationToken)`
   - `SearchMetaAsync(string query, MetaSearchOptions? options, CancellationToken)`
 
-### Step 2.5 — `UserClient` : corriger les Search Engine models (signatures fausses)
-- **Écart CRITIQUE** : Les 3 méthodes Search Engine du SDK ont des modèles Request complètement faux vs Postman :
-  - **`AddSearchEnginesRequest`** : SDK envoie `{ "search_engines": [...] }`. Postman envoie `{ "type", "url", "apikey", "download_type" }`.
-  - **`ModifySearchEnginesRequest`** : SDK envoie `{ "search_engines": [...] }`. Postman envoie `{ "id", "type", "url", "apikey", "download_type" }`.
-  - **`ControlSearchEnginesRequest`** : SDK envoie `{ "operation", "search_engines": [...] }`. Postman envoie `{ "operation", "id", "all" }`.
-- **Fichiers modèles** :
-  - `src/TorBoxSDK/Models/User/AddSearchEnginesRequest.cs` — refonte : propriétés `Type` (string?), `Url` (string?), `Apikey` (string?), `DownloadType` (string?, JSON: `"download_type"`)
-  - `src/TorBoxSDK/Models/User/ModifySearchEnginesRequest.cs` — refonte : propriétés `Id` (long), `Type` (string?), `Url` (string?), `Apikey` (string?), `DownloadType` (string?, JSON: `"download_type"`)
-  - `src/TorBoxSDK/Models/User/ControlSearchEnginesRequest.cs` — refonte : propriétés `Operation` (string), `Id` (long?), `All` (bool?)
+### Step 2.5 — `UserClient`: fix Search Engine models (incorrect signatures)
+- **CRITICAL Gap**: The 3 Search Engine methods in the SDK have completely wrong Request models vs Postman:
+  - **`AddSearchEnginesRequest`**: SDK sends `{ "search_engines": [...] }`. Postman sends `{ "type", "url", "apikey", "download_type" }`.
+  - **`ModifySearchEnginesRequest`**: SDK sends `{ "search_engines": [...] }`. Postman sends `{ "id", "type", "url", "apikey", "download_type" }`.
+  - **`ControlSearchEnginesRequest`**: SDK sends `{ "operation", "search_engines": [...] }`. Postman sends `{ "operation", "id", "all" }`.
+- **Model files**:
+  - `src/TorBoxSDK/Models/User/AddSearchEnginesRequest.cs` — overhaul: properties `Type` (string?), `Url` (string?), `Apikey` (string?), `DownloadType` (string?, JSON: `"download_type"`)
+  - `src/TorBoxSDK/Models/User/ModifySearchEnginesRequest.cs` — overhaul: properties `Id` (long), `Type` (string?), `Url` (string?), `Apikey` (string?), `DownloadType` (string?, JSON: `"download_type"`)
+  - `src/TorBoxSDK/Models/User/ControlSearchEnginesRequest.cs` — overhaul: properties `Operation` (string), `Id` (long?), `All` (bool?)
 
-### Step 2.6 — `UserClient` : corriger les User params manquants/faux
-- **`AddReferralAsync`** : SDK envoie un JSON body `{ "referral_code" }`. Postman utilise un **query param** `?referral=`. Méthode d'envoi fausse.
-  - **Fichier** : `src/TorBoxSDK/Main/User/UserClient.cs` — changer pour envoyer `referral` en query string au lieu de JSON body
-  - **Fichier** : `src/TorBoxSDK/Models/User/AddReferralRequest.cs` — peut être supprimé ou transformé en simple param string
-- **`StartDeviceAuthAsync`** : Postman a query param `app` (string, nom de l'app). SDK n'en a pas.
-  - **Fichier** : `src/TorBoxSDK/Main/User/UserClient.cs` + interface — ajouter `string? app = null`
-- **`GetSearchEnginesAsync`** : Postman a query param `id` (long?, optionnel) pour récupérer un search engine spécifique. SDK n'en a pas.
-  - **Fichier** : `src/TorBoxSDK/Main/User/UserClient.cs` + interface — ajouter `long? id = null`
-- **`GetTransactionPdfAsync`** : Postman utilise `?transaction_id` en query param. SDK utilise `{transactionId}` en path. Route potentiellement fausse.
-  - **Fichier** : `src/TorBoxSDK/Main/User/UserClient.cs` — vérifier et corriger vers query param si la route path ne marche pas
+### Step 2.6 — `UserClient`: fix missing/incorrect User params
+- **`AddReferralAsync`**: SDK sends a JSON body `{ "referral_code" }`. Postman uses a **query param** `?referral=`. Incorrect sending method.
+  - **File**: `src/TorBoxSDK/Main/User/UserClient.cs` — change to send `referral` as a query string instead of JSON body
+  - **File**: `src/TorBoxSDK/Models/User/AddReferralRequest.cs` — can be removed or simplified to a plain string param
+- **`StartDeviceAuthAsync`**: Postman has query param `app` (string, app name). The SDK does not have it.
+  - **File**: `src/TorBoxSDK/Main/User/UserClient.cs` + interface — add `string? app = null`
+- **`GetSearchEnginesAsync`**: Postman has query param `id` (long?, optional) to retrieve a specific search engine. The SDK does not have it.
+  - **File**: `src/TorBoxSDK/Main/User/UserClient.cs` + interface — add `long? id = null`
+- **`GetTransactionPdfAsync`**: Postman uses `?transaction_id` as a query param. The SDK uses `{transactionId}` in the path. Route is potentially incorrect.
+  - **File**: `src/TorBoxSDK/Main/User/UserClient.cs` — verify and switch to query param if the path route does not work
 
-### Step 2.7 — `VendorsClient` : corriger content-type et param name
-- **`RegisterAsync`** et **`UpdateAccountAsync`** : Postman envoie en **form-data** (`vendor_name`, `vendor_url`). SDK envoie en JSON. Écart de content-type.
-  - **Fichier** : `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — changer `TorBoxApiHelper.JsonContent()` en multipart form-data pour ces 2 méthodes
-- **`GetAccountByEmailAsync`** : Postman utilise le query param `user_auth_id`. SDK utilise `user_email`. Nom de param potentiellement faux.
-  - **Fichier** : `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — renommer le param en `userAuthId` et le query param en `user_auth_id`
-  - **Fichier** : `src/TorBoxSDK/Main/Vendors/IVendorsClient.cs` — renommer la méthode en `GetAccountByAuthIdAsync(string userAuthId, ...)` (breaking change)
-- **`RegisterUserAsync`** : Postman envoie en **form-data** `user_email`. SDK envoie en JSON. Écart de content-type.
-  - **Fichier** : `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — changer en multipart form-data
-
----
-
-## Phase 3 — Modèles sous-dimensionnés (enrichissement)
-
-### Step 3.1 — `EditSettingsRequest` : enrichir massif
-- **Écart MAJEUR** : Postman `Edit User Settings` a ~60+ propriétés. Le SDK n'en a que 5 (`save_magnet_history`, `download_behavior`, `torrent_seed_preference`, `default_torrent_name`, `enable_notifications`).
-- **Fichier** : `src/TorBoxSDK/Models/User/EditSettingsRequest.cs` — ajouter TOUTES les propriétés de Postman :
-  - Notifications : `email_notifications`, `web_notifications`, `mobile_notifications`, `rss_notifications`, `discord_notifications`, `jdownloader_notifications`, `webhook_notifications`, `telegram_notifications`
-  - Webhook/Telegram : `webhook_url`, `telegram_id`, `discord_id`
-  - Stremio : `stremio_quality` (int[]?), `stremio_resolution` (int[]?), `stremio_language` (int[]?), `stremio_cache` (int[]?), `stremio_size_lower` (long?), `stremio_size_upper` (long?), `stremio_allow_adult` (bool?), `stremio_seed_torrents` (int?), `stremio_sort` (string?), `stremio_use_custom_search_engines` (bool?), `stremio_result_sort` (string?), `stremio_legacy_your_media` (bool?), `stremio_only_your_media_streams` (bool?), `stremio_disable_your_media_streams` (bool?), `stremio_limit_per_resolution_torrent` (int?), `stremio_limit_per_resolution_usenet` (int?), `stremio_torrent_seeders_cutoff` (int?), `stremio_wait_for_download_usenet` (bool?), `stremio_wait_for_download_torrent` (bool?), `stremio_disable_filtered_note` (bool?), `stremio_emoji_in_description` (bool?)
-  - Downloads : `seed_torrents` (int?), `allow_zipped` (bool?), `stremio_allow_zipped` (bool?), `cdn_selection` (string?), `append_filename_to_links` (bool?)
-  - Cloud storage : `google_drive_folder_id` (string?), `onedrive_save_path` (string?), `onefichier_folder_id` (string?), `gofile_folder_id` (string?), `pixeldrain_api_key` (string?), `onefichier_api_key` (string?), `gofile_api_key` (string?), `mega_email` (string?), `mega_password` (string?)
-  - UI : `download_speed_in_tab` (bool?), `show_tracker_in_torrents` (bool?), `dashboard_filter` (object?), `dashboard_sort` (string?), `patreon_id` (string?)
-  - Web Player : `web_player_always_transcode` (bool?), `web_player_always_skip_intro` (bool?), `web_player_audio_preferred_language` (string?), `web_player_subtitle_preferred_language` (string?), `web_player_disable_prestream_selector` (bool?), `web_player_disable_next_up_dialogue` (bool?), `web_player_enable_scrobbling` (bool?)
-  - WebDAV : `webdav_use_local_files` (bool?), `webdav_use_folder_view` (bool?), `webdav_flatten` (bool?)
-
-### Step 3.2 — `AddRssRequest` : ajouter les champs manquants
-- **Écart** : Postman `Add RSS Feed` a ces champs en plus du SDK : `do_regex` (pas `regex_filter`), `dont_regex` (pas `regex_filter_exclude`), `dont_older_than`, `pass_check`, `torrent_seeding`.
-- **Vérification nécessaire** : Confirmer que les JSON names dans le SDK (`regex_filter` / `regex_filter_exclude`) correspondent bien à l'API réelle. Postman utilise `do_regex` / `dont_regex`. Si l'API accepte les deux, pas d'action. Sinon :
-  - **Fichier** : `src/TorBoxSDK/Models/Rss/AddRssRequest.cs`
-    - Renommer `RegexFilter` JSON name de `"regex_filter"` à `"do_regex"`
-    - Renommer `RegexFilterExclude` JSON name de `"regex_filter_exclude"` à `"dont_regex"`
-    - Ajouter `DontOlderThan` (int?, JSON: `"dont_older_than"`)
-    - Ajouter `PassCheck` (bool?, JSON: `"pass_check"`)
-    - Ajouter `TorrentSeeding` (int?, JSON: `"torrent_seeding"`)
+### Step 2.7 — `VendorsClient`: fix content-type and param name
+- **`RegisterAsync`** and **`UpdateAccountAsync`**: Postman sends as **form-data** (`vendor_name`, `vendor_url`). The SDK sends as JSON. Content-type mismatch.
+  - **File**: `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — change `TorBoxApiHelper.JsonContent()` to multipart form-data for these 2 methods
+- **`GetAccountByEmailAsync`**: Postman uses the query param `user_auth_id`. The SDK uses `user_email`. Param name is potentially incorrect.
+  - **File**: `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — rename the param to `userAuthId` and the query param to `user_auth_id`
+  - **File**: `src/TorBoxSDK/Main/Vendors/IVendorsClient.cs` — rename the method to `GetAccountByAuthIdAsync(string userAuthId, ...)` (breaking change)
+- **`RegisterUserAsync`**: Postman sends as **form-data** `user_email`. The SDK sends as JSON. Content-type mismatch.
+  - **File**: `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — change to multipart form-data
 
 ---
 
-## Phase 4 — Corrections organisationnelles
+## Phase 3 — Undersized Models (enrichment)
 
-### Step 4.1 — Déplacer les Changelogs de NotificationsClient vers GeneralClient
-- **Écart** : Postman les classe sous `General`, le SDK dans `NotificationsClient`.
-- **Fichier** : `src/TorBoxSDK/Main/Notifications/NotificationsClient.cs` — supprimer `GetChangelogsRssAsync` et `GetChangelogsJsonAsync`
-- **Fichier** : `src/TorBoxSDK/Main/General/GeneralClient.cs` — ajouter les deux méthodes
-- **Impact** : Breaking change mineur.
+### Step 3.1 — `EditSettingsRequest`: major enrichment
+- **MAJOR Gap**: Postman `Edit User Settings` has ~60+ properties. The SDK only has 5 (`save_magnet_history`, `download_behavior`, `torrent_seed_preference`, `default_torrent_name`, `enable_notifications`).
+- **File**: `src/TorBoxSDK/Models/User/EditSettingsRequest.cs` — add ALL properties from Postman:
+  - Notifications: `email_notifications`, `web_notifications`, `mobile_notifications`, `rss_notifications`, `discord_notifications`, `jdownloader_notifications`, `webhook_notifications`, `telegram_notifications`
+  - Webhook/Telegram: `webhook_url`, `telegram_id`, `discord_id`
+  - Stremio: `stremio_quality` (int[]?), `stremio_resolution` (int[]?), `stremio_language` (int[]?), `stremio_cache` (int[]?), `stremio_size_lower` (long?), `stremio_size_upper` (long?), `stremio_allow_adult` (bool?), `stremio_seed_torrents` (int?), `stremio_sort` (string?), `stremio_use_custom_search_engines` (bool?), `stremio_result_sort` (string?), `stremio_legacy_your_media` (bool?), `stremio_only_your_media_streams` (bool?), `stremio_disable_your_media_streams` (bool?), `stremio_limit_per_resolution_torrent` (int?), `stremio_limit_per_resolution_usenet` (int?), `stremio_torrent_seeders_cutoff` (int?), `stremio_wait_for_download_usenet` (bool?), `stremio_wait_for_download_torrent` (bool?), `stremio_disable_filtered_note` (bool?), `stremio_emoji_in_description` (bool?)
+  - Downloads: `seed_torrents` (int?), `allow_zipped` (bool?), `stremio_allow_zipped` (bool?), `cdn_selection` (string?), `append_filename_to_links` (bool?)
+  - Cloud storage: `google_drive_folder_id` (string?), `onedrive_save_path` (string?), `onefichier_folder_id` (string?), `gofile_folder_id` (string?), `pixeldrain_api_key` (string?), `onefichier_api_key` (string?), `gofile_api_key` (string?), `mega_email` (string?), `mega_password` (string?)
+  - UI: `download_speed_in_tab` (bool?), `show_tracker_in_torrents` (bool?), `dashboard_filter` (object?), `dashboard_sort` (string?), `patreon_id` (string?)
+  - Web Player: `web_player_always_transcode` (bool?), `web_player_always_skip_intro` (bool?), `web_player_audio_preferred_language` (string?), `web_player_subtitle_preferred_language` (string?), `web_player_disable_prestream_selector` (bool?), `web_player_disable_next_up_dialogue` (bool?), `web_player_enable_scrobbling` (bool?)
+  - WebDAV: `webdav_use_local_files` (bool?), `webdav_use_folder_view` (bool?), `webdav_flatten` (bool?)
 
-### Step 4.2 — Supprimer les doublons queued dans TorrentsClient
-- **Écart** : Les routes `torrents/getqueued` et `torrents/controlqueued` n'existent pas dans Postman. QueuedClient utilise les bonnes routes (`queued/getqueued`, `queued/controlqueued`).
-- **Fichier** : `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface — supprimer `GetQueuedTorrentsAsync` et `ControlQueuedTorrentsAsync`
+### Step 3.2 — `AddRssRequest`: add missing fields
+- **Gap**: Postman `Add RSS Feed` has these fields beyond the SDK: `do_regex` (not `regex_filter`), `dont_regex` (not `regex_filter_exclude`), `dont_older_than`, `pass_check`, `torrent_seeding`.
+- **Verification needed**: Confirm that the JSON names in the SDK (`regex_filter` / `regex_filter_exclude`) match the actual API. Postman uses `do_regex` / `dont_regex`. If the API accepts both, no action needed. Otherwise:
+  - **File**: `src/TorBoxSDK/Models/Rss/AddRssRequest.cs`
+    - Rename `RegexFilter` JSON name from `"regex_filter"` to `"do_regex"`
+    - Rename `RegexFilterExclude` JSON name from `"regex_filter_exclude"` to `"dont_regex"`
+    - Add `DontOlderThan` (int?, JSON: `"dont_older_than"`)
+    - Add `PassCheck` (bool?, JSON: `"pass_check"`)
+    - Add `TorrentSeeding` (int?, JSON: `"torrent_seeding"`)
 
 ---
 
-## Phase 5 — Tests et validation (*depends on toutes les phases*)
+## Phase 4 — Organizational Corrections
 
-### Step 5.1 — Tests unitaires pour les nouveaux paramètres
-- Tests pour chaque modèle modifié (Steps 1.1-1.10)
-- Tests pour les Stream params (Step 2.1)
-- Tests pour QueuedClient params (Step 2.2)
-- Tests pour Search Options (Step 2.4)
+### Step 4.1 — Move Changelogs from NotificationsClient to GeneralClient
+- **Gap**: Postman classifies them under `General`, while the SDK places them in `NotificationsClient`.
+- **File**: `src/TorBoxSDK/Main/Notifications/NotificationsClient.cs` — remove `GetChangelogsRssAsync` and `GetChangelogsJsonAsync`
+- **File**: `src/TorBoxSDK/Main/General/GeneralClient.cs` — add both methods
+- **Impact**: Minor breaking change.
 
-### Step 5.2 — Adapter les tests existants
+### Step 4.2 — Remove queued duplicates in TorrentsClient
+- **Gap**: The routes `torrents/getqueued` and `torrents/controlqueued` do not exist in Postman. QueuedClient uses the correct routes (`queued/getqueued`, `queued/controlqueued`).
+- **File**: `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` + interface — remove `GetQueuedTorrentsAsync` and `ControlQueuedTorrentsAsync`
+
+---
+
+## Phase 5 — Tests and Validation (*depends on all phases*)
+
+### Step 5.1 — Unit tests for new parameters
+- Tests for each modified model (Steps 1.1-1.10)
+- Tests for Stream params (Step 2.1)
+- Tests for QueuedClient params (Step 2.2)
+- Tests for Search Options (Step 2.4)
+
+### Step 5.2 — Update existing tests
 - NotificationsClient changelogs → GeneralClient
 - TorrentsClient queued → QueuedClient
-- StreamClient signature changée → mettre à jour
-- GetTorrentInfoByFileAsync signature changée → mettre à jour
+- StreamClient signature changed → update
+- GetTorrentInfoByFileAsync signature changed → update
 
-### Step 5.3 — Build et validation
-- `dotnet build` sans warnings
-- `dotnet test` passe à 100%
-
----
-
-## Résumé quantitatif des écarts trouvés
-
-| Catégorie | Nombre d'écarts | Sévérité |
-|-----------|----------------|----------|
-| **Propriétés manquantes dans les Request/Options models** | 18 propriétés sur 8 modèles | Haute |
-| **Paramètres de query manquants dans les clients** | 11 params sur 4 méthodes | Critique (Stream) |
-| **Modèle EditSettingsRequest sous-dimensionné** | ~55 propriétés manquantes | Haute |
-| **RSS AddRssRequest JSON names potentiellement faux** | 2 renames + 3 ajouts | Moyenne |
-| **Search API Options models inexistants** | 3 nouveaux models + 5 méthodes | Haute |
-| **Écart organisationnel (changelogs)** | 2 méthodes mal placées | Basse |
-| **Doublons (queued dans Torrents)** | 2 méthodes à supprimer | Basse |
-| **GetStreamData signature complètement fausse** | 5 params tous faux | Critique |
-| **User Search Engine models totalement faux** | 3 models à refondre | Critique |
-| **User params manquants/faux** | 4 méthodes (referral, device, search, pdf) | Haute |
-| **Vendor content-type faux (JSON vs form-data)** | 3 méthodes | Haute |
-| **Vendor GetAccountByEmail param name faux** | 1 méthode | Haute |
+### Step 5.3 — Build and validation
+- `dotnet build` with no warnings
+- `dotnet test` passes at 100%
 
 ---
 
-## Fichiers concernés
+## Quantitative Summary of Gaps Found
 
-### Modifiés (modèles)
+| Category | Number of Gaps | Severity |
+|----------|---------------|----------|
+| **Missing properties in Request/Options models** | 18 properties across 8 models | High |
+| **Missing query parameters in clients** | 11 params across 4 methods | Critical (Stream) |
+| **Undersized EditSettingsRequest model** | ~55 missing properties | High |
+| **RSS AddRssRequest potentially incorrect JSON names** | 2 renames + 3 additions | Medium |
+| **Non-existent Search API Options models** | 3 new models + 5 methods | High |
+| **Organizational discrepancy (changelogs)** | 2 misplaced methods | Low |
+| **Duplicates (queued in Torrents)** | 2 methods to remove | Low |
+| **GetStreamData completely incorrect signature** | 5 params all wrong | Critical |
+| **User Search Engine models entirely incorrect** | 3 models to overhaul | Critical |
+| **Missing/incorrect User params** | 4 methods (referral, device, search, pdf) | High |
+| **Incorrect Vendor content-type (JSON vs form-data)** | 3 methods | High |
+| **Incorrect Vendor GetAccountByEmail param name** | 1 method | High |
+
+---
+
+## Affected Files
+
+### Modified (models)
 - `src/TorBoxSDK/Models/Torrents/CreateTorrentRequest.cs` — +1 prop
 - `src/TorBoxSDK/Models/Torrents/RequestDownloadOptions.cs` — +2 props
 - `src/TorBoxSDK/Models/Usenet/CreateUsenetDownloadRequest.cs` — +2 props
@@ -225,32 +225,32 @@ L'analyse complète des 4 collections Postman (Main, Search, Relay, Vendors) par
 - `src/TorBoxSDK/Models/WebDownloads/CreateWebDownloadRequest.cs` — +2 props
 - `src/TorBoxSDK/Models/WebDownloads/RequestWebDownloadOptions.cs` — +3 props
 - `src/TorBoxSDK/Models/WebDownloads/EditWebDownloadRequest.cs` — +1 prop
-- `src/TorBoxSDK/Models/User/EditSettingsRequest.cs` — +~55 props (refonte)
-- `src/TorBoxSDK/Models/Rss/AddRssRequest.cs` — +3 props, 2 renames possibles
+- `src/TorBoxSDK/Models/User/EditSettingsRequest.cs` — +~55 props (overhaul)
+- `src/TorBoxSDK/Models/Rss/AddRssRequest.cs` — +3 props, 2 possible renames
 
-### Modifiés (clients)
-- `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` — GetTorrentInfo params, GetTorrentInfoByFile refactor, suppression queued
-- `src/TorBoxSDK/Main/Torrents/ITorrentsClient.cs` — idem interface
-- `src/TorBoxSDK/Main/Stream/StreamClient.cs` — CreateStream +3 params, GetStreamData refonte complète
-- `src/TorBoxSDK/Main/Stream/IStreamClient.cs` — idem interface
+### Modified (clients)
+- `src/TorBoxSDK/Main/Torrents/TorrentsClient.cs` — GetTorrentInfo params, GetTorrentInfoByFile refactor, queued removal
+- `src/TorBoxSDK/Main/Torrents/ITorrentsClient.cs` — same for interface
+- `src/TorBoxSDK/Main/Stream/StreamClient.cs` — CreateStream +3 params, GetStreamData complete overhaul
+- `src/TorBoxSDK/Main/Stream/IStreamClient.cs` — same for interface
 - `src/TorBoxSDK/Main/Queued/QueuedClient.cs` — GetQueuedAsync +5 params
-- `src/TorBoxSDK/Main/Queued/IQueuedClient.cs` — idem interface
-- `src/TorBoxSDK/Search/SearchApiClient.cs` — 5 méthodes + Options param
-- `src/TorBoxSDK/Search/ISearchApiClient.cs` — idem interface
-- `src/TorBoxSDK/Main/Notifications/NotificationsClient.cs` — suppression changelogs
-- `src/TorBoxSDK/Main/General/GeneralClient.cs` — ajout changelogs
+- `src/TorBoxSDK/Main/Queued/IQueuedClient.cs` — same for interface
+- `src/TorBoxSDK/Search/SearchApiClient.cs` — 5 methods + Options param
+- `src/TorBoxSDK/Search/ISearchApiClient.cs` — same for interface
+- `src/TorBoxSDK/Main/Notifications/NotificationsClient.cs` — changelogs removal
+- `src/TorBoxSDK/Main/General/GeneralClient.cs` — changelogs addition
 - `src/TorBoxSDK/Main/User/UserClient.cs` — AddReferral query param, StartDeviceAuth +app, GetSearchEngines +id, GetTransactionPdf routing
-- `src/TorBoxSDK/Main/User/IUserClient.cs` — idem interface
+- `src/TorBoxSDK/Main/User/IUserClient.cs` — same for interface
 - `src/TorBoxSDK/Main/Vendors/VendorsClient.cs` — Register/UpdateAccount form-data, GetAccountByEmail rename, RegisterUser form-data
-- `src/TorBoxSDK/Main/Vendors/IVendorsClient.cs` — idem interface
+- `src/TorBoxSDK/Main/Vendors/IVendorsClient.cs` — same for interface
 
-### Modifiés (modèles User - refontes)
-- `src/TorBoxSDK/Models/User/AddSearchEnginesRequest.cs` — refonte complète (type, url, apikey, download_type)
-- `src/TorBoxSDK/Models/User/ModifySearchEnginesRequest.cs` — refonte complète (+id)
-- `src/TorBoxSDK/Models/User/ControlSearchEnginesRequest.cs` — refonte (operation, id, all)
-- `src/TorBoxSDK/Models/User/AddReferralRequest.cs` — supprimé ou simplifié
+### Modified (User models - overhauls)
+- `src/TorBoxSDK/Models/User/AddSearchEnginesRequest.cs` — complete overhaul (type, url, apikey, download_type)
+- `src/TorBoxSDK/Models/User/ModifySearchEnginesRequest.cs` — complete overhaul (+id)
+- `src/TorBoxSDK/Models/User/ControlSearchEnginesRequest.cs` — overhaul (operation, id, all)
+- `src/TorBoxSDK/Models/User/AddReferralRequest.cs` — removed or simplified
 
-### Créés
+### Created
 - `src/TorBoxSDK/Models/Torrents/TorrentInfoRequest.cs`
 - `src/TorBoxSDK/Models/Search/TorrentSearchOptions.cs`
 - `src/TorBoxSDK/Models/Search/UsenetSearchOptions.cs`
@@ -258,19 +258,19 @@ L'analyse complète des 4 collections Postman (Main, Search, Relay, Vendors) par
 
 ---
 
-## Décisions
+## Decisions
 
-- **Breaking changes acceptés** : SDK pas encore v1.0, on corrige maintenant
-- **Options nullable par défaut** : backward-compatible, les méthodes marchent sans options
-- **EditSettingsRequest** : toutes les nouvelles propriétés sont nullable pour ne pas casser l'envoi partiel
-- **RSS JSON names** : Nécessite test contre l'API réelle. Si `do_regex` et `regex_filter` marchent tous les deux, garder `regex_filter`. Sinon renommer.
-- **GetStreamData** : Breaking change au niveau paramètres car la signature actuelle est incorrecte vs l'API Postman
-- **GetIntercomHashAsync reste** dans NotificationsClient
-- **Get30DayStatsAsync reste** dans GeneralClient
-- **Endpoints extras SDK** (OAuth Integrations, Torznab, Newznab, etc.) conservés
+- **Breaking changes accepted**: SDK is not yet v1.0, so we fix now
+- **Options nullable by default**: backward-compatible, methods work without options
+- **EditSettingsRequest**: all new properties are nullable to avoid breaking partial updates
+- **RSS JSON names**: Requires testing against the real API. If both `do_regex` and `regex_filter` work, keep `regex_filter`. Otherwise rename.
+- **GetStreamData**: Breaking change at the parameter level because the current signature is incorrect vs the Postman API
+- **GetIntercomHashAsync stays** in NotificationsClient
+- **Get30DayStatsAsync stays** in GeneralClient
+- **Extra SDK endpoints** (OAuth Integrations, Torznab, Newznab, etc.) retained
 
-## Hors périmètre
-- Pas d'ajout de nouveaux endpoints (100% coverage déjà atteinte)
-- Pas de mise à jour docs/samples (Phase future)
-- Pas de modification des 13 méthodes Integrations OAuth (non vérifiables sans doc Postman)
-- Pas de refactoring architectural profond
+## Out of Scope
+- No new endpoint additions (100% coverage already achieved)
+- No docs/samples updates (future phase)
+- No modifications to the 13 Integrations OAuth methods (not verifiable without Postman docs)
+- No deep architectural refactoring

@@ -198,10 +198,10 @@ public sealed class AuthHandler(TorBoxClientOptions options) : DelegatingHandler
 
 ## Dependency Injection
 
-- `TorBoxClient` and all sub-clients registered via `AddTorBox()`
+- Only `ITorBoxClient` is registered in the DI container via `AddTorBox()`
+- All sub-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, and resource clients) are `internal` and instantiated by `TorBoxClient` — they are **not** individually registered
 - No `new HttpClient()` in constructors — use `IHttpClientFactory` or injected `HttpClient`
 - `TorBoxClientOptions` via the options pattern, not a static class
-- All public interfaces registered, not only implementations
 
 ## Response Handling
 
