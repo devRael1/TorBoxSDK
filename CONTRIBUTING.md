@@ -1,14 +1,16 @@
 # Contributing to TorBoxSDK
 
-Thanks for helping improve TorBoxSDK.
+Thanks for helping improve TorBoxSDK! This repository is an MIT-licensed, community-driven, open-source SDK. Everyone is welcome to contribute — whether it's API coverage, documentation, tests, examples, packaging, or bug fixes.
 
-This repository is an MIT-licensed open-source SDK. Contributions are welcome for API coverage, documentation, tests, examples, packaging, and bug fixes.
+Please note that this project is released with a [Code of Conduct](CODE_OF_CONDUCT.md). By participating, you agree to abide by its terms.
 
 ## Before you start
 
 - Check existing [issues](https://github.com/devRael1/TorBoxSDK/issues) before opening a new one
+- Use the provided [issue templates](https://github.com/devRael1/TorBoxSDK/issues/new/choose) for bug reports and feature requests
 - Open an issue or discussion first for larger changes, new API areas, or behavior changes
 - Keep proposals aligned with the current public SDK structure: `TorBoxClient`, `Main`, `Search`, and `Relay`
+- For security vulnerabilities, please follow our [Security Policy](SECURITY.md) — do **not** open a public issue
 
 ## Development workflow
 
