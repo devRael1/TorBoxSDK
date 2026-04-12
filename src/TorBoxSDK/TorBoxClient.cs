@@ -1,3 +1,8 @@
+using System.Net.Http;
+
+using Microsoft.Extensions.Options;
+
+using TorBoxSDK.Http;
 using TorBoxSDK.Main;
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;
@@ -12,6 +17,9 @@ namespace TorBoxSDK;
 /// <see cref="TorBoxClient"/> aggregates the three API-family clients
 /// (<see cref="IMainApiClient"/>, <see cref="ISearchApiClient"/>,
 /// <see cref="IRelayApiClient"/>) into a single injectable service.
+/// All sub-clients are instantiated internally and are not available
+/// through the DI container. Users must use <see cref="ITorBoxClient"/>
+/// to access all SDK functionality.
 /// </para>
 /// <para>
 /// Register the client through dependency injection using
@@ -19,23 +27,37 @@ namespace TorBoxSDK;
 /// or construct it directly for non-DI scenarios.
 /// </para>
 /// </remarks>
-/// <remarks>
-/// Initializes a new instance of the <see cref="TorBoxClient"/> class.
-/// </remarks>
-/// <param name="main">The Main API client.</param>
-/// <param name="search">The Search API client.</param>
-/// <param name="relay">The Relay API client.</param>
-/// <exception cref="ArgumentNullException">
-/// Thrown when <paramref name="main"/>, <paramref name="search"/>, or <paramref name="relay"/> is <see langword="null"/>.
-/// </exception>
-public sealed class TorBoxClient(IMainApiClient main, ISearchApiClient search, IRelayApiClient relay) : ITorBoxClient
+public sealed class TorBoxClient : ITorBoxClient
 {
-    /// <inheritdoc />
-    public IMainApiClient Main { get; } = main ?? throw new ArgumentNullException(nameof(main));
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TorBoxClient"/> class
+    /// using an <see cref="IHttpClientFactory"/> to create the required HTTP clients.
+    /// </summary>
+    /// <param name="httpClientFactory">The HTTP client factory used to create named clients.</param>
+    /// <param name="options">The SDK configuration options.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="httpClientFactory"/> or <paramref name="options"/> is <see langword="null"/>.
+    /// </exception>
+    internal TorBoxClient(IHttpClientFactory httpClientFactory, IOptions<TorBoxClientOptions> options)
+    {
+        ArgumentNullException.ThrowIfNull(httpClientFactory);
+        ArgumentNullException.ThrowIfNull(options);
+
+        HttpClient mainHttpClient = httpClientFactory.CreateClient(HttpClientNames.MainApi);
+        HttpClient searchHttpClient = httpClientFactory.CreateClient(HttpClientNames.SearchApi);
+        HttpClient relayHttpClient = httpClientFactory.CreateClient(HttpClientNames.RelayApi);
+
+        Main = new MainApiClient(mainHttpClient);
+        Search = new SearchApiClient(searchHttpClient);
+        Relay = new RelayApiClient(relayHttpClient);
+    }
 
     /// <inheritdoc />
-    public ISearchApiClient Search { get; } = search ?? throw new ArgumentNullException(nameof(search));
+    public IMainApiClient Main { get; }
 
     /// <inheritdoc />
-    public IRelayApiClient Relay { get; } = relay ?? throw new ArgumentNullException(nameof(relay));
+    public ISearchApiClient Search { get; }
+
+    /// <inheritdoc />
+    public IRelayApiClient Relay { get; }
 }

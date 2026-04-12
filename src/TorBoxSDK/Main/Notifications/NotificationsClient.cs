@@ -15,7 +15,7 @@ namespace TorBoxSDK.Main.Notifications;
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-public sealed class NotificationsClient(HttpClient httpClient) : INotificationsClient
+internal sealed class NotificationsClient(HttpClient httpClient) : INotificationsClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

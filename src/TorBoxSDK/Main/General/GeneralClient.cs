@@ -15,7 +15,7 @@ namespace TorBoxSDK.Main.General;
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-public sealed class GeneralClient(HttpClient httpClient) : IGeneralClient
+internal sealed class GeneralClient(HttpClient httpClient) : IGeneralClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 

@@ -3,20 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using TorBoxSDK.Http;
-using TorBoxSDK.Main;
-using TorBoxSDK.Main.General;
-using TorBoxSDK.Main.Integrations;
-using TorBoxSDK.Main.Notifications;
-using TorBoxSDK.Main.Queued;
-using TorBoxSDK.Main.Rss;
-using TorBoxSDK.Main.Stream;
-using TorBoxSDK.Main.Torrents;
-using TorBoxSDK.Main.Usenet;
-using TorBoxSDK.Main.User;
-using TorBoxSDK.Main.Vendors;
-using TorBoxSDK.Main.WebDownloads;
-using TorBoxSDK.Relay;
-using TorBoxSDK.Search;
 
 namespace TorBoxSDK.DependencyInjection;
 
@@ -87,22 +73,18 @@ public static class TorBoxServiceCollectionExtensions
         // Register the auth handler as transient so each HttpClient pipeline gets its own instance.
         services.AddTransient<AuthHandler>();
 
-        // --- Main API resource clients (all share the Main API base URL) ---
-        AddMainApiClient<IGeneralClient, GeneralClient>(services);
-        AddMainApiClient<ITorrentsClient, TorrentsClient>(services);
-        AddMainApiClient<IUsenetClient, UsenetClient>(services);
-        AddMainApiClient<IWebDownloadsClient, WebDownloadsClient>(services);
-        AddMainApiClient<IUserClient, UserClient>(services);
-        AddMainApiClient<INotificationsClient, NotificationsClient>(services);
-        AddMainApiClient<IRssClient, RssClient>(services);
-        AddMainApiClient<IStreamClient, StreamClient>(services);
-        AddMainApiClient<IIntegrationsClient, IntegrationsClient>(services);
-        AddMainApiClient<IVendorsClient, VendorsClient>(services);
-        AddMainApiClient<IQueuedClient, QueuedClient>(services);
-
-        // --- Search API client ---
+        // --- Named HTTP clients (sub-clients are NOT registered in the DI container) ---
         services
-            .AddHttpClient<ISearchApiClient, SearchApiClient>((sp, client) =>
+            .AddHttpClient(HttpClientNames.MainApi, (sp, client) =>
+            {
+                TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
+                client.BaseAddress = new Uri(options.MainApiBaseUrl);
+                client.Timeout = options.Timeout;
+            })
+            .AddHttpMessageHandler<AuthHandler>();
+
+        services
+            .AddHttpClient(HttpClientNames.SearchApi, (sp, client) =>
             {
                 TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
                 client.BaseAddress = new Uri(options.SearchApiBaseUrl);
@@ -110,9 +92,8 @@ public static class TorBoxServiceCollectionExtensions
             })
             .AddHttpMessageHandler<AuthHandler>();
 
-        // --- Relay API client ---
         services
-            .AddHttpClient<IRelayApiClient, RelayApiClient>((sp, client) =>
+            .AddHttpClient(HttpClientNames.RelayApi, (sp, client) =>
             {
                 TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
                 client.BaseAddress = new Uri(options.RelayApiBaseUrl);
@@ -120,22 +101,12 @@ public static class TorBoxServiceCollectionExtensions
             })
             .AddHttpMessageHandler<AuthHandler>();
 
-        // --- Aggregate clients ---
-        services.AddScoped<IMainApiClient, MainApiClient>();
-        services.AddScoped<ITorBoxClient, TorBoxClient>();
-    }
-
-    private static void AddMainApiClient<TClient, TImplementation>(IServiceCollection services)
-        where TClient : class
-        where TImplementation : class, TClient
-    {
-        services
-            .AddHttpClient<TClient, TImplementation>((sp, client) =>
-            {
-                TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
-                client.BaseAddress = new Uri(options.MainApiBaseUrl);
-                client.Timeout = options.Timeout;
-            })
-            .AddHttpMessageHandler<AuthHandler>();
+        // --- Only ITorBoxClient / TorBoxClient is registered in the DI container ---
+        services.AddScoped<ITorBoxClient>(sp =>
+        {
+            IHttpClientFactory httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+            IOptions<TorBoxClientOptions> options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>();
+            return new TorBoxClient(httpClientFactory, options);
+        });
     }
 }
