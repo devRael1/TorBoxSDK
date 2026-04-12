@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.User;
 /// Default implementation of <see cref="IUserClient"/> for user account
 /// management through the TorBox Main API.
 /// </summary>
-public sealed class UserClient : IUserClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="UserClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class UserClient(HttpClient httpClient) : IUserClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UserClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public UserClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
@@ -46,8 +41,7 @@ public sealed class UserClient : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<UserProfile>> GetMeAsync(bool? settings = null, CancellationToken cancellationToken = default)
     {
-        string query = TorBoxApiHelper.BuildQuery(
-            ("settings", settings?.ToString().ToLowerInvariant()));
+        string query = TorBoxApiHelper.BuildQuery(("settings", settings?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/me{query}");
         return await TorBoxApiHelper.SendAsync<UserProfile>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -58,8 +52,7 @@ public sealed class UserClient : IUserClient
     {
         Guard.ThrowIfNullOrEmpty(referralCode, nameof(referralCode));
 
-        string query = TorBoxApiHelper.BuildQuery(
-            ("referral", referralCode));
+        string query = TorBoxApiHelper.BuildQuery(("referral", referralCode));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"user/addreferral{query}");
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -68,8 +61,7 @@ public sealed class UserClient : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(string? app = null, CancellationToken cancellationToken = default)
     {
-        string query = TorBoxApiHelper.BuildQuery(
-            ("app", app));
+        string query = TorBoxApiHelper.BuildQuery(("app", app));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/auth/device/start{query}");
         return await TorBoxApiHelper.SendAsync<DeviceCodeResponse>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -125,8 +117,7 @@ public sealed class UserClient : IUserClient
     {
         Guard.ThrowIfNullOrEmpty(transactionId, nameof(transactionId));
 
-        string query = TorBoxApiHelper.BuildQuery(
-            ("transaction_id", transactionId));
+        string query = TorBoxApiHelper.BuildQuery(("transaction_id", transactionId));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/transaction/pdf{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -149,8 +140,7 @@ public sealed class UserClient : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<IReadOnlyList<SearchEngine>>> GetSearchEnginesAsync(long? id = null, CancellationToken cancellationToken = default)
     {
-        string query = TorBoxApiHelper.BuildQuery(
-            ("id", id?.ToString()));
+        string query = TorBoxApiHelper.BuildQuery(("id", id?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/settings/searchengines{query}");
         return await TorBoxApiHelper.SendAsync<IReadOnlyList<SearchEngine>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

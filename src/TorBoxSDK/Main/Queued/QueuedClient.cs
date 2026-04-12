@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.Queued;
 /// Default implementation of <see cref="IQueuedClient"/> for managing
 /// queued items through the TorBox Main API.
 /// </summary>
-public sealed class QueuedClient : IQueuedClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="QueuedClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueuedClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public QueuedClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(GetQueuedOptions? options = null, CancellationToken cancellationToken = default)

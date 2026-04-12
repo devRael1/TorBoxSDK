@@ -1,10 +1,10 @@
 ---
 description: "Use when documenting or preparing TorBoxSDK for release: write or improve README and docs pages, add XML documentation, review samples from a documentation perspective, and prepare package-facing docs and release readiness notes for the TorBox C# SDK."
 name: "Docs"
-tools: [read, edit, search, web, todo, vscode.mermaid-chat-features/renderMermaidDiagram]
+tools: [read, edit, search, web, todo, vscode.mermaid-chat-features/renderMermaidDiagram, "agent"]
 model: GPT-5.4 (copilot)
 argument-hint: "Describe the documentation work to perform, such as improve the README, add XML docs, create architecture docs, review sample guidance, or prepare release documentation."
-agents: []
+agents: ["*"]
 user-invocable: true
 disable-model-invocation: false
 ---

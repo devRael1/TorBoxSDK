@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.Vendors;
 /// Default implementation of <see cref="IVendorsClient"/> for managing
 /// vendors through the TorBox Main API.
 /// </summary>
-public sealed class VendorsClient : IVendorsClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="VendorsClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="VendorsClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public VendorsClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<VendorAccount>> RegisterAsync(RegisterVendorRequest request, CancellationToken cancellationToken = default)
@@ -30,8 +25,10 @@ public sealed class VendorsClient : IVendorsClient
         ArgumentNullException.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
 
-        MultipartFormDataContent content = new();
-        content.Add(new StringContent(request.VendorName), "vendor_name");
+        MultipartFormDataContent content = new()
+        {
+            { new StringContent(request.VendorName), "vendor_name" }
+        };
 
         if (request.VendorUrl is not null)
         {
@@ -59,7 +56,7 @@ public sealed class VendorsClient : IVendorsClient
             throw new ArgumentException("At least one of VendorName or VendorUrl must be provided.", nameof(request));
         }
 
-        MultipartFormDataContent content = new();
+        MultipartFormDataContent content = [];
 
         if (!string.IsNullOrEmpty(request.VendorName))
         {
@@ -87,8 +84,7 @@ public sealed class VendorsClient : IVendorsClient
     {
         Guard.ThrowIfNullOrEmpty(userAuthId, nameof(userAuthId));
 
-        string query = TorBoxApiHelper.BuildQuery(
-            ("user_auth_id", userAuthId));
+        string query = TorBoxApiHelper.BuildQuery(("user_auth_id", userAuthId));
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Get, $"vendors/getaccount{query}");
         return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -100,8 +96,10 @@ public sealed class VendorsClient : IVendorsClient
         ArgumentNullException.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.UserEmail, nameof(request.UserEmail));
 
-        MultipartFormDataContent content = new();
-        content.Add(new StringContent(request.UserEmail), "user_email");
+        MultipartFormDataContent content = new()
+        {
+            { new StringContent(request.UserEmail), "user_email" }
+        };
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/registeruser") { Content = content };
         return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

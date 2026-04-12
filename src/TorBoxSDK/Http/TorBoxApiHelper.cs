@@ -16,41 +16,19 @@ internal static class TorBoxApiHelper
         CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        string json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-        string json = await response.Content.ReadAsStringAsync(
-#if NET7_0_OR_GREATER
-            cancellationToken
-#endif
-        ).ConfigureAwait(false);
-
-        TorBoxResponse<T>? result = JsonSerializer.Deserialize<TorBoxResponse<T>>(json, TorBoxJsonOptions.Default);
-
-        if (result is null)
-        {
-            throw new TorBoxException(
-                "Failed to deserialize API response.",
-                TorBoxErrorCode.UnknownError,
-                json);
-        }
+        TorBoxResponse<T>? result = JsonSerializer.Deserialize<TorBoxResponse<T>>(json, TorBoxJsonOptions.Default) ?? throw new TorBoxException("Failed to deserialize API response.", TorBoxErrorCode.UnknownError, json);
 
         if (!result.Success)
         {
             TorBoxErrorCode errorCode = ParseErrorCode(result.Error);
-            throw new TorBoxException(
-                result.Detail ?? result.Error ?? "Unknown API error.",
-                errorCode,
-                result.Detail);
+            throw new TorBoxException(result.Detail ?? result.Error ?? "Unknown API error.", errorCode, result.Detail);
         }
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new TorBoxException(
-                $"HTTP {(int)response.StatusCode}: {result.Detail ?? response.ReasonPhrase}",
-                TorBoxErrorCode.ServerError,
-                result.Detail);
-        }
-
-        return result;
+        return !response.IsSuccessStatusCode
+            ? throw new TorBoxException($"HTTP {(int)response.StatusCode}: {result.Detail ?? response.ReasonPhrase}", TorBoxErrorCode.ServerError, result.Detail)
+            : result;
     }
 
     /// <summary>Sends a request and deserializes the non-generic TorBox response envelope.</summary>
@@ -60,22 +38,9 @@ internal static class TorBoxApiHelper
         CancellationToken cancellationToken)
     {
         using HttpResponseMessage response = await httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        string json = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
 
-        string json = await response.Content.ReadAsStringAsync(
-#if NET7_0_OR_GREATER
-            cancellationToken
-#endif
-        ).ConfigureAwait(false);
-
-        TorBoxResponse? result = JsonSerializer.Deserialize<TorBoxResponse>(json, TorBoxJsonOptions.Default);
-
-        if (result is null)
-        {
-            throw new TorBoxException(
-                "Failed to deserialize API response.",
-                TorBoxErrorCode.UnknownError,
-                json);
-        }
+        TorBoxResponse? result = JsonSerializer.Deserialize<TorBoxResponse>(json, TorBoxJsonOptions.Default) ?? throw new TorBoxException("Failed to deserialize API response.", TorBoxErrorCode.UnknownError, json);
 
         if (!result.Success)
         {
@@ -86,15 +51,9 @@ internal static class TorBoxApiHelper
                 result.Detail);
         }
 
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new TorBoxException(
-                $"HTTP {(int)response.StatusCode}: {result.Detail ?? response.ReasonPhrase}",
-                TorBoxErrorCode.ServerError,
-                result.Detail);
-        }
-
-        return result;
+        return !response.IsSuccessStatusCode
+            ? throw new TorBoxException($"HTTP {(int)response.StatusCode}: {result.Detail ?? response.ReasonPhrase}", TorBoxErrorCode.ServerError, result.Detail)
+            : result;
     }
 
     /// <summary>Builds a query string from parameters, skipping null values.</summary>

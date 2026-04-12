@@ -11,7 +11,7 @@
 
   <PropertyGroup Label="NuGet metadata">
     <PackageId>TorBoxSDK</PackageId>
-    <Description>Official C# SDK for the TorBox API. Provides typed clients for Main, Search, and Relay APIs with built-in authentication, dependency injection, and multi-target support.</Description>
+    <Description>Unofficial C# SDK for the TorBox API. Provides typed clients for Main, Search, and Relay APIs with built-in authentication, dependency injection, and multi-target support.</Description>
     <Tags>torbox;sdk;api;torrent;usenet;webdownloads;debrid</Tags>
     <RepositoryUrl>https://github.com/devRael1/TorBoxSDK</RepositoryUrl>
     <PackageProjectUrl>https://github.com/devRael1/TorBoxSDK</PackageProjectUrl>

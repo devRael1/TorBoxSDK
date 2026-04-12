@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.Usenet;
 /// Default implementation of <see cref="IUsenetClient"/> for managing
 /// usenet downloads through the TorBox Main API.
 /// </summary>
-public sealed class UsenetClient : IUsenetClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="UsenetClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="UsenetClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public UsenetClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<UsenetDownload>> CreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken cancellationToken = default)

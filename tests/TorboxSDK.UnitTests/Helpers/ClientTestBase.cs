@@ -7,7 +7,7 @@ namespace TorboxSDK.UnitTests.Helpers;
 
 internal static class ClientTestBase
 {
-    private static readonly Dictionary<Type, string> BaseAddresses = new()
+    private static readonly Dictionary<Type, string> _baseAddresses = new()
     {
         [typeof(SearchApiClient)] = "https://search-api.torbox.app/",
         [typeof(RelayApiClient)] = "https://relay.torbox.app/",
@@ -20,7 +20,7 @@ internal static class ClientTestBase
         where TClient : class
     {
         string resolvedBaseAddress = baseAddress
-            ?? (BaseAddresses.TryGetValue(typeof(TClient), out string? mapped) ? mapped : "https://api.torbox.app/v1/api/");
+            ?? (_baseAddresses.TryGetValue(typeof(TClient), out string? mapped) ? mapped : "https://api.torbox.app/v1/api/");
 
         MockHttpMessageHandler handler = new(json, statusCode);
         HttpClient httpClient = new(handler) { BaseAddress = new Uri(resolvedBaseAddress) };

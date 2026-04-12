@@ -1,6 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-
-using TorBoxSDK;
 using TorBoxSDK.DependencyInjection;
 using TorBoxSDK.Examples.Helpers;
 using TorBoxSDK.Models.Common;
@@ -23,7 +21,7 @@ public static class BasicSetupExample
         //         AddTorBox() registers all API clients, handlers,
         //         and options needed by the SDK.
         // ──────────────────────────────────────────────────────────
-        ServiceCollection services = new ServiceCollection();
+        var services = new ServiceCollection();
 
         services.AddTorBox(options =>
         {

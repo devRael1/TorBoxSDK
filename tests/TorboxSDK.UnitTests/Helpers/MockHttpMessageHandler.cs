@@ -2,19 +2,13 @@ using System.Net;
 
 namespace TorboxSDK.UnitTests.Helpers;
 
-internal sealed class MockHttpMessageHandler : HttpMessageHandler
+internal sealed class MockHttpMessageHandler(string response, HttpStatusCode statusCode = HttpStatusCode.OK) : HttpMessageHandler
 {
-    private readonly string _response;
-    private readonly HttpStatusCode _statusCode;
+    private readonly string _response = response;
+    private readonly HttpStatusCode _statusCode = statusCode;
 
     public HttpRequestMessage? LastRequest { get; private set; }
     public string? LastRequestContent { get; private set; }
-
-    public MockHttpMessageHandler(string response, HttpStatusCode statusCode = HttpStatusCode.OK)
-    {
-        _response = response;
-        _statusCode = statusCode;
-    }
 
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,

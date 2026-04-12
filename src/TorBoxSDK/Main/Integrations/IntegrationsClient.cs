@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.Integrations;
 /// Default implementation of <see cref="IIntegrationsClient"/> for managing
 /// third-party integrations through the TorBox Main API.
 /// </summary>
-public sealed class IntegrationsClient : IIntegrationsClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="IntegrationsClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="IntegrationsClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public IntegrationsClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)

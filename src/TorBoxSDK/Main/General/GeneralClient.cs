@@ -8,21 +8,16 @@ namespace TorBoxSDK.Main.General;
 /// Default implementation of <see cref="IGeneralClient"/> for general
 /// TorBox API operations including status, statistics, and speedtest.
 /// </summary>
-public sealed class GeneralClient : IGeneralClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="GeneralClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class GeneralClient(HttpClient httpClient) : IGeneralClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GeneralClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public GeneralClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetUpStatusAsync(CancellationToken cancellationToken = default)

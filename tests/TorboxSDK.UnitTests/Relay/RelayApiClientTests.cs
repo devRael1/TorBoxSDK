@@ -1,7 +1,7 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Relay;
 using TorBoxSDK.Relay;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Relay;
 
@@ -35,7 +35,7 @@ public sealed class RelayApiClientTests
     public async Task GetStatusAsync_WithValidResponse_ReturnsStatus()
     {
         // Arrange
-        (RelayApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<RelayApiClient>(StatusJson);
+        (RelayApiClient client, MockHttpMessageHandler _) = ClientTestBase.CreateClient<RelayApiClient>(StatusJson);
 
         // Act
         TorBoxResponse<RelayStatus> result = await client.GetStatusAsync();

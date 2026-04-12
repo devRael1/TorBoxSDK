@@ -8,21 +8,16 @@ namespace TorBoxSDK.Search;
 /// Default implementation of <see cref="ISearchApiClient"/> for querying
 /// torrent and usenet indexers and metadata through the TorBox Search API.
 /// </summary>
-public sealed class SearchApiClient : ISearchApiClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="SearchApiClient"/> class.
+/// </remarks>
+/// <param name="httpClient">The HTTP client configured for the Search API.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+/// </exception>
+public sealed class SearchApiClient(HttpClient httpClient) : ISearchApiClient
 {
-    private readonly HttpClient _httpClient;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SearchApiClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Search API.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    public SearchApiClient(HttpClient httpClient)
-    {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-    }
+    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> GetTorrentSearchTutorialAsync(CancellationToken cancellationToken = default)
@@ -148,35 +143,29 @@ public sealed class SearchApiClient : ISearchApiClient
 
     private static string BuildTorrentSearchQuery(TorrentSearchOptions? options)
     {
-        if (options is null)
-        {
-            return string.Empty;
-        }
-
-        return TorBoxApiHelper.BuildQuery(
-            ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
-            ("season", options.Season?.ToString()),
-            ("episode", options.Episode?.ToString()),
-            ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
-            ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
-            ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
-            ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
+        return options is null
+            ? string.Empty
+            : TorBoxApiHelper.BuildQuery(
+                ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
+                ("season", options.Season?.ToString()),
+                ("episode", options.Episode?.ToString()),
+                ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
+                ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
+                ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
+                ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
     }
 
     private static string BuildUsenetSearchQuery(UsenetSearchOptions? options)
     {
-        if (options is null)
-        {
-            return string.Empty;
-        }
-
-        return TorBoxApiHelper.BuildQuery(
-            ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
-            ("season", options.Season?.ToString()),
-            ("episode", options.Episode?.ToString()),
-            ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
-            ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
-            ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
-            ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
+        return options is null
+            ? string.Empty
+            : TorBoxApiHelper.BuildQuery(
+                ("metadata", options.Metadata?.ToString().ToLowerInvariant()),
+                ("season", options.Season?.ToString()),
+                ("episode", options.Episode?.ToString()),
+                ("check_cache", options.CheckCache?.ToString().ToLowerInvariant()),
+                ("check_owned", options.CheckOwned?.ToString().ToLowerInvariant()),
+                ("search_user_engines", options.SearchUserEngines?.ToString().ToLowerInvariant()),
+                ("cached_only", options.CachedOnly?.ToString().ToLowerInvariant()));
     }
 }

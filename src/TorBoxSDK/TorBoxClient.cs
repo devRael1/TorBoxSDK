@@ -19,30 +19,23 @@ namespace TorBoxSDK;
 /// or construct it directly for non-DI scenarios.
 /// </para>
 /// </remarks>
-public sealed class TorBoxClient : ITorBoxClient
+/// <remarks>
+/// Initializes a new instance of the <see cref="TorBoxClient"/> class.
+/// </remarks>
+/// <param name="main">The Main API client.</param>
+/// <param name="search">The Search API client.</param>
+/// <param name="relay">The Relay API client.</param>
+/// <exception cref="ArgumentNullException">
+/// Thrown when <paramref name="main"/>, <paramref name="search"/>, or <paramref name="relay"/> is <see langword="null"/>.
+/// </exception>
+public sealed class TorBoxClient(IMainApiClient main, ISearchApiClient search, IRelayApiClient relay) : ITorBoxClient
 {
     /// <inheritdoc />
-    public IMainApiClient Main { get; }
+    public IMainApiClient Main { get; } = main ?? throw new ArgumentNullException(nameof(main));
 
     /// <inheritdoc />
-    public ISearchApiClient Search { get; }
+    public ISearchApiClient Search { get; } = search ?? throw new ArgumentNullException(nameof(search));
 
     /// <inheritdoc />
-    public IRelayApiClient Relay { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="TorBoxClient"/> class.
-    /// </summary>
-    /// <param name="main">The Main API client.</param>
-    /// <param name="search">The Search API client.</param>
-    /// <param name="relay">The Relay API client.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="main"/>, <paramref name="search"/>, or <paramref name="relay"/> is <see langword="null"/>.
-    /// </exception>
-    public TorBoxClient(IMainApiClient main, ISearchApiClient search, IRelayApiClient relay)
-    {
-        Main = main ?? throw new ArgumentNullException(nameof(main));
-        Search = search ?? throw new ArgumentNullException(nameof(search));
-        Relay = relay ?? throw new ArgumentNullException(nameof(relay));
-    }
+    public IRelayApiClient Relay { get; } = relay ?? throw new ArgumentNullException(nameof(relay));
 }

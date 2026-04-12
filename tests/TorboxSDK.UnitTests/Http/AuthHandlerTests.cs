@@ -1,10 +1,7 @@
-using System.Net;
-
 using Microsoft.Extensions.Options;
-
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK;
 using TorBoxSDK.Http;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Http;
 
@@ -14,7 +11,7 @@ public sealed class AuthHandlerTests
     public async Task SendAsync_WithApiKey_AddsAuthorizationHeader()
     {
         // Arrange
-        var options = Options.Create(new TorBoxClientOptions { ApiKey = "test-api-key-123" });
+        IOptions<TorBoxClientOptions> options = Options.Create(new TorBoxClientOptions { ApiKey = "test-api-key-123" });
         var innerHandler = new MockHttpMessageHandler("""{"success":true,"error":null,"detail":"OK"}""");
         var authHandler = new AuthHandler(options) { InnerHandler = innerHandler };
         using var httpClient = new HttpClient(authHandler);
@@ -34,7 +31,7 @@ public sealed class AuthHandlerTests
     public async Task SendAsync_WithEmptyApiKey_DoesNotAddAuthorizationHeader()
     {
         // Arrange
-        var options = Options.Create(new TorBoxClientOptions { ApiKey = string.Empty });
+        IOptions<TorBoxClientOptions> options = Options.Create(new TorBoxClientOptions { ApiKey = string.Empty });
         var innerHandler = new MockHttpMessageHandler("""{"success":true,"error":null,"detail":"OK"}""");
         var authHandler = new AuthHandler(options) { InnerHandler = innerHandler };
         using var httpClient = new HttpClient(authHandler);

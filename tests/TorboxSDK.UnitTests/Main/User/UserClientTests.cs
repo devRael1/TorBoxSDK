@@ -1,7 +1,7 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.User;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.User;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.User;
 
@@ -386,7 +386,7 @@ public sealed class UserClientTests
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(StringDataJson);
 
         // Act
-        TorBoxResponse<string> result = await client.GetTransactionPdfAsync("42");
+        await client.GetTransactionPdfAsync("42");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
