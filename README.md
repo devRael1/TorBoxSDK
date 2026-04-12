@@ -132,28 +132,21 @@ services.AddTorBox(configuration);
 
 ## Documentation and Examples
 
-- [Getting Started](https://github.com/devRael1/TorBoxSDK/blob/main/docs/getting-started.md)
-- [Architecture Overview](https://github.com/devRael1/TorBoxSDK/blob/main/docs/architecture.md)
-- [API Reference](https://github.com/devRael1/TorBoxSDK/blob/main/docs/api-reference.md)
-- [Configuration Reference](https://github.com/devRael1/TorBoxSDK/blob/main/docs/configuration.md)
-- [Error Handling](https://github.com/devRael1/TorBoxSDK/blob/main/docs/error-handling.md)
-- [Roadmap](https://github.com/devRael1/TorBoxSDK/blob/main/docs/TODO.md)
-- [Examples project](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples) with 37 runnable scenarios across Main, Search, Relay, and error-handling workflows
-
-## Open Source Project Notes
-
-TorBoxSDK is maintained as a public MIT-licensed SDK:
-
-- Use it in personal, commercial, or internal projects under the terms of the [MIT License](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
-- File bugs or request improvements through [GitHub Issues](https://github.com/devRael1/TorBoxSDK/issues)
-- Use pull requests for targeted fixes, API coverage improvements, docs updates, and sample improvements
-- Keep docs and examples aligned with the real public SDK surface
+- [Getting Started](docs/getting-started.md)
+- [Architecture Overview](docs/architecture.md)
+- [API Reference](docs/api-reference.md)
+- [Configuration Reference](docs/configuration.md)
+- [Error Handling](docs/error-handling.md)
+- [Examples project](src/TorBoxSDK.Examples/) with 37 runnable scenarios across Main, Search, Relay, and error-handling workflows
 
 ## Contributing
 
-Contributions are welcome from SDK consumers and maintainers alike.
+Contributions are welcome from SDK consumers and maintainers alike. TorBoxSDK is an open-source, community-driven project — everyone is free to participate, open issues, and submit pull requests.
 
-- Read the [contributing guide](https://github.com/devRael1/TorBoxSDK/blob/main/CONTRIBUTING.md)
+- Read the [Contributing Guide](CONTRIBUTING.md) for development workflow and PR expectations
+- Review the [Code of Conduct](CODE_OF_CONDUCT.md) before participating
+- Report security vulnerabilities privately via the [Security Policy](SECURITY.md)
+- File bugs or request features through [GitHub Issues](https://github.com/devRael1/TorBoxSDK/issues) (templates are provided)
 - Prefer focused pull requests with matching docs or XML documentation updates when public behavior changes
 - For changes that call live TorBox services, document any environment requirements such as `TORBOX_API_KEY`
 
@@ -171,4 +164,4 @@ Integration tests are designed to skip gracefully when `TORBOX_API_KEY` is not s
 
 ## License
 
-This repository is available under the [MIT License](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE).
+This repository is available under the [MIT License](LICENSE).
