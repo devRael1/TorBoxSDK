@@ -202,15 +202,17 @@ Pas de skill dédié — suivre directement les tâches de la Phase 1 dans `docs
 
 ### 1.4 — Injection de dépendances
 - [ ] `AddTorBox(Action<TorBoxClientOptions>)` sur `IServiceCollection`
-- [ ] `IHttpClientFactory` pour la gestion du `HttpClient`
+- [ ] `IHttpClientFactory` pour la gestion du `HttpClient` via des clients nommés
 - [ ] Support `IConfiguration` section `TorBox`
-- [ ] Tous les clients enregistrés (interfaces + implémentations)
+- [ ] Seul `ITorBoxClient` est enregistré dans le conteneur DI
+- [ ] Les sous-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, resource clients) sont `internal` et instanciés par `TorBoxClient` — pas enregistrés individuellement
 
 **Critères de sortie Phase 1 :**
 - `dotnet build` passe sans erreur ni warning sur tous les targets
-- `TorBoxClient client = new(options)` compile
 - `services.AddTorBox(o => o.ApiKey = "...")` compile
+- `provider.GetRequiredService<ITorBoxClient>()` résout le client
 - `client.Main.Torrents` est accessible (même si vide)
+- Les sous-clients ne sont pas résolvables directement depuis le conteneur DI
 
 ---
 

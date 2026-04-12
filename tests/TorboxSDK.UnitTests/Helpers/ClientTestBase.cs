@@ -26,7 +26,7 @@ internal static class ClientTestBase
         HttpClient httpClient = new(handler) { BaseAddress = new Uri(resolvedBaseAddress) };
 
         TClient client = (TClient?)Activator.CreateInstance(typeof(TClient), httpClient)
-            ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}. Ensure it has a public constructor accepting HttpClient.");
+            ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}. Ensure it has an internal constructor accepting HttpClient.");
 
         return (client, handler);
     }

@@ -50,8 +50,14 @@ The SDK binds from the `TorBox` section:
 
 Both overloads register:
 
-- authenticated `HttpClient` pipelines
-- Main API resource clients
-- `ISearchApiClient`
-- `IRelayApiClient`
-- `ITorBoxClient`
+- authenticated named `HttpClient` pipelines (Main, Search, Relay)
+- `ITorBoxClient` as the single SDK entry point
+
+All sub-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, and their resource clients) are instantiated internally by `TorBoxClient`. They are **not** registered individually in the DI container. To access any sub-client, resolve `ITorBoxClient` and navigate through its properties:
+
+```csharp
+ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
+client.Main.Torrents   // ITorrentsClient
+client.Search          // ISearchApiClient
+client.Relay           // IRelayApiClient
+```
