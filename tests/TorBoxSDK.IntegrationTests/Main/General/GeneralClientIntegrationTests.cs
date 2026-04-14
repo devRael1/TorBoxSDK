@@ -81,7 +81,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
     }
 
     [SkippableFact]
-    public async Task GetChangelogsRssAsync_WithValidApiKey_ReturnsRssUrl()
+    public async Task GetChangelogsRssAsync_WithValidApiKey_ReturnsFeed()
     {
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
@@ -89,11 +89,12 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<string> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
+        TorBoxResponse<RssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);
         Assert.True(response.Success);
+        Assert.NotNull(response.Data);
     }
 
     [SkippableFact]

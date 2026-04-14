@@ -1,5 +1,4 @@
-using System.Text.Json;
-
+﻿using System.Text.Json;
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Torrents;
 

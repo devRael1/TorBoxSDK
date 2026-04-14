@@ -1,6 +1,5 @@
-using System.Net;
+﻿using System.Net;
 using System.Reflection;
-
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;
 

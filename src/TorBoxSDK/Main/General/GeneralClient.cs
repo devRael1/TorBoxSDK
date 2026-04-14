@@ -1,3 +1,5 @@
+﻿using System.IO;
+using System.Xml.Serialization;
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
@@ -74,10 +76,29 @@ internal sealed class GeneralClient : IGeneralClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetChangelogsRssAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<RssFeed>> GetChangelogsRssAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "changelogs/rss");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        string content = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            throw new TorBoxException(
+                $"HTTP {(int)httpResponse.StatusCode}: {httpResponse.ReasonPhrase}",
+                TorBoxErrorCode.ServerError,
+                content);
+        }
+
+        XmlSerializer serializer = new(typeof(RssFeed));
+        using StringReader reader = new(content);
+        RssFeed? feed = (RssFeed?)serializer.Deserialize(reader);
+
+        return new TorBoxResponse<RssFeed>
+        {
+            Success = true,
+            Data = feed
+        };
     }
 
     /// <inheritdoc />

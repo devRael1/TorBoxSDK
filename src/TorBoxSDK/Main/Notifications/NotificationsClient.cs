@@ -1,5 +1,4 @@
-using System.Xml.Linq;
-
+﻿using System.Xml.Linq;
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;

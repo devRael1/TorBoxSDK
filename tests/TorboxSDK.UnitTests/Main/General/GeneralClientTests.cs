@@ -28,13 +28,22 @@ public sealed class GeneralClientTests
         }
         """;
 
-    private const string StringDataJson = """
-        {
-            "success": true,
-            "error": null,
-            "detail": "Found.",
-            "data": "https://torbox.app/changelogs/rss"
-        }
+    private const string ChangelogsRssXml = """
+        <?xml version="1.0" ?>
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+          <channel>
+            <title>TorBox Changelogs</title>
+            <link>https://torbox.app/changelogs</link>
+            <description>TorBox Changelog RSS Feed</description>
+            <language>en-us</language>
+            <lastBuildDate>Wed, 10 Jul 2024 07:12:36 GMT</lastBuildDate>
+            <item>
+              <title>v2.9 - Feature Release</title>
+              <description>Major update with new features.</description>
+              <pubDate>Wed, 10 Jul 2024 07:12:36 GMT</pubDate>
+            </item>
+          </channel>
+        </rss>
         """;
 
     private const string DailyStatsJson = """
@@ -85,8 +94,12 @@ public sealed class GeneralClientTests
             "detail": "Found.",
             "data": [
                 {
+                    "id": 1,
                     "name": "v8.4.3",
-                    "html": "Major update"
+                    "html": "<p>Major update</p>",
+                    "markdown": "**Major update**",
+                    "link": "https://torbox.app/changelogs/v8.4.3",
+                    "created_at": "2024-07-10T07:12:36Z"
                 }
             ]
         }
@@ -207,16 +220,21 @@ public sealed class GeneralClientTests
     public async Task GetChangelogsRssAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StringDataJson);
+        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsRssXml);
 
         // Act
-        TorBoxResponse<string> result = await client.GetChangelogsRssAsync();
+        TorBoxResponse<RssFeed> result = await client.GetChangelogsRssAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.Contains("changelogs/rss", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.NotNull(result.Data.Channel);
+        Assert.Equal("TorBox Changelogs", result.Data.Channel.Title);
+        Assert.NotEmpty(result.Data.Channel.Items);
+        Assert.Equal("v2.9 - Feature Release", result.Data.Channel.Items[0].Title);
     }
 
     // --- GetChangelogsJsonAsync ---
@@ -237,5 +255,12 @@ public sealed class GeneralClientTests
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
         Assert.NotEmpty(result.Data);
+        Changelog first = result.Data[0];
+        Assert.Equal(1, first.Id);
+        Assert.Equal("v8.4.3", first.Name);
+        Assert.Equal("<p>Major update</p>", first.Html);
+        Assert.Equal("**Major update**", first.Markdown);
+        Assert.Equal("https://torbox.app/changelogs/v8.4.3", first.Link);
+        Assert.Equal(DateTimeOffset.Parse("2024-07-10T07:12:36Z"), first.CreatedAt);
     }
 }
