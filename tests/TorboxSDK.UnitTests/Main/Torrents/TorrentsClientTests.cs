@@ -564,6 +564,22 @@ public sealed class TorrentsClientTests
     // --- AsyncCreateTorrentAsync ---
 
     [Fact]
+    public async Task CreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = true };
+
+        // Act
+        await client.CreateTorrentAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
+        Assert.Contains("true", handler.LastRequestContent);
+    }
+
+    [Fact]
     public async Task AsyncCreateTorrentAsync_WithMagnet_SendsMultipartPost()
     {
         // Arrange
@@ -589,6 +605,22 @@ public sealed class TorrentsClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateTorrentAsync(null!));
+    }
+
+    [Fact]
+    public async Task AsyncCreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent()
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = true };
+
+        // Act
+        await client.AsyncCreateTorrentAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
+        Assert.Contains("true", handler.LastRequestContent);
     }
 
     [Fact]

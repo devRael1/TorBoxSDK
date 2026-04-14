@@ -131,6 +131,22 @@ public sealed class UsenetClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.CreateUsenetDownloadAsync(request));
     }
 
+    [Fact]
+    public async Task CreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent()
+    {
+        // Arrange
+        (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = true, AddOnlyIfCached = false };
+
+        // Act
+        await client.CreateUsenetDownloadAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        Assert.Contains("as_queued", handler.LastRequestContent);
+        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
+    }
+
     // --- ControlUsenetDownloadAsync ---
 
     [Fact]
@@ -409,6 +425,22 @@ public sealed class UsenetClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateUsenetDownloadAsync(null!));
+    }
+
+    [Fact]
+    public async Task AsyncCreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent()
+    {
+        // Arrange
+        (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = true, AddOnlyIfCached = false };
+
+        // Act
+        await client.AsyncCreateUsenetDownloadAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        Assert.Contains("as_queued", handler.LastRequestContent);
+        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
     }
 
     [Fact]
