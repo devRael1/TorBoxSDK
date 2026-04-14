@@ -1,5 +1,5 @@
-﻿using System.IO;
-using System.Xml.Serialization;
+﻿using System.Xml;
+using System.Xml.Linq;
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
@@ -37,7 +37,7 @@ internal sealed class GeneralClient : IGeneralClient
         }
         else
         {
-            _rootUrl = new Uri("https://api.torbox.app/");
+            throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
         }
     }
 
@@ -90,15 +90,59 @@ internal sealed class GeneralClient : IGeneralClient
                 content);
         }
 
-        XmlSerializer serializer = new(typeof(RssFeed));
-        using StringReader reader = new(content);
-        RssFeed? feed = (RssFeed?)serializer.Deserialize(reader);
-
-        return new TorBoxResponse<RssFeed>
+        try
         {
-            Success = true,
-            Data = feed
-        };
+            XDocument doc = XDocument.Parse(content);
+            XElement? rss = doc.Root;
+            XElement? channel = rss?.Element("channel");
+            XNamespace contentNs = "http://purl.org/rss/1.0/modules/content/";
+
+            List<RssItem> items = [];
+            if (channel is not null)
+            {
+                foreach (XElement item in channel.Elements("item"))
+                {
+                    items.Add(new RssItem
+                    {
+                        Title = item.Element("title")?.Value ?? string.Empty,
+                        Link = item.Element("link")?.Value ?? string.Empty,
+                        Description = item.Element("description")?.Value ?? string.Empty,
+                        PubDate = item.Element("pubDate")?.Value ?? string.Empty,
+                        ContentEncoded = item.Element(contentNs + "encoded")?.Value
+                    });
+                }
+            }
+
+            RssFeed feed = new()
+            {
+                Version = rss?.Attribute("version")?.Value ?? string.Empty,
+                Channel = channel is null
+                    ? null
+                    : new RssChannel
+                    {
+                        Title = channel.Element("title")?.Value ?? string.Empty,
+                        Link = channel.Element("link")?.Value ?? string.Empty,
+                        Description = channel.Element("description")?.Value ?? string.Empty,
+                        Language = channel.Element("language")?.Value ?? string.Empty,
+                        LastBuildDate = channel.Element("lastBuildDate")?.Value ?? string.Empty,
+                        Items = items.AsReadOnly()
+                    }
+            };
+
+            return new TorBoxResponse<RssFeed>
+            {
+                Success = true,
+                Data = feed
+            };
+        }
+        catch (XmlException ex)
+        {
+            throw new TorBoxException(
+                "Failed to parse changelogs RSS feed.",
+                TorBoxErrorCode.UnknownError,
+                content,
+                ex);
+        }
     }
 
     /// <inheritdoc />

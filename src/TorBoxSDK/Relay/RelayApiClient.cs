@@ -36,7 +36,7 @@ internal sealed class RelayApiClient : IRelayApiClient
         }
         else
         {
-            _rootUrl = new Uri("https://relay.torbox.app/");
+            throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
         }
     }
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using TorBoxSDK.Main.General;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
@@ -261,6 +262,6 @@ public sealed class GeneralClientTests
         Assert.Equal("<p>Major update</p>", first.Html);
         Assert.Equal("**Major update**", first.Markdown);
         Assert.Equal("https://torbox.app/changelogs/v8.4.3", first.Link);
-        Assert.Equal(DateTimeOffset.Parse("2024-07-10T07:12:36Z"), first.CreatedAt);
+        Assert.Equal(DateTimeOffset.Parse("2024-07-10T07:12:36Z", CultureInfo.InvariantCulture), first.CreatedAt);
     }
 }

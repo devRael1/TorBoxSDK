@@ -1,4 +1,5 @@
-﻿using System.Xml.Linq;
+﻿using System.Xml;
+using System.Xml.Linq;
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
@@ -38,42 +39,53 @@ internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) 
                 content);
         }
 
-        XDocument doc = XDocument.Parse(content);
-        XElement? channel = doc.Root?.Element("channel");
-
-        List<NotificationRssItem> items = [];
-        if (channel is not null)
+        try
         {
-            foreach (XElement item in channel.Elements("item"))
+            XDocument doc = XDocument.Parse(content);
+            XElement? channel = doc.Root?.Element("channel");
+
+            List<NotificationRssItem> items = [];
+            if (channel is not null)
             {
-                DateTimeOffset? pubDate = null;
-                string? pubDateStr = item.Element("pubDate")?.Value;
-                if (pubDateStr is not null && DateTimeOffset.TryParse(pubDateStr, out DateTimeOffset parsed))
+                foreach (XElement item in channel.Elements("item"))
                 {
-                    pubDate = parsed.ToUniversalTime();
+                    DateTimeOffset? pubDate = null;
+                    string? pubDateStr = item.Element("pubDate")?.Value;
+                    if (pubDateStr is not null && DateTimeOffset.TryParse(pubDateStr, out DateTimeOffset parsed))
+                    {
+                        pubDate = parsed.ToUniversalTime();
+                    }
+
+                    items.Add(new NotificationRssItem
+                    {
+                        Title = item.Element("title")?.Value,
+                        Description = item.Element("description")?.Value,
+                        Guid = item.Element("guid")?.Value,
+                        PubDate = pubDate
+                    });
                 }
-
-                items.Add(new NotificationRssItem
-                {
-                    Title = item.Element("title")?.Value,
-                    Description = item.Element("description")?.Value,
-                    Guid = item.Element("guid")?.Value,
-                    PubDate = pubDate
-                });
             }
-        }
 
-        return new TorBoxResponse<NotificationRssFeed>
-        {
-            Success = true,
-            Data = new NotificationRssFeed
+            return new TorBoxResponse<NotificationRssFeed>
             {
-                Title = channel?.Element("title")?.Value,
-                Link = channel?.Element("link")?.Value,
-                Description = channel?.Element("description")?.Value,
-                Items = items.AsReadOnly()
-            }
-        };
+                Success = true,
+                Data = new NotificationRssFeed
+                {
+                    Title = channel?.Element("title")?.Value,
+                    Link = channel?.Element("link")?.Value,
+                    Description = channel?.Element("description")?.Value,
+                    Items = items.AsReadOnly()
+                }
+            };
+        }
+        catch (XmlException ex)
+        {
+            throw new TorBoxException(
+                "Failed to parse notification RSS feed.",
+                TorBoxErrorCode.UnknownError,
+                content,
+                ex);
+        }
     }
 
     /// <inheritdoc />

@@ -41,6 +41,7 @@ internal static class ClientTestBase
         {
             args[i] = parameters[i].ParameterType == typeof(string)
                 ? string.Empty
+                // Value types always produce a non-null default via Activator.CreateInstance.
                 : Activator.CreateInstance(parameters[i].ParameterType)!;
         }
 
