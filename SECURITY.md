@@ -17,9 +17,10 @@ The following versions of TorBoxSDK are currently supported with security update
 **Please do NOT report security vulnerabilities through public GitHub issues.**
 
 If you discover a security vulnerability in TorBoxSDK, please report it
-responsibly using GitHub's private security advisory feature:
+responsibly by email at **devrael1@protonmail.com**.
 
-**[Report a vulnerability](https://github.com/devRael1/TorBoxSDK/security/advisories/new)**
+GitHub's private security advisory reporting is not configured for this
+repository, so please do not use it for vulnerability reports.
 
 When reporting, please include:
 
