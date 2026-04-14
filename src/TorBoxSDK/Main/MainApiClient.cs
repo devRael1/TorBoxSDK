@@ -61,10 +61,11 @@ internal sealed class MainApiClient : IMainApiClient
     /// Initializes a new instance of the <see cref="MainApiClient"/> class.
     /// </summary>
     /// <param name="httpClient">The HTTP client configured for the Main API.</param>
+    /// <param name="apiKey">The TorBox API key, used by sub-clients that require it as a query parameter.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
     /// </exception>
-    internal MainApiClient(HttpClient httpClient)
+    internal MainApiClient(HttpClient httpClient, string apiKey)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
 
@@ -73,7 +74,7 @@ internal sealed class MainApiClient : IMainApiClient
         Usenet = new UsenetClient(httpClient);
         WebDownloads = new WebDownloadsClient(httpClient);
         User = new UserClient(httpClient);
-        Notifications = new NotificationsClient(httpClient);
+        Notifications = new NotificationsClient(httpClient, apiKey);
         Rss = new RssClient(httpClient);
         Stream = new StreamClient(httpClient);
         Integrations = new IntegrationsClient(httpClient);

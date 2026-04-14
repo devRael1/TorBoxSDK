@@ -8,11 +8,11 @@ namespace TorBoxSDK.Main.Notifications;
 /// </summary>
 public interface INotificationsClient
 {
-    /// <summary>Gets the notifications RSS feed URL.</summary>
+    /// <summary>Gets the notifications RSS feed.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The RSS feed URL as a string.</returns>
+    /// <returns>The parsed RSS feed.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<string>> GetNotificationRssAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<NotificationRssFeed>> GetNotificationRssAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the authenticated user's notifications.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>

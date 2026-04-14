@@ -1,3 +1,5 @@
+using System.Xml.Linq;
+
 using TorBoxSDK.Http;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
@@ -12,18 +14,67 @@ namespace TorBoxSDK.Main.Notifications;
 /// Initializes a new instance of the <see cref="NotificationsClient"/> class.
 /// </remarks>
 /// <param name="httpClient">The HTTP client configured for the Main API.</param>
+/// <param name="apiKey">The TorBox API key used to authenticate RSS feed requests.</param>
 /// <exception cref="ArgumentNullException">
 /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
 /// </exception>
-internal sealed class NotificationsClient(HttpClient httpClient) : INotificationsClient
+internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) : INotificationsClient
 {
     private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly string _apiKey = apiKey ?? string.Empty;
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> GetNotificationRssAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<NotificationRssFeed>> GetNotificationRssAsync(CancellationToken cancellationToken = default)
     {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "notifications/rss");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        string query = TorBoxApiHelper.BuildQuery(("token", _apiKey));
+        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"notifications/rss{query}");
+        using HttpResponseMessage httpResponse = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
+        string content = await httpResponse.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+
+        if (!httpResponse.IsSuccessStatusCode)
+        {
+            throw new TorBoxException(
+                $"HTTP {(int)httpResponse.StatusCode}: {httpResponse.ReasonPhrase}",
+                TorBoxErrorCode.ServerError,
+                content);
+        }
+
+        XDocument doc = XDocument.Parse(content);
+        XElement? channel = doc.Root?.Element("channel");
+
+        List<NotificationRssItem> items = [];
+        if (channel is not null)
+        {
+            foreach (XElement item in channel.Elements("item"))
+            {
+                DateTimeOffset? pubDate = null;
+                string? pubDateStr = item.Element("pubDate")?.Value;
+                if (pubDateStr is not null && DateTimeOffset.TryParse(pubDateStr, out DateTimeOffset parsed))
+                {
+                    pubDate = parsed.ToUniversalTime();
+                }
+
+                items.Add(new NotificationRssItem
+                {
+                    Title = item.Element("title")?.Value,
+                    Description = item.Element("description")?.Value,
+                    Guid = item.Element("guid")?.Value,
+                    PubDate = pubDate
+                });
+            }
+        }
+
+        return new TorBoxResponse<NotificationRssFeed>
+        {
+            Success = true,
+            Data = new NotificationRssFeed
+            {
+                Title = channel?.Element("title")?.Value,
+                Link = channel?.Element("link")?.Value,
+                Description = channel?.Element("description")?.Value,
+                Items = items.AsReadOnly()
+            }
+        };
     }
 
     /// <inheritdoc />

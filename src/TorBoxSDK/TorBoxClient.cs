@@ -1,7 +1,4 @@
-using System.Net.Http;
-
 using Microsoft.Extensions.Options;
-
 using TorBoxSDK.Http;
 using TorBoxSDK.Main;
 using TorBoxSDK.Relay;
@@ -48,7 +45,7 @@ public sealed class TorBoxClient : ITorBoxClient
         HttpClient searchHttpClient = httpClientFactory.CreateClient(HttpClientNames.SearchApi);
         HttpClient relayHttpClient = httpClientFactory.CreateClient(HttpClientNames.RelayApi);
 
-        Main = new MainApiClient(mainHttpClient);
+        Main = new MainApiClient(mainHttpClient, options.Value.ApiKey);
         Search = new SearchApiClient(searchHttpClient);
         Relay = new RelayApiClient(relayHttpClient);
     }

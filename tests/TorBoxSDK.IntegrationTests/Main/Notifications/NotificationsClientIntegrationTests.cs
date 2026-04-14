@@ -40,7 +40,7 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<string> response = await _fixture.Client.Main.Notifications
+        TorBoxResponse<NotificationRssFeed> response = await _fixture.Client.Main.Notifications
             .GetNotificationRssAsync(cts.Token);
 
         // Assert

@@ -26,13 +26,27 @@ internal static class ClientTestBase
         MockHttpMessageHandler handler = new(json, statusCode);
         HttpClient httpClient = new(handler) { BaseAddress = new Uri(resolvedBaseAddress) };
 
-        TClient client = (TClient?)Activator.CreateInstance(
-                typeof(TClient),
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
-                binder: null,
-                args: [httpClient],
-                culture: null)
-            ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}. Ensure it has an internal constructor accepting HttpClient.");
+        ConstructorInfo ctor = typeof(TClient)
+            .GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+            .FirstOrDefault(c =>
+            {
+                ParameterInfo[] ps = c.GetParameters();
+                return ps.Length > 0 && ps[0].ParameterType == typeof(HttpClient);
+            })
+            ?? throw new InvalidOperationException($"No constructor accepting HttpClient found on {typeof(TClient).Name}.");
+
+        ParameterInfo[] parameters = ctor.GetParameters();
+        object[] args = new object[parameters.Length];
+        args[0] = httpClient;
+        for (int i = 1; i < parameters.Length; i++)
+        {
+            args[i] = parameters[i].ParameterType == typeof(string)
+                ? string.Empty
+                : Activator.CreateInstance(parameters[i].ParameterType)!;
+        }
+
+        TClient client = (TClient?)ctor.Invoke(args)
+            ?? throw new InvalidOperationException($"Failed to create instance of {typeof(TClient).Name}.");
 
         return (client, handler);
     }
