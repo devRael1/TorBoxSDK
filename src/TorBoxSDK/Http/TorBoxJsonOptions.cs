@@ -36,6 +36,8 @@ internal static class TorBoxJsonOptions
         };
 
         options.Converters.Add(new JsonStringEnumConverter(namingPolicy));
+        options.Converters.Add(new UtcDateTimeOffsetConverter());
+        options.Converters.Add(new NullableUtcDateTimeOffsetConverter());
 
         return options;
     }
