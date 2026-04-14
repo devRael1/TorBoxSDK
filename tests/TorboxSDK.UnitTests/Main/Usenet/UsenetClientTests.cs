@@ -145,8 +145,10 @@ public sealed class UsenetClientTests
 
         // Assert
         Assert.NotNull(handler.LastRequestContent);
-        Assert.Contains("as_queued", handler.LastRequestContent);
-        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
+        string expectedAsQueuedContent = $"name=as_queued\r\n\r\n{asQueued.ToString().ToLowerInvariant()}";
+        string expectedAddOnlyIfCachedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedAsQueuedContent, handler.LastRequestContent);
+        Assert.Contains(expectedAddOnlyIfCachedContent, handler.LastRequestContent);
     }
 
     // --- ControlUsenetDownloadAsync ---
@@ -443,8 +445,10 @@ public sealed class UsenetClientTests
 
         // Assert
         Assert.NotNull(handler.LastRequestContent);
-        Assert.Contains("as_queued", handler.LastRequestContent);
-        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
+        string expectedAsQueuedContent = $"name=as_queued\r\n\r\n{asQueued.ToString().ToLowerInvariant()}";
+        string expectedAddOnlyIfCachedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedAsQueuedContent, handler.LastRequestContent);
+        Assert.Contains(expectedAddOnlyIfCachedContent, handler.LastRequestContent);
     }
 
     [Fact]

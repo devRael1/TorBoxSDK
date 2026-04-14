@@ -196,6 +196,24 @@ public sealed class TorrentsClientTests
         Assert.True(result.Success);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent(bool addOnlyIfCached)
+    {
+        // Arrange
+        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = addOnlyIfCached };
+
+        // Act
+        await client.CreateTorrentAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        string expectedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedContent, handler.LastRequestContent);
+    }
+
     [Fact]
     public async Task ControlTorrentAsync_WithValidRequest_SendsPostRequest()
     {
@@ -563,24 +581,6 @@ public sealed class TorrentsClientTests
 
     // --- AsyncCreateTorrentAsync ---
 
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task CreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent(bool addOnlyIfCached)
-    {
-        // Arrange
-        (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
-        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = addOnlyIfCached };
-
-        // Act
-        await client.CreateTorrentAsync(request);
-
-        // Assert
-        Assert.NotNull(handler.LastRequestContent);
-        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
-        Assert.Contains(addOnlyIfCached.ToString().ToLowerInvariant(), handler.LastRequestContent);
-    }
-
     [Fact]
     public async Task AsyncCreateTorrentAsync_WithMagnet_SendsMultipartPost()
     {
@@ -623,8 +623,8 @@ public sealed class TorrentsClientTests
 
         // Assert
         Assert.NotNull(handler.LastRequestContent);
-        Assert.Contains("add_only_if_cached", handler.LastRequestContent);
-        Assert.Contains(addOnlyIfCached.ToString().ToLowerInvariant(), handler.LastRequestContent);
+        string expectedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedContent, handler.LastRequestContent);
     }
 
     [Fact]
