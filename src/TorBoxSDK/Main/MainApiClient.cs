@@ -62,14 +62,15 @@ internal sealed class MainApiClient : IMainApiClient
     /// </summary>
     /// <param name="httpClient">The HTTP client configured for the Main API.</param>
     /// <param name="apiKey">The TorBox API key, used by sub-clients that require it as a query parameter.</param>
+    /// <param name="baseUrl">The root Main API URL (without version), used by endpoints that target the API root.</param>
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
     /// </exception>
-    internal MainApiClient(HttpClient httpClient, string apiKey)
+    internal MainApiClient(HttpClient httpClient, string apiKey, string baseUrl)
     {
         ArgumentNullException.ThrowIfNull(httpClient);
 
-        General = new GeneralClient(httpClient);
+        General = new GeneralClient(httpClient, baseUrl);
         Torrents = new TorrentsClient(httpClient);
         Usenet = new UsenetClient(httpClient);
         WebDownloads = new WebDownloadsClient(httpClient);

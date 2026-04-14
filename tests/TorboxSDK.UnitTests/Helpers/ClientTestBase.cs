@@ -11,7 +11,7 @@ internal static class ClientTestBase
     private static readonly Dictionary<Type, string> _baseAddresses = new()
     {
         [typeof(SearchApiClient)] = "https://search-api.torbox.app/",
-        [typeof(RelayApiClient)] = "https://relay.torbox.app/",
+        [typeof(RelayApiClient)] = "https://relay.torbox.app/v1/",
     };
 
     internal static (TClient client, MockHttpMessageHandler handler) CreateClient<TClient>(

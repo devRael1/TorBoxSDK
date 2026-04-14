@@ -32,7 +32,8 @@ public static class BasicSetupExample
 
             // Optional: override default timeouts and base URLs.
             // options.Timeout = TimeSpan.FromSeconds(60);
-            // options.MainApiBaseUrl = "https://api.torbox.app/v1/api/";
+            // options.MainApiBaseUrl = "https://api.torbox.app/";
+            // options.ApiVersion = "v1";
         });
 
         // ──────────────────────────────────────────────────────────

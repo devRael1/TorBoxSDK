@@ -8,22 +8,42 @@ namespace TorBoxSDK.Main.General;
 /// Default implementation of <see cref="IGeneralClient"/> for general
 /// TorBox API operations including status, statistics, and speedtest.
 /// </summary>
-/// <remarks>
-/// Initializes a new instance of the <see cref="GeneralClient"/> class.
-/// </remarks>
-/// <param name="httpClient">The HTTP client configured for the Main API.</param>
-/// <exception cref="ArgumentNullException">
-/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-/// </exception>
-internal sealed class GeneralClient(HttpClient httpClient) : IGeneralClient
+internal sealed class GeneralClient : IGeneralClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient;
+    private readonly Uri _rootUrl;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GeneralClient"/> class.
+    /// </summary>
+    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
+    /// <param name="baseUrl">The root Main API URL (without version), used for the up-status endpoint.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+    /// </exception>
+    internal GeneralClient(HttpClient httpClient, string baseUrl)
+    {
+        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+
+        if (!string.IsNullOrEmpty(baseUrl))
+        {
+            _rootUrl = new Uri(baseUrl);
+        }
+        else if (httpClient.BaseAddress is not null)
+        {
+            _rootUrl = new Uri($"{httpClient.BaseAddress.Scheme}://{httpClient.BaseAddress.Host}/");
+        }
+        else
+        {
+            _rootUrl = new Uri("https://api.torbox.app/");
+        }
+    }
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetUpStatusAsync(CancellationToken cancellationToken = default)
     {
-        // An empty relative URI resolves to the API base address itself (GET /v1/api/).
-        using var request = new HttpRequestMessage(HttpMethod.Get, string.Empty);
+        // Use the root API URL (without version path) as an absolute URI.
+        using var request = new HttpRequestMessage(HttpMethod.Get, _rootUrl);
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 

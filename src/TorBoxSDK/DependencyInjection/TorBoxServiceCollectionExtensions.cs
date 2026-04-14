@@ -78,7 +78,7 @@ public static class TorBoxServiceCollectionExtensions
             .AddHttpClient(HttpClientNames.MainApi, (sp, client) =>
             {
                 TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
-                client.BaseAddress = new Uri(options.MainApiBaseUrl);
+                client.BaseAddress = new Uri(options.MainApiVersionedUrl);
                 client.Timeout = options.Timeout;
             })
             .AddHttpMessageHandler<AuthHandler>();
@@ -96,7 +96,7 @@ public static class TorBoxServiceCollectionExtensions
             .AddHttpClient(HttpClientNames.RelayApi, (sp, client) =>
             {
                 TorBoxClientOptions options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>().Value;
-                client.BaseAddress = new Uri(options.RelayApiBaseUrl);
+                client.BaseAddress = new Uri(options.RelayApiVersionedUrl);
                 client.Timeout = options.Timeout;
             })
             .AddHttpMessageHandler<AuthHandler>();
