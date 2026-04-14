@@ -13,9 +13,10 @@ namespace TorboxSDK.UnitTests.CrossFramework;
 
 /// <summary>
 /// Tests that validate cross-framework compatibility for the TorBox SDK.
-/// These tests exercise framework-specific code paths, including polyfills
-/// for <see cref="Guard"/> (net6.0/net7.0 vs net7.0+) and
-/// <see cref="TorBoxJsonOptions"/> (net6.0/net7.0 vs net8.0+).
+/// These tests exercise framework-specific code paths, including the
+/// <see cref="Guard"/> polyfill (uses built-in API on net7.0+, manual checks on net6.0) and
+/// <see cref="TorBoxJsonOptions"/> (uses built-in SnakeCaseLower on net8.0+, custom policy on net6.0/net7.0).
+/// The unit test project targets net8.0 and net10.0 to verify both frameworks at runtime.
 /// </summary>
 public sealed class FrameworkCompatibilityTests
 {
@@ -106,7 +107,7 @@ public sealed class FrameworkCompatibilityTests
     [Fact]
     public void UtcDateTimeOffsetConverter_Deserialize_NormalizesToUtc()
     {
-        // Arrange — offset is +05:00, should be normalised to UTC
+        // Arrange — offset is +05:00, should be normalized to UTC
         string json = """
             {
                 "success": true,
@@ -193,7 +194,7 @@ public sealed class FrameworkCompatibilityTests
         // Act
         string json = JsonSerializer.Serialize(model, TorBoxJsonOptions.Default);
 
-        // Assert — serialised value should be UTC (07:00:00+00:00)
+        // Assert — serialized value should be UTC (07:00:00+00:00)
         Assert.Contains("2024-07-10T07:00:00", json);
         Assert.Contains("+00:00", json);
     }
