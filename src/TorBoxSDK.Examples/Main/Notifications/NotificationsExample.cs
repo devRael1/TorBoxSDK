@@ -93,12 +93,17 @@ public static class NotificationsExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Fetching notification RSS feed...");
 
-            TorBoxResponse<string> rssResponse =
+            TorBoxResponse<NotificationRssFeed> rssResponse =
                 await client.Main.Notifications.GetNotificationRssAsync(cts.Token);
 
             if (rssResponse.Data is not null)
             {
-                Console.WriteLine($"  RSS Feed URL: {rssResponse.Data}");
+                Console.WriteLine($"  RSS Feed: {rssResponse.Data.Title ?? "N/A"} ({rssResponse.Data.Items.Count} item(s))");
+                foreach (NotificationRssItem item in rssResponse.Data.Items)
+                {
+                    Console.WriteLine($"    [{item.PubDate?.ToString("yyyy-MM-dd HH:mm") ?? "N/A"}] {item.Title}");
+                    Console.WriteLine($"      {item.Description}");
+                }
             }
 
             // ──────────────────────────────────────────────────────

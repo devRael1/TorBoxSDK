@@ -74,7 +74,11 @@ public static class GeneralExample
                 for (int i = 0; i < displayCount; i++)
                 {
                     Changelog changelog = changelogsResponse.Data[i];
-                    Console.WriteLine($"  - {changelog}");
+                    Console.WriteLine($"  [{changelog.Id}] {changelog.Name}");
+                    if (changelog.Link is not null)
+                        Console.WriteLine($"      Link: {changelog.Link}");
+                    if (changelog.CreatedAt is not null)
+                        Console.WriteLine($"      Date: {changelog.CreatedAt:yyyy-MM-dd}");
                 }
             }
 
@@ -84,12 +88,21 @@ public static class GeneralExample
             Console.WriteLine();
             Console.WriteLine("Fetching changelogs RSS...");
 
-            TorBoxResponse<string> rssResponse =
+            TorBoxResponse<ChangelogsRssFeed> rssResponse =
                 await client.Main.General.GetChangelogsRssAsync(cts.Token);
 
-            if (rssResponse.Data is not null)
+            if (rssResponse.Data?.Channel is not null)
             {
-                Console.WriteLine($"  RSS feed length: {rssResponse.Data.Length} chars");
+                ChangelogsRssChannel channel = rssResponse.Data.Channel;
+                Console.WriteLine($"  Feed title: {channel.Title}");
+                Console.WriteLine($"  Items: {channel.Items.Count}");
+
+                int displayCount = Math.Min(3, channel.Items.Count);
+                for (int i = 0; i < displayCount; i++)
+                {
+                    ChangelogsRssItem item = channel.Items[i];
+                    Console.WriteLine($"    - {item.Title} ({item.PubDate})");
+                }
             }
         }
         catch (TorBoxException ex)

@@ -9,11 +9,10 @@ public sealed class RelayApiClientTests
 {
     private const string StatusJson = """
         {
-            "success": true,
-            "error": null,
-            "detail": "OK.",
+            "status": "TorBox Relay Satellite is running.",
             "data": {
-                "status": "operational"
+                "current_online": 0,
+                "current_workers": 5
             }
         }
         """;
@@ -44,7 +43,10 @@ public sealed class RelayApiClientTests
         Assert.NotNull(result);
         Assert.True(result.Success);
         Assert.NotNull(result.Data);
-        Assert.Equal("operational", result.Data.Status);
+        Assert.Equal("TorBox Relay Satellite is running.", result.Data.Status);
+        Assert.NotNull(result.Data.Data);
+        Assert.Equal(0, result.Data.Data.CurrentOnline);
+        Assert.Equal(5, result.Data.Data.CurrentWorkers);
     }
 
     [Fact]

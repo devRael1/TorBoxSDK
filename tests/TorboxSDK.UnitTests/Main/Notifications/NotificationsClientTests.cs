@@ -15,13 +15,21 @@ public sealed class NotificationsClientTests
         }
         """;
 
-    private const string StringDataJson = """
-        {
-            "success": true,
-            "error": null,
-            "detail": "Found.",
-            "data": "https://torbox.app/notifications/rss/abc123"
-        }
+    private const string NotificationRssXml = """
+        <?xml version="1.0" ?>
+        <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+          <channel>
+            <title>TorBox Notifications</title>
+            <link>https://api.torbox.app/v1/api/notifications/rss?token=test-token</link>
+            <description>TorBox Notifications</description>
+            <item>
+              <title>Torrent Ready To Download</title>
+              <description>Your torrent Test.torrent has finished processing.</description>
+              <guid>12345</guid>
+              <pubDate>2026-04-07T11:35:58Z</pubDate>
+            </item>
+          </channel>
+        </rss>
         """;
 
     private const string NotificationsJson = """
@@ -61,16 +69,20 @@ public sealed class NotificationsClientTests
     public async Task GetNotificationRssAsync_WithNoParameters_SendsGetRequest()
     {
         // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(StringDataJson);
+        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationRssXml);
 
         // Act
-        TorBoxResponse<string> result = await client.GetNotificationRssAsync();
+        TorBoxResponse<NotificationRssFeed> result = await client.GetNotificationRssAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
         Assert.Contains("notifications/rss", handler.LastRequest.RequestUri!.ToString());
         Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Equal("TorBox Notifications", result.Data.Title);
+        Assert.NotEmpty(result.Data.Items);
+        Assert.Equal("Torrent Ready To Download", result.Data.Items[0].Title);
     }
 
     // --- GetMyNotificationsAsync ---

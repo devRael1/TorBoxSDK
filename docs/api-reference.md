@@ -50,7 +50,7 @@ General service endpoints for root status, platform statistics, speedtest file d
 | `GetStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<Stats>` | Gets current aggregate TorBox statistics. |
 | `Get30DayStatsAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<DailyStats>>` | Gets daily statistics snapshots for the last 30 days. |
 | `GetSpeedtestFilesAsync` | `options: SpeedtestOptions? = null`<br>`cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<SpeedtestServer>>` | Gets speedtest server data using optional region, IP, and test length options. |
-| `GetChangelogsRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<string>` | Gets the changelog RSS feed URL or content reference. |
+| `GetChangelogsRssAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<ChangelogsRssFeed>` | Gets the changelogs as a parsed RSS 2.0 feed. |
 | `GetChangelogsJsonAsync` | `cancellationToken: CancellationToken = default` | `TorBoxResponse<IReadOnlyList<Changelog>>` | Gets changelog entries as JSON data. |
 
 ### Torrents Client
@@ -1298,8 +1298,12 @@ Type: `record`
 
 | Property | Type | Description |
 |---|---|---|
+| `Id` | `int` | Unique identifier of the changelog entry. |
 | `Name` | `string` | Changelog version or entry name. |
 | `Html` | `string?` | HTML content of the changelog entry. |
+| `Markdown` | `string?` | Markdown content of the changelog entry. |
+| `Link` | `string?` | Link associated with the changelog entry. |
+| `CreatedAt` | `DateTimeOffset?` | Creation date of the changelog entry. |
 
 #### `DailyStats`
 
@@ -1346,7 +1350,41 @@ Type: `record`
 |---|---|---|
 | `UserIp` | `string?` | User IP to use for the speedtest request. |
 | `Region` | `string?` | Region override. |
-| `TestLength` | `int?` | Test length in seconds. |
+| `TestLength` | `string?` | Test length override. |
+
+#### `ChangelogsRssFeed`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Version` | `string` | RSS version (e.g. "2.0"). |
+| `Channel` | `ChangelogsRssChannel?` | Channel metadata and items. |
+
+#### `ChangelogsRssChannel`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Title` | `string` | Channel title. |
+| `Link` | `string` | Channel link. |
+| `Description` | `string` | Channel description. |
+| `Language` | `string` | Channel language. |
+| `LastBuildDate` | `string` | Last build date as a string. |
+| `Items` | `IReadOnlyList<ChangelogsRssItem>` | List of RSS items. |
+
+#### `ChangelogsRssItem`
+
+Type: `record`
+
+| Property | Type | Description |
+|---|---|---|
+| `Title` | `string` | Item title. |
+| `Link` | `string` | Item link. |
+| `Description` | `string` | Item description. |
+| `PubDate` | `string` | Publication date as a string. |
+| `ContentEncoded` | `string?` | Content:encoded element value. |
 
 ## Enums
 

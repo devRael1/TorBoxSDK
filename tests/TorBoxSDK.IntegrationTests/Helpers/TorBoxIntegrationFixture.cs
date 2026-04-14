@@ -1,5 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
-
+﻿using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK.DependencyInjection;
 
 namespace TorBoxSDK.IntegrationTests.Helpers;
