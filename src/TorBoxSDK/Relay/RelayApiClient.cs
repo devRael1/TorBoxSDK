@@ -28,11 +28,16 @@ internal sealed class RelayApiClient : IRelayApiClient
 
         if (!string.IsNullOrEmpty(baseUrl))
         {
-            _rootUrl = new Uri(baseUrl);
+            if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out Uri? parsedBaseUrl))
+            {
+                throw new ArgumentException("Base URL must be a valid absolute URI.", nameof(baseUrl));
+            }
+
+            _rootUrl = parsedBaseUrl;
         }
         else if (httpClient.BaseAddress is not null)
         {
-            _rootUrl = new Uri($"{httpClient.BaseAddress.Scheme}://{httpClient.BaseAddress.Host}/");
+            _rootUrl = new Uri(httpClient.BaseAddress, "/");
         }
         else
         {

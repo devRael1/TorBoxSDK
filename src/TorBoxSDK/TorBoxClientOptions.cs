@@ -38,12 +38,29 @@ public sealed class TorBoxClientOptions
     /// Defaults to <c>v1</c>. Combined with <see cref="MainApiBaseUrl"/>
     /// to produce the full base URL (e.g. <c>https://api.torbox.app/v1/api/</c>).
     /// </remarks>
+    [Required]
     public string ApiVersion { get; set; } = "v1";
 
     /// <summary>
     /// Gets the fully-qualified Main API base URL including the version path.
     /// </summary>
-    internal string MainApiVersionedUrl => $"{MainApiBaseUrl.TrimEnd('/')}/{ApiVersion}/api/";
+    internal string MainApiVersionedUrl
+    {
+        get
+        {
+            string trimmed = MainApiBaseUrl.TrimEnd('/');
+
+            // Detect if the base URL already contains a version path (e.g. "/v1/api/")
+            // to avoid doubling the path when a consumer has legacy configuration.
+            if (trimmed.EndsWith($"/{ApiVersion}/api", StringComparison.OrdinalIgnoreCase) ||
+                trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase))
+            {
+                return trimmed + "/";
+            }
+
+            return $"{trimmed}/{ApiVersion}/api/";
+        }
+    }
 
     /// <summary>
     /// Gets or sets the base URL for the Search API.
@@ -69,7 +86,22 @@ public sealed class TorBoxClientOptions
     /// <summary>
     /// Gets the fully-qualified Relay API base URL including the version path.
     /// </summary>
-    internal string RelayApiVersionedUrl => $"{RelayApiBaseUrl.TrimEnd('/')}/{ApiVersion}/";
+    internal string RelayApiVersionedUrl
+    {
+        get
+        {
+            string trimmed = RelayApiBaseUrl.TrimEnd('/');
+
+            // Detect if the base URL already contains the version path
+            // to avoid doubling the path when a consumer has legacy configuration.
+            if (trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase))
+            {
+                return trimmed + "/";
+            }
+
+            return $"{trimmed}/{ApiVersion}/";
+        }
+    }
 
     /// <summary>
     /// Gets or sets the HTTP request timeout.

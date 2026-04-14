@@ -29,11 +29,16 @@ internal sealed class GeneralClient : IGeneralClient
 
         if (!string.IsNullOrEmpty(baseUrl))
         {
-            _rootUrl = new Uri(baseUrl);
+            if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out Uri? parsedBaseUrl))
+            {
+                throw new ArgumentException("Base URL must be a valid absolute URI.", nameof(baseUrl));
+            }
+
+            _rootUrl = parsedBaseUrl;
         }
         else if (httpClient.BaseAddress is not null)
         {
-            _rootUrl = new Uri($"{httpClient.BaseAddress.Scheme}://{httpClient.BaseAddress.Host}/");
+            _rootUrl = new Uri(httpClient.BaseAddress, "/");
         }
         else
         {
@@ -76,7 +81,7 @@ internal sealed class GeneralClient : IGeneralClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<RssFeed>> GetChangelogsRssAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<ChangelogsRssFeed>> GetChangelogsRssAsync(CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Get, "changelogs/rss");
         using HttpResponseMessage httpResponse = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
@@ -97,12 +102,12 @@ internal sealed class GeneralClient : IGeneralClient
             XElement? channel = rss?.Element("channel");
             XNamespace contentNs = "http://purl.org/rss/1.0/modules/content/";
 
-            List<RssItem> items = [];
+            List<ChangelogsRssItem> items = [];
             if (channel is not null)
             {
                 foreach (XElement item in channel.Elements("item"))
                 {
-                    items.Add(new RssItem
+                    items.Add(new ChangelogsRssItem
                     {
                         Title = item.Element("title")?.Value ?? string.Empty,
                         Link = item.Element("link")?.Value ?? string.Empty,
@@ -113,12 +118,12 @@ internal sealed class GeneralClient : IGeneralClient
                 }
             }
 
-            RssFeed feed = new()
+            ChangelogsRssFeed feed = new()
             {
                 Version = rss?.Attribute("version")?.Value ?? string.Empty,
                 Channel = channel is null
                     ? null
-                    : new RssChannel
+                    : new ChangelogsRssChannel
                     {
                         Title = channel.Element("title")?.Value ?? string.Empty,
                         Link = channel.Element("link")?.Value ?? string.Empty,
@@ -129,7 +134,7 @@ internal sealed class GeneralClient : IGeneralClient
                     }
             };
 
-            return new TorBoxResponse<RssFeed>
+            return new TorBoxResponse<ChangelogsRssFeed>
             {
                 Success = true,
                 Data = feed

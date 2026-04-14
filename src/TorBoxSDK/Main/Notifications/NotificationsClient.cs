@@ -26,6 +26,11 @@ internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) 
     /// <inheritdoc />
     public async Task<TorBoxResponse<NotificationRssFeed>> GetNotificationRssAsync(CancellationToken cancellationToken = default)
     {
+        if (string.IsNullOrEmpty(_apiKey))
+        {
+            throw new InvalidOperationException("An API key is required to access the notifications RSS feed. Configure the API key via TorBoxClientOptions.ApiKey.");
+        }
+
         string query = TorBoxApiHelper.BuildQuery(("token", _apiKey));
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"notifications/rss{query}");
         using HttpResponseMessage httpResponse = await _httpClient.SendAsync(httpRequest, cancellationToken).ConfigureAwait(false);
@@ -51,7 +56,8 @@ internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) 
                 {
                     DateTimeOffset? pubDate = null;
                     string? pubDateStr = item.Element("pubDate")?.Value;
-                    if (pubDateStr is not null && DateTimeOffset.TryParse(pubDateStr, out DateTimeOffset parsed))
+                    if (pubDateStr is not null &&
+                        DateTimeOffset.TryParse(pubDateStr, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out DateTimeOffset parsed))
                     {
                         pubDate = parsed.ToUniversalTime();
                     }

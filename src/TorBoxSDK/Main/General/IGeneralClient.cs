@@ -38,7 +38,7 @@ public interface IGeneralClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The parsed RSS feed with channel metadata and changelog items.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<RssFeed>> GetChangelogsRssAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<ChangelogsRssFeed>> GetChangelogsRssAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Gets the changelogs as structured JSON data.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>

@@ -88,19 +88,19 @@ public static class GeneralExample
             Console.WriteLine();
             Console.WriteLine("Fetching changelogs RSS...");
 
-            TorBoxResponse<RssFeed> rssResponse =
+            TorBoxResponse<ChangelogsRssFeed> rssResponse =
                 await client.Main.General.GetChangelogsRssAsync(cts.Token);
 
             if (rssResponse.Data?.Channel is not null)
             {
-                RssChannel channel = rssResponse.Data.Channel;
+                ChangelogsRssChannel channel = rssResponse.Data.Channel;
                 Console.WriteLine($"  Feed title: {channel.Title}");
                 Console.WriteLine($"  Items: {channel.Items.Count}");
 
                 int displayCount = Math.Min(3, channel.Items.Count);
                 for (int i = 0; i < displayCount; i++)
                 {
-                    RssItem item = channel.Items[i];
+                    ChangelogsRssItem item = channel.Items[i];
                     Console.WriteLine($"    - {item.Title} ({item.PubDate})");
                 }
             }

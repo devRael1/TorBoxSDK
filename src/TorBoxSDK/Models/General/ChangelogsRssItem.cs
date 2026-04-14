@@ -1,7 +1,7 @@
 namespace TorBoxSDK.Models.General;
 
-/// <summary>Represents a single item in an RSS 2.0 feed.</summary>
-public sealed record RssItem
+/// <summary>Represents a single item in a changelogs RSS 2.0 feed.</summary>
+public sealed record ChangelogsRssItem
 {
     /// <summary>Gets the item title.</summary>
     public string Title { get; init; } = string.Empty;

@@ -224,7 +224,7 @@ public sealed class GeneralClientTests
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsRssXml);
 
         // Act
-        TorBoxResponse<RssFeed> result = await client.GetChangelogsRssAsync();
+        TorBoxResponse<ChangelogsRssFeed> result = await client.GetChangelogsRssAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);

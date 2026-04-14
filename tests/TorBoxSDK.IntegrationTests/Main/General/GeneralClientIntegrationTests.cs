@@ -89,7 +89,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
 
         // Act
-        TorBoxResponse<RssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
+        TorBoxResponse<ChangelogsRssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);
