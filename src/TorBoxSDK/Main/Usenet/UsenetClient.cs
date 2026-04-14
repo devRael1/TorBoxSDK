@@ -55,6 +55,16 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
             content.Add(new StringContent(request.PostProcessing.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)), "post_processing");
         }
 
+        if (request.AsQueued is not null)
+        {
+            content.Add(new StringContent(request.AsQueued.Value.ToString().ToLowerInvariant()), "as_queued");
+        }
+
+        if (request.AddOnlyIfCached is not null)
+        {
+            content.Add(new StringContent(request.AddOnlyIfCached.Value.ToString().ToLowerInvariant()), "add_only_if_cached");
+        }
+
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/createusenetdownload") { Content = content };
         return await TorBoxApiHelper.SendAsync<UsenetDownload>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
@@ -176,6 +186,16 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
         if (request.PostProcessing is not null)
         {
             content.Add(new StringContent(request.PostProcessing.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)), "post_processing");
+        }
+
+        if (request.AsQueued is not null)
+        {
+            content.Add(new StringContent(request.AsQueued.Value.ToString().ToLowerInvariant()), "as_queued");
+        }
+
+        if (request.AddOnlyIfCached is not null)
+        {
+            content.Add(new StringContent(request.AddOnlyIfCached.Value.ToString().ToLowerInvariant()), "add_only_if_cached");
         }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/asynccreateusenetdownload") { Content = content };

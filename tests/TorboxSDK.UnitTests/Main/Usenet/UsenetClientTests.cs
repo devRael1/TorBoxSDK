@@ -131,6 +131,26 @@ public sealed class UsenetClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.CreateUsenetDownloadAsync(request));
     }
 
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task CreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent(bool asQueued, bool addOnlyIfCached)
+    {
+        // Arrange
+        (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = asQueued, AddOnlyIfCached = addOnlyIfCached };
+
+        // Act
+        await client.CreateUsenetDownloadAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        string expectedAsQueuedContent = $"name=as_queued\r\n\r\n{asQueued.ToString().ToLowerInvariant()}";
+        string expectedAddOnlyIfCachedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedAsQueuedContent, handler.LastRequestContent);
+        Assert.Contains(expectedAddOnlyIfCachedContent, handler.LastRequestContent);
+    }
+
     // --- ControlUsenetDownloadAsync ---
 
     [Fact]
@@ -409,6 +429,26 @@ public sealed class UsenetClientTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateUsenetDownloadAsync(null!));
+    }
+
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task AsyncCreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent(bool asQueued, bool addOnlyIfCached)
+    {
+        // Arrange
+        (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = asQueued, AddOnlyIfCached = addOnlyIfCached };
+
+        // Act
+        await client.AsyncCreateUsenetDownloadAsync(request);
+
+        // Assert
+        Assert.NotNull(handler.LastRequestContent);
+        string expectedAsQueuedContent = $"name=as_queued\r\n\r\n{asQueued.ToString().ToLowerInvariant()}";
+        string expectedAddOnlyIfCachedContent = $"name=add_only_if_cached\r\n\r\n{addOnlyIfCached.ToString().ToLowerInvariant()}";
+        Assert.Contains(expectedAsQueuedContent, handler.LastRequestContent);
+        Assert.Contains(expectedAddOnlyIfCachedContent, handler.LastRequestContent);
     }
 
     [Fact]

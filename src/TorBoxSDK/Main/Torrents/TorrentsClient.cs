@@ -60,6 +60,11 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
             content.Add(new StringContent(request.AsQueued.Value.ToString().ToLowerInvariant()), "as_queued");
         }
 
+        if (request.AddOnlyIfCached is not null)
+        {
+            content.Add(new StringContent(request.AddOnlyIfCached.Value.ToString().ToLowerInvariant()), "add_only_if_cached");
+        }
+
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/createtorrent") { Content = content };
         return await TorBoxApiHelper.SendAsync<Torrent>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
@@ -261,6 +266,11 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
         if (request.AsQueued is not null)
         {
             content.Add(new StringContent(request.AsQueued.Value.ToString().ToLowerInvariant()), "as_queued");
+        }
+
+        if (request.AddOnlyIfCached is not null)
+        {
+            content.Add(new StringContent(request.AddOnlyIfCached.Value.ToString().ToLowerInvariant()), "add_only_if_cached");
         }
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/asynccreatetorrent") { Content = content };
