@@ -131,12 +131,14 @@ public sealed class UsenetClientTests
         await Assert.ThrowsAsync<ArgumentException>(() => client.CreateUsenetDownloadAsync(request));
     }
 
-    [Fact]
-    public async Task CreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent()
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task CreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent(bool asQueued, bool addOnlyIfCached)
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
-        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = true, AddOnlyIfCached = false };
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = asQueued, AddOnlyIfCached = addOnlyIfCached };
 
         // Act
         await client.CreateUsenetDownloadAsync(request);
@@ -427,12 +429,14 @@ public sealed class UsenetClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateUsenetDownloadAsync(null!));
     }
 
-    [Fact]
-    public async Task AsyncCreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent()
+    [Theory]
+    [InlineData(true, false)]
+    [InlineData(false, true)]
+    public async Task AsyncCreateUsenetDownloadAsync_WithAsQueuedAndAddOnlyIfCached_IncludesInMultipartContent(bool asQueued, bool addOnlyIfCached)
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(SingleUsenetJson);
-        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = true, AddOnlyIfCached = false };
+        CreateUsenetDownloadRequest request = new() { Link = "https://example.com/file.nzb", AsQueued = asQueued, AddOnlyIfCached = addOnlyIfCached };
 
         // Act
         await client.AsyncCreateUsenetDownloadAsync(request);

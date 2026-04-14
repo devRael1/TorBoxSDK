@@ -563,12 +563,14 @@ public sealed class TorrentsClientTests
 
     // --- AsyncCreateTorrentAsync ---
 
-    [Fact]
-    public async Task CreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task CreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent(bool addOnlyIfCached)
     {
         // Arrange
         (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
-        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = true };
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = addOnlyIfCached };
 
         // Act
         await client.CreateTorrentAsync(request);
@@ -576,7 +578,7 @@ public sealed class TorrentsClientTests
         // Assert
         Assert.NotNull(handler.LastRequestContent);
         Assert.Contains("add_only_if_cached", handler.LastRequestContent);
-        Assert.Contains("true", handler.LastRequestContent);
+        Assert.Contains(addOnlyIfCached.ToString().ToLowerInvariant(), handler.LastRequestContent);
     }
 
     [Fact]
@@ -607,12 +609,14 @@ public sealed class TorrentsClientTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateTorrentAsync(null!));
     }
 
-    [Fact]
-    public async Task AsyncCreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent()
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task AsyncCreateTorrentAsync_WithAddOnlyIfCached_IncludesInMultipartContent(bool addOnlyIfCached)
     {
         // Arrange
         (TorrentsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<TorrentsClient>(SingleTorrentJson);
-        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = true };
+        CreateTorrentRequest request = new() { Magnet = "magnet:?xt=urn:btih:abc123", AddOnlyIfCached = addOnlyIfCached };
 
         // Act
         await client.AsyncCreateTorrentAsync(request);
@@ -620,7 +624,7 @@ public sealed class TorrentsClientTests
         // Assert
         Assert.NotNull(handler.LastRequestContent);
         Assert.Contains("add_only_if_cached", handler.LastRequestContent);
-        Assert.Contains("true", handler.LastRequestContent);
+        Assert.Contains(addOnlyIfCached.ToString().ToLowerInvariant(), handler.LastRequestContent);
     }
 
     [Fact]
