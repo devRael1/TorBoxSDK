@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
+using TorBoxSDK.Http.Validation;
 
-namespace TorBoxSDK.Http;
+namespace TorBoxSDK.Http.Handlers;
 
 /// <summary>
 /// HTTP message handler that injects the TorBox API key as a Bearer token

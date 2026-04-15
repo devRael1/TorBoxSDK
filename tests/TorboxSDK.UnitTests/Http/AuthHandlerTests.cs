@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Options;
 using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK;
-using TorBoxSDK.Http;
+using TorBoxSDK.Http.Handlers;
 
 namespace TorboxSDK.UnitTests.Http;
 

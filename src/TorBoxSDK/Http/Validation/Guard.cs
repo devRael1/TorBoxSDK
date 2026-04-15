@@ -1,7 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
-namespace TorBoxSDK.Http;
+namespace TorBoxSDK.Http.Validation;
 
 /// <summary>
 /// Internal guard helpers for argument validation that work across all target frameworks.

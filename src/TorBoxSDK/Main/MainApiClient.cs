@@ -1,4 +1,4 @@
-using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Main.General;
 using TorBoxSDK.Main.Integrations;
 using TorBoxSDK.Main.Notifications;

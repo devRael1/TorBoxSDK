@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TorBoxSDK.Http;
+namespace TorBoxSDK.Http.Json;
 
 /// <summary>
 /// A <see cref="JsonConverter{T}"/> for <see cref="DateTimeOffset"/> that

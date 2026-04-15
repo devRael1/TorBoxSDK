@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Json;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Relay;
 

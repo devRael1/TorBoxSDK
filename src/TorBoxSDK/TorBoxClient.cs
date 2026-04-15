@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Main;
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;

@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using TorBoxSDK.Http;
+using TorBoxSDK.Http.Json;
 using TorBoxSDK.Models.Torrents;
 
 namespace TorboxSDK.UnitTests.Models.Torrents;

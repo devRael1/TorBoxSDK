@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Handlers;
+using TorBoxSDK.Http.Validation;
 
 namespace TorBoxSDK.DependencyInjection;
 
