@@ -17,12 +17,12 @@ namespace TorBoxSDK.Main.Rss;
 /// </exception>
 internal sealed class RssClient(HttpClient httpClient) : IRssClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse> AddRssAsync(AddRssRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/addrss")
         {
@@ -34,7 +34,7 @@ internal sealed class RssClient(HttpClient httpClient) : IRssClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlRssAsync(ControlRssRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/controlrss")
         {
@@ -46,7 +46,7 @@ internal sealed class RssClient(HttpClient httpClient) : IRssClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ModifyRssAsync(ModifyRssRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/modifyrss")
         {

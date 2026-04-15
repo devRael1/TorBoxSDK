@@ -17,12 +17,12 @@ namespace TorBoxSDK.Main.Stream;
 /// </exception>
 internal sealed class StreamClient(HttpClient httpClient) : IStreamClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> CreateStreamAsync(CreateStreamOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.Type, nameof(options.Type));
 
         string query = TorBoxApiHelper.BuildQuery(
@@ -40,7 +40,7 @@ internal sealed class StreamClient(HttpClient httpClient) : IStreamClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetStreamDataAsync(GetStreamDataOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.PresignedToken, nameof(options.PresignedToken));
         Guard.ThrowIfNullOrEmpty(options.Token, nameof(options.Token));
 

@@ -17,7 +17,7 @@ namespace TorBoxSDK.Search;
 /// </exception>
 internal sealed class SearchApiClient(HttpClient httpClient) : ISearchApiClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> GetTorrentSearchTutorialAsync(CancellationToken cancellationToken = default)
@@ -76,7 +76,7 @@ internal sealed class SearchApiClient(HttpClient httpClient) : ISearchApiClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> DownloadUsenetAsync(DownloadUsenetOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.Id, nameof(options.Id));
         Guard.ThrowIfNullOrEmpty(options.Guid, nameof(options.Guid));
 
@@ -114,7 +114,7 @@ internal sealed class SearchApiClient(HttpClient httpClient) : ISearchApiClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> SearchTorznabAsync(SearchTorznabOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.Query, nameof(options.Query));
 
         string queryString = TorBoxApiHelper.BuildQuery(
@@ -129,7 +129,7 @@ internal sealed class SearchApiClient(HttpClient httpClient) : ISearchApiClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> SearchNewznabAsync(SearchNewznabOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.Query, nameof(options.Query));
 
         string queryString = TorBoxApiHelper.BuildQuery(

@@ -17,12 +17,12 @@ namespace TorBoxSDK.Main.User;
 /// </exception>
 internal sealed class UserClient(HttpClient httpClient) : IUserClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/refreshtoken")
         {
@@ -70,7 +70,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetDeviceTokenAsync(DeviceTokenRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/auth/device/token")
         {
@@ -82,7 +82,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> DeleteMeAsync(DeleteAccountRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, "user/deleteme")
         {
@@ -126,7 +126,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> AddSearchEnginesAsync(AddSearchEnginesRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.Type, nameof(request.Type));
         Guard.ThrowIfNullOrEmpty(request.Url, nameof(request.Url));
 
@@ -149,7 +149,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ModifySearchEnginesAsync(ModifySearchEnginesRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/settings/modifysearchengines")
         {
@@ -161,7 +161,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlSearchEnginesAsync(ControlSearchEnginesRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.Operation, nameof(request.Operation));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "user/settings/controlsearchengines")
@@ -174,7 +174,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> EditSettingsAsync(EditSettingsRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "user/settings/editsettings")
         {

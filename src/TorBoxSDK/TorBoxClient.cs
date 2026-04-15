@@ -38,8 +38,8 @@ public sealed class TorBoxClient : ITorBoxClient
     /// </exception>
     internal TorBoxClient(IHttpClientFactory httpClientFactory, IOptions<TorBoxClientOptions> options)
     {
-        ArgumentNullException.ThrowIfNull(httpClientFactory);
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(httpClientFactory);
+        Guard.ThrowIfNull(options);
 
         HttpClient mainHttpClient = httpClientFactory.CreateClient(HttpClientNames.MainApi);
         HttpClient searchHttpClient = httpClientFactory.CreateClient(HttpClientNames.SearchApi);

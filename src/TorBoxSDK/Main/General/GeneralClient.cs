@@ -25,7 +25,7 @@ internal sealed class GeneralClient : IGeneralClient
     /// </exception>
     internal GeneralClient(HttpClient httpClient, string baseUrl)
     {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _httpClient = Guard.ThrowIfNull(httpClient);
 
         if (!string.IsNullOrEmpty(baseUrl))
         {
