@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using TorBoxSDK.Http.Json;
 using TorBoxSDK.Models.Common;
 
 namespace TorBoxSDK.Http;

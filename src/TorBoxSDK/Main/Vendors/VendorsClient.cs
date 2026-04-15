@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Vendors;
 
@@ -17,12 +18,12 @@ namespace TorBoxSDK.Main.Vendors;
 /// </exception>
 internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<VendorAccount>> RegisterAsync(RegisterVendorRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
 
         MultipartFormDataContent content = new()
@@ -49,7 +50,7 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<VendorAccount>> UpdateAccountAsync(UpdateVendorAccountRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.VendorName is null && request.VendorUrl is null)
         {
@@ -93,7 +94,7 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> RegisterUserAsync(RegisterVendorUserRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.UserEmail, nameof(request.UserEmail));
 
         MultipartFormDataContent content = new()
@@ -108,7 +109,7 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> RemoveUserAsync(RemoveVendorUserRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using HttpRequestMessage httpRequest = new(HttpMethod.Delete, "vendors/removeuser")
         {

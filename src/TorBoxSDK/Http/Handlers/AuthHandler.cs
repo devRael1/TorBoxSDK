@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
+using TorBoxSDK.Http.Validation;
 
-namespace TorBoxSDK.Http;
+namespace TorBoxSDK.Http.Handlers;
 
 /// <summary>
 /// HTTP message handler that injects the TorBox API key as a Bearer token
@@ -12,7 +13,7 @@ namespace TorBoxSDK.Http;
 /// <param name="options">The options containing the API key.</param>
 internal sealed class AuthHandler(IOptions<TorBoxClientOptions> options) : DelegatingHandler
 {
-    private readonly IOptions<TorBoxClientOptions> _options = options ?? throw new ArgumentNullException(nameof(options));
+    private readonly IOptions<TorBoxClientOptions> _options = Guard.ThrowIfNull(options);
 
     /// <inheritdoc />
     protected override Task<HttpResponseMessage> SendAsync(

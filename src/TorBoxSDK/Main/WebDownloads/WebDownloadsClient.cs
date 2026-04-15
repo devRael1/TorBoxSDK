@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.WebDownloads;
 
@@ -17,12 +18,12 @@ namespace TorBoxSDK.Main.WebDownloads;
 /// </exception>
 internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<WebDownload>> CreateWebDownloadAsync(CreateWebDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "webdl/createwebdownload")
         {
@@ -34,7 +35,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlWebDownloadAsync(ControlWebDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "webdl/controlwebdownload")
         {
@@ -46,7 +47,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> RequestDownloadAsync(RequestWebDownloadOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
 
         string query = TorBoxApiHelper.BuildQuery(
             ("web_id", options.WebId.ToString()),
@@ -77,8 +78,8 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
+        Guard.ThrowIfNull(options);
+        Guard.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
 
         string hashParam = string.Join(",", options.Hashes);
         string query = TorBoxApiHelper.BuildQuery(
@@ -93,7 +94,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckWebCachedRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "webdl/checkcached")
         {
@@ -112,7 +113,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse> EditWebDownloadAsync(EditWebDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "webdl/editwebdownload")
         {
@@ -124,7 +125,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<WebDownload>> AsyncCreateWebDownloadAsync(CreateWebDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "webdl/asynccreatewebdownload")
         {

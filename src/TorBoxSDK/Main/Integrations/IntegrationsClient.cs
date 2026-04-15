@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Integrations;
 
@@ -17,7 +18,7 @@ namespace TorBoxSDK.Main.Integrations;
 /// </exception>
 internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)
@@ -29,7 +30,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreateGoogleDriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/googledrive")
         {
@@ -41,7 +42,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreateDropboxJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/dropbox")
         {
@@ -53,7 +54,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreateOnedriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/onedrive")
         {
@@ -65,7 +66,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreateGofileJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/gofile")
         {
@@ -77,7 +78,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreateOneFichierJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/1fichier")
         {
@@ -89,7 +90,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntegrationJob>> CreatePixeldrainJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/pixeldrain")
         {
@@ -158,7 +159,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
         Guard.ThrowIfNullOrEmpty(request.Provider, nameof(request.Provider));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(request.Provider)}/register")
@@ -180,7 +181,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles")
         {

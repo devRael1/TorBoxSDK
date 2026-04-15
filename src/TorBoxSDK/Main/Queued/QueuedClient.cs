@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Queued;
 
@@ -17,7 +18,7 @@ namespace TorBoxSDK.Main.Queued;
 /// </exception>
 internal sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(GetQueuedOptions? options = null, CancellationToken cancellationToken = default)
@@ -36,7 +37,7 @@ internal sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlQueuedAsync(ControlQueuedRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "queued/controlqueued")
         {

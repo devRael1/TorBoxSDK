@@ -1,3 +1,4 @@
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Main.General;
 using TorBoxSDK.Main.Integrations;
 using TorBoxSDK.Main.Notifications;
@@ -68,7 +69,7 @@ internal sealed class MainApiClient : IMainApiClient
     /// </exception>
     internal MainApiClient(HttpClient httpClient, string apiKey, string baseUrl)
     {
-        ArgumentNullException.ThrowIfNull(httpClient);
+        Guard.ThrowIfNull(httpClient);
 
         General = new GeneralClient(httpClient, baseUrl);
         Torrents = new TorrentsClient(httpClient);

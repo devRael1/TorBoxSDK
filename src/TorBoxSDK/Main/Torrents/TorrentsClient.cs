@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Torrents;
 
@@ -17,12 +18,12 @@ namespace TorBoxSDK.Main.Torrents;
 /// </exception>
 internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<Torrent>> CreateTorrentAsync(CreateTorrentRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.Magnet is null && request.File is null)
         {
@@ -72,7 +73,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlTorrentAsync(ControlTorrentRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/controltorrent")
         {
@@ -84,7 +85,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> RequestDownloadAsync(RequestDownloadOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
 
         string query = TorBoxApiHelper.BuildQuery(
             ("torrent_id", options.TorrentId.ToString()),
@@ -115,8 +116,8 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
+        Guard.ThrowIfNull(options);
+        Guard.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
 
         string hashParam = string.Join(",", options.Hashes);
         string query = TorBoxApiHelper.BuildQuery(
@@ -131,7 +132,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/checkcached")
         {
@@ -143,7 +144,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> ExportDataAsync(ExportDataOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
 
         string query = TorBoxApiHelper.BuildQuery(
             ("torrent_id", options.TorrentId.ToString()),
@@ -156,7 +157,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(GetTorrentInfoOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.Hash, nameof(options.Hash));
 
         string query = TorBoxApiHelper.BuildQuery(
@@ -171,7 +172,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoByFileAsync(TorrentInfoRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.File is null && request.Magnet is null && request.Hash is null)
         {
@@ -218,7 +219,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> EditTorrentAsync(EditTorrentRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "torrents/edittorrent")
         {
@@ -230,7 +231,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<Torrent>> AsyncCreateTorrentAsync(CreateTorrentRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.Magnet is null && request.File is null)
         {
@@ -280,7 +281,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> MagnetToFileAsync(MagnetToFileRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "torrents/magnettofile")
         {

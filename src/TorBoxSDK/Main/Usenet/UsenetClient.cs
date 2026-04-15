@@ -1,4 +1,5 @@
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Usenet;
 
@@ -17,12 +18,12 @@ namespace TorBoxSDK.Main.Usenet;
 /// </exception>
 internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
     public async Task<TorBoxResponse<UsenetDownload>> CreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.Link is null && request.File is null)
         {
@@ -72,7 +73,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> ControlUsenetDownloadAsync(ControlUsenetDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/controlusenetdownload")
         {
@@ -84,7 +85,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<string>> RequestDownloadAsync(RequestUsenetDownloadOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
 
         string query = TorBoxApiHelper.BuildQuery(
             ("usenet_id", options.UsenetId.ToString()),
@@ -115,8 +116,8 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
-        ArgumentNullException.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
+        Guard.ThrowIfNull(options);
+        Guard.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
 
         string hashParam = string.Join(",", options.Hashes);
         string query = TorBoxApiHelper.BuildQuery(
@@ -131,7 +132,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckUsenetCachedRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "usenet/checkcached")
         {
@@ -143,7 +144,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse> EditUsenetDownloadAsync(EditUsenetDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Put, "usenet/editusenetdownload")
         {
@@ -155,7 +156,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<UsenetDownload>> AsyncCreateUsenetDownloadAsync(CreateUsenetDownloadRequest request, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(request);
+        Guard.ThrowIfNull(request);
 
         if (request.Link is null && request.File is null)
         {

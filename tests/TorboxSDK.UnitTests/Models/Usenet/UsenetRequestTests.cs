@@ -1,5 +1,5 @@
 ﻿using System.Text.Json;
-using TorBoxSDK.Http;
+using TorBoxSDK.Http.Json;
 using TorBoxSDK.Models.Usenet;
 
 namespace TorboxSDK.UnitTests.Models.Usenet;

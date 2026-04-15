@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Json;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Relay;
 
@@ -24,7 +26,7 @@ internal sealed class RelayApiClient : IRelayApiClient
     /// </exception>
     internal RelayApiClient(HttpClient httpClient, string baseUrl)
     {
-        _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+        _httpClient = Guard.ThrowIfNull(httpClient);
 
         if (!string.IsNullOrEmpty(baseUrl))
         {
@@ -76,7 +78,7 @@ internal sealed class RelayApiClient : IRelayApiClient
     /// <inheritdoc />
     public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(CheckInactiveOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.AuthId, nameof(options.AuthId));
 
         using var request = new HttpRequestMessage(HttpMethod.Get, $"inactivecheck/torrent/{Uri.EscapeDataString(options.AuthId)}/{options.TorrentId}");

@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Options;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Main;
 using TorBoxSDK.Relay;
 using TorBoxSDK.Search;
@@ -38,8 +39,8 @@ public sealed class TorBoxClient : ITorBoxClient
     /// </exception>
     internal TorBoxClient(IHttpClientFactory httpClientFactory, IOptions<TorBoxClientOptions> options)
     {
-        ArgumentNullException.ThrowIfNull(httpClientFactory);
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(httpClientFactory);
+        Guard.ThrowIfNull(options);
 
         HttpClient mainHttpClient = httpClientFactory.CreateClient(HttpClientNames.MainApi);
         HttpClient searchHttpClient = httpClientFactory.CreateClient(HttpClientNames.SearchApi);

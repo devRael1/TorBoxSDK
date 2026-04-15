@@ -2,6 +2,8 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Handlers;
+using TorBoxSDK.Http.Validation;
 
 namespace TorBoxSDK.DependencyInjection;
 
@@ -25,8 +27,8 @@ public static class TorBoxServiceCollectionExtensions
         this IServiceCollection services,
         Action<TorBoxClientOptions> configure)
     {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configure);
+        Guard.ThrowIfNull(services);
+        Guard.ThrowIfNull(configure);
 
         services
             .AddOptions<TorBoxClientOptions>()
@@ -54,8 +56,8 @@ public static class TorBoxServiceCollectionExtensions
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(configuration);
+        Guard.ThrowIfNull(services);
+        Guard.ThrowIfNull(configuration);
 
         services
             .AddOptions<TorBoxClientOptions>()

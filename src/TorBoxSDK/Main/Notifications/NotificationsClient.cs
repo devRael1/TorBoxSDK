@@ -1,6 +1,7 @@
 ﻿using System.Xml;
 using System.Xml.Linq;
 using TorBoxSDK.Http;
+using TorBoxSDK.Http.Validation;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
 
@@ -20,7 +21,7 @@ namespace TorBoxSDK.Main.Notifications;
 /// </exception>
 internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) : INotificationsClient
 {
-    private readonly HttpClient _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
     private readonly string _apiKey = apiKey ?? string.Empty;
 
     /// <inheritdoc />
@@ -125,7 +126,7 @@ internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) 
     /// <inheritdoc />
     public async Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(GetIntercomHashOptions options, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(options);
+        Guard.ThrowIfNull(options);
         Guard.ThrowIfNullOrEmpty(options.AuthId, nameof(options.AuthId));
         Guard.ThrowIfNullOrEmpty(options.Email, nameof(options.Email));
 

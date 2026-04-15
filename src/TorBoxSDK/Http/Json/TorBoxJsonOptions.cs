@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TorBoxSDK.Http;
+namespace TorBoxSDK.Http.Json;
 
 /// <summary>
 /// Provides the shared <see cref="JsonSerializerOptions"/> instance used
