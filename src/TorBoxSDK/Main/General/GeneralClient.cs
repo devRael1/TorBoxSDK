@@ -1,4 +1,4 @@
-﻿using System.Xml;
+using System.Xml;
 using System.Xml.Linq;
 using TorBoxSDK.Http;
 using TorBoxSDK.Http.Validation;
@@ -37,13 +37,11 @@ internal sealed class GeneralClient : IGeneralClient
 
             _rootUrl = parsedBaseUrl;
         }
-        else if (httpClient.BaseAddress is not null)
-        {
-            _rootUrl = new Uri(httpClient.BaseAddress, "/");
-        }
         else
         {
-            throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
+            _rootUrl = httpClient.BaseAddress is not null
+                ? new Uri(httpClient.BaseAddress, "/")
+                : throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
         }
     }
 
@@ -98,7 +96,7 @@ internal sealed class GeneralClient : IGeneralClient
 
         try
         {
-            XDocument doc = XDocument.Parse(content);
+            var doc = XDocument.Parse(content);
             XElement? rss = doc.Root;
             XElement? channel = rss?.Element("channel");
             XNamespace contentNs = "http://purl.org/rss/1.0/modules/content/";

@@ -52,13 +52,9 @@ public sealed class TorBoxClientOptions
 
             // Detect if the base URL already contains a version path (e.g. "/v1/api/")
             // to avoid doubling the path when a consumer has legacy configuration.
-            if (trimmed.EndsWith($"/{ApiVersion}/api", StringComparison.OrdinalIgnoreCase) ||
-                trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase))
-            {
-                return trimmed + "/";
-            }
-
-            return $"{trimmed}/{ApiVersion}/api/";
+            return trimmed.EndsWith($"/{ApiVersion}/api", StringComparison.OrdinalIgnoreCase) || trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase)
+                ? trimmed + "/"
+                : $"{trimmed}/{ApiVersion}/api/";
         }
     }
 
@@ -94,12 +90,7 @@ public sealed class TorBoxClientOptions
 
             // Detect if the base URL already contains the version path
             // to avoid doubling the path when a consumer has legacy configuration.
-            if (trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase))
-            {
-                return trimmed + "/";
-            }
-
-            return $"{trimmed}/{ApiVersion}/";
+            return trimmed.EndsWith($"/{ApiVersion}", StringComparison.OrdinalIgnoreCase) ? trimmed + "/" : $"{trimmed}/{ApiVersion}/";
         }
     }
 
