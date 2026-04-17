@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\TorBoxSDK\TorBoxSDK.csproj" />
+    <ProjectReference Include="..\TorBoxSDK.TestUtilities\TorBoxSDK.TestUtilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

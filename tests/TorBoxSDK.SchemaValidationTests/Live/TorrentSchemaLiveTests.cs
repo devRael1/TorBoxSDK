@@ -45,6 +45,32 @@ public sealed class TorrentSchemaLiveTests(SchemaLiveTestFixture fixture)
             BuildMessage("GET /v1/api/torrents/mylist", typeof(Torrent), unmapped));
     }
 
+    [SkippableFact]
+    public async Task GetTorrentInfo_ResponseFields_AllMappedInSdkModel()
+    {
+        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+
+        // Arrange
+        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+        // Act
+        HttpResponseMessage response = await _fixture.HttpClient
+            .GetAsync("/v1/api/torrents/torrentinfo?hash=3b245504cf5f11bbdbe1201cea6a6bf45aee1bc0", cts.Token)
+            .ConfigureAwait(false);
+
+        string json = await response.Content
+            .ReadAsStringAsync(cts.Token)
+            .ConfigureAwait(false);
+
+        IReadOnlyList<string> unmapped =
+            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<TorrentInfo>>(json);
+
+        // Assert
+        Assert.True(
+            unmapped.Count == 0,
+            BuildMessage("GET /v1/api/torrents/torrentinfo", typeof(TorrentInfo), unmapped));
+    }
+
     private static string BuildMessage(
         string endpoint,
         Type modelType,

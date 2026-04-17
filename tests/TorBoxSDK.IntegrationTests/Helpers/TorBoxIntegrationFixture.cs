@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System.Net.Http.Headers;
+using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK.DependencyInjection;
 
 namespace TorBoxSDK.IntegrationTests.Helpers;
@@ -6,10 +7,14 @@ namespace TorBoxSDK.IntegrationTests.Helpers;
 /// <summary>
 /// Shared xUnit class fixture that bootstraps the TorBox SDK via dependency injection
 /// and exposes the resolved <see cref="ITorBoxClient"/> for integration tests.
+/// Also provides a raw <see cref="HttpClient"/> for schema validation against live API responses.
 /// </summary>
 public sealed class TorBoxIntegrationFixture : IAsyncLifetime
 {
+    private static readonly Uri TorBoxBaseUri = new("https://api.torbox.app");
+
     private ServiceProvider? _serviceProvider;
+    private HttpClient? _rawHttpClient;
 
     /// <summary>
     /// Gets a value indicating whether the <c>TORBOX_API_KEY</c> environment variable is set.
@@ -21,6 +26,13 @@ public sealed class TorBoxIntegrationFixture : IAsyncLifetime
     /// </summary>
     // Set in constructor — guaranteed non-null before any test accesses it.
     public ITorBoxClient Client { get; private set; } = null!;
+
+    /// <summary>
+    /// Gets a raw <see cref="HttpClient"/> configured with the TorBox API base address
+    /// and Bearer token for schema validation tests that need the raw JSON response.
+    /// </summary>
+    public HttpClient RawHttpClient =>
+        _rawHttpClient ?? throw new InvalidOperationException("Fixture has not been initialised.");
 
     public TorBoxIntegrationFixture()
     {
@@ -37,6 +49,14 @@ public sealed class TorBoxIntegrationFixture : IAsyncLifetime
 
         _serviceProvider = services.BuildServiceProvider();
         Client = _serviceProvider.GetRequiredService<ITorBoxClient>();
+
+        // Create a raw HttpClient for schema validation (bypasses SDK deserialization).
+        _rawHttpClient = new HttpClient { BaseAddress = TorBoxBaseUri };
+        if (HasApiKey)
+        {
+            _rawHttpClient.DefaultRequestHeaders.Authorization =
+                new AuthenticationHeaderValue("Bearer", apiKey!);
+        }
     }
 
     /// <inheritdoc />
@@ -45,6 +65,9 @@ public sealed class TorBoxIntegrationFixture : IAsyncLifetime
     /// <inheritdoc />
     public async Task DisposeAsync()
     {
+        _rawHttpClient?.Dispose();
+        _rawHttpClient = null;
+
         if (_serviceProvider is not null)
         {
             await _serviceProvider.DisposeAsync();
