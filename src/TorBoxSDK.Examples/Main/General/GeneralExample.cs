@@ -76,9 +76,14 @@ public static class GeneralExample
                     Changelog changelog = changelogsResponse.Data[i];
                     Console.WriteLine($"  [{changelog.Id}] {changelog.Name}");
                     if (changelog.Link is not null)
+                    {
                         Console.WriteLine($"      Link: {changelog.Link}");
+                    }
+
                     if (changelog.CreatedAt is not null)
+                    {
                         Console.WriteLine($"      Date: {changelog.CreatedAt:yyyy-MM-dd}");
+                    }
                 }
             }
 

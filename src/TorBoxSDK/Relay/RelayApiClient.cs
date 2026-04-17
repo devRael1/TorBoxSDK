@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using TorBoxSDK.Http;
 using TorBoxSDK.Http.Json;
 using TorBoxSDK.Http.Validation;
@@ -37,13 +37,11 @@ internal sealed class RelayApiClient : IRelayApiClient
 
             _rootUrl = parsedBaseUrl;
         }
-        else if (httpClient.BaseAddress is not null)
-        {
-            _rootUrl = new Uri(httpClient.BaseAddress, "/");
-        }
         else
         {
-            throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
+            _rootUrl = httpClient.BaseAddress is not null
+                ? new Uri(httpClient.BaseAddress, "/")
+                : throw new ArgumentException("A base URL must be provided when HttpClient.BaseAddress is not set.", nameof(baseUrl));
         }
     }
 
