@@ -40,7 +40,16 @@ public static class GetProfileExample
 
                 if (profile.Settings is not null)
                 {
+                    UserSettings settings = profile.Settings;
                     Console.WriteLine($"  Settings loaded: Yes");
+                    Console.WriteLine($"    Email notifications: {settings.EmailNotifications?.ToString() ?? "N/A"}");
+                    Console.WriteLine($"    Web notifications: {settings.WebNotifications?.ToString() ?? "N/A"}");
+                    Console.WriteLine($"    Allow zipped: {settings.AllowZipped?.ToString() ?? "N/A"}");
+                    Console.WriteLine($"    CDN selection: {settings.CdnSelection ?? "N/A"}");
+                    Console.WriteLine($"    Dashboard sort: {settings.DashboardSort ?? "N/A"}");
+                    Console.WriteLine($"    Append filename to links: {settings.AppendFilenameToLinks?.ToString() ?? "N/A"}");
+                    Console.WriteLine($"    Web player transcode: {settings.WebPlayerAlwaysTranscode?.ToString() ?? "N/A"}");
+                    Console.WriteLine($"    WebDAV folder view: {settings.WebdavUseFolderView?.ToString() ?? "N/A"}");
                 }
             }
 

@@ -76,7 +76,7 @@ public static class SearchEnginesExample
             {
                 Id = engineId,
                 Url = "https://updated-indexer.example.com/api",  // Updated URL
-                Apikey = "updated-api-key",                       // Updated API key
+                Apikey = indexerApiKey,                            // Reuse the env-var-sourced API key
             };
 
             TorBoxResponse modifyResponse =
