@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!-- Link open_api.json from the repository root so it is copied to the output directory. -->
+  <ItemGroup>
+    <None Include="..\..\open_api.json" Link="open_api.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="Xunit.SkippableFact" />
+  </ItemGroup>
+
+  <!-- net6.0/net7.0: use older test infrastructure that natively supports these TFMs -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" VersionOverride="17.8.0" />
+    <PackageReference Include="xunit.runner.visualstudio" VersionOverride="2.8.2" />
+  </ItemGroup>
+
+  <!-- net8.0+: use latest test infrastructure -->
+  <ItemGroup Condition="'$(TargetFramework)' != 'net6.0' And '$(TargetFramework)' != 'net7.0'">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TorBoxSDK\TorBoxSDK.csproj" />
+    <ProjectReference Include="..\TorBoxSDK.TestUtilities\TorBoxSDK.TestUtilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+</Project>

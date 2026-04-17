@@ -6,6 +6,8 @@
   <Folder Name="/tests/">
     <Project Path="tests/TorBoxSDK.IntegrationTests/TorBoxSDK.IntegrationTests.csproj" Id="520dbc30-5db8-4895-b6e8-36cb0b53ac56" />
     <Project Path="tests/TorBoxSDK.PerformanceTests/TorBoxSDK.PerformanceTests.csproj" Id="eee6f563-4d4e-4626-969f-4c0533c6c171" />
+    <Project Path="tests/TorBoxSDK.SchemaValidationTests/TorBoxSDK.SchemaValidationTests.csproj" />
+    <Project Path="tests/TorBoxSDK.TestUtilities/TorBoxSDK.TestUtilities.csproj" />
     <Project Path="tests/TorboxSDK.UnitTests/TorboxSDK.UnitTests.csproj" Id="6bd01066-54c3-4b90-9b35-5113c2e081f1" />
   </Folder>
 </Solution>

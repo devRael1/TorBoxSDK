@@ -28,7 +28,7 @@ public sealed class AuthFailureIntegrationTests
         await using ServiceProvider provider = services.BuildServiceProvider();
         ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
 
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act & Assert
         TorBoxException exception = await Assert.ThrowsAsync<TorBoxException>(

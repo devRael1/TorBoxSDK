@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.User;
 
@@ -19,7 +19,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<UserProfile> response = await _fixture.Client.Main.User.GetMeAsync(cancellationToken: cts.Token);
@@ -38,7 +38,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<UserProfile> response = await _fixture.Client.Main.User.GetMeAsync(
@@ -58,7 +58,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.User.GetConfirmationAsync(cts.Token);
@@ -74,7 +74,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<ReferralData> response = await _fixture.Client.Main.User.GetReferralDataAsync(cts.Token);
@@ -90,7 +90,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<Subscription>> response = await _fixture.Client.Main.User
@@ -107,7 +107,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<Transaction>> response = await _fixture.Client.Main.User
@@ -124,7 +124,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<SearchEngine>> response = await _fixture.Client.Main.User

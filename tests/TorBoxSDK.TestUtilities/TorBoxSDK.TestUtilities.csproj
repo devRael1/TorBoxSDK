@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0;net10.0</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <!--
+      Shared test utilities for schema validation and unmapped field detection.
+      Targets all TFMs (net6.0-net10.0) so that SchemaValidationTests
+      can reference this project across all supported .NET versions.
+    -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\TorBoxSDK\TorBoxSDK.csproj" />
+  </ItemGroup>
+
+</Project>

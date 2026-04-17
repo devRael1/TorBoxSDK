@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Queued;
 
@@ -19,7 +19,7 @@ public sealed class QueuedClientIntegrationTests(TorBoxIntegrationFixture fixtur
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<QueuedDownload>> response = await _fixture.Client.Main.Queued

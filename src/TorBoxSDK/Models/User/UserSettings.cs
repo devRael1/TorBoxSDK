@@ -363,6 +363,71 @@ public sealed record UserSettings
     [JsonPropertyName("dashboard_filter")]
     public DashboardFilter? DashboardFilter { get; init; }
 
+    /// <summary>
+    /// Gets the dashboard sort preference,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("dashboard_sort")]
+    public string? DashboardSort { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the filename is appended to download links,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("append_filename_to_links")]
+    public bool? AppendFilenameToLinks { get; init; }
+
+    // ──── Web Player ────
+
+    /// <summary>
+    /// Gets a value indicating whether the web player always transcodes media,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_always_transcode")]
+    public bool? WebPlayerAlwaysTranscode { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the web player always skips intros,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_always_skip_intro")]
+    public bool? WebPlayerAlwaysSkipIntro { get; init; }
+
+    /// <summary>
+    /// Gets the preferred audio language for the web player,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_audio_preferred_language")]
+    public string? WebPlayerAudioPreferredLanguage { get; init; }
+
+    /// <summary>
+    /// Gets the preferred subtitle language for the web player,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_subtitle_preferred_language")]
+    public string? WebPlayerSubtitlePreferredLanguage { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the pre-stream selector is disabled in the web player,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_disable_prestream_selector")]
+    public bool? WebPlayerDisablePrestreamSelector { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the "Next Up" dialogue is disabled in the web player,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_disable_next_up_dialogue")]
+    public bool? WebPlayerDisableNextUpDialogue { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether scrobbling is enabled in the web player,
+    /// or <see langword="null"/> if not specified.
+    /// </summary>
+    [JsonPropertyName("web_player_enable_scrobbling")]
+    public bool? WebPlayerEnableScrobbling { get; init; }
+
     // ──── WebDAV ────
 
     /// <summary>
