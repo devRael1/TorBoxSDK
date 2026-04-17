@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
 using TorBoxSDK.Models.User;
@@ -20,7 +20,7 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<Notification>> response = await _fixture.Client.Main.Notifications
@@ -37,7 +37,7 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<NotificationRssFeed> response = await _fixture.Client.Main.Notifications
@@ -54,7 +54,7 @@ public sealed class NotificationsClientIntegrationTests(TorBoxIntegrationFixture
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         TorBoxResponse<UserProfile> meResponse = await _fixture.Client.Main.User
             .GetMeAsync(cancellationToken: cts.Token);

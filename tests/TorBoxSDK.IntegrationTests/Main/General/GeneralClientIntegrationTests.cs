@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
 
@@ -19,7 +19,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.General.GetUpStatusAsync(cts.Token);
@@ -35,7 +35,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<Stats> response = await _fixture.Client.Main.General.GetStatsAsync(cts.Token);
@@ -52,7 +52,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<DailyStats>> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
@@ -69,7 +69,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<SpeedtestServer>> response = await _fixture.Client.Main.General
@@ -86,7 +86,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<ChangelogsRssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
@@ -103,7 +103,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<Changelog>> response = await _fixture.Client.Main.General

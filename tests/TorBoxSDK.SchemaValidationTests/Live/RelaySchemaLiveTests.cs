@@ -1,4 +1,4 @@
-using TorBoxSDK.Models.Common;
+﻿using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Relay;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
@@ -21,7 +21,7 @@ public sealed class RelaySchemaLiveTests(SchemaLiveTestFixture fixture)
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         HttpResponseMessage response = await _fixture.HttpClient

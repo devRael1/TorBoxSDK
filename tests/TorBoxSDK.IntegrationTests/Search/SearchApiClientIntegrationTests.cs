@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Search;
 
@@ -19,7 +19,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
@@ -36,7 +36,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<TorrentSearchResponse> response = await _fixture.Client.Search
@@ -55,7 +55,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
@@ -72,7 +72,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<UsenetSearchResponse> response = await _fixture.Client.Search
@@ -90,7 +90,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
@@ -107,7 +107,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<MetaSearchResult>> response = await _fixture.Client.Search
@@ -125,7 +125,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search
@@ -142,7 +142,7 @@ public sealed class SearchApiClientIntegrationTests(TorBoxIntegrationFixture fix
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<string> response = await _fixture.Client.Search

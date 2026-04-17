@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Torrents;
 
@@ -19,7 +19,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<Torrent>> response = await _fixture.Client.Main.Torrents
@@ -37,7 +37,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
         // Ubuntu 24.04 LTS torrent info hash
         IReadOnlyList<string> hashes = ["3b245504cf5f11bbdbe1201cea6a6bf45aee1bc0"];
 
@@ -56,7 +56,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
         // Ubuntu 24.04 LTS torrent info hash
         string hash = "3b245504cf5f11bbdbe1201cea6a6bf45aee1bc0";
 

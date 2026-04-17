@@ -1,4 +1,4 @@
-using TorBoxSDK.IntegrationTests.Helpers;
+﻿using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Integrations;
 
@@ -19,7 +19,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyDictionary<string, bool>> response = await _fixture.Client.Main.Integrations
@@ -36,7 +36,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<IReadOnlyList<IntegrationJob>> response = await _fixture.Client.Main.Integrations
@@ -55,7 +55,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         Skip.If(string.IsNullOrEmpty(discordToken), "TORBOX_DISCORD_TOKEN not set.");
 
         // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.Integrations
