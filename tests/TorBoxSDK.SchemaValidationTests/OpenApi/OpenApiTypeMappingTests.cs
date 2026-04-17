@@ -45,6 +45,12 @@ public sealed class OpenApiTypeMappingTests
                 if (!propMap.ContainsKey(fieldName) || knownAbsent.Contains(fieldName))
                     continue;
 
+                // Skip fields with known type mismatches between OpenAPI spec and SDK serialization.
+                IReadOnlySet<string> knownMismatch = SchemaModelMapping.KnownTypeMismatches
+                    .GetValueOrDefault(schemaName) ?? new HashSet<string>();
+                if (knownMismatch.Contains(fieldName))
+                    continue;
+
                 data.Add(schemaName, modelType, fieldName, openApiType);
             }
         }

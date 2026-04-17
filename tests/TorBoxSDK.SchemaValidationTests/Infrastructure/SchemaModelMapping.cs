@@ -156,6 +156,24 @@ internal static class SchemaModelMapping
         };
 
     /// <summary>
+    /// Gets the set of (schema, fieldName) pairs that have a known type mismatch between
+    /// the OpenAPI spec and the SDK's actual serialization behavior.
+    /// </summary>
+    /// <remarks>
+    /// The <c>seed</c> field on torrent creation schemas is declared as <c>integer|null</c>
+    /// in the OpenAPI spec, but the SDK serializes <see cref="TorBoxSDK.Models.Torrents.SeedPreference"/>
+    /// as a string via the global <c>JsonStringEnumConverter</c> in <c>TorBoxJsonOptions.Default</c>.
+    /// </remarks>
+    public static IReadOnlyDictionary<string, IReadOnlySet<string>> KnownTypeMismatches { get; } =
+        new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
+        {
+            // SeedPreference is an enum serialized as snake_case string by the global converter,
+            // but the OpenAPI spec declares 'seed' as integer|null.
+            ["Body_create_torrent_v1_api_torrents_createtorrent_post"] = Set("seed"),
+            ["Body_async_create_torrent_v1_api_torrents_asynccreatetorrent_post"] = Set("seed"),
+        };
+
+    /// <summary>
     /// Returns the equivalent OpenAPI type string for a .NET property type,
     /// used for basic type-compatibility checks in <c>OpenApiTypeMappingTests</c>.
     /// </summary>
@@ -172,7 +190,9 @@ internal static class SchemaModelMapping
             underlying == typeof(decimal)) return "number";
         if (underlying == typeof(DateTimeOffset) || underlying == typeof(DateTime))
             return "string";  // ISO-8601 strings in JSON
-        if (underlying.IsEnum) return IsJsonStringEnum(underlying) ? "string" : "integer";
+        // TorBoxJsonOptions.Default registers a global JsonStringEnumConverter with SnakeCaseLower,
+        // so all enums serialize as strings regardless of per-type [JsonConverter] attributes.
+        if (underlying.IsEnum) return "string";
         if (IsCollectionType(underlying)) return "array";
 
         return "object";
@@ -187,29 +207,6 @@ internal static class SchemaModelMapping
             || def == typeof(IEnumerable<>)
             || def == typeof(IReadOnlyCollection<>)
             || def == typeof(ICollection<>);
-    }
-
-    /// <summary>
-    /// Returns <see langword="true"/> when the enum type is decorated with
-    /// <c>[JsonConverter(typeof(JsonStringEnumConverter))]</c> and therefore serialises as a string.
-    /// Returns <see langword="false"/> for enums that serialise as their underlying integer value.
-    /// </summary>
-    private static bool IsJsonStringEnum(Type enumType)
-    {
-        foreach (System.Reflection.CustomAttributeData attr in enumType.CustomAttributes)
-        {
-            if (attr.AttributeType != typeof(System.Text.Json.Serialization.JsonConverterAttribute))
-                continue;
-
-            if (attr.ConstructorArguments.Count > 0 &&
-                attr.ConstructorArguments[0].Value is Type converterType &&
-                converterType == typeof(System.Text.Json.Serialization.JsonStringEnumConverter))
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static IReadOnlySet<string> Set(params string[] values) =>

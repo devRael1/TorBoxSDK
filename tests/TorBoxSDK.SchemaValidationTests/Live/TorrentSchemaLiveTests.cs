@@ -28,9 +28,11 @@ public sealed class TorrentSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/torrents/mylist", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -54,9 +56,11 @@ public sealed class TorrentSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/torrents/torrentinfo?hash=3b245504cf5f11bbdbe1201cea6a6bf45aee1bc0", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)

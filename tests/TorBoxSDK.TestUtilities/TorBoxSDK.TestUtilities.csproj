@@ -5,8 +5,8 @@
     <IsPackable>false</IsPackable>
     <!--
       Shared test utilities for schema validation and unmapped field detection.
-      Targets all TFMs so that both SchemaValidationTests (net8.0+) and
-      IntegrationTests (net6.0-net10.0) can reference this project.
+      Targets all TFMs (net6.0-net10.0) so that SchemaValidationTests
+      can reference this project across all supported .NET versions.
     -->
   </PropertyGroup>
 

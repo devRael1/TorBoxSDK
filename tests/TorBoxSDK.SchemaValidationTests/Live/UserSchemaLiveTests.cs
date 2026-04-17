@@ -24,9 +24,11 @@ public sealed class UserSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/user/me", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -50,9 +52,11 @@ public sealed class UserSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/user/subscriptions", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -76,9 +80,11 @@ public sealed class UserSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/user/transactions", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -102,9 +108,11 @@ public sealed class UserSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/user/settings/searchengines", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -128,9 +136,11 @@ public sealed class UserSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/user/referraldata", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)

@@ -24,9 +24,11 @@ public sealed class IntegrationsSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/integration/jobs", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)

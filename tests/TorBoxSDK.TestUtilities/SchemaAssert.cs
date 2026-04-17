@@ -32,9 +32,11 @@ public static class SchemaAssert
         string endpoint,
         CancellationToken cancellationToken = default)
     {
-        HttpResponseMessage response = await httpClient
+        using HttpResponseMessage response = await httpClient
             .GetAsync(endpoint, cancellationToken)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(

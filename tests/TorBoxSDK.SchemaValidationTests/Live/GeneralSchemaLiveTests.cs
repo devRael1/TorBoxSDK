@@ -24,9 +24,11 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/stats", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -50,9 +52,11 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/stats/30day", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -76,9 +80,11 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/general/speedtest", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
@@ -102,9 +108,11 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        HttpResponseMessage response = await _fixture.HttpClient
+        using HttpResponseMessage response = await _fixture.HttpClient
             .GetAsync("/v1/api/general/changelogs/json", cts.Token)
             .ConfigureAwait(false);
+
+        response.EnsureSuccessStatusCode();
 
         string json = await response.Content
             .ReadAsStringAsync(cts.Token)
