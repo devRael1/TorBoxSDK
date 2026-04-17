@@ -1,0 +1,116 @@
+name: Integration & Live Schema Tests
+
+on:
+  pull_request_review:
+    types: [submitted]
+  workflow_dispatch:
+    inputs:
+      run_live_schema:
+        description: 'Run live schema validation tests'
+        required: false
+        default: 'true'
+        type: boolean
+      run_integration:
+        description: 'Run integration tests'
+        required: false
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  check-approval:
+    name: Check PR Approval
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved')
+    runs-on: ubuntu-latest
+    outputs:
+      approved: ${{ steps.check.outputs.approved }}
+    steps:
+      - id: check
+        run: echo "approved=true" >> "$GITHUB_OUTPUT"
+
+  integration-tests:
+    name: Integration Tests
+    needs: check-approval
+    if: >
+      needs.check-approval.outputs.approved == 'true' &&
+      (github.event_name == 'workflow_dispatch' && inputs.run_integration == true ||
+       github.event_name == 'pull_request_review')
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run integration tests
+        env:
+          TORBOX_API_KEY: ${{ secrets.TORBOX_API_KEY }}
+        run: >
+          dotnet test tests/TorBoxSDK.IntegrationTests/
+          --configuration Release
+          --logger "trx;LogFileName=integration-tests.trx"
+          --results-directory ./test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-results
+          path: ./test-results/*.trx
+          retention-days: 14
+
+  live-schema-validation:
+    name: Live Schema Validation
+    needs: check-approval
+    if: >
+      needs.check-approval.outputs.approved == 'true' &&
+      (github.event_name == 'workflow_dispatch' && inputs.run_live_schema == true ||
+       github.event_name == 'pull_request_review')
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run live schema validation tests
+        env:
+          TORBOX_API_KEY: ${{ secrets.TORBOX_API_KEY }}
+        run: >
+          dotnet test tests/TorBoxSDK.SchemaValidationTests/
+          --configuration Release
+          --logger "trx;LogFileName=live-schema-validation.trx"
+          --results-directory ./test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-schema-validation-results
+          path: ./test-results/*.trx
+          retention-days: 14
