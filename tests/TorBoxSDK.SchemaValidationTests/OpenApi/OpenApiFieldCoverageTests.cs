@@ -54,13 +54,14 @@ public sealed class OpenApiFieldCoverageTests
         Assert.True(
             schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
             $"Schema '{schemaName}' was not found in the OpenAPI specification.");
+        Assert.NotNull(schemaFields);
 
         IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
         IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
             .GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
         // Act
-        List<string> missingInSdk = schemaFields!.Keys
+        List<string> missingInSdk = schemaFields.Keys
             .Where(field => !sdkJsonNames.Contains(field) && !knownAbsent.Contains(field))
             .OrderBy(f => f, StringComparer.Ordinal)
             .ToList();
@@ -86,6 +87,7 @@ public sealed class OpenApiFieldCoverageTests
         Assert.True(
             schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
             $"Schema '{schemaName}' was not found in the OpenAPI specification.");
+        Assert.NotNull(schemaFields);
 
         IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
         IReadOnlySet<string> knownExtra = SchemaModelMapping.KnownSdkFieldsNotInOpenApi
@@ -93,7 +95,7 @@ public sealed class OpenApiFieldCoverageTests
 
         // Act
         List<string> extraInSdk = sdkJsonNames
-            .Where(field => !schemaFields!.ContainsKey(field) && !knownExtra.Contains(field))
+            .Where(field => !schemaFields.ContainsKey(field) && !knownExtra.Contains(field))
             .OrderBy(f => f, StringComparer.Ordinal)
             .ToList();
 

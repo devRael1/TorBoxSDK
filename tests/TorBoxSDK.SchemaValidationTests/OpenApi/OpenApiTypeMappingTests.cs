@@ -44,6 +44,7 @@ public sealed class OpenApiTypeMappingTests
         Assert.True(
             schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
             $"Schema '{schemaName}' was not found in the OpenAPI specification.");
+        Assert.NotNull(schemaFields);
 
         IReadOnlyDictionary<string, PropertyInfo> propMap =
             ModelReflector.GetJsonPropertyMap(modelType);
@@ -52,9 +53,9 @@ public sealed class OpenApiTypeMappingTests
         IReadOnlySet<string> knownMismatch = SchemaModelMapping.KnownTypeMismatches
             .GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
+        // Act
         List<string> mismatches = [];
-
-        foreach ((string fieldName, string openApiType) in schemaFields!)
+        foreach ((string fieldName, string openApiType) in schemaFields)
         {
             if (!propMap.TryGetValue(fieldName, out PropertyInfo? prop) ||
                 knownAbsent.Contains(fieldName) ||
@@ -73,7 +74,7 @@ public sealed class OpenApiTypeMappingTests
             }
         }
 
-        // Act & Assert
+        // Assert
         Assert.True(
             mismatches.Count == 0,
             $"Type mismatch(es) found for schema '{schemaName}':{Environment.NewLine}" +

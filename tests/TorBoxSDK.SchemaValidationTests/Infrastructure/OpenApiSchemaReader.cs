@@ -14,6 +14,7 @@ internal static class OpenApiSchemaReader
     /// </summary>
     internal const string OpenApiUrl = "https://api.torbox.app/openapi.json";
 
+    private static readonly HttpClient _httpClient = new();
     private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _cachedSchemas = new(FetchAndParseAsync);
 
     /// <summary>
@@ -69,8 +70,7 @@ internal static class OpenApiSchemaReader
 
     private static async Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> FetchAndParseAsync()
     {
-        using HttpClient client = new();
-        string json = await client.GetStringAsync(OpenApiUrl).ConfigureAwait(false);
+        string json = await _httpClient.GetStringAsync(OpenApiUrl).ConfigureAwait(false);
         return Parse(json);
     }
 
