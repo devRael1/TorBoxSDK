@@ -101,7 +101,6 @@ public sealed class UsenetRequestTests
         // Arrange
         RequestUsenetDownloadOptions options = new()
         {
-            UsenetId = 42,
             FileId = 3,
             ZipLink = true,
             UserIp = "10.0.0.1",
@@ -116,7 +115,6 @@ public sealed class UsenetRequestTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal(42, root.GetProperty("usenet_id").GetInt64());
         Assert.Equal("usenet-token", root.GetProperty("token").GetString());
         Assert.True(root.GetProperty("redirect").GetBoolean());
         Assert.False(root.GetProperty("append_name").GetBoolean());
@@ -126,10 +124,7 @@ public sealed class UsenetRequestTests
     public void RequestUsenetDownloadOptions_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        RequestUsenetDownloadOptions options = new()
-        {
-            UsenetId = 1,
-        };
+        RequestUsenetDownloadOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);

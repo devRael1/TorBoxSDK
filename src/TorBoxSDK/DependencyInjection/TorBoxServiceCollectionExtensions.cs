@@ -8,8 +8,7 @@ using TorBoxSDK.Http.Validation;
 namespace TorBoxSDK.DependencyInjection;
 
 /// <summary>
-/// Extension methods for registering the TorBox SDK services
-/// with a <see cref="IServiceCollection"/>.
+/// Extension methods for registering the TorBox SDK services with a <see cref="IServiceCollection"/>.
 /// </summary>
 public static class TorBoxServiceCollectionExtensions
 {
@@ -23,9 +22,7 @@ public static class TorBoxServiceCollectionExtensions
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="services"/> or <paramref name="configure"/> is <see langword="null"/>.
     /// </exception>
-    public static IServiceCollection AddTorBox(
-        this IServiceCollection services,
-        Action<TorBoxClientOptions> configure)
+    public static IServiceCollection AddTorBox(this IServiceCollection services, Action<TorBoxClientOptions> configure)
     {
         Guard.ThrowIfNull(services);
         Guard.ThrowIfNull(configure);
@@ -52,9 +49,7 @@ public static class TorBoxServiceCollectionExtensions
     /// <exception cref="ArgumentNullException">
     /// Thrown when <paramref name="services"/> or <paramref name="configuration"/> is <see langword="null"/>.
     /// </exception>
-    public static IServiceCollection AddTorBox(
-        this IServiceCollection services,
-        IConfiguration configuration)
+    public static IServiceCollection AddTorBox(this IServiceCollection services, IConfiguration configuration)
     {
         Guard.ThrowIfNull(services);
         Guard.ThrowIfNull(configuration);

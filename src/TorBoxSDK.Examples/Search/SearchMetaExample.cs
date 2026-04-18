@@ -64,7 +64,7 @@ public static class SearchMetaExample
             Console.WriteLine("Using Torznab search...");
 
             TorBoxResponse<string> torznabResponse =
-                await client.Search.SearchTorznabAsync(new SearchTorznabOptions { Query = query }, cancellationToken: cts.Token);
+                await client.Search.SearchTorznabAsync(query, cancellationToken: cts.Token);
 
             if (torznabResponse.Data is not null)
             {
@@ -74,7 +74,7 @@ public static class SearchMetaExample
             Console.WriteLine("Using Newznab search...");
 
             TorBoxResponse<string> newznabResponse =
-                await client.Search.SearchNewznabAsync(new SearchNewznabOptions { Query = query }, cancellationToken: cts.Token);
+                await client.Search.SearchNewznabAsync(query, cancellationToken: cts.Token);
 
             if (newznabResponse.Data is not null)
             {

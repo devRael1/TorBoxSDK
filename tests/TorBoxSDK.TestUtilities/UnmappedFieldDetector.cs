@@ -29,7 +29,7 @@ public static class UnmappedFieldDetector
     /// </returns>
     public static IReadOnlyList<string> FindUnmappedFields<T>(string json)
     {
-        using JsonDocument doc = JsonDocument.Parse(json);
+        using var doc = JsonDocument.Parse(json);
         List<string> unmapped = [];
         TraverseElement(doc.RootElement, typeof(T), pathPrefix: string.Empty, unmapped);
         return unmapped;
@@ -44,7 +44,9 @@ public static class UnmappedFieldDetector
         List<string> unmapped)
     {
         if (element.ValueKind != JsonValueKind.Object)
+        {
             return;
+        }
 
         IReadOnlyDictionary<string, PropertyInfo> knownProps =
             ModelReflector.GetJsonPropertyMap(targetType);
@@ -80,7 +82,10 @@ public static class UnmappedFieldDetector
                         foreach (JsonElement item in jsonProp.Value.EnumerateArray())
                         {
                             if (item.ValueKind == JsonValueKind.Object)
+                            {
                                 TraverseElement(item, elementType, $"{currentPath}[]", unmapped);
+                            }
+
                             break;
                         }
                     }
@@ -91,17 +96,17 @@ public static class UnmappedFieldDetector
 
     private static Type? GetCollectionElementType(Type type)
     {
-        if (!type.IsGenericType) return null;
-
-        Type def = type.GetGenericTypeDefinition();
-        if (def == typeof(IReadOnlyList<>) || def == typeof(List<>) ||
-            def == typeof(IEnumerable<>) || def == typeof(IReadOnlyCollection<>) ||
-            def == typeof(ICollection<>))
+        if (!type.IsGenericType)
         {
-            return type.GetGenericArguments()[0];
+            return null;
         }
 
-        return null;
+        Type def = type.GetGenericTypeDefinition();
+        return def == typeof(IReadOnlyList<>) || def == typeof(List<>) ||
+            def == typeof(IEnumerable<>) || def == typeof(IReadOnlyCollection<>) ||
+            def == typeof(ICollection<>)
+            ? type.GetGenericArguments()[0]
+            : null;
     }
 
     /// <summary>

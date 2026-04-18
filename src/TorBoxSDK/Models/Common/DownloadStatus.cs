@@ -1,11 +1,8 @@
-using System.Text.Json.Serialization;
-
 namespace TorBoxSDK.Models.Common;
 
 /// <summary>
 /// Enumerates the possible states of a download item.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DownloadStatus
 {
     /// <summary>An unknown or unmapped download status was returned.</summary>

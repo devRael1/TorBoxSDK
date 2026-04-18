@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.Common;
 
@@ -12,22 +12,16 @@ namespace TorBoxSDK.Models.Common;
 public sealed record CheckCachedOptions
 {
     /// <summary>
-    /// Gets the list of hashes to check for cache availability.
-    /// </summary>
-    [JsonPropertyName("hash")]
-    public IReadOnlyList<string> Hashes { get; init; } = [];
-
-    /// <summary>
     /// Gets the optional response format,
     /// or <see langword="null"/> to use the default format.
     /// </summary>
-    [JsonPropertyName("format")]
+    [QueryParameterName("format")]
     public string? Format { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to include file listings in the response,
     /// or <see langword="null"/> to use the default behavior.
     /// </summary>
-    [JsonPropertyName("list_files")]
+    [QueryParameterName("list_files")]
     public bool? ListFiles { get; init; }
 }

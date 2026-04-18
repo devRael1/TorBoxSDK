@@ -141,25 +141,5 @@ public sealed class RelayModelTests
         Assert.Null(result.LastActive);
     }
 
-    // ──── CheckInactiveOptions ────
 
-    [Fact]
-    public void CheckInactiveOptions_Serialize_ProducesExpectedJson()
-    {
-        // Arrange
-        CheckInactiveOptions options = new()
-        {
-            AuthId = "auth-relay-001",
-            TorrentId = 12345,
-        };
-
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
-
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.Equal("auth-relay-001", root.GetProperty("auth_id").GetString());
-        Assert.Equal(12345, root.GetProperty("torrent_id").GetInt64());
-    }
 }

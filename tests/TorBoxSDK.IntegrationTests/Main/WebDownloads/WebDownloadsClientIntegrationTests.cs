@@ -61,7 +61,7 @@ public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture 
 
         // Act
         TorBoxResponse<object> response = await _fixture.Client.Main.WebDownloads
-            .CheckCachedAsync(new CheckCachedOptions { Hashes = hashes }, cancellationToken: cts.Token);
+            .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert
         Assert.NotNull(response);

@@ -35,7 +35,7 @@ Endpoint implementation is now owned directly by `/dev` as **J2 — Endpoint** t
 |-----|---------|---------------|
 | **J1 — Architecture** | Designing or refactoring client structure, DI, namespacing, cross-cutting concerns | `architecture` skill |
 | **J2 — Endpoint** | Adding or extending an API endpoint (models + client method + tests) | Internal `/dev` endpoint workflow |
-| **J3 — Tests** | Writing unit, integration, or performance tests for existing code | `tests` skill |
+| **J3 — Tests** | Writing unit, integration, schema validation, or performance tests for existing code | `tests` skill |
 | **J4 — Review** | Reviewing or auditing C# code before merge | `code-review` skill |
 | **J5 — Docs & Packaging** | README, samples, XML docs, NuGet metadata, release readiness | `docs` skill |
 | **J6 — Foundation** | Scaffolding project infrastructure (csproj, build props, editorconfig, DI setup) | See [foundation jobs reference](./references/dev-jobs.md#j6--foundation-jobs) |

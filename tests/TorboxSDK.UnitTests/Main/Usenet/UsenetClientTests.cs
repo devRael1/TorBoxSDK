@@ -1,7 +1,7 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.Usenet;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Usenet;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.Usenet;
 
@@ -187,10 +187,10 @@ public sealed class UsenetClientTests
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(DownloadJson);
-        RequestUsenetDownloadOptions options = new() { UsenetId = 1 };
+        RequestUsenetDownloadOptions options = new() { };
 
         // Act
-        TorBoxResponse<string> result = await client.RequestDownloadAsync(options);
+        TorBoxResponse<string> result = await client.RequestDownloadAsync(1, options);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -207,14 +207,13 @@ public sealed class UsenetClientTests
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(DownloadJson);
         RequestUsenetDownloadOptions options = new()
         {
-            UsenetId = 42,
             Token = "custom-token",
             AppendName = true,
             Redirect = false,
         };
 
         // Act
-        await client.RequestDownloadAsync(options);
+        await client.RequestDownloadAsync(42, options);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -226,13 +225,17 @@ public sealed class UsenetClientTests
     }
 
     [Fact]
-    public async Task RequestDownloadAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task RequestDownloadAsync_WithNoOptions_SendsGetRequestWithIdOnly()
     {
         // Arrange
-        (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(DownloadJson);
+        (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(DownloadJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.RequestDownloadAsync(null!));
+        // Act
+        await client.RequestDownloadAsync(1);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Contains("usenet_id=1", handler.LastRequest.RequestUri!.ToString());
     }
 
     // --- GetMyUsenetListAsync ---
@@ -297,10 +300,9 @@ public sealed class UsenetClientTests
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
-        IReadOnlyList<string> hashes = ["hash1", "hash2"];
 
         // Act
-        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = hashes });
+        await client.CheckCachedAsync(["hash1", "hash2"]);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -316,7 +318,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act
-        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = ["hash1"], Format = "object", ListFiles = true });
+        await client.CheckCachedAsync(["hash1"], new CheckCachedOptions { Format = "object", ListFiles = true });
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -342,7 +344,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(new CheckCachedOptions { Hashes = null! }));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
     }
 
     // --- CheckCachedByPostAsync ---

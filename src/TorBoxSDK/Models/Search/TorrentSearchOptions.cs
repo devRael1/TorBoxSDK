@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.Search;
 
@@ -11,48 +11,48 @@ public sealed record TorrentSearchOptions
     /// Gets a value indicating whether to include metadata in the search results,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("metadata")]
+    [QueryParameterName("metadata")]
     public bool? Metadata { get; init; }
 
     /// <summary>
     /// Gets the season number to filter results by,
     /// or <see langword="null"/> to include all seasons.
     /// </summary>
-    [JsonPropertyName("season")]
+    [QueryParameterName("season")]
     public int? Season { get; init; }
 
     /// <summary>
     /// Gets the episode number to filter results by,
     /// or <see langword="null"/> to include all episodes.
     /// </summary>
-    [JsonPropertyName("episode")]
+    [QueryParameterName("episode")]
     public int? Episode { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to check if the results are cached,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("check_cache")]
+    [QueryParameterName("check_cache")]
     public bool? CheckCache { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to check if the results are already owned,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("check_owned")]
+    [QueryParameterName("check_owned")]
     public bool? CheckOwned { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to use custom user search engines,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("search_user_engines")]
+    [QueryParameterName("search_user_engines")]
     public bool? SearchUserEngines { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to only return cached results,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("cached_only")]
+    [QueryParameterName("cached_only")]
     public bool? CachedOnly { get; init; }
 }

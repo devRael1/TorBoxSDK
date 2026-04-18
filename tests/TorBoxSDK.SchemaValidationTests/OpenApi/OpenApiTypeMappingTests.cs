@@ -15,44 +15,17 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// </remarks>
 public sealed class OpenApiTypeMappingTests
 {
-    private static readonly string OpenApiFilePath = OpenApiSchemaReader.FindOpenApiFilePath();
-
-    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Schemas =
-        OpenApiSchemaReader.Read(OpenApiFilePath);
+    private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromApiAsync);
 
     /// <summary>
-    /// Provides one row per (schema, type, fieldName, openApiType) tuple for the parameterised test.
-    /// Only fields that are actually mapped in both the spec and the SDK are included.
+    /// Provides one row per schema→type mapping for the parameterised tests.
     /// </summary>
-    public static TheoryData<string, Type, string, string> MappedFields()
+    public static TheoryData<string, Type> MappedSchemas()
     {
-        TheoryData<string, Type, string, string> data = new();
-
+        TheoryData<string, Type> data = [];
         foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
         {
-            if (!Schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields))
-                continue;
-
-            IReadOnlyDictionary<string, PropertyInfo> propMap =
-                ModelReflector.GetJsonPropertyMap(modelType);
-
-            IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
-                .GetValueOrDefault(schemaName) ?? new HashSet<string>();
-
-            foreach ((string fieldName, string openApiType) in schemaFields)
-            {
-                // Skip fields intentionally not mapped in the SDK.
-                if (!propMap.ContainsKey(fieldName) || knownAbsent.Contains(fieldName))
-                    continue;
-
-                // Skip fields with known type mismatches between OpenAPI spec and SDK serialization.
-                IReadOnlySet<string> knownMismatch = SchemaModelMapping.KnownTypeMismatches
-                    .GetValueOrDefault(schemaName) ?? new HashSet<string>();
-                if (knownMismatch.Contains(fieldName))
-                    continue;
-
-                data.Add(schemaName, modelType, fieldName, openApiType);
-            }
+            data.Add(schemaName, modelType);
         }
 
         return data;
@@ -63,27 +36,49 @@ public sealed class OpenApiTypeMappingTests
     /// type category declared for the same field.
     /// </summary>
     [Theory]
-    [MemberData(nameof(MappedFields))]
-    public void MappedField_HasCompatibleType(
-        string schemaName,
-        Type modelType,
-        string fieldName,
-        string openApiType)
+    [MemberData(nameof(MappedSchemas))]
+    public async Task MappedSchemaFields_HaveCompatibleTypes(string schemaName, Type modelType)
     {
         // Arrange
+        IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> schemas = await _schemas.Value;
+        Assert.True(
+            schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
+            $"Schema '{schemaName}' was not found in the OpenAPI specification.");
+        Assert.NotNull(schemaFields);
+
         IReadOnlyDictionary<string, PropertyInfo> propMap =
             ModelReflector.GetJsonPropertyMap(modelType);
-        PropertyInfo prop = propMap[fieldName];
+        IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
+            .GetValueOrDefault(schemaName) ?? new HashSet<string>();
+        IReadOnlySet<string> knownMismatch = SchemaModelMapping.KnownTypeMismatches
+            .GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
-        string dotNetCategory = SchemaModelMapping.MapDotNetTypeToOpenApiType(prop.PropertyType);
-        string baseOpenApiType = ExtractBaseType(openApiType);
+        // Act
+        List<string> mismatches = [];
+        foreach ((string fieldName, string openApiType) in schemaFields)
+        {
+            if (!propMap.TryGetValue(fieldName, out PropertyInfo? prop) ||
+                knownAbsent.Contains(fieldName) ||
+                knownMismatch.Contains(fieldName))
+            {
+                continue;
+            }
 
-        // Act & Assert
+            string dotNetCategory = SchemaModelMapping.MapDotNetTypeToOpenApiType(prop.PropertyType);
+            string baseOpenApiType = ExtractBaseType(openApiType);
+            if (!AreCompatible(dotNetCategory, baseOpenApiType))
+            {
+                mismatches.Add(
+                    $"  - {schemaName}.{fieldName}: OpenAPI '{openApiType}' vs " +
+                    $"{modelType.Name}.{prop.Name} ({prop.PropertyType.Name}) -> '{dotNetCategory}'");
+            }
+        }
+
+        // Assert
         Assert.True(
-            AreCompatible(dotNetCategory, baseOpenApiType),
-            $"Type mismatch for '{schemaName}.{fieldName}': " +
-            $"OpenAPI declares '{openApiType}' but '{modelType.Name}.{prop.Name}' " +
-            $"({prop.PropertyType.Name}) maps to OpenAPI category '{dotNetCategory}'.");
+            mismatches.Count == 0,
+            $"Type mismatch(es) found for schema '{schemaName}':{Environment.NewLine}" +
+            string.Join(Environment.NewLine, mismatches));
     }
 
     // ── Private helpers ───────────────────────────────────────────────────────────────
@@ -95,7 +90,9 @@ public sealed class OpenApiTypeMappingTests
     private static string ExtractBaseType(string openApiType)
     {
         if (!openApiType.Contains('|'))
+        {
             return openApiType;
+        }
 
         string? nonNull = openApiType
             .Split('|')
@@ -111,12 +108,16 @@ public sealed class OpenApiTypeMappingTests
     private static bool AreCompatible(string dotNetCategory, string openApiBase)
     {
         if (string.Equals(dotNetCategory, openApiBase, StringComparison.Ordinal))
+        {
             return true;
+        }
 
         // integer ↔ number are both numeric in JSON — allow either direction.
         if ((dotNetCategory == "integer" && openApiBase == "number") ||
             (dotNetCategory == "number" && openApiBase == "integer"))
+        {
             return true;
+        }
 
         // DateTimeOffset is serialised as an ISO-8601 string, which is "string" in OpenAPI.
         // Enum types also serialise as strings.
@@ -127,7 +128,9 @@ public sealed class OpenApiTypeMappingTests
             openApiBase != "number" &&
             openApiBase != "array" &&
             openApiBase != "object")
+        {
             return true;
+        }
 
         return false;
     }

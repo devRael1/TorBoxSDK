@@ -73,13 +73,8 @@ public static class CreateWebDownloadExample
 
             Console.WriteLine($"Requesting download link for web download {webDownloadId}...");
 
-            RequestWebDownloadOptions downloadOptions = new()
-            {
-                WebId = webDownloadId,
-            };
-
             TorBoxResponse<string> downloadResponse =
-                await client.Main.WebDownloads.RequestDownloadAsync(downloadOptions, cts.Token);
+                await client.Main.WebDownloads.RequestDownloadAsync(webDownloadId, cancellationToken: cts.Token);
 
             if (downloadResponse.Data is not null)
             {

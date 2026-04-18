@@ -8,12 +8,12 @@ on:
       run_live_schema:
         description: 'Run live schema validation tests'
         required: false
-        default: 'true'
+        default: true
         type: boolean
       run_integration:
         description: 'Run integration tests'
         required: false
-        default: 'true'
+        default: true
         type: boolean
 
 permissions:

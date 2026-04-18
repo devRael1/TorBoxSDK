@@ -25,12 +25,12 @@ public interface ITorrentsClient
     Task<TorBoxResponse> ControlTorrentAsync(ControlTorrentRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Requests a download link for a torrent.</summary>
-    /// <param name="options">The download request options.</param>
+    /// <param name="torrentId">The unique identifier of the torrent to download.</param>
+    /// <param name="options">Optional download request options.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The download URL as a string.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<string>> RequestDownloadAsync(RequestDownloadOptions options, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<string>> RequestDownloadAsync(long torrentId, RequestDownloadOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the authenticated user's torrent list.</summary>
     /// <param name="options">Optional query parameters for filtering and pagination.</param>
@@ -40,12 +40,13 @@ public interface ITorrentsClient
     Task<TorBoxResponse<IReadOnlyList<Torrent>>> GetMyTorrentListAsync(GetMyListOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more torrent hashes are cached on TorBox (GET).</summary>
-    /// <param name="options">The cache check options containing hashes and optional parameters.</param>
+    /// <param name="hashes">The list of hashes to check for cache availability.</param>
+    /// <param name="options">Optional cache check parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The cache status data as a dynamic object.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>, or when the hashes collection in <paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="hashes"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more torrent hashes are cached on TorBox (POST).</summary>
     /// <param name="request">The cache check request containing hashes and options.</param>
@@ -56,21 +57,22 @@ public interface ITorrentsClient
     Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Exports data for a torrent in the specified format.</summary>
-    /// <param name="options">The export options containing the torrent ID and optional format.</param>
+    /// <param name="torrentId">The unique identifier of the torrent to export data for.</param>
+    /// <param name="exportType">The export type format, or <see langword="null"/> for the default format.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The exported data as a string.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<string>> ExportDataAsync(ExportDataOptions options, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<string>> ExportDataAsync(long torrentId, string? exportType = null, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves torrent metadata from a hash.</summary>
-    /// <param name="options">The torrent info options containing the hash and optional parameters.</param>
+    /// <param name="hash">The info hash of the torrent.</param>
+    /// <param name="options">Optional torrent info parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The torrent metadata information.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentException">Thrown when the hash in <paramref name="options"/> is empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="hash"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="hash"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(GetTorrentInfoOptions options, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(string hash, GetTorrentInfoOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves torrent metadata from a torrent file, magnet URI, or info hash via the POST endpoint.</summary>
     /// <param name="request">The torrent info request containing the file bytes, magnet URI, hash, and options.</param>

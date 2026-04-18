@@ -61,7 +61,7 @@ public static class DownloadSearchResultsExample
                     Console.WriteLine($"Downloading NZB for result: {resultId}...");
 
                     TorBoxResponse<string> downloadResponse =
-                        await client.Search.DownloadUsenetAsync(new DownloadUsenetOptions { Id = resultId, Guid = guid }, cts.Token);
+                        await client.Search.DownloadUsenetAsync(resultId, guid, cts.Token);
 
                     if (downloadResponse.Data is not null)
                     {

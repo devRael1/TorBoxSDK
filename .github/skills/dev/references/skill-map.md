@@ -12,7 +12,7 @@ Quick reference to determine which skill to load based on the nature of the work
 dev (orchestrator skill)
 ├── architecture       → client structure, DI, namespaces
 ├── J2 endpoint workflow → models + client method + HTTP wiring
-├── tests              → unit tests, integration, perf
+├── tests              → unit tests, schema validation, integration, perf
 ├── code-review        → audit and validation before merge
 └── docs               → README, docs pages, samples, XML doc, diagrams, NuGet
 ```
@@ -33,6 +33,7 @@ The `dev` skill does not replace these skills. It chooses which one to launch, i
 | "Extend a resource client interface" | `dev` (J2) | `.github/skills/dev/SKILL.md` |
 | "Write unit tests" | `tests` | `.github/skills/tests/SKILL.md` |
 | "Write integration tests" | `tests` | `.github/skills/tests/SKILL.md` |
+| "Update schema validation tests" | `tests` | `.github/skills/tests/SKILL.md` |
 | "Add benchmarks" | `tests` | `.github/skills/tests/SKILL.md` |
 | "Review this file" | `code-review` | `.github/skills/code-review/SKILL.md` |
 | "Audit src/ before merge" | `code-review` | `.github/skills/code-review/SKILL.md` |

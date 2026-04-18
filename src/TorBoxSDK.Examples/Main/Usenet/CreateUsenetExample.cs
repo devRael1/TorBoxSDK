@@ -76,13 +76,8 @@ public static class CreateUsenetExample
 
             Console.WriteLine($"Requesting download link for Usenet ID {usenetId}...");
 
-            RequestUsenetDownloadOptions downloadOptions = new()
-            {
-                UsenetId = usenetId,
-            };
-
             TorBoxResponse<string> downloadResponse =
-                await client.Main.Usenet.RequestDownloadAsync(downloadOptions, cts.Token);
+                await client.Main.Usenet.RequestDownloadAsync(usenetId, cancellationToken: cts.Token);
 
             if (downloadResponse.Data is not null)
             {

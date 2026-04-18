@@ -124,15 +124,14 @@ internal sealed class NotificationsClient(HttpClient httpClient, string apiKey) 
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(GetIntercomHashOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<IntercomHash>> GetIntercomHashAsync(string authId, string email, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-        Guard.ThrowIfNullOrEmpty(options.AuthId, nameof(options.AuthId));
-        Guard.ThrowIfNullOrEmpty(options.Email, nameof(options.Email));
+        Guard.ThrowIfNullOrEmpty(authId, nameof(authId));
+        Guard.ThrowIfNullOrEmpty(email, nameof(email));
 
         string query = TorBoxApiHelper.BuildQuery(
-            ("auth_id", options.AuthId),
-            ("email", options.Email));
+            ("auth_id", authId),
+            ("email", email));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"intercom/hash{query}");
         return await TorBoxApiHelper.SendAsync<IntercomHash>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

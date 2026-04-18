@@ -6,13 +6,6 @@
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
-  <!-- Link open_api.json from the repository root so it is copied to the output directory. -->
-  <ItemGroup>
-    <None Include="..\..\open_api.json" Link="open_api.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="coverlet.collector" />
     <PackageReference Include="xunit" />

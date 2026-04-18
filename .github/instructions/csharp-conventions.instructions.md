@@ -515,6 +515,42 @@ public async Task GetMeAsync_WithRealApiKey_ReturnsUser()
 - No I/O in baseline benchmarks unless measuring HTTP overhead
 - Do not delete existing benchmarks without justification
 
+## Schema Validation Tests (`TorBoxSDK.SchemaValidationTests`)
+
+Schema tests verify bidirectional consistency between the TorBox OpenAPI specification and SDK model types. The OpenAPI spec is fetched at test time from `https://api.torbox.app/openapi.json` — no local copy is versioned.
+
+### Static Schema Tests (`OpenApi/`)
+
+Static schema tests compare the downloaded OpenAPI specification against SDK model types without calling the API:
+
+- `OpenApiFieldCoverageTests` — verifies all OpenAPI fields are mapped in the SDK and vice-versa
+- `OpenApiTypeMappingTests` — verifies C# property types are compatible with OpenAPI type declarations
+
+Key rules:
+- Use `OpenApiSchemaReader.ReadFromApi()` for all spec access — never read from a local file
+- Register new schema-to-type mappings in `SchemaModelMapping.SchemaToType`
+- Record intentional field discrepancies in `SchemaModelMapping.KnownOpenApiFieldsNotInSdk` or `KnownSdkFieldsNotInOpenApi`
+- Record intentional type mismatches in `SchemaModelMapping.KnownTypeMismatches`
+- Filter static tests in CI with `--filter "Category!=Live"`
+
+### Live Schema Tests (`Live/`)
+
+Live schema tests call real TorBox API endpoints and check for unmapped fields:
+
+- `[Trait("Category", "Live")]` on every live test class
+- `[Collection("SchemaLive")]` to share `SchemaLiveTestFixture`
+- Always skip gracefully when `TORBOX_API_KEY` is absent via `Skip.If(!Fixture.HasApiKey)`
+- Use `SchemaAssert.FindUnmappedFieldsAsync<T>()` for field detection
+- Use `EnsureSuccessStatusCode()` and `using` on every `HttpResponseMessage`
+
+### Shared Infrastructure
+
+Infrastructure classes in `Infrastructure/` delegate to `TorBoxSDK.TestUtilities`:
+- `ModelReflector` — `[JsonPropertyName]` reflection
+- `UnmappedFieldDetector` — recursive unmapped JSON field detection
+- `OpenApiSchemaReader` — OpenAPI spec download and parsing (cached per process)
+- `SchemaModelMapping` — schema-to-type map with known exclusions and type mismatches
+
 ---
 
 # Part 5 — Samples (`samples/**/*.cs`)

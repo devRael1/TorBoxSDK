@@ -19,13 +19,15 @@ public static class ModelReflector
     /// </returns>
     public static IReadOnlySet<string> GetJsonPropertyNames(Type type)
     {
-        HashSet<string> names = new(StringComparer.Ordinal);
+        HashSet<string> names = [];
 
         foreach (PropertyInfo prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             JsonPropertyNameAttribute? attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
             if (attr is not null)
+            {
                 names.Add(attr.Name);
+            }
         }
 
         return names;
@@ -41,13 +43,15 @@ public static class ModelReflector
     /// </returns>
     public static IReadOnlyDictionary<string, PropertyInfo> GetJsonPropertyMap(Type type)
     {
-        Dictionary<string, PropertyInfo> map = new(StringComparer.Ordinal);
+        Dictionary<string, PropertyInfo> map = [];
 
         foreach (PropertyInfo prop in type.GetProperties(BindingFlags.Public | BindingFlags.Instance))
         {
             JsonPropertyNameAttribute? attr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
             if (attr is not null)
+            {
                 map[attr.Name] = prop;
+            }
         }
 
         return map;

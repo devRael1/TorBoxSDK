@@ -114,7 +114,7 @@ public static class NotificationsExample
             Console.WriteLine("Fetching Intercom identity hash...");
 
             TorBoxResponse<IntercomHash> intercomResponse =
-                await client.Main.Notifications.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "your-auth-id", Email = "your@email.com" }, cts.Token);
+                await client.Main.Notifications.GetIntercomHashAsync("your-auth-id", "your@email.com", cts.Token);
 
             if (intercomResponse.Data is not null)
             {

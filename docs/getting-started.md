@@ -35,8 +35,7 @@ using TorBoxSDK.Models.Search;
 using TorBoxSDK.Models.Torrents;
 
 TorBoxResponse<IReadOnlyList<Torrent>> torrents = await client.Main.Torrents.GetMyTorrentListAsync();
-TorBoxResponse<TorrentSearchResponse> results =
-    await client.Search.SearchTorrentsAsync("ubuntu");
+TorBoxResponse<TorrentSearchResponse> results = await client.Search.SearchTorrentsAsync("ubuntu");
 ```
 
 ## What to expect from responses

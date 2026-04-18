@@ -4,38 +4,59 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 
 /// <summary>
 /// Reads and parses the TorBox OpenAPI specification to extract schema property definitions.
+/// The specification is fetched from the public TorBox API endpoint and cached for the
+/// lifetime of the process.
 /// </summary>
 internal static class OpenApiSchemaReader
 {
     /// <summary>
-    /// Reads the OpenAPI specification from the given file path and returns all schema definitions.
+    /// Public URL of the TorBox OpenAPI specification.
     /// </summary>
-    /// <param name="filePath">Path to the <c>open_api.json</c> file.</param>
+    internal const string OpenApiUrl = "https://api.torbox.app/openapi.json";
+
+    private static readonly HttpClient _httpClient = new();
+    private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _cachedSchemas = new(FetchAndParseAsync);
+
+    /// <summary>
+    /// Returns all schema definitions from the TorBox OpenAPI specification.
+    /// The specification is downloaded once from <see cref="OpenApiUrl"/> and cached
+    /// for the lifetime of the process.
+    /// </summary>
     /// <returns>
     /// A dictionary keyed by schema name. Each value is a dictionary of property name
     /// to its OpenAPI type string (e.g., <c>"string"</c>, <c>"integer"</c>,
     /// <c>"boolean"</c>, <c>"array"</c>, <c>"object"</c>, or a <c>$ref</c> type name).
     /// </returns>
-    public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Read(string filePath)
-    {
-        string json = File.ReadAllText(filePath);
-        using JsonDocument doc = JsonDocument.Parse(json);
+    public static Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> ReadFromApiAsync() => _cachedSchemas.Value;
 
-        Dictionary<string, IReadOnlyDictionary<string, string>> result =
-            new(StringComparer.Ordinal);
+    /// <summary>
+    /// Parses the OpenAPI specification from a raw JSON string.
+    /// </summary>
+    /// <param name="json">The raw JSON content of the OpenAPI specification.</param>
+    public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Parse(string json)
+    {
+        using var doc = JsonDocument.Parse(json);
+
+        Dictionary<string, IReadOnlyDictionary<string, string>> result = [];
 
         if (!doc.RootElement.TryGetProperty("components", out JsonElement components))
+        {
             return result;
+        }
 
         if (!components.TryGetProperty("schemas", out JsonElement schemas))
+        {
             return result;
+        }
 
         foreach (JsonProperty schema in schemas.EnumerateObject())
         {
             if (!schema.Value.TryGetProperty("properties", out JsonElement props))
+            {
                 continue;
+            }
 
-            Dictionary<string, string> properties = new(StringComparer.Ordinal);
+            Dictionary<string, string> properties = [];
             foreach (JsonProperty prop in props.EnumerateObject())
             {
                 properties[prop.Name] = ExtractType(prop.Value);
@@ -47,31 +68,23 @@ internal static class OpenApiSchemaReader
         return result;
     }
 
-    /// <summary>
-    /// Locates the <c>open_api.json</c> file next to the test assembly.
-    /// </summary>
-    /// <exception cref="FileNotFoundException">
-    /// Thrown when <c>open_api.json</c> is not found in the output directory.
-    /// Ensure it is linked and configured with <c>CopyToOutputDirectory</c> in the csproj.
-    /// </exception>
-    public static string FindOpenApiFilePath()
+    private static async Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> FetchAndParseAsync()
     {
-        string candidate = Path.Combine(AppContext.BaseDirectory, "open_api.json");
-        return File.Exists(candidate)
-            ? candidate
-            : throw new FileNotFoundException(
-                $"open_api.json not found in '{AppContext.BaseDirectory}'. " +
-                "Ensure the file is linked and set to CopyToOutputDirectory in the csproj.",
-                candidate);
+        string json = await _httpClient.GetStringAsync(OpenApiUrl).ConfigureAwait(false);
+        return Parse(json);
     }
 
     private static string ExtractType(JsonElement propDef)
     {
         if (propDef.TryGetProperty("type", out JsonElement typeElem))
+        {
             return typeElem.GetString() ?? "unknown";
+        }
 
         if (propDef.TryGetProperty("$ref", out JsonElement refElem))
+        {
             return refElem.GetString()?.Split('/').Last() ?? "unknown";
+        }
 
         if (propDef.TryGetProperty("anyOf", out JsonElement anyOf))
         {
@@ -79,11 +92,17 @@ internal static class OpenApiSchemaReader
             foreach (JsonElement item in anyOf.EnumerateArray())
             {
                 if (item.TryGetProperty("type", out JsonElement t))
+                {
                     parts.Add(t.GetString() ?? "null");
+                }
                 else if (item.TryGetProperty("$ref", out JsonElement r))
+                {
                     parts.Add(r.GetString()?.Split('/').Last() ?? "unknown");
+                }
                 else
+                {
                     parts.Add("null");
+                }
             }
             return string.Join("|", parts);
         }

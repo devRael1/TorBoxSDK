@@ -1,4 +1,8 @@
 <Solution>
+  <Folder Name="/items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/TorBoxSDK.Examples/TorBoxSDK.Examples.csproj" />
     <Project Path="src/TorBoxSDK/TorBoxSDK.csproj" />

@@ -121,47 +121,6 @@ public sealed class TorrentControlRequestTests
         Assert.Equal("magnet:?xt=urn:btih:abc123def456ghi789", root.GetProperty("magnet").GetString());
     }
 
-    // ──── ExportDataOptions ────
-
-    [Fact]
-    public void ExportDataOptions_Serialize_WithAllProperties_ProducesExpectedJson()
-    {
-        // Arrange
-        ExportDataOptions options = new()
-        {
-            TorrentId = 99,
-            ExportType = "magnet",
-        };
-
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
-
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.Equal(99, root.GetProperty("torrent_id").GetInt64());
-        Assert.Equal("magnet", root.GetProperty("type").GetString());
-    }
-
-    [Fact]
-    public void ExportDataOptions_Serialize_WithNullType_OmitsTypeProperty()
-    {
-        // Arrange
-        ExportDataOptions options = new()
-        {
-            TorrentId = 50,
-        };
-
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
-
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.Equal(50, root.GetProperty("torrent_id").GetInt64());
-        Assert.False(root.TryGetProperty("type", out _));
-    }
-
     // ──── GetTorrentInfoOptions ────
 
     [Fact]
@@ -170,7 +129,6 @@ public sealed class TorrentControlRequestTests
         // Arrange
         GetTorrentInfoOptions options = new()
         {
-            Hash = "abc123def456ghi789jkl012",
             Timeout = 30,
             UseCacheLookup = true,
         };
@@ -181,7 +139,6 @@ public sealed class TorrentControlRequestTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal("abc123def456ghi789jkl012", root.GetProperty("hash").GetString());
         Assert.Equal(30, root.GetProperty("timeout").GetInt32());
         Assert.True(root.GetProperty("use_cache_lookup").GetBoolean());
     }
@@ -190,10 +147,7 @@ public sealed class TorrentControlRequestTests
     public void GetTorrentInfoOptions_Serialize_WithNullOptionals_OmitsNullProperties()
     {
         // Arrange
-        GetTorrentInfoOptions options = new()
-        {
-            Hash = "abc123",
-        };
+        GetTorrentInfoOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
@@ -201,7 +155,6 @@ public sealed class TorrentControlRequestTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal("abc123", root.GetProperty("hash").GetString());
         Assert.False(root.TryGetProperty("timeout", out _));
         Assert.False(root.TryGetProperty("use_cache_lookup", out _));
     }

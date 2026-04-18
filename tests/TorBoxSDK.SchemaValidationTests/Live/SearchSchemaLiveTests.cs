@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Search;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
@@ -90,13 +90,10 @@ public sealed class SearchSchemaLiveTests(SchemaLiveTestFixture fixture)
             .ReadAsStringAsync(cts.Token)
             .ConfigureAwait(false);
 
-        IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<MetaSearchResult>>>(json);
+        IReadOnlyList<string> unmapped = UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<MetaSearchResult>>>(json);
 
         // Assert
-        Assert.True(
-            unmapped.Count == 0,
-            BuildMessage("GET /v1/api/search/meta/inception", typeof(MetaSearchResult), unmapped));
+        Assert.True(unmapped.Count == 0, BuildMessage("GET /v1/api/search/meta/inception", typeof(MetaSearchResult), unmapped));
     }
 
     private static string BuildMessage(

@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
@@ -53,7 +53,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
 
         // Act
         using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/stats/30day", cts.Token)
+            .GetAsync("/v1/api/stats/30days", cts.Token)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -68,7 +68,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         // Assert
         Assert.True(
             unmapped.Count == 0,
-            BuildMessage("GET /v1/api/stats/30day", typeof(DailyStats), unmapped));
+            BuildMessage("GET /v1/api/stats/30days", typeof(DailyStats), unmapped));
     }
 
     [SkippableFact]
@@ -81,7 +81,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
 
         // Act
         using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/general/speedtest", cts.Token)
+            .GetAsync("/v1/api/speedtest", cts.Token)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -96,7 +96,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         // Assert
         Assert.True(
             unmapped.Count == 0,
-            BuildMessage("GET /v1/api/general/speedtest", typeof(SpeedtestServer), unmapped));
+            BuildMessage("GET /v1/api/speedtest", typeof(SpeedtestServer), unmapped));
     }
 
     [SkippableFact]
@@ -109,7 +109,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
 
         // Act
         using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/general/changelogs/json", cts.Token)
+            .GetAsync("/v1/api/changelogs/json", cts.Token)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -124,7 +124,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         // Assert
         Assert.True(
             unmapped.Count == 0,
-            BuildMessage("GET /v1/api/general/changelogs/json", typeof(Changelog), unmapped));
+            BuildMessage("GET /v1/api/changelogs/json", typeof(Changelog), unmapped));
     }
 
     private static string BuildMessage(

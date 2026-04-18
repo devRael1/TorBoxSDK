@@ -24,8 +24,7 @@ public static class RelayExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Checking relay server status...");
 
-            TorBoxResponse<RelayStatus> statusResponse =
-                await client.Relay.GetStatusAsync(cts.Token);
+            TorBoxResponse<RelayStatus> statusResponse = await client.Relay.GetStatusAsync(cts.Token);
 
             if (statusResponse.Data is not null)
             {
@@ -48,7 +47,7 @@ public static class RelayExample
             Console.WriteLine($"Checking inactivity for torrent {torrentId} (auth: {authId})...");
 
             TorBoxResponse<InactiveCheckResult> inactiveResponse =
-                await client.Relay.CheckForInactiveAsync(new CheckInactiveOptions { AuthId = authId, TorrentId = torrentId }, cts.Token);
+                await client.Relay.CheckForInactiveAsync(authId, torrentId, cts.Token);
 
             if (inactiveResponse.Data is not null)
             {

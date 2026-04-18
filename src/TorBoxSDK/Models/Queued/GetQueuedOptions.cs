@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.Queued;
 
@@ -14,34 +14,34 @@ public sealed record GetQueuedOptions
     /// Gets the optional queued download ID to retrieve a single item,
     /// or <see langword="null"/> to retrieve the full list.
     /// </summary>
-    [JsonPropertyName("id")]
+    [QueryParameterName("id")]
     public long? Id { get; init; }
 
     /// <summary>
     /// Gets the optional offset for pagination,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("offset")]
+    [QueryParameterName("offset")]
     public int? Offset { get; init; }
 
     /// <summary>
     /// Gets the optional limit for pagination,
     /// or <see langword="null"/> to use the server default.
     /// </summary>
-    [JsonPropertyName("limit")]
+    [QueryParameterName("limit")]
     public int? Limit { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to bypass the cache,
     /// or <see langword="null"/> to use the default caching behavior.
     /// </summary>
-    [JsonPropertyName("bypass_cache")]
+    [QueryParameterName("bypass_cache")]
     public bool? BypassCache { get; init; }
 
     /// <summary>
     /// Gets the optional type filter for queued downloads,
     /// or <see langword="null"/> to include all types.
     /// </summary>
-    [JsonPropertyName("type")]
+    [QueryParameterName("type")]
     public string? Type { get; init; }
 }

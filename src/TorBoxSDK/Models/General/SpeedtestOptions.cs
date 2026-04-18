@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.General;
 
@@ -11,20 +11,20 @@ public sealed record SpeedtestOptions
     /// Gets the user's IP address for the speedtest,
     /// or <see langword="null"/> to use the caller's IP.
     /// </summary>
-    [JsonPropertyName("user_ip")]
+    [QueryParameterName("user_ip")]
     public string? UserIp { get; init; }
 
     /// <summary>
     /// Gets the region for the speedtest,
     /// or <see langword="null"/> to auto-detect.
     /// </summary>
-    [JsonPropertyName("region")]
+    [QueryParameterName("region")]
     public string? Region { get; init; }
 
     /// <summary>
     /// Gets the test length value (e.g. "short", "long"),
     /// or <see langword="null"/> to use the default.
     /// </summary>
-    [JsonPropertyName("test_length")]
+    [QueryParameterName("test_length")]
     public string? TestLength { get; init; }
 }
