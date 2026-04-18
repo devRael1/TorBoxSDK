@@ -144,7 +144,11 @@ img {
   color: var(--tb-primary);
 }
 
-/* External brand links in top navbar */
+/* External brand links in top navbar — pushed to the right */
+nav.navbar .navbar-nav li:has(> a.nav-link[href*='github.com/devRael1/TorBoxSDK']) {
+  margin-left: auto;
+}
+
 nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK'],
 nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK'] {
   font-size: 0;
