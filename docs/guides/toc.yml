@@ -1,0 +1,40 @@
+- name: Getting Started
+  href: getting-started.md
+  items:
+    - name: Prerequisites and Installation
+      href: getting-started/prerequisites-and-installation.md
+    - name: First Request with Dependency Injection
+      href: getting-started/first-request-with-di.md
+    - name: Standalone Client and Lifetime
+      href: getting-started/standalone-client.md
+- name: Configuration
+  href: configuration.md
+  items:
+    - name: Options Reference
+      href: configuration/options-reference.md
+    - name: Base URLs and Versioning
+      href: configuration/urls-and-versioning.md
+    - name: Timeouts and HTTP Pipeline
+      href: configuration/timeouts-and-http-pipeline.md
+- name: Error Handling
+  href: error-handling.md
+  items:
+    - name: Exception Model
+      href: error-handling/exception-model.md
+    - name: Error Codes and Mapping
+      href: error-handling/error-codes.md
+    - name: Retry, Cancellation, and Resilience
+      href: error-handling/retry-cancellation-and-resilience.md
+- name: Architecture
+  href: architecture.md
+  items:
+    - name: Client Hierarchy
+      href: architecture/client-hierarchy.md
+    - name: Main API Clients
+      href: architecture/main-api-clients.md
+    - name: Search and Relay APIs
+      href: architecture/search-and-relay-apis.md
+    - name: Dependency Injection
+      href: architecture/dependency-injection.md
+    - name: Responses and Exceptions
+      href: architecture/responses-and-exceptions.md

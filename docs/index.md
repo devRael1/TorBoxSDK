@@ -1,3 +1,9 @@
+---
+uid: index
+title: TorBoxSDK Documentation
+description: Unofficial C# SDK for the TorBox API with typed clients for Main, Search, and Relay APIs.
+---
+
 # TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
@@ -52,20 +58,20 @@ var result = await client.Main.User.GetMeAsync();
 
 ## Documentation
 
-- [Getting Started Overview](docs/guides/getting-started.md) - Install and make your first request
-- [Architecture Overview](docs/guides/architecture.md) - Understand the client hierarchy
-- [Configuration Overview](docs/guides/configuration.md) - Configure options and base URLs
-- [Error Handling Overview](docs/guides/error-handling.md) - Handle API errors
-- [API Reference](docs/guides/api-reference.md) - Full API documentation
-- [Examples](src/TorBoxSDK.Examples/) - 37 runnable scenarios
+- [Getting Started Overview](guides/getting-started.md) - Install and make your first request
+- [Architecture Overview](guides/architecture.md) - Understand the client hierarchy
+- [Configuration Overview](guides/configuration.md) - Configure options and base URLs
+- [Error Handling Overview](guides/error-handling.md) - Handle API errors
+- [API Reference](api/TorBoxSDK.yml) - Full API documentation
+- [Examples](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples/) - 37 runnable scenarios
 
 ## Contributing
 
-Contributions are welcome! Read the [Contributing Guide](CONTRIBUTING.md) for development workflow and review the [Code of Conduct](CODE_OF_CONDUCT.md).
+Contributions are welcome! Read the [Contributing Guide](https://github.com/devRael1/TorBoxSDK/blob/main/CONTRIBUTING.md) for development workflow and review the [Code of Conduct](https://github.com/devRael1/TorBoxSDK/blob/main/CODE_OF_CONDUCT.md).
 
-- [Report vulnerabilities](SECURITY.md) privately
+- [Report vulnerabilities](https://github.com/devRael1/TorBoxSDK/blob/main/SECURITY.md) privately
 - [File issues and feature requests](https://github.com/devRael1/TorBoxSDK/issues)
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License. See [LICENSE](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE) for details.

@@ -3,26 +3,54 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
 
+  <!-- Default versions for net8.0+ -->
   <ItemGroup Label="SDK dependencies">
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="8.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.Options" Version="8.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Options" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.202" />
   </ItemGroup>
 
+  <!-- net6.0/net7.0 overrides to keep support for older TFMs -->
+  <ItemGroup Label="SDK dependencies overrides (net6/net7)">
+    <PackageVersion Update="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.2" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.Http" Version="8.0.1" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.Options" Version="8.0.2" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.Options.DataAnnotations" Version="8.0.0" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.SourceLink.GitHub" Version="8.0.0" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+  </ItemGroup>
+
+  <!-- Default versions for net8.0+ -->
   <ItemGroup Label="Examples dependencies">
-    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="8.0.1" />
-    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="10.0.6" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.6" />
   </ItemGroup>
 
+  <!-- net6.0/net7.0 overrides to keep support for older TFMs -->
+  <ItemGroup Label="Examples dependencies overrides (net6/net7)">
+    <PackageVersion Update="Microsoft.Extensions.Configuration.Json" Version="8.0.1" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.Extensions.DependencyInjection" Version="8.0.1" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+  </ItemGroup>
+
+  <!-- Default versions for net8.0+ -->
   <ItemGroup Label="Test dependencies">
-    <PackageVersion Include="coverlet.collector" Version="6.0.4" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageVersion Include="coverlet.collector" Version="10.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.4.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.4" />
-    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.23" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Xunit.SkippableFact" Version="1.5.61" />
+  </ItemGroup>
+
+  <!-- net6.0/net7.0 overrides to keep support for older TFMs -->
+  <ItemGroup Label="Test dependencies overrides (net6/net7)">
+    <PackageVersion Update="coverlet.collector" Version="6.0.4" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Microsoft.NET.Test.Sdk" Version="17.8.0" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="xunit.runner.visualstudio" Version="2.8.2" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
+    <PackageVersion Update="Xunit.SkippableFact" Version="1.5.23" Condition="'$(TargetFramework)' == 'net6.0' Or '$(TargetFramework)' == 'net7.0'" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,45 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["src/TorBoxSDK/TorBoxSDK.csproj"],
+          "src": "../"
+        }
+      ],
+      "dest": "api",
+      "filter": "filterConfig.yml",
+      "properties": {
+           "TargetFramework": "net10.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["**/*.{md,yml}"],
+        "exclude": ["_site/**", "filterConfig.yml"]
+      }
+    ],
+    "resource": [
+      {
+        "files": ["**/images/**"]
+      }
+    ],
+    "template": ["default", "modern", "templates/material"],
+    "globalMetadata": {
+      "_appTitle": "TorBoxSDK",
+      "_appFooter": "<span class='tb-footer-left'>Made by <a href='https://github.com/devRael1'>devRael1</a> with ❤️</span><span class='tb-footer-right'>Under license: <a href='https://github.com/devRael1/TorBoxSDK/blob/master/LICENSE'>MIT</a></span><script>(function(){const apply=function(){document.querySelectorAll(\"nav.navbar .navbar-nav a.nav-link[href*='api-docs.torbox.app']\").forEach(function(a){a.setAttribute('target','_blank');a.setAttribute('rel','noopener noreferrer');});};apply();if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',apply,{once:true});}new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});})();</script>",
+      "_appFaviconPath": "images/favicon.svg",
+      "_appLogoPath": "images/logo.svg",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/devRael1/TorBoxSDK",
+        "branch": "main",
+        "apiSpecFolder": "docs/api"
+      }
+    },
+    "postProcessors": ["ExtractSearchIndex"],
+    "dest": "_site"
+  }
+}

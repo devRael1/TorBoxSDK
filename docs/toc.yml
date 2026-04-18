@@ -1,0 +1,12 @@
+- name: Guides
+  href: guides/
+- name: API Reference
+  href: api/TorBoxSDK.yml
+- name: TorBox API
+  href: https://api-docs.torbox.app/
+- name: Changelog
+  href: https://github.com/devRael1/TorBoxSDK/releases
+- name: GitHub
+  href: https://github.com/devRael1/TorBoxSDK
+- name: NuGet
+  href: https://www.nuget.org/packages/TorBoxSDK

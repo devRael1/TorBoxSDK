@@ -1,0 +1,695 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --bs-font-sans-serif: 'Inter', system-ui, -apple-system, sans-serif;
+  --bs-font-monospace: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+  --bs-border-radius: 10px;
+
+  --border-radius-button: 40px;
+  --card-box-shadow: 0 1px 2px 0 #3d41440f, 0 1px 3px 1px #3d414429;
+
+  /* TorBox brand colors */
+  --tb-primary: #04BF8A;
+  --tb-primary-hover: #03a87a;
+  --tb-primary-subtle: #04bf8a1a;
+
+  --material-yellow-light: #fbbf24;
+  --material-yellow-dark: #5a5338;
+
+  --material-blue-light: #c4d9f1;
+  --material-blue-dark: #383e5a;
+
+  --material-red-light: #f1c4c4;
+  --material-red-dark: #5a3838;
+
+  --material-warning-header: #eab3081a;
+  --material-warning-background: #fef9c3;
+  --material-warning-background-dark: #2d2a14;
+
+  --material-info-header: #04bf8a1a;
+  --material-info-background: #e6faf3;
+  --material-info-background-dark: #0d2b22;
+
+  --material-danger-header: #ef44441a;
+  --material-danger-background: #fef2f2;
+  --material-danger-background-dark: #2d1414;
+}
+
+/* ============================
+   DARK MODE — TorBox identity
+   ============================ */
+[data-bs-theme='dark'] {
+  --bs-body-bg: #12141B;
+  --bs-body-color: #D1D5DB;
+  --bs-tertiary-bg: #0D0F13;
+  --bs-secondary-bg: #1E2129;
+  --bs-border-color: #212A36;
+  --bs-link-color: #04BF8A;
+  --bs-link-hover-color: #03a87a;
+  --bs-primary-bg-subtle: #0D0F13;
+  --bs-primary-border-subtle: #04bf8a33;
+  --bs-code-color: #04BF8A;
+  --card-box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 5px 1px rgba(0, 0, 0, 0.15);
+}
+
+/* ============================
+   LIGHT MODE — clean & fresh
+   ============================ */
+[data-bs-theme='light'] {
+  --bs-link-color: #049b6f;
+  --bs-link-hover-color: #037a58;
+  --bs-code-color: #049b6f;
+}
+
+/* HEADINGS */
+
+h1 {
+  font-weight: 700;
+  font-size: 32px;
+}
+
+h2 {
+  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.8;
+}
+
+h3 {
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.8;
+}
+
+h5 {
+  font-size: 14px;
+  padding: 10px 0px;
+}
+
+article h2,
+article h3,
+article h4 {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+[data-bs-theme='light'] article h4 {
+  padding-bottom: 8px;
+  border-bottom: 2px solid #ddd;
+}
+
+[data-bs-theme='dark'] article h4 {
+  padding-bottom: 8px;
+  border-bottom: 2px solid #212A36;
+}
+
+/** IMAGES **/
+img {
+  border-radius: var(--bs-border-radius);
+  box-shadow: var(--card-box-shadow);
+}
+
+/** NAVBAR **/
+.navbar-brand > img {
+  box-shadow: none;
+  color: var(--bs-nav-link-color);
+  width: 172px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+[data-bs-theme='light'] nav.navbar {
+  background-color: var(--bs-primary-bg-subtle);
+}
+
+[data-bs-theme='dark'] nav.navbar {
+  background-color: #0D0F13;
+  border-bottom: 1px solid #212A36;
+}
+
+.navbar-nav > li > a {
+  border-radius: var(--border-radius-button);
+  transition: all 200ms ease;
+}
+
+.navbar-nav a.nav-link:focus,
+.navbar-nav a.nav-link:hover {
+  background-color: var(--bs-primary-border-subtle);
+}
+
+[data-bs-theme='dark'] .navbar-nav a.nav-link:focus,
+[data-bs-theme='dark'] .navbar-nav a.nav-link:hover {
+  background-color: #04bf8a1a;
+  color: #04BF8A;
+}
+
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link.show {
+  color: var(--tb-primary);
+}
+
+/* Let top nav consume remaining width so right-aligned brand icons can sit near theme toggle */
+nav.navbar #navbar > .navbar-nav {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Keep search and right-side icon cluster visually separated. */
+nav.navbar #navbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+nav.navbar #navbar > form.search {
+  margin-right: 0.75rem;
+}
+
+nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK'],
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK'] {
+  font-size: 0;
+  line-height: 1;
+  width: 2.375rem;
+  height: 2.375rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+nav.navbar a.btn.dropdown-toggle[title='Change theme'] {
+  width: 2.375rem;
+  height: 2.375rem;
+  padding: 0;
+  border-radius: var(--border-radius-button);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 200ms ease;
+}
+
+/* Ensure the theme icon visually matches the two SVG navbar icons. */
+nav.navbar a.btn.dropdown-toggle[title='Change theme'] i,
+nav.navbar a.btn.dropdown-toggle[title='Change theme'] svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK']::before,
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']::before {
+  content: '';
+  display: inline-block;
+  width: 1.2rem;
+  height: 1.2rem;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: 100% 100%;
+}
+
+/* Keep icon links visually aligned with the theme toggle button. */
+nav.navbar .navbar-nav li:has(> a.nav-link[href='https://github.com/devRael1/TorBoxSDK']),
+nav.navbar .navbar-nav li:has(> a.nav-link[href*='nuget.org/packages/TorBoxSDK']) {
+  display: flex;
+  align-items: center;
+}
+
+nav.navbar .navbar-nav li:has(> a.nav-link[href='https://github.com/devRael1/TorBoxSDK']) {
+  margin-left: auto;
+  padding-left: 0.5rem;
+}
+
+nav.navbar .navbar-nav li:has(> a.nav-link[href*='nuget.org/packages/TorBoxSDK']) {
+  margin-left: 0.375rem;
+}
+
+nav.navbar a.btn.dropdown-toggle[title='Change theme'] {
+  margin-left: 0.375rem;
+}
+
+/* Right-side icon hover parity: GitHub, NuGet, Theme switcher. */
+nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK']:hover,
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:hover,
+nav.navbar a.btn.dropdown-toggle[title='Change theme']:hover {
+  background-color: var(--bs-primary-border-subtle);
+  color: var(--tb-primary);
+}
+
+nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK']:focus,
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:focus,
+nav.navbar a.btn.dropdown-toggle[title='Change theme']:focus {
+  background-color: transparent;
+  color: inherit;
+}
+
+[data-bs-theme='dark'] nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK']:hover,
+[data-bs-theme='dark'] nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:hover,
+[data-bs-theme='dark'] nav.navbar a.btn.dropdown-toggle[title='Change theme']:hover {
+  background-color: #04bf8a1a;
+  color: #04BF8A;
+}
+
+nav.navbar .navbar-nav a.nav-link[href='https://github.com/devRael1/TorBoxSDK']::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.3 11.3 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.5 5.8.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.6-1.4-1.3-1.8-1.3-1.8-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.8 0-1.3.5-2.3 1.2-3.2-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.3 11.3 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.1.8.9 1.2 1.9 1.2 3.2 0 4.5-2.8 5.5-5.5 5.8.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z'/%3E%3C/svg%3E");
+}
+
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']::before {
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7.2 12 2l9 5.2v9.6L12 22l-9-5.2V7.2Zm9 13.1 7-4V8.2l-7 4-7-4v8.1l7 4Zm-5.5-13L12 10.5l5.5-3.2L12 4.1 6.5 7.3Z'/%3E%3C/svg%3E");
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 7.2 12 2l9 5.2v9.6L12 22l-9-5.2V7.2Zm9 13.1 7-4V8.2l-7 4-7-4v8.1l7 4Zm-5.5-13L12 10.5l5.5-3.2L12 4.1 6.5 7.3Z'/%3E%3C/svg%3E");
+}
+
+/** SEARCH AND FILTER **/
+input.form-control {
+  border-radius: var(--border-radius-button);
+}
+
+[data-bs-theme='dark'] input.form-control {
+  background-color: #1E2129;
+  border-color: #212A36;
+  color: #D1D5DB;
+}
+
+[data-bs-theme='dark'] input.form-control:focus {
+  border-color: #04BF8A;
+  box-shadow: 0 0 0 0.2rem #04bf8a33;
+}
+
+form.filter {
+  margin: 0.3rem;
+}
+
+/** SIDEBAR **/
+[data-bs-theme='dark'] .toc .nav > li > a {
+  color: #9CA3AF;
+}
+
+[data-bs-theme='dark'] .toc .nav > li > a:hover,
+[data-bs-theme='dark'] .toc .nav > li > a:focus {
+  color: #04BF8A;
+}
+
+[data-bs-theme='dark'] .toc .nav > li.active > a {
+  color: #04BF8A;
+  border-left-color: #04BF8A;
+}
+
+/** ALERTS **/
+.alert {
+  padding: 0;
+  border: none;
+  box-shadow: var(--card-box-shadow);
+}
+
+.alert > p {
+  padding: 0.2rem 0.7rem 0.7rem 1rem;
+}
+
+.alert > ul {
+  margin-bottom: 0;
+  padding: 5px 40px;
+}
+
+.alert > h5 {
+  padding: 0.5rem 0.7rem 0.7rem 1rem;
+  border-radius: var(--bs-border-radius) var(--bs-border-radius) 0 0;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.alert-info {
+  color: var(--material-blue-dark);
+  background-color: var(--material-info-background);
+}
+
+[data-bs-theme='dark'] .alert-info {
+  color: #8ae8c8;
+  background-color: var(--material-info-background-dark);
+  border-left: 3px solid #04BF8A;
+}
+
+.alert-info > h5 {
+  background-color: var(--material-info-header);
+}
+
+.alert-warning {
+  color: var(--material-yellow-dark);
+  background-color: var(--material-warning-background);
+}
+
+[data-bs-theme='dark'] .alert-warning {
+  color: var(--material-yellow-light);
+  background-color: var(--material-warning-background-dark);
+  border-left: 3px solid #EAB308;
+}
+
+.alert-warning > h5 {
+  background-color: var(--material-warning-header);
+}
+
+.alert-danger {
+  color: var(--material-red-dark);
+  background-color: var(--material-danger-background);
+}
+
+[data-bs-theme='dark'] .alert-danger {
+  color: #fca5a5;
+  background-color: var(--material-danger-background-dark);
+  border-left: 3px solid #EF4444;
+}
+
+.alert-danger > h5 {
+  background-color: var(--material-danger-header);
+}
+
+/** TABLES **/
+[data-bs-theme='dark'] .table {
+  --bs-table-bg: transparent;
+  --bs-table-striped-bg: #1E2129;
+  --bs-table-hover-bg: #04bf8a0d;
+  border-color: #212A36;
+}
+
+/** BUTTONS & LINKS **/
+[data-bs-theme='dark'] a {
+  color: #04BF8A;
+}
+
+[data-bs-theme='dark'] a:hover {
+  color: #03a87a;
+}
+
+/** FOOTER **/
+footer {
+  border-top: 1px solid var(--bs-border-color);
+}
+
+footer .container-xxl > .flex-fill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+footer .tb-footer-right {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+[data-bs-theme='dark'] footer {
+  background-color: #0D0F13;
+  border-top: 1px solid #212A36;
+}
+
+footer a {
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+/** BREADCRUMB **/
+[data-bs-theme='dark'] .breadcrumb-item + .breadcrumb-item::before {
+  color: #6B7280;
+}
+
+[data-bs-theme='dark'] .breadcrumb-item a {
+  color: #9CA3AF;
+}
+
+[data-bs-theme='dark'] .breadcrumb-item.active {
+  color: #D1D5DB;
+}
+
+/* ============================
+   CODE BLOCKS — One Dark theme
+   ============================ */
+code {
+  border-radius: var(--bs-border-radius);
+  margin: 4px 2px;
+  box-shadow: var(--card-box-shadow);
+  font-family: var(--bs-font-monospace);
+}
+
+/* Inline code */
+[data-bs-theme='dark'] :not(pre) > code {
+  background-color: #1E2129;
+  color: #04BF8A;
+  padding: 2px 6px;
+  border: 1px solid #212A36;
+  box-shadow: none;
+}
+
+[data-bs-theme='light'] :not(pre) > code {
+  background-color: #f0fdf9;
+  color: #049b6f;
+  padding: 2px 6px;
+  border: 1px solid #d1fae5;
+  box-shadow: none;
+}
+
+/* Code blocks */
+pre {
+  border-radius: var(--bs-border-radius);
+  overflow: hidden;
+}
+
+pre > code {
+  box-shadow: none;
+  margin: 0;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+/* Dark mode — Visual Studio 2022 Dark syntax theme */
+[data-bs-theme='dark'] pre {
+  background-color: #0D0F13 !important;
+  border: 1px solid #212A36;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+[data-bs-theme='dark'] pre > code {
+  background-color: transparent !important;
+  color: #D4D4D4;
+}
+
+/* highlight.js theme overrides for dark mode — Visual Studio 2022 Dark */
+[data-bs-theme='dark'] .hljs {
+  background: #0D0F13 !important;
+  color: #D4D4D4;
+}
+
+[data-bs-theme='dark'] .hljs-keyword,
+[data-bs-theme='dark'] .hljs-selector-tag,
+[data-bs-theme='dark'] .hljs-operator {
+  color: #569CD6;
+  font-weight: 500;
+}
+
+[data-bs-theme='dark'] .hljs-built_in,
+[data-bs-theme='dark'] .hljs-type {
+  color: #4EC9B0;
+}
+
+[data-bs-theme='dark'] .hljs-string,
+[data-bs-theme='dark'] .hljs-selector-attr,
+[data-bs-theme='dark'] .hljs-selector-pseudo,
+[data-bs-theme='dark'] .hljs-regexp {
+  color: #D69D85;
+}
+
+[data-bs-theme='dark'] .hljs-number,
+[data-bs-theme='dark'] .hljs-literal,
+[data-bs-theme='dark'] .hljs-symbol,
+[data-bs-theme='dark'] .hljs-bullet {
+  color: #B5CEA8;
+}
+
+[data-bs-theme='dark'] .hljs-attr,
+[data-bs-theme='dark'] .hljs-variable,
+[data-bs-theme='dark'] .hljs-template-variable {
+  color: #9CDCFE;
+}
+
+[data-bs-theme='dark'] .hljs-title,
+[data-bs-theme='dark'] .hljs-title.function_ {
+  color: #FFD866;
+  font-weight: 500;
+}
+
+[data-bs-theme='dark'] .hljs-title.class_ {
+  color: #4EC9B0;
+  font-weight: 500;
+}
+
+[data-bs-theme='dark'] .hljs-comment,
+[data-bs-theme='dark'] .hljs-quote {
+  color: #6A9955;
+  font-style: italic;
+}
+
+[data-bs-theme='dark'] .hljs-doctag {
+  color: #608B4E;
+}
+
+[data-bs-theme='dark'] .hljs-meta,
+[data-bs-theme='dark'] .hljs-meta .hljs-keyword {
+  color: #C586C0;
+}
+
+[data-bs-theme='dark'] .hljs-params {
+  color: #9CDCFE;
+}
+
+[data-bs-theme='dark'] .hljs-section {
+  color: #569CD6;
+}
+
+[data-bs-theme='dark'] .hljs-name,
+[data-bs-theme='dark'] .hljs-tag {
+  color: #569CD6;
+}
+
+[data-bs-theme='dark'] .hljs-property,
+[data-bs-theme='dark'] .hljs-attribute {
+  color: #9CDCFE;
+}
+
+[data-bs-theme='dark'] .hljs-subst,
+[data-bs-theme='dark'] .hljs-punctuation {
+  color: #D4D4D4;
+}
+
+[data-bs-theme='dark'] .hljs-selector-id,
+[data-bs-theme='dark'] .hljs-selector-class {
+  color: #D7BA7D;
+}
+
+[data-bs-theme='dark'] .hljs-emphasis {
+  font-style: italic;
+}
+
+[data-bs-theme='dark'] .hljs-strong {
+  font-weight: bold;
+}
+
+[data-bs-theme='dark'] .hljs-addition {
+  color: #6A9955;
+  background-color: #6a995522;
+}
+
+[data-bs-theme='dark'] .hljs-deletion {
+  color: #CE9178;
+  background-color: #ce917822;
+}
+
+/* Light mode — enhanced code block */
+[data-bs-theme='light'] pre {
+  background-color: #f7f9fc !important;
+  border: 1px solid #d7dde8;
+}
+
+[data-bs-theme='light'] .hljs {
+  background: #f7f9fc !important;
+  color: #1f2937;
+}
+
+[data-bs-theme='light'] .hljs-keyword,
+[data-bs-theme='light'] .hljs-selector-tag,
+[data-bs-theme='light'] .hljs-operator {
+  color: #0b57d0;
+  font-weight: 500;
+}
+
+[data-bs-theme='light'] .hljs-built_in,
+[data-bs-theme='light'] .hljs-type {
+  color: #0f766e;
+}
+
+[data-bs-theme='light'] .hljs-string,
+[data-bs-theme='light'] .hljs-regexp {
+  color: #b42318;
+}
+
+[data-bs-theme='light'] .hljs-number,
+[data-bs-theme='light'] .hljs-literal {
+  color: #7c3aed;
+}
+
+[data-bs-theme='light'] .hljs-title,
+[data-bs-theme='light'] .hljs-title.function_,
+[data-bs-theme='light'] .hljs-title.class_ {
+  color: #9a3412;
+  font-weight: 500;
+}
+
+[data-bs-theme='light'] .hljs-comment {
+  color: #5f6b7a;
+  font-style: italic;
+}
+
+[data-bs-theme='light'] .hljs-property,
+[data-bs-theme='light'] .hljs-attribute,
+[data-bs-theme='light'] .hljs-variable,
+[data-bs-theme='light'] .hljs-template-variable {
+  color: #0f5f9c;
+}
+
+[data-bs-theme='light'] .hljs-meta,
+[data-bs-theme='light'] .hljs-meta .hljs-keyword {
+  color: #7a3aa9;
+}
+
+/* ============================
+   SCROLLBAR — dark mode
+   ============================ */
+[data-bs-theme='dark'] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-bs-theme='dark'] ::-webkit-scrollbar-track {
+  background: #12141B;
+}
+
+[data-bs-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #212A36;
+  border-radius: 4px;
+}
+
+[data-bs-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: #04BF8A;
+}
+
+/* ============================
+   BADGES (API members)
+   ============================ */
+[data-bs-theme='dark'] .badge {
+  border: 1px solid #212A36;
+}
+
+/* ============================
+   CARDS
+   ============================ */
+[data-bs-theme='dark'] .card {
+  background-color: #1E2129;
+  border-color: #212A36;
+}
+
+/* ============================
+   API MEMBER PAGES
+   ============================ */
+[data-bs-theme='dark'] .memberList .level0 {
+  border-color: #212A36;
+}
+
+[data-bs-theme='dark'] .memberList .level0:hover {
+  background-color: #04bf8a0d;
+}

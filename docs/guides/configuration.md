@@ -1,6 +1,12 @@
-# Configuration Reference
+---
+uid: configuration
+title: Configuration Overview
+description: Configure TorBoxSDK options including API key, base URLs, and timeouts.
+---
 
-TorBoxSDK is configured through `TorBoxClientOptions`.
+# Configuration Overview
+
+TorBoxSDK is configured through <xref:TorBoxSDK.TorBoxClientOptions>.
 
 ## Options
 
@@ -81,9 +87,9 @@ using TorBoxClient client = new(options =>
 Both overloads register:
 
 - authenticated named `HttpClient` pipelines (Main, Search, Relay)
-- `ITorBoxClient` as the single SDK entry point
+- <xref:TorBoxSDK.ITorBoxClient> as the single SDK entry point
 
-All sub-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, and their resource clients) are instantiated internally by `TorBoxClient`. They are **not** registered individually in the DI container. To access any sub-client, resolve `ITorBoxClient` and navigate through its properties:
+All sub-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, and their resource clients) are instantiated internally by <xref:TorBoxSDK.TorBoxClient>. They are **not** registered individually in the DI container. To access any sub-client, resolve <xref:TorBoxSDK.ITorBoxClient> and navigate through its properties:
 
 ```csharp
 ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
@@ -91,3 +97,5 @@ client.Main.Torrents   // ITorrentsClient
 client.Search          // ISearchApiClient
 client.Relay           // IRelayApiClient
 ```
+
+
