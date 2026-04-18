@@ -34,9 +34,9 @@ namespace TorBoxSDK;
 /// </remarks>
 public sealed class TorBoxClient : ITorBoxClient
 {
-    private readonly HttpClient? _ownedMainClient;
-    private readonly HttpClient? _ownedSearchClient;
-    private readonly HttpClient? _ownedRelayClient;
+    private readonly HttpClient? _ownedMainHttpClient;
+    private readonly HttpClient? _ownedSearchHttpClient;
+    private readonly HttpClient? _ownedRelayHttpClient;
     private bool _disposed;
 
     /// <inheritdoc />
@@ -81,13 +81,13 @@ public sealed class TorBoxClient : ITorBoxClient
         ValidateBaseUrl(options.SearchApiBaseUrl, nameof(options.SearchApiBaseUrl));
         ValidateBaseUrl(options.RelayApiVersionedUrl, nameof(options.RelayApiBaseUrl));
 
-        _ownedMainClient = CreateHttpClient(options.ApiKey, options.MainApiVersionedUrl, options.Timeout);
-        _ownedSearchClient = CreateHttpClient(options.ApiKey, options.SearchApiBaseUrl, options.Timeout);
-        _ownedRelayClient = CreateHttpClient(options.ApiKey, options.RelayApiVersionedUrl, options.Timeout);
+        _ownedMainHttpClient = CreateHttpClient(options.ApiKey, options.MainApiVersionedUrl, options.Timeout);
+        _ownedSearchHttpClient = CreateHttpClient(options.ApiKey, options.SearchApiBaseUrl, options.Timeout);
+        _ownedRelayHttpClient = CreateHttpClient(options.ApiKey, options.RelayApiVersionedUrl, options.Timeout);
 
-        Main = new MainApiClient(_ownedMainClient, options.ApiKey, options.MainApiBaseUrl);
-        Search = new SearchApiClient(_ownedSearchClient);
-        Relay = new RelayApiClient(_ownedRelayClient, options.RelayApiBaseUrl);
+        Main = new MainApiClient(_ownedMainHttpClient, options.ApiKey, options.MainApiBaseUrl);
+        Search = new SearchApiClient(_ownedSearchHttpClient);
+        Relay = new RelayApiClient(_ownedRelayHttpClient, options.RelayApiBaseUrl);
     }
 
     /// <summary>
@@ -142,9 +142,9 @@ public sealed class TorBoxClient : ITorBoxClient
             return;
         }
 
-        _ownedMainClient?.Dispose();
-        _ownedSearchClient?.Dispose();
-        _ownedRelayClient?.Dispose();
+        _ownedMainHttpClient?.Dispose();
+        _ownedSearchHttpClient?.Dispose();
+        _ownedRelayHttpClient?.Dispose();
         _disposed = true;
     }
 
