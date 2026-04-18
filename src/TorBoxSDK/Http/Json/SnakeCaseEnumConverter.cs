@@ -74,9 +74,87 @@ internal sealed class SnakeCaseEnumConverter<T> : JsonConverter<T>
             }
         }
 
-        return reader.TokenType == JsonTokenType.Number && reader.TryGetInt32(out int intValue) ? (T)(object)intValue : default;
+        if (reader.TokenType == JsonTokenType.Number && TryReadNumericEnumValue(ref reader, out T numericResult))
+        {
+            return numericResult;
+        }
+
+        return default;
     }
 
+    private static bool TryReadNumericEnumValue(ref Utf8JsonReader reader, out T value)
+    {
+        switch (Type.GetTypeCode(Enum.GetUnderlyingType(typeof(T))))
+        {
+            case TypeCode.Byte:
+                if (reader.TryGetByte(out byte byteValue))
+                {
+                    value = (T)Enum.ToObject(typeof(T), byteValue);
+                    return true;
+                }
+
+                break;
+            case TypeCode.SByte:
+                if (reader.TryGetSByte(out sbyte sbyteValue))
+                {
+                    value = (T)Enum.ToObject(typeof(T), sbyteValue);
+                    return true;
+                }
+
+                break;
+            case TypeCode.Int16:
+                if (reader.TryGetInt16(out short int16Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), int16Value);
+                    return true;
+                }
+
+                break;
+            case TypeCode.UInt16:
+                if (reader.TryGetUInt16(out ushort uint16Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), uint16Value);
+                    return true;
+                }
+
+                break;
+            case TypeCode.Int32:
+                if (reader.TryGetInt32(out int int32Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), int32Value);
+                    return true;
+                }
+
+                break;
+            case TypeCode.UInt32:
+                if (reader.TryGetUInt32(out uint uint32Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), uint32Value);
+                    return true;
+                }
+
+                break;
+            case TypeCode.Int64:
+                if (reader.TryGetInt64(out long int64Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), int64Value);
+                    return true;
+                }
+
+                break;
+            case TypeCode.UInt64:
+                if (reader.TryGetUInt64(out ulong uint64Value))
+                {
+                    value = (T)Enum.ToObject(typeof(T), uint64Value);
+                    return true;
+                }
+
+                break;
+        }
+
+        value = default;
+        return false;
+    }
     public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
     {
         if (_writeMap.TryGetValue(value, out string? name))
