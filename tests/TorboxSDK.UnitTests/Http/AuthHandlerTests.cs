@@ -44,4 +44,40 @@ public sealed class AuthHandlerTests
         Assert.NotNull(innerHandler.LastRequest);
         Assert.Null(innerHandler.LastRequest.Headers.Authorization);
     }
+
+    [Fact]
+    public async Task SendAsync_WithStringApiKey_SetsAuthorizationHeader()
+    {
+        // Arrange
+        var innerHandler = new MockHttpMessageHandler("""{"success":true,"error":null,"detail":"OK"}""");
+        var authHandler = new AuthHandler("test-key") { InnerHandler = innerHandler };
+        using var httpClient = new HttpClient(authHandler);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.torbox.app/v1/api/torrents/mylist");
+
+        // Act
+        await httpClient.SendAsync(request);
+
+        // Assert
+        Assert.NotNull(innerHandler.LastRequest);
+        Assert.NotNull(innerHandler.LastRequest.Headers.Authorization);
+        Assert.Equal("Bearer", innerHandler.LastRequest.Headers.Authorization.Scheme);
+        Assert.Equal("test-key", innerHandler.LastRequest.Headers.Authorization.Parameter);
+    }
+
+    [Fact]
+    public async Task SendAsync_WithEmptyStringApiKey_DoesNotSetAuthorizationHeader()
+    {
+        // Arrange
+        var innerHandler = new MockHttpMessageHandler("""{"success":true,"error":null,"detail":"OK"}""");
+        var authHandler = new AuthHandler(string.Empty) { InnerHandler = innerHandler };
+        using var httpClient = new HttpClient(authHandler);
+        using var request = new HttpRequestMessage(HttpMethod.Get, "https://api.torbox.app/v1/api/torrents/mylist");
+
+        // Act
+        await httpClient.SendAsync(request);
+
+        // Assert
+        Assert.NotNull(innerHandler.LastRequest);
+        Assert.Null(innerHandler.LastRequest.Headers.Authorization);
+    }
 }

@@ -7,9 +7,12 @@ TorBoxSDK is configured through `TorBoxClientOptions`.
 | Property | Required | Default | Notes |
 |---|---|---|---|
 | `ApiKey` | Yes | — | Required for authenticated TorBox requests |
-| `MainApiBaseUrl` | No | `https://api.torbox.app/v1/api/` | Trailing slash should be preserved |
+| `MainApiBaseUrl` | No | `https://api.torbox.app/` | Host URL for the Main API. Trailing slash should be preserved. |
+| `ApiVersion` | Yes | `v1` | Version segment used to compute versioned Main and Relay API URLs |
+| `MainApiVersionedUrl` | — | Computed | Full Main API URL with version (e.g. `https://api.torbox.app/v1/api/`). Read-only. |
 | `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Trailing slash should be preserved |
-| `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Trailing slash should be preserved |
+| `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Host URL for the Relay API. Trailing slash should be preserved. |
+| `RelayApiVersionedUrl` | — | Computed | Full Relay API URL with version (e.g. `https://relay.torbox.app/v1/`). Read-only. |
 | `Timeout` | No | `00:00:30` | Applied to all configured `HttpClient` instances |
 
 ## Configure with code
@@ -41,6 +44,33 @@ The SDK binds from the `TorBox` section:
     "Timeout": "00:00:30"
   }
 }
+```
+
+## Configure without DI
+
+When using standalone mode, pass options directly to the constructor:
+
+```csharp
+// API key only (default settings)
+using TorBoxClient client = new("your-api-key");
+
+// Full options object
+using TorBoxClient client = new(new TorBoxClientOptions
+{
+    ApiKey = "your-api-key",
+    MainApiBaseUrl = "https://api.torbox.app/",
+    ApiVersion = "v1",
+    SearchApiBaseUrl = "https://search-api.torbox.app/",
+    RelayApiBaseUrl = "https://relay.torbox.app/",
+    Timeout = TimeSpan.FromSeconds(60)
+});
+
+// Configuration delegate
+using TorBoxClient client = new(options =>
+{
+    options.ApiKey = "your-api-key";
+    options.Timeout = TimeSpan.FromMinutes(2);
+});
 ```
 
 ## Registration overloads
