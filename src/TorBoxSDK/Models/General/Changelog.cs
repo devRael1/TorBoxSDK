@@ -12,7 +12,7 @@ public sealed record Changelog
     /// Gets the unique identifier of the changelog entry.
     /// </summary>
     [JsonPropertyName("id")]
-    public int Id { get; init; }
+    public string Id { get; init; } = string.Empty;
 
     /// <summary>
     /// Gets the version name of the changelog entry.

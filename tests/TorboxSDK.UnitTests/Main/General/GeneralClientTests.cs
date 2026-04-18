@@ -95,7 +95,7 @@ public sealed class GeneralClientTests
             "detail": "Found.",
             "data": [
                 {
-                    "id": 1,
+                    "id": "1",
                     "name": "v8.4.3",
                     "html": "<p>Major update</p>",
                     "markdown": "**Major update**",
@@ -257,7 +257,7 @@ public sealed class GeneralClientTests
         Assert.NotNull(result.Data);
         Assert.NotEmpty(result.Data);
         Changelog first = result.Data[0];
-        Assert.Equal(1, first.Id);
+        Assert.Equal("1", first.Id);
         Assert.Equal("v8.4.3", first.Name);
         Assert.Equal("<p>Major update</p>", first.Html);
         Assert.Equal("**Major update**", first.Markdown);

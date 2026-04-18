@@ -153,7 +153,7 @@ public sealed class GeneralModelTests
         // Arrange
         string json = """
             {
-                "id": 7,
+                "id": "7",
                 "name": "v2.5.0",
                 "html": "<p>Bug fixes and improvements</p>",
                 "markdown": "# Bug fixes and improvements",
@@ -167,7 +167,7 @@ public sealed class GeneralModelTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(7, result.Id);
+        Assert.Equal("7", result.Id);
         Assert.Equal("v2.5.0", result.Name);
         Assert.Equal("<p>Bug fixes and improvements</p>", result.Html);
         Assert.Equal("# Bug fixes and improvements", result.Markdown);
@@ -182,7 +182,7 @@ public sealed class GeneralModelTests
         // Arrange
         string json = """
             {
-                "id": 1,
+                "id": "1",
                 "name": "v1.0.0"
             }
             """;
@@ -192,7 +192,7 @@ public sealed class GeneralModelTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(1, result.Id);
+        Assert.Equal("1", result.Id);
         Assert.Equal("v1.0.0", result.Name);
         Assert.Null(result.Html);
         Assert.Null(result.Markdown);
