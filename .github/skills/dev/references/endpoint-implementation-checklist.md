@@ -31,4 +31,6 @@ Use this checklist when executing **J2 — Endpoint** inside `/dev`.
 - Add unit tests for success.
 - Add unit tests for failure.
 - Assert the route, method, and payload.
+- Register new models in `SchemaModelMapping.SchemaToType` for schema validation.
+- Run static schema tests to verify field and type coverage.
 - Update docs if the public API changed.
