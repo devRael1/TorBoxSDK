@@ -112,6 +112,9 @@ img {
 .navbar-brand > img {
   box-shadow: none;
   color: var(--bs-nav-link-color);
+  width: 172px !important;
+  height: auto !important;
+  max-height: none !important;
 }
 
 [data-bs-theme='light'] nav.navbar {
@@ -142,6 +145,12 @@ img {
 .navbar-nav .nav-link.active,
 .navbar-nav .nav-link.show {
   color: var(--tb-primary);
+}
+
+/* Let top nav consume remaining width so right-aligned brand icons can sit near theme toggle */
+nav.navbar #navbar > .navbar-nav {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 /* External brand links in top navbar — pushed to the right */

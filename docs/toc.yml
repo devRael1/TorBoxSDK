@@ -6,9 +6,9 @@
   href: api/
 - name: Architecture
   href: articles/architecture.md
+- name: TorBox API
+  href: https://api-docs.torbox.app/
 - name: GitHub
   href: https://github.com/devRael1/TorBoxSDK
 - name: NuGet
   href: https://www.nuget.org/packages/TorBoxSDK
-- name: TorBox API
-  href: https://api-docs.torbox.app/
