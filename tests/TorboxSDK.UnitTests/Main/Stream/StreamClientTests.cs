@@ -100,7 +100,7 @@ public sealed class StreamClientTests
         (StreamClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<StreamClient>(StreamDataJson);
 
         // Act
-        TorBoxResponse<object> result = await client.GetStreamDataAsync("pre-signed-token-abc", "auth-token-123");
+        TorBoxResponse<StreamData> result = await client.GetStreamDataAsync("pre-signed-token-abc", "auth-token-123");
 
         // Assert
         Assert.NotNull(handler.LastRequest);

@@ -46,7 +46,7 @@ public interface IUsenetClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="hashes"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckUsenetCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more Usenet hashes are cached on TorBox (POST).</summary>
     /// <param name="request">The cache check request containing hashes and options.</param>
@@ -54,7 +54,7 @@ public interface IUsenetClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckUsenetCachedRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckUsenetCached>> CheckCachedByPostAsync(CheckUsenetCachedRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Edits the properties of an existing Usenet download.</summary>
     /// <param name="request">The edit request containing the new property values.</param>

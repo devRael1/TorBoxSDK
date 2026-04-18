@@ -107,7 +107,7 @@ public interface IIntegrationsClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="provider"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<OAuthCallback>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default);
 
     /// <summary>Handles the OAuth success endpoint for the specified provider.</summary>
     /// <param name="provider">The OAuth provider name.</param>
@@ -116,7 +116,7 @@ public interface IIntegrationsClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="provider"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="provider"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<OAuthSuccess>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default);
 
     /// <summary>Registers an OAuth integration with the specified provider.</summary>
     /// <param name="request">The registration request containing the provider, authorization code and redirect URI.</param>
@@ -142,5 +142,5 @@ public interface IIntegrationsClient
     /// <returns>The linked Discord roles data.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<LinkedDiscordRoles>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default);
 }

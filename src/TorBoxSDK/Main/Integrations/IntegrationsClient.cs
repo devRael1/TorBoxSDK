@@ -139,21 +139,21 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<OAuthCallback>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/callback");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<OAuthCallback>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<OAuthSuccess>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/success");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<OAuthSuccess>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -179,7 +179,7 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<LinkedDiscordRoles>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -187,6 +187,6 @@ internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsC
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<LinkedDiscordRoles>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 }

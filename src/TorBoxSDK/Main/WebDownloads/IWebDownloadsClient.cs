@@ -46,7 +46,7 @@ public interface IWebDownloadsClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="hashes"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckWebCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more web download hashes are cached on TorBox (POST).</summary>
     /// <param name="request">The cache check request containing hashes and options.</param>
@@ -54,7 +54,7 @@ public interface IWebDownloadsClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckWebCachedRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckWebCached>> CheckCachedByPostAsync(CheckWebCachedRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the list of supported hosters and their status.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>

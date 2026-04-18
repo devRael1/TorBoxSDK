@@ -31,7 +31,7 @@ public static class CheckCachedExample
 
             Console.WriteLine($"Checking cache for {hashes.Count} hash(es) via GET...");
 
-            TorBoxResponse<object> cacheResponse =
+            TorBoxResponse<CheckCached> cacheResponse =
                 await client.Main.Torrents.CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
             Console.WriteLine($"  Response: {cacheResponse.Detail ?? "Check completed"}");
@@ -49,7 +49,7 @@ public static class CheckCachedExample
                 ListFiles = true,    // Include file listings in response
             };
 
-            TorBoxResponse<object> postResponse =
+            TorBoxResponse<CheckCached> postResponse =
                 await client.Main.Torrents.CheckCachedByPostAsync(postRequest, cts.Token);
 
             Console.WriteLine($"  Response: {postResponse.Detail ?? "Check completed"}");

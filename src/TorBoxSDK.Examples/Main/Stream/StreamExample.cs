@@ -85,7 +85,7 @@ public static class StreamExample
                 Console.WriteLine();
                 Console.WriteLine("Getting stream data with presigned token...");
 
-                TorBoxResponse<object> streamDataResponse =
+                TorBoxResponse<StreamData> streamDataResponse =
                     await client.Main.Stream.GetStreamDataAsync(
                         presignedToken, authToken,
                         new GetStreamDataOptions

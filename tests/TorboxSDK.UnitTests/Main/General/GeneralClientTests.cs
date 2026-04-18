@@ -115,7 +115,7 @@ public sealed class GeneralClientTests
         (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
 
         // Act
-        TorBoxResponse<object> result = await client.GetUpStatusAsync();
+        TorBoxResponse<UpStatus> result = await client.GetUpStatusAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);

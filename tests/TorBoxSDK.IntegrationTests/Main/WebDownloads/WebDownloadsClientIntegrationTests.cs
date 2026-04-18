@@ -60,7 +60,7 @@ public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture 
         IReadOnlyList<string> hashes = ["abc123def456"];
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.WebDownloads
+        TorBoxResponse<CheckWebCached> response = await _fixture.Client.Main.WebDownloads
             .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert

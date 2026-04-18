@@ -112,7 +112,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(hashes, nameof(hashes));
 
@@ -123,11 +123,11 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
             ("list_files", options?.ListFiles?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/checkcached{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckCached>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -135,7 +135,7 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

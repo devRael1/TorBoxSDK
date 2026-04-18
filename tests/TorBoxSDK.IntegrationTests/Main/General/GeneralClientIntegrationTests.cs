@@ -22,7 +22,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.General.GetUpStatusAsync(cts.Token);
+        TorBoxResponse<UpStatus> response = await _fixture.Client.Main.General.GetUpStatusAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);

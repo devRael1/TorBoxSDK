@@ -244,7 +244,7 @@ public sealed class UserClientTests
         (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(DeviceCodeJson);
 
         // Act
-        TorBoxResponse<DeviceCodeResponse> result = await client.StartDeviceAuthAsync();
+        TorBoxResponse<DeviceCode> result = await client.StartDeviceAuthAsync();
 
         // Assert
         Assert.NotNull(handler.LastRequest);

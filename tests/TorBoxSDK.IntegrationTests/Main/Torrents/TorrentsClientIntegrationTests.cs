@@ -42,7 +42,7 @@ public sealed class TorrentsClientIntegrationTests(TorBoxIntegrationFixture fixt
         IReadOnlyList<string> hashes = ["3b245504cf5f11bbdbe1201cea6a6bf45aee1bc0"];
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.Torrents
+        TorBoxResponse<CheckCached> response = await _fixture.Client.Main.Torrents
             .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert

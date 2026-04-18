@@ -46,11 +46,11 @@ internal sealed class GeneralClient : IGeneralClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetUpStatusAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<UpStatus>> GetUpStatusAsync(CancellationToken cancellationToken = default)
     {
         // Use the root API URL (without version path) as an absolute URI.
         using var request = new HttpRequestMessage(HttpMethod.Get, _rootUrl);
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, request, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<UpStatus>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

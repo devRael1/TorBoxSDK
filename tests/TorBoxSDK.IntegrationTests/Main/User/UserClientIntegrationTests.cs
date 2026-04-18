@@ -61,7 +61,7 @@ public sealed class UserClientIntegrationTests(TorBoxIntegrationFixture fixture)
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.User.GetConfirmationAsync(cts.Token);
+        TorBoxResponse<Confirmation> response = await _fixture.Client.Main.User.GetConfirmationAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);

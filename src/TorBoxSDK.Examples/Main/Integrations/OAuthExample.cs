@@ -68,7 +68,7 @@ public static class OAuthExample
             Console.WriteLine();
             Console.WriteLine($"Handling OAuth callback for '{provider}'...");
 
-            TorBoxResponse<object> callbackResponse =
+            TorBoxResponse<OAuthCallback> callbackResponse =
                 await client.Main.Integrations.OAuthCallbackAsync(provider, cts.Token);
 
             Console.WriteLine($"  Callback result: {callbackResponse.Detail ?? "Processed"}");
@@ -79,7 +79,7 @@ public static class OAuthExample
             Console.WriteLine();
             Console.WriteLine($"Handling OAuth success for '{provider}'...");
 
-            TorBoxResponse<object> successResponse =
+            TorBoxResponse<OAuthSuccess> successResponse =
                 await client.Main.Integrations.OAuthSuccessAsync(provider, cts.Token);
 
             Console.WriteLine($"  Success result: {successResponse.Detail ?? "Confirmed"}");
@@ -120,7 +120,7 @@ public static class OAuthExample
             Console.WriteLine();
             Console.WriteLine("Fetching linked Discord roles...");
 
-            TorBoxResponse<object> discordResponse =
+            TorBoxResponse<LinkedDiscordRoles> discordResponse =
                 await client.Main.Integrations.GetLinkedDiscordRolesAsync(
                     new LinkedRolesRequest { DiscordToken = "your-discord-token" },
                     cts.Token);

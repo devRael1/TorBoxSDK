@@ -38,7 +38,7 @@ internal sealed class StreamClient(HttpClient httpClient) : IStreamClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetStreamDataAsync(string presignedToken, string token, GetStreamDataOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<StreamData>> GetStreamDataAsync(string presignedToken, string token, GetStreamDataOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNullOrEmpty(presignedToken, nameof(presignedToken));
         Guard.ThrowIfNullOrEmpty(token, nameof(token));
@@ -51,6 +51,6 @@ internal sealed class StreamClient(HttpClient httpClient) : IStreamClient
             ("chosen_resolution_index", options?.ChosenResolutionIndex?.ToString()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"stream/getstreamdata{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<StreamData>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 }

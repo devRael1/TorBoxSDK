@@ -46,7 +46,7 @@ public interface ITorrentsClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="hashes"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default);
 
     /// <summary>Checks whether one or more torrent hashes are cached on TorBox (POST).</summary>
     /// <param name="request">The cache check request containing hashes and options.</param>
@@ -54,7 +54,7 @@ public interface ITorrentsClient
     /// <returns>The cache status data as a dynamic object.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<CheckCached>> CheckCachedByPostAsync(CheckCachedRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Exports data for a torrent in the specified format.</summary>
     /// <param name="torrentId">The unique identifier of the torrent to export data for.</param>

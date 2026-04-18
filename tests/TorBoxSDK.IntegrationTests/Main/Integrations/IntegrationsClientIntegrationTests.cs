@@ -58,7 +58,7 @@ public sealed class IntegrationsClientIntegrationTests(TorBoxIntegrationFixture 
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.Integrations
+        TorBoxResponse<LinkedDiscordRoles> response = await _fixture.Client.Main.Integrations
             .GetLinkedDiscordRolesAsync(
                 new LinkedRolesRequest { DiscordToken = discordToken },
                 cts.Token);

@@ -13,7 +13,7 @@ public interface IGeneralClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The API status data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetUpStatusAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<UpStatus>> GetUpStatusAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves aggregate TorBox service statistics.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>

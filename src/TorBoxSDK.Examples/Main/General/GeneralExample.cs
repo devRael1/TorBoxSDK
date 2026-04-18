@@ -23,7 +23,7 @@ public static class GeneralExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Checking API status...");
 
-            TorBoxResponse<object> statusResponse =
+            TorBoxResponse<UpStatus> statusResponse =
                 await client.Main.General.GetUpStatusAsync(cts.Token);
 
             Console.WriteLine($"  API is up: {statusResponse.Detail ?? "Online"}");

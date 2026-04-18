@@ -14,13 +14,13 @@ public interface IUserClient
     /// <returns>The refreshed token data.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<RefreshToken>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Gets the confirmation status for the authenticated user.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The confirmation data.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetConfirmationAsync(CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<Confirmation>> GetConfirmationAsync(CancellationToken cancellationToken = default);
 
     /// <summary>Retrieves the authenticated user's profile.</summary>
     /// <param name="settings">Whether to include account settings in the response.</param>
@@ -42,7 +42,7 @@ public interface IUserClient
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The device code response containing a user code and verification URL.</returns>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(string? app = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<DeviceCode>> StartDeviceAuthAsync(string? app = null, CancellationToken cancellationToken = default);
 
     /// <summary>Exchanges a device code for an access token.</summary>
     /// <param name="request">The device token request.</param>
@@ -50,7 +50,7 @@ public interface IUserClient
     /// <returns>The token data.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetDeviceTokenAsync(DeviceTokenRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<DeviceToken>> GetDeviceTokenAsync(DeviceTokenRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Deletes the authenticated user's account.</summary>
     /// <param name="request">The delete account request.</param>

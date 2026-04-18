@@ -25,7 +25,7 @@ public static class UsenetAdvancedExample
 
             Console.WriteLine($"Checking cache for {hashes.Count} Usenet hash(es) (GET)...");
 
-            TorBoxResponse<object> cacheResponse =
+            TorBoxResponse<CheckUsenetCached> cacheResponse =
                 await client.Main.Usenet.CheckCachedAsync(hashes, new CheckCachedOptions { Format = "object", ListFiles = true }, cancellationToken: cts.Token);
 
             Console.WriteLine($"  Cache check result: {cacheResponse.Detail ?? "Completed"}");
@@ -43,7 +43,7 @@ public static class UsenetAdvancedExample
                 ListFiles = true,
             };
 
-            TorBoxResponse<object> cachePostResponse =
+            TorBoxResponse<CheckUsenetCached> cachePostResponse =
                 await client.Main.Usenet.CheckCachedByPostAsync(cacheRequest, cts.Token);
 
             Console.WriteLine($"  POST cache check result: {cachePostResponse.Detail ?? "Completed"}");

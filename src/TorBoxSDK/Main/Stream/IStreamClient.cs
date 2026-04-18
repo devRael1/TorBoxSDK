@@ -29,5 +29,5 @@ public interface IStreamClient
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="presignedToken"/> or <paramref name="token"/> is <see langword="null"/>.</exception>
     /// <exception cref="ArgumentException">Thrown when <paramref name="presignedToken"/> or <paramref name="token"/> is empty.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<object>> GetStreamDataAsync(string presignedToken, string token, GetStreamDataOptions? options = null, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<StreamData>> GetStreamDataAsync(string presignedToken, string token, GetStreamDataOptions? options = null, CancellationToken cancellationToken = default);
 }

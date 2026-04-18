@@ -21,7 +21,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<RefreshToken>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -29,14 +29,14 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<RefreshToken>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetConfirmationAsync(CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<Confirmation>> GetConfirmationAsync(CancellationToken cancellationToken = default)
     {
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "user/getconfirmation");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<Confirmation>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -60,16 +60,16 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<DeviceCodeResponse>> StartDeviceAuthAsync(string? app = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<DeviceCode>> StartDeviceAuthAsync(string? app = null, CancellationToken cancellationToken = default)
     {
         string query = TorBoxApiHelper.BuildQuery(("app", app));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"user/auth/device/start{query}");
-        return await TorBoxApiHelper.SendAsync<DeviceCodeResponse>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<DeviceCode>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetDeviceTokenAsync(DeviceTokenRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<DeviceToken>> GetDeviceTokenAsync(DeviceTokenRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -77,7 +77,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<DeviceToken>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

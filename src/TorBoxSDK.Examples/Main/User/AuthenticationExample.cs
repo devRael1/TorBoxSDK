@@ -30,7 +30,7 @@ public static class AuthenticationExample
                 SessionToken = sessionToken,
             };
 
-            TorBoxResponse<object> refreshResponse =
+            TorBoxResponse<RefreshToken> refreshResponse =
                 await client.Main.User.RefreshTokenAsync(refreshRequest, cts.Token);
 
             Console.WriteLine($"  Result: {refreshResponse.Detail ?? "Token refreshed"}");
@@ -41,7 +41,7 @@ public static class AuthenticationExample
             Console.WriteLine();
             Console.WriteLine("Checking account confirmation status...");
 
-            TorBoxResponse<object> confirmResponse =
+            TorBoxResponse<Confirmation> confirmResponse =
                 await client.Main.User.GetConfirmationAsync(cts.Token);
 
             Console.WriteLine($"  Confirmation: {confirmResponse.Detail ?? "Confirmed"}");
@@ -53,13 +53,13 @@ public static class AuthenticationExample
             Console.WriteLine();
             Console.WriteLine("Starting device authorization flow...");
 
-            TorBoxResponse<DeviceCodeResponse> deviceCodeResponse =
+            TorBoxResponse<DeviceCode> deviceCodeResponse =
                 await client.Main.User.StartDeviceAuthAsync(app: "my-app", cancellationToken: cts.Token);
 
             if (deviceCodeResponse.Data is not null)
             {
-                DeviceCodeResponse deviceCode = deviceCodeResponse.Data;
-                Console.WriteLine($"  Code: {deviceCode.Code ?? "N/A"}");
+                DeviceCode deviceCode = deviceCodeResponse.Data;
+                Console.WriteLine($"  Code: {deviceCode.UserCode ?? "N/A"}");
                 Console.WriteLine($"  Verification URL: {deviceCode.VerificationUrl ?? "N/A"}");
                 Console.WriteLine($"  Friendly URL: {deviceCode.FriendlyVerificationUrl ?? "N/A"}");
                 Console.WriteLine($"  Expires at: {deviceCode.ExpiresAt?.ToString("o") ?? "N/A"}");
@@ -70,17 +70,17 @@ public static class AuthenticationExample
                 // In practice, you would poll this endpoint at the
                 // specified interval until the user authorizes.
                 // ──────────────────────────────────────────────────
-                if (deviceCode.DeviceCode is not null)
+                if (deviceCode.DeviceCodeValue is not null)
                 {
                     Console.WriteLine();
                     Console.WriteLine("Exchanging device code for token...");
 
                     DeviceTokenRequest tokenRequest = new()
                     {
-                        DeviceCode = deviceCode.DeviceCode,
+                        DeviceCode = deviceCode.DeviceCodeValue,
                     };
 
-                    TorBoxResponse<object> tokenResponse =
+                    TorBoxResponse<DeviceToken> tokenResponse =
                         await client.Main.User.GetDeviceTokenAsync(tokenRequest, cts.Token);
 
                     Console.WriteLine($"  Result: {tokenResponse.Detail ?? "Token received"}");

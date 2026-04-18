@@ -112,7 +112,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckUsenetCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(hashes, nameof(hashes));
 
@@ -123,11 +123,11 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
             ("list_files", options?.ListFiles?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"usenet/checkcached{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckUsenetCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckUsenetCachedRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckUsenetCached>> CheckCachedByPostAsync(CheckUsenetCachedRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -135,7 +135,7 @@ internal sealed class UsenetClient(HttpClient httpClient) : IUsenetClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckUsenetCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

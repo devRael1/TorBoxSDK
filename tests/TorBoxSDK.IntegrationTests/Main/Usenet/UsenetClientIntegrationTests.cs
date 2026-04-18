@@ -41,7 +41,7 @@ public sealed class UsenetClientIntegrationTests(TorBoxIntegrationFixture fixtur
         IReadOnlyList<string> hashes = ["abc123def456"];
 
         // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.Usenet
+        TorBoxResponse<CheckUsenetCached> response = await _fixture.Client.Main.Usenet
             .CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
         // Assert

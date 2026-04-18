@@ -74,7 +74,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckWebCached>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(hashes, nameof(hashes));
 
@@ -85,11 +85,11 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
             ("list_files", options?.ListFiles?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"webdl/checkcached{query}");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckWebCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedByPostAsync(CheckWebCachedRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<CheckWebCached>> CheckCachedByPostAsync(CheckWebCachedRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -97,7 +97,7 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<CheckWebCached>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
