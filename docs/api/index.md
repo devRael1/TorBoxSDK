@@ -26,7 +26,7 @@ The SDK is structured around a single root client with three API families:
 | <xref:TorBoxSDK.TorBoxClient> | Concrete client implementation supporting both DI and standalone usage |
 | <xref:TorBoxSDK.TorBoxClientOptions> | Configuration options (API key, base URLs, timeout) |
 | <xref:TorBoxSDK.Models.Common.TorBoxResponse`1> | Standard API response envelope with typed data |
-| <xref:TorBoxSDK.TorBoxException> | Exception thrown on API-level failures |
+| <xref:TorBoxSDK.Models.Common.TorBoxException> | Exception thrown on API-level failures |
 
 ## Browsing
 

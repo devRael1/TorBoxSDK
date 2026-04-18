@@ -95,7 +95,7 @@ The DI-focused constructor is marked with `[ActivatorUtilitiesConstructor]` so A
 - Authentication uses a Bearer token attached by an internal `DelegatingHandler`
 - JSON serialization uses `System.Text.Json` with `snake_case` naming
 - Responses use the standard <xref:TorBoxSDK.Models.Common.TorBoxResponse`1> envelope
-- API failures are surfaced through <xref:TorBoxSDK.TorBoxException>
+- API failures are surfaced through <xref:TorBoxSDK.Models.Common.TorBoxException>
 - DI registration uses named `HttpClient` pipelines through `IHttpClientFactory` via `AddTorBox()`
 
 ## Why this structure exists

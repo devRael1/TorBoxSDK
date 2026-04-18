@@ -75,7 +75,7 @@ TorBoxResponse<TorrentSearchResponse> results = await client.Search.SearchTorren
 ## What to expect from responses
 
 - Successful calls return <xref:TorBoxSDK.Models.Common.TorBoxResponse`1>
-- API errors throw <xref:TorBoxSDK.TorBoxException>
+- API errors throw <xref:TorBoxSDK.Models.Common.TorBoxException>
 - All SDK methods are asynchronous
 - All public async methods accept `CancellationToken`
 
