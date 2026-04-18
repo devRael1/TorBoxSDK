@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.Search;
 
@@ -11,6 +11,6 @@ public sealed record MetaSearchOptions
     /// Gets the content type to filter metadata results by,
     /// or <see langword="null"/> to include all content types.
     /// </summary>
-    [JsonPropertyName("type")]
+    [QueryParameterName("type")]
     public string? Type { get; init; }
 }

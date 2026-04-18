@@ -156,10 +156,10 @@ public sealed class WebDownloadsClientTests
     {
         // Arrange
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
-        RequestWebDownloadOptions options = new() { WebId = 1 };
+        RequestWebDownloadOptions options = new() { };
 
         // Act
-        TorBoxResponse<string> result = await client.RequestDownloadAsync(options);
+        TorBoxResponse<string> result = await client.RequestDownloadAsync(1, options);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -176,14 +176,13 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
         RequestWebDownloadOptions options = new()
         {
-            WebId = 42,
             Token = "custom-token",
             AppendName = true,
             Redirect = false,
         };
 
         // Act
-        await client.RequestDownloadAsync(options);
+        await client.RequestDownloadAsync(42, options);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -195,13 +194,17 @@ public sealed class WebDownloadsClientTests
     }
 
     [Fact]
-    public async Task RequestDownloadAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task RequestDownloadAsync_WithNullOptions_SendsGetRequestWithIdOnly()
     {
         // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
+        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.RequestDownloadAsync(null!));
+        // Act
+        await client.RequestDownloadAsync(1);
+
+        // Assert
+        Assert.NotNull(handler.LastRequest);
+        Assert.Contains("web_id=1", handler.LastRequest.RequestUri!.ToString());
     }
 
     // --- GetMyWebDownloadListAsync ---
@@ -268,7 +271,7 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
         // Act
-        await client.CheckCachedAsync(new CheckCachedOptions { Hashes = ["hash1", "hash2"] });
+        await client.CheckCachedAsync(["hash1", "hash2"]);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -284,7 +287,7 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
     }
 
     [Fact]
@@ -294,7 +297,7 @@ public sealed class WebDownloadsClientTests
         (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(new CheckCachedOptions { Hashes = null! }));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
     }
 
     // --- CheckCachedByPostAsync ---

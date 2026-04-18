@@ -25,13 +25,8 @@ public static class DownloadTorrentExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine($"Requesting download link for torrent {torrentId}...");
 
-            RequestDownloadOptions downloadOptions = new()
-            {
-                TorrentId = torrentId,
-            };
-
             TorBoxResponse<string> downloadResponse =
-                await client.Main.Torrents.RequestDownloadAsync(downloadOptions, cts.Token);
+                await client.Main.Torrents.RequestDownloadAsync(torrentId, cancellationToken: cts.Token);
 
             if (downloadResponse.Data is not null)
             {
@@ -46,12 +41,11 @@ public static class DownloadTorrentExample
 
             RequestDownloadOptions fileDownloadOptions = new()
             {
-                TorrentId = torrentId,
                 FileId = fileId,
             };
 
             TorBoxResponse<string> fileDownloadResponse =
-                await client.Main.Torrents.RequestDownloadAsync(fileDownloadOptions, cts.Token);
+                await client.Main.Torrents.RequestDownloadAsync(torrentId, fileDownloadOptions, cts.Token);
 
             if (fileDownloadResponse.Data is not null)
             {
@@ -63,12 +57,11 @@ public static class DownloadTorrentExample
             // ──────────────────────────────────────────────────────
             RequestDownloadOptions zipOptions = new()
             {
-                TorrentId = torrentId,
                 ZipLink = true,
             };
 
             TorBoxResponse<string> zipResponse =
-                await client.Main.Torrents.RequestDownloadAsync(zipOptions, cts.Token);
+                await client.Main.Torrents.RequestDownloadAsync(torrentId, zipOptions, cts.Token);
 
             if (zipResponse.Data is not null)
             {
@@ -81,7 +74,7 @@ public static class DownloadTorrentExample
             Console.WriteLine($"Exporting data for torrent {torrentId}...");
 
             TorBoxResponse<string> exportResponse =
-                await client.Main.Torrents.ExportDataAsync(new ExportDataOptions { TorrentId = torrentId }, cancellationToken: cts.Token);
+                await client.Main.Torrents.ExportDataAsync(torrentId, cancellationToken: cts.Token);
 
             if (exportResponse.Data is not null)
             {

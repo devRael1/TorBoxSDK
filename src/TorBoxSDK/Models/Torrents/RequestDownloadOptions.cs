@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using TorBoxSDK.Http;
 
 namespace TorBoxSDK.Models.Torrents;
 
@@ -7,56 +7,50 @@ namespace TorBoxSDK.Models.Torrents;
 /// </summary>
 /// <remarks>
 /// These options are sent as query string parameters, not as a JSON body.
-/// The <see cref="JsonPropertyNameAttribute"/> attributes are provided for consistent
-/// naming conventions with the API.
+/// The <see cref="QueryParameterNameAttribute"/> attributes document the
+/// corresponding API query parameter names.
 /// </remarks>
 public sealed record RequestDownloadOptions
 {
     /// <summary>
-    /// Gets the unique identifier of the torrent to download.
-    /// </summary>
-    [JsonPropertyName("torrent_id")]
-    public long TorrentId { get; init; }
-
-    /// <summary>
     /// Gets the identifier of a specific file within the torrent to download,
     /// or <see langword="null"/> to download all files.
     /// </summary>
-    [JsonPropertyName("file_id")]
+    [QueryParameterName("file_id")]
     public long? FileId { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to return a zip download link,
     /// or <see langword="null"/> to use the default behavior.
     /// </summary>
-    [JsonPropertyName("zip_link")]
+    [QueryParameterName("zip_link")]
     public bool? ZipLink { get; init; }
 
     /// <summary>
     /// Gets the IP address of the user requesting the download,
     /// or <see langword="null"/> to omit.
     /// </summary>
-    [JsonPropertyName("user_ip")]
+    [QueryParameterName("user_ip")]
     public string? UserIp { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to redirect to the download URL,
     /// or <see langword="null"/> to return the URL in the response body.
     /// </summary>
-    [JsonPropertyName("redirect")]
+    [QueryParameterName("redirect")]
     public bool? Redirect { get; init; }
 
     /// <summary>
     /// Gets the API token to use for authentication,
     /// or <see langword="null"/> to use the client's default token.
     /// </summary>
-    [JsonPropertyName("token")]
+    [QueryParameterName("token")]
     public string? Token { get; init; }
 
     /// <summary>
     /// Gets a value indicating whether to append the file name to the download URL,
     /// or <see langword="null"/> to use the default behavior.
     /// </summary>
-    [JsonPropertyName("append_name")]
+    [QueryParameterName("append_name")]
     public bool? AppendName { get; init; }
 }

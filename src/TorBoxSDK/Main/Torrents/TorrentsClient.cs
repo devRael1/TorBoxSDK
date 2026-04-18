@@ -83,18 +83,16 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> RequestDownloadAsync(RequestDownloadOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> RequestDownloadAsync(long torrentId, RequestDownloadOptions? options = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-
         string query = TorBoxApiHelper.BuildQuery(
-            ("torrent_id", options.TorrentId.ToString()),
-            ("file_id", options.FileId?.ToString()),
-            ("zip_link", options.ZipLink?.ToString().ToLowerInvariant()),
-            ("token", options.Token),
-            ("user_ip", options.UserIp),
-            ("redirect", options.Redirect?.ToString().ToLowerInvariant()),
-            ("append_name", options.AppendName?.ToString().ToLowerInvariant()));
+            ("torrent_id", torrentId.ToString()),
+            ("file_id", options?.FileId?.ToString()),
+            ("zip_link", options?.ZipLink?.ToString().ToLowerInvariant()),
+            ("token", options?.Token),
+            ("user_ip", options?.UserIp),
+            ("redirect", options?.Redirect?.ToString().ToLowerInvariant()),
+            ("append_name", options?.AppendName?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/requestdl{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -114,16 +112,15 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-        Guard.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
+        Guard.ThrowIfNull(hashes, nameof(hashes));
 
-        string hashParam = string.Join(",", options.Hashes);
+        string hashParam = string.Join(",", hashes);
         string query = TorBoxApiHelper.BuildQuery(
             ("hash", hashParam),
-            ("format", options.Format),
-            ("list_files", options.ListFiles?.ToString().ToLowerInvariant()));
+            ("format", options?.Format),
+            ("list_files", options?.ListFiles?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/checkcached{query}");
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -142,28 +139,25 @@ internal sealed class TorrentsClient(HttpClient httpClient) : ITorrentsClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> ExportDataAsync(ExportDataOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> ExportDataAsync(long torrentId, string? exportType = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-
         string query = TorBoxApiHelper.BuildQuery(
-            ("torrent_id", options.TorrentId.ToString()),
-            ("type", options.ExportType));
+            ("torrent_id", torrentId.ToString()),
+            ("type", exportType));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/exportdata{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(GetTorrentInfoOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<TorrentInfo>> GetTorrentInfoAsync(string hash, GetTorrentInfoOptions? options = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-        Guard.ThrowIfNullOrEmpty(options.Hash, nameof(options.Hash));
+        Guard.ThrowIfNullOrEmpty(hash, nameof(hash));
 
         string query = TorBoxApiHelper.BuildQuery(
-            ("hash", options.Hash),
-            ("timeout", options.Timeout?.ToString()),
-            ("use_cache_lookup", options.UseCacheLookup?.ToString().ToLowerInvariant()));
+            ("hash", hash),
+            ("timeout", options?.Timeout?.ToString()),
+            ("use_cache_lookup", options?.UseCacheLookup?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"torrents/torrentinfo{query}");
         return await TorBoxApiHelper.SendAsync<TorrentInfo>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

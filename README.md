@@ -1,4 +1,4 @@
-# TorBoxSDK
+﻿# TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
@@ -161,6 +161,14 @@ dotnet test tests/TorBoxSDK.IntegrationTests/
 ```
 
 Integration tests are designed to skip gracefully when `TORBOX_API_KEY` is not set.
+
+## Versioning
+
+This project follows [Semantic Versioning (SemVer)](https://semver.org). Each release version uses the `MAJOR.MINOR.PATCH` format:
+
+- **MAJOR** — incompatible API changes
+- **MINOR** — new functionality added in a backward-compatible manner
+- **PATCH** — backward-compatible bug fixes
 
 ## License
 

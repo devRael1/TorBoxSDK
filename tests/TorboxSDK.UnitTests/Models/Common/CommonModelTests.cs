@@ -153,7 +153,6 @@ public sealed class CommonModelTests
         // Arrange
         CheckCachedOptions options = new()
         {
-            Hashes = ["hash1", "hash2", "hash3"],
             Format = "object",
             ListFiles = true,
         };
@@ -165,12 +164,6 @@ public sealed class CommonModelTests
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
 
-        JsonElement hashes = root.GetProperty("hash");
-        Assert.Equal(3, hashes.GetArrayLength());
-        Assert.Equal("hash1", hashes[0].GetString());
-        Assert.Equal("hash2", hashes[1].GetString());
-        Assert.Equal("hash3", hashes[2].GetString());
-
         Assert.Equal("object", root.GetProperty("format").GetString());
         Assert.True(root.GetProperty("list_files").GetBoolean());
     }
@@ -179,10 +172,7 @@ public sealed class CommonModelTests
     public void CheckCachedOptions_Serialize_WithNullOptionals_OmitsNullProperties()
     {
         // Arrange
-        CheckCachedOptions options = new()
-        {
-            Hashes = ["abc123"],
-        };
+        CheckCachedOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
@@ -190,7 +180,6 @@ public sealed class CommonModelTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.True(root.TryGetProperty("hash", out _));
         Assert.False(root.TryGetProperty("format", out _));
         Assert.False(root.TryGetProperty("list_files", out _));
     }

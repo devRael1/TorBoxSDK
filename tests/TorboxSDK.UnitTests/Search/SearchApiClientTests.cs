@@ -414,7 +414,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(downloadJson);
 
         // Act
-        TorBoxResponse<string> result = await client.DownloadUsenetAsync(new DownloadUsenetOptions { Id = "nzb-id-123", Guid = "guid-456" });
+        TorBoxResponse<string> result = await client.DownloadUsenetAsync("nzb-id-123", "guid-456");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -424,13 +424,13 @@ public sealed class SearchApiClientTests
     }
 
     [Fact]
-    public async Task DownloadUsenetAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task DownloadUsenetAsync_WithNullId_ThrowsArgumentNullException()
     {
         // Arrange
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.DownloadUsenetAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.DownloadUsenetAsync(null!, "guid"));
     }
 
     [Fact]
@@ -440,7 +440,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync(new DownloadUsenetOptions { Id = "", Guid = "guid" }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync("", "guid"));
     }
 
     [Fact]
@@ -450,7 +450,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync(new DownloadUsenetOptions { Id = "id", Guid = "" }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.DownloadUsenetAsync("id", ""));
     }
 
     // --- GetMetaByIdAsync ---
@@ -518,7 +518,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(torznabJson);
 
         // Act
-        TorBoxResponse<string> result = await client.SearchTorznabAsync(new SearchTorznabOptions { Query = "ubuntu" });
+        TorBoxResponse<string> result = await client.SearchTorznabAsync("ubuntu");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -545,7 +545,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(torznabJson);
 
         // Act
-        await client.SearchTorznabAsync(new SearchTorznabOptions { Query = "ubuntu", ApiKey = "my-key" });
+        await client.SearchTorznabAsync("ubuntu", "my-key");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -554,7 +554,7 @@ public sealed class SearchApiClientTests
     }
 
     [Fact]
-    public async Task SearchTorznabAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task SearchTorznabAsync_WithNullQuery_ThrowsArgumentNullException()
     {
         // Arrange
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
@@ -570,7 +570,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchTorznabAsync(new SearchTorznabOptions { Query = "" }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchTorznabAsync(""));
     }
 
     // --- SearchNewznabAsync ---
@@ -590,7 +590,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(newznabJson);
 
         // Act
-        TorBoxResponse<string> result = await client.SearchNewznabAsync(new SearchNewznabOptions { Query = "ubuntu" });
+        TorBoxResponse<string> result = await client.SearchNewznabAsync("ubuntu");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -603,7 +603,7 @@ public sealed class SearchApiClientTests
     }
 
     [Fact]
-    public async Task SearchNewznabAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task SearchNewznabAsync_WithNullQuery_ThrowsArgumentNullException()
     {
         // Arrange
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
@@ -619,7 +619,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, _) = ClientTestBase.CreateClient<SearchApiClient>(SearchResultsJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchNewznabAsync(new SearchNewznabOptions { Query = "" }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.SearchNewznabAsync(""));
     }
 
     [Fact]
@@ -637,7 +637,7 @@ public sealed class SearchApiClientTests
         (SearchApiClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<SearchApiClient>(newznabJson);
 
         // Act
-        await client.SearchNewznabAsync(new SearchNewznabOptions { Query = "ubuntu", ApiKey = "my-key" });
+        await client.SearchNewznabAsync("ubuntu", "my-key");
 
         // Assert
         Assert.NotNull(handler.LastRequest);

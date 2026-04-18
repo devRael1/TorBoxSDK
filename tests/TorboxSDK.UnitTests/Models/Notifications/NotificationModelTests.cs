@@ -104,25 +104,5 @@ public sealed class NotificationModelTests
         Assert.Null(result.Hash);
     }
 
-    // ──── GetIntercomHashOptions ────
 
-    [Fact]
-    public void GetIntercomHashOptions_Serialize_ProducesExpectedJson()
-    {
-        // Arrange
-        GetIntercomHashOptions options = new()
-        {
-            AuthId = "auth-xyz-789",
-            Email = "user@example.com",
-        };
-
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
-
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.Equal("auth-xyz-789", root.GetProperty("auth_id").GetString());
-        Assert.Equal("user@example.com", root.GetProperty("email").GetString());
-    }
 }

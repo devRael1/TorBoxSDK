@@ -100,7 +100,6 @@ public sealed class WebDownloadRequestTests
         // Arrange
         RequestWebDownloadOptions options = new()
         {
-            WebId = 42,
             FileId = 2,
             ZipLink = false,
             UserIp = "172.16.0.1",
@@ -115,7 +114,6 @@ public sealed class WebDownloadRequestTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal(42, root.GetProperty("web_id").GetInt64());
         Assert.Equal("web-token-abc", root.GetProperty("token").GetString());
         Assert.True(root.GetProperty("redirect").GetBoolean());
         Assert.True(root.GetProperty("append_name").GetBoolean());
@@ -125,10 +123,7 @@ public sealed class WebDownloadRequestTests
     public void RequestWebDownloadOptions_Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        RequestWebDownloadOptions options = new()
-        {
-            WebId = 1,
-        };
+        RequestWebDownloadOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);

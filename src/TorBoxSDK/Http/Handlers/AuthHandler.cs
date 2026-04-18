@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 using TorBoxSDK.Http.Validation;
 
@@ -24,7 +25,7 @@ internal sealed class AuthHandler(IOptions<TorBoxClientOptions> options) : Deleg
 
         if (!string.IsNullOrWhiteSpace(apiKey))
         {
-            request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", apiKey);
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
         }
 
         return base.SendAsync(request, cancellationToken);

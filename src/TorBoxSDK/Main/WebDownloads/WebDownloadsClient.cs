@@ -45,18 +45,16 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> RequestDownloadAsync(RequestWebDownloadOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> RequestDownloadAsync(long webId, RequestWebDownloadOptions? options = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-
         string query = TorBoxApiHelper.BuildQuery(
-            ("web_id", options.WebId.ToString()),
-            ("file_id", options.FileId?.ToString()),
-            ("zip_link", options.ZipLink?.ToString().ToLowerInvariant()),
-            ("token", options.Token),
-            ("user_ip", options.UserIp),
-            ("redirect", options.Redirect?.ToString().ToLowerInvariant()),
-            ("append_name", options.AppendName?.ToString().ToLowerInvariant()));
+            ("web_id", webId.ToString()),
+            ("file_id", options?.FileId?.ToString()),
+            ("zip_link", options?.ZipLink?.ToString().ToLowerInvariant()),
+            ("token", options?.Token),
+            ("user_ip", options?.UserIp),
+            ("redirect", options?.Redirect?.ToString().ToLowerInvariant()),
+            ("append_name", options?.AppendName?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"webdl/requestdl{query}");
         return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
@@ -76,16 +74,15 @@ internal sealed class WebDownloadsClient(HttpClient httpClient) : IWebDownloadsC
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> CheckCachedAsync(CheckCachedOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<object>> CheckCachedAsync(IReadOnlyList<string> hashes, CheckCachedOptions? options = null, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-        Guard.ThrowIfNull(options.Hashes, $"{nameof(options)}.{nameof(CheckCachedOptions.Hashes)}");
+        Guard.ThrowIfNull(hashes, nameof(hashes));
 
-        string hashParam = string.Join(",", options.Hashes);
+        string hashParam = string.Join(",", hashes);
         string query = TorBoxApiHelper.BuildQuery(
             ("hash", hashParam),
-            ("format", options.Format),
-            ("list_files", options.ListFiles?.ToString().ToLowerInvariant()));
+            ("format", options?.Format),
+            ("list_files", options?.ListFiles?.ToString().ToLowerInvariant()));
 
         using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"webdl/checkcached{query}");
         return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

@@ -12,7 +12,6 @@ public sealed class RequestDownloadOptionsTests
         // Arrange
         RequestDownloadOptions options = new()
         {
-            TorrentId = 42,
             FileId = 5,
             ZipLink = true,
             UserIp = "192.168.1.1",
@@ -27,7 +26,6 @@ public sealed class RequestDownloadOptionsTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal(42, root.GetProperty("torrent_id").GetInt64());
         Assert.Equal("my-api-token", root.GetProperty("token").GetString());
         Assert.True(root.GetProperty("append_name").GetBoolean());
         Assert.False(root.GetProperty("redirect").GetBoolean());
@@ -37,10 +35,7 @@ public sealed class RequestDownloadOptionsTests
     public void Serialize_WithNullNewProperties_OmitsThem()
     {
         // Arrange
-        RequestDownloadOptions options = new()
-        {
-            TorrentId = 1,
-        };
+        RequestDownloadOptions options = new();
 
         // Act
         string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
@@ -48,7 +43,6 @@ public sealed class RequestDownloadOptionsTests
         // Assert
         using JsonDocument doc = JsonDocument.Parse(json);
         JsonElement root = doc.RootElement;
-        Assert.Equal(1, root.GetProperty("torrent_id").GetInt64());
         Assert.False(root.TryGetProperty("token", out _));
         Assert.False(root.TryGetProperty("append_name", out _));
     }

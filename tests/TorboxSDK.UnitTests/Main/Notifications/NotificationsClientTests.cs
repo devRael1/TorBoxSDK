@@ -168,7 +168,7 @@ public sealed class NotificationsClientTests
         (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act
-        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = "test@test.com" });
+        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync("auth-id", "test@test.com");
 
         // Assert
         Assert.NotNull(handler.LastRequest);
@@ -180,13 +180,13 @@ public sealed class NotificationsClientTests
     }
 
     [Fact]
-    public async Task GetIntercomHashAsync_WithNullOptions_ThrowsArgumentNullException()
+    public async Task GetIntercomHashAsync_WithNullAuthId_ThrowsArgumentNullException()
     {
         // Arrange
         (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!, "test@test.com"));
     }
 
     [Fact]
@@ -196,7 +196,7 @@ public sealed class NotificationsClientTests
         (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = string.Empty, Email = "test@test.com" }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(string.Empty, "test@test.com"));
     }
 
     [Fact]
@@ -206,6 +206,6 @@ public sealed class NotificationsClientTests
         (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(new GetIntercomHashOptions { AuthId = "auth-id", Email = string.Empty }));
+        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync("auth-id", string.Empty));
     }
 }

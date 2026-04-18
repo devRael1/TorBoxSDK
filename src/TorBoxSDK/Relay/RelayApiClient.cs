@@ -74,12 +74,11 @@ internal sealed class RelayApiClient : IRelayApiClient
     }
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(CheckInactiveOptions options, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<InactiveCheckResult>> CheckForInactiveAsync(string authId, long torrentId, CancellationToken cancellationToken = default)
     {
-        Guard.ThrowIfNull(options);
-        Guard.ThrowIfNullOrEmpty(options.AuthId, nameof(options.AuthId));
+        Guard.ThrowIfNullOrEmpty(authId, nameof(authId));
 
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"inactivecheck/torrent/{Uri.EscapeDataString(options.AuthId)}/{options.TorrentId}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"inactivecheck/torrent/{Uri.EscapeDataString(authId)}/{torrentId}");
         return await TorBoxApiHelper.SendAsync<InactiveCheckResult>(_httpClient, request, cancellationToken).ConfigureAwait(false);
     }
 }

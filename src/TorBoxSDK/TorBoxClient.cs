@@ -28,6 +28,15 @@ namespace TorBoxSDK;
 /// </remarks>
 public sealed class TorBoxClient : ITorBoxClient
 {
+    /// <inheritdoc />
+    public IMainApiClient Main { get; }
+
+    /// <inheritdoc />
+    public ISearchApiClient Search { get; }
+
+    /// <inheritdoc />
+    public IRelayApiClient Relay { get; }
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TorBoxClient"/> class
     /// using an <see cref="IHttpClientFactory"/> to create the required HTTP clients.
@@ -50,13 +59,4 @@ public sealed class TorBoxClient : ITorBoxClient
         Search = new SearchApiClient(searchHttpClient);
         Relay = new RelayApiClient(relayHttpClient, options.Value.RelayApiBaseUrl);
     }
-
-    /// <inheritdoc />
-    public IMainApiClient Main { get; }
-
-    /// <inheritdoc />
-    public ISearchApiClient Search { get; }
-
-    /// <inheritdoc />
-    public IRelayApiClient Relay { get; }
 }

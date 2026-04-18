@@ -34,7 +34,7 @@ public static class StreamExample
 
             TorBoxResponse<string> streamResponse =
                 await client.Main.Stream.CreateStreamAsync(
-                    new CreateStreamOptions { Id = downloadId, FileId = fileId, Type = type },
+                    downloadId, fileId, type,
                     cancellationToken: cts.Token);
 
             if (streamResponse.Data is not null)
@@ -56,11 +56,9 @@ public static class StreamExample
 
             TorBoxResponse<string> customStreamResponse =
                 await client.Main.Stream.CreateStreamAsync(
+                    downloadId, fileId, type,
                     new CreateStreamOptions
                     {
-                        Id = downloadId,
-                        FileId = fileId,
-                        Type = type,
                         ChosenSubtitleIndex = subtitleIndex,
                         ChosenAudioIndex = audioIndex,
                     },
@@ -89,10 +87,9 @@ public static class StreamExample
 
                 TorBoxResponse<object> streamDataResponse =
                     await client.Main.Stream.GetStreamDataAsync(
+                        presignedToken, authToken,
                         new GetStreamDataOptions
                         {
-                            PresignedToken = presignedToken,
-                            Token = authToken,
                             ChosenSubtitleIndex = subtitleIndex,
                             ChosenAudioIndex = audioIndex,
                         },
