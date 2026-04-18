@@ -225,7 +225,7 @@ public sealed class UsenetClientTests
     }
 
     [Fact]
-    public async Task RequestDownloadAsync_WithNullOptions_SendsGetRequestWithIdOnly()
+    public async Task RequestDownloadAsync_WithNoOptions_SendsGetRequestWithIdOnly()
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(DownloadJson);

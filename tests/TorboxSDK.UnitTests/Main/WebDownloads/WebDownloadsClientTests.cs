@@ -194,7 +194,7 @@ public sealed class WebDownloadsClientTests
     }
 
     [Fact]
-    public async Task RequestDownloadAsync_WithNullOptions_SendsGetRequestWithIdOnly()
+    public async Task RequestDownloadAsync_WithNoOptions_SendsGetRequestWithIdOnly()
     {
         // Arrange
         (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);

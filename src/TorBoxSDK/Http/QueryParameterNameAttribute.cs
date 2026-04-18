@@ -1,9 +1,9 @@
 namespace TorBoxSDK.Http;
 
 /// <summary>
-/// Specifies the query parameter name that a property maps to when
-/// building an HTTP query string. This attribute is used on Options
-/// record properties to document the API parameter name.
+/// Specifies the query parameter name that a property maps to.
+/// This attribute is used on options model properties as metadata
+/// for API documentation and discoverability.
 /// </summary>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public sealed class QueryParameterNameAttribute : Attribute
