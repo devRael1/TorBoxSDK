@@ -53,8 +53,11 @@ public sealed class TorBoxClient : ITorBoxClient
     /// using the specified API key and default options.
     /// </summary>
     /// <param name="apiKey">The TorBox API key used for Bearer authentication.</param>
+    /// <exception cref="ArgumentNullException">
+    /// Thrown when <paramref name="apiKey"/> is <see langword="null"/>.
+    /// </exception>
     /// <exception cref="ArgumentException">
-    /// Thrown when <paramref name="apiKey"/> is <see langword="null"/> or empty.
+    /// Thrown when <paramref name="apiKey"/> is empty.
     /// </exception>
     public TorBoxClient(string apiKey)
         : this(new TorBoxClientOptions { ApiKey = apiKey })
@@ -172,6 +175,11 @@ public sealed class TorBoxClient : ITorBoxClient
         if (!Uri.TryCreate(url, UriKind.Absolute, out _))
         {
             throw new ArgumentException($"'{url}' is not a valid absolute URI.", paramName);
+        }
+
+        if (!url.EndsWith('/'))
+        {
+            throw new ArgumentException($"Base URL '{url}' must end with a trailing '/' for correct relative URI resolution.", paramName);
         }
     }
 }
