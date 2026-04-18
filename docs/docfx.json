@@ -10,7 +10,7 @@
       "dest": "api",
       "filter": "filterConfig.yml",
       "properties": {
-        "TargetFramework": "net8.0"
+           "TargetFramework": "net10.0"
       }
     }
   ],
@@ -29,7 +29,7 @@
     "template": ["default", "modern", "templates/material"],
     "globalMetadata": {
       "_appTitle": "TorBoxSDK",
-      "_appFooter": "Made by <a href='https://github.com/devRael1'>devRael1</a> with ❤️",
+      "_appFooter": "<span class='tb-footer-left'>Made by <a href='https://github.com/devRael1'>devRael1</a> with ❤️</span><span class='tb-footer-right'>Under license: <a href='https://github.com/devRael1/TorBoxSDK/blob/master/LICENSE'>MIT</a></span><script>(function(){const apply=function(){document.querySelectorAll(\"nav.navbar .navbar-nav a.nav-link[href*='api-docs.torbox.app']\").forEach(function(a){a.setAttribute('target','_blank');a.setAttribute('rel','noopener noreferrer');});};apply();if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',apply,{once:true});}new MutationObserver(apply).observe(document.body,{childList:true,subtree:true});})();</script>",
       "_appFaviconPath": "images/favicon.svg",
       "_appLogoPath": "images/logo.svg",
       "_enableSearch": true,

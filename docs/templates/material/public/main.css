@@ -162,15 +162,31 @@ nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK'],
 nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK'] {
   font-size: 0;
   line-height: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+nav.navbar a.btn.dropdown-toggle[title='Change theme'] {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  border-radius: var(--border-radius-button);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 200ms ease;
 }
 
 nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK']::before,
 nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']::before {
   content: '';
   display: inline-block;
-  width: 1.1rem;
-  height: 1.1rem;
-  vertical-align: middle;
+  width: 1.25rem;
+  height: 1.25rem;
   background-color: currentColor;
   mask-repeat: no-repeat;
   mask-position: center;
@@ -178,6 +194,35 @@ nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']::before 
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   -webkit-mask-size: contain;
+}
+
+/* Keep icon links visually aligned with the theme toggle button. */
+nav.navbar .navbar-nav li:has(> a.nav-link[href*='github.com/devRael1/TorBoxSDK']),
+nav.navbar .navbar-nav li:has(> a.nav-link[href*='nuget.org/packages/TorBoxSDK']) {
+  display: flex;
+  align-items: center;
+}
+
+/* Right-side icon hover parity: GitHub, NuGet, Theme switcher. */
+nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK']:hover,
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:hover,
+nav.navbar a.btn.dropdown-toggle[title='Change theme']:hover {
+  background-color: var(--bs-primary-border-subtle);
+  color: var(--tb-primary);
+}
+
+nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK']:focus,
+nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:focus,
+nav.navbar a.btn.dropdown-toggle[title='Change theme']:focus {
+  background-color: transparent;
+  color: inherit;
+}
+
+[data-bs-theme='dark'] nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK']:hover,
+[data-bs-theme='dark'] nav.navbar .navbar-nav a.nav-link[href*='nuget.org/packages/TorBoxSDK']:hover,
+[data-bs-theme='dark'] nav.navbar a.btn.dropdown-toggle[title='Change theme']:hover {
+  background-color: #04bf8a1a;
+  color: #04BF8A;
 }
 
 nav.navbar .navbar-nav a.nav-link[href*='github.com/devRael1/TorBoxSDK']::before {
@@ -315,6 +360,19 @@ footer {
   border-top: 1px solid var(--bs-border-color);
 }
 
+footer .container-xxl > .flex-fill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+footer .tb-footer-right {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 [data-bs-theme='dark'] footer {
   background-color: #0D0F13;
   border-top: 1px solid #212A36;
@@ -400,7 +458,8 @@ pre > code {
 }
 
 [data-bs-theme='dark'] .hljs-keyword,
-[data-bs-theme='dark'] .hljs-selector-tag {
+[data-bs-theme='dark'] .hljs-selector-tag,
+[data-bs-theme='dark'] .hljs-operator {
   color: #569CD6;
   font-weight: 500;
 }
@@ -412,7 +471,8 @@ pre > code {
 
 [data-bs-theme='dark'] .hljs-string,
 [data-bs-theme='dark'] .hljs-selector-attr,
-[data-bs-theme='dark'] .hljs-selector-pseudo {
+[data-bs-theme='dark'] .hljs-selector-pseudo,
+[data-bs-theme='dark'] .hljs-regexp {
   color: #D69D85;
 }
 
@@ -431,7 +491,7 @@ pre > code {
 
 [data-bs-theme='dark'] .hljs-title,
 [data-bs-theme='dark'] .hljs-title.function_ {
-  color: #DCDCAA;
+  color: #FFD866;
   font-weight: 500;
 }
 
@@ -452,7 +512,7 @@ pre > code {
 
 [data-bs-theme='dark'] .hljs-meta,
 [data-bs-theme='dark'] .hljs-meta .hljs-keyword {
-  color: #9B9B9B;
+  color: #C586C0;
 }
 
 [data-bs-theme='dark'] .hljs-params {
@@ -466,6 +526,16 @@ pre > code {
 [data-bs-theme='dark'] .hljs-name,
 [data-bs-theme='dark'] .hljs-tag {
   color: #569CD6;
+}
+
+[data-bs-theme='dark'] .hljs-property,
+[data-bs-theme='dark'] .hljs-attribute {
+  color: #9CDCFE;
+}
+
+[data-bs-theme='dark'] .hljs-subst,
+[data-bs-theme='dark'] .hljs-punctuation {
+  color: #D4D4D4;
 }
 
 [data-bs-theme='dark'] .hljs-selector-id,
@@ -493,43 +563,59 @@ pre > code {
 
 /* Light mode — enhanced code block */
 [data-bs-theme='light'] pre {
-  background-color: #fafbfc !important;
-  border: 1px solid #e5e7eb;
+  background-color: #f7f9fc !important;
+  border: 1px solid #d7dde8;
 }
 
 [data-bs-theme='light'] .hljs {
-  background: #fafbfc !important;
+  background: #f7f9fc !important;
+  color: #1f2937;
 }
 
-[data-bs-theme='light'] .hljs-keyword {
-  color: #8b5cf6;
+[data-bs-theme='light'] .hljs-keyword,
+[data-bs-theme='light'] .hljs-selector-tag,
+[data-bs-theme='light'] .hljs-operator {
+  color: #0b57d0;
   font-weight: 500;
 }
 
 [data-bs-theme='light'] .hljs-built_in,
 [data-bs-theme='light'] .hljs-type {
-  color: #b45309;
+  color: #0f766e;
 }
 
-[data-bs-theme='light'] .hljs-string {
-  color: #059669;
+[data-bs-theme='light'] .hljs-string,
+[data-bs-theme='light'] .hljs-regexp {
+  color: #b42318;
 }
 
 [data-bs-theme='light'] .hljs-number,
 [data-bs-theme='light'] .hljs-literal {
-  color: #d97706;
+  color: #7c3aed;
 }
 
 [data-bs-theme='light'] .hljs-title,
 [data-bs-theme='light'] .hljs-title.function_,
 [data-bs-theme='light'] .hljs-title.class_ {
-  color: #2563eb;
+  color: #9a3412;
   font-weight: 500;
 }
 
 [data-bs-theme='light'] .hljs-comment {
-  color: #6b7280;
+  color: #5f6b7a;
   font-style: italic;
+}
+
+[data-bs-theme='light'] .hljs-property,
+[data-bs-theme='light'] .hljs-attribute,
+[data-bs-theme='light'] .hljs-variable,
+[data-bs-theme='light'] .hljs-template-variable {
+  color: #0f5f9c;
+}
+
+[data-bs-theme='light'] .hljs-meta,
+[data-bs-theme='light'] .hljs-meta .hljs-keyword {
+  color: #7a3aa9;
 }
 
 /* ============================

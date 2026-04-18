@@ -1,10 +1,10 @@
 ---
 uid: configuration
-title: Configuration Reference
+title: Configuration Overview
 description: Configure TorBoxSDK options including API key, base URLs, and timeouts.
 ---
 
-# Configuration Reference
+# Configuration Overview
 
 TorBoxSDK is configured through <xref:TorBoxSDK.TorBoxClientOptions>.
 
@@ -97,3 +97,5 @@ client.Main.Torrents   // ITorrentsClient
 client.Search          // ISearchApiClient
 client.Relay           // IRelayApiClient
 ```
+
+

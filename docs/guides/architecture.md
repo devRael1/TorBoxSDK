@@ -10,6 +10,24 @@ This guide is for integrators and contributors who want to understand the public
 
 ## Client hierarchy
 
+```text
+TorBoxClient (ITorBoxClient)
+|- Main (IMainApiClient)
+|  |- General
+|  |- Torrents
+|  |- Usenet
+|  |- WebDownloads
+|  |- User
+|  |- Notifications
+|  |- Rss
+|  |- Stream
+|  |- Integrations
+|  |- Vendors
+|  └─ Queued
+|- Search (ISearchApiClient)
+└─ Relay (IRelayApiClient)
+```
+
 ```mermaid
 flowchart TD
     TorBoxClient["TorBoxClient / ITorBoxClient"]
@@ -107,3 +125,11 @@ The SDK keeps the root API simple:
 - focused resource clients for day-to-day endpoint usage
 
 All concrete client implementations are `internal`. Users always go through <xref:TorBoxSDK.ITorBoxClient> to access any SDK functionality. This helps keep IntelliSense discoverable while still covering the full TorBox API surface.
+
+## Detailed architecture guides
+
+- [Client Hierarchy](architecture/client-hierarchy.md)
+- [Main API Clients](architecture/main-api-clients.md)
+- [Search and Relay APIs](architecture/search-and-relay-apis.md)
+- [Dependency Injection](architecture/dependency-injection.md)
+- [Responses and Exceptions](architecture/responses-and-exceptions.md)

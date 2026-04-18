@@ -1,10 +1,10 @@
 ---
 uid: getting-started
-title: Getting Started
+title: Getting Started Overview
 description: Install TorBoxSDK and make your first request to the TorBox API.
 ---
 
-# Getting Started
+# Getting Started Overview
 
 This guide is for developers integrating TorBoxSDK into a .NET application for the first time.
 
@@ -79,9 +79,4 @@ TorBoxResponse<TorrentSearchResponse> results = await client.Search.SearchTorren
 - All SDK methods are asynchronous
 - All public async methods accept `CancellationToken`
 
-## Next steps
 
-- [API Reference](api-reference.md)
-- [Configuration Reference](configuration.md)
-- [Error Handling](error-handling.md)
-- [Architecture Overview](architecture.md)

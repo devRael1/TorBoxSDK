@@ -1,13 +1,11 @@
-- name: Getting Started
-  href: articles/getting-started.md
-- name: Articles
-  href: articles/
+ - name: Guides
+  href: guides/
 - name: API Reference
-  href: api/
-- name: Architecture
-  href: articles/architecture.md
+   href: api/index.md
 - name: TorBox API
   href: https://api-docs.torbox.app/
+ - name: Changelog
+   href: https://github.com/devRael1/TorBoxSDK/releases
 - name: GitHub
   href: https://github.com/devRael1/TorBoxSDK
 - name: NuGet

@@ -1,10 +1,10 @@
 ---
 uid: error-handling
-title: Error Handling
+title: Error Handling Overview
 description: Handle TorBox API errors and exceptions in TorBoxSDK.
 ---
 
-# Error Handling
+# Error Handling Overview
 
 TorBoxSDK uses two related patterns:
 
@@ -68,3 +68,5 @@ catch (TorBoxException ex) when (ex.ErrorCode == TorBoxErrorCode.TooManyRequests
 - API-level errors are normalized into <xref:TorBoxSDK.Models.Common.TorBoxException>
 - Transport failures and cancellations may surface as `HttpRequestException` or `TaskCanceledException`
 - Unmapped API error strings fall back to `TorBoxErrorCode.Unknown`
+
+
