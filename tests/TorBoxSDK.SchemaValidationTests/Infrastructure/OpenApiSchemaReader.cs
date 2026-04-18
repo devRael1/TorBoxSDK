@@ -14,7 +14,7 @@ internal static class OpenApiSchemaReader
     /// </summary>
     internal const string OpenApiUrl = "https://api.torbox.app/openapi.json";
 
-    private static readonly Lazy<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> _cachedSchemas = new(FetchAndParse);
+    private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _cachedSchemas = new(FetchAndParseAsync);
 
     /// <summary>
     /// Returns all schema definitions from the TorBox OpenAPI specification.
@@ -26,7 +26,7 @@ internal static class OpenApiSchemaReader
     /// to its OpenAPI type string (e.g., <c>"string"</c>, <c>"integer"</c>,
     /// <c>"boolean"</c>, <c>"array"</c>, <c>"object"</c>, or a <c>$ref</c> type name).
     /// </returns>
-    public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> ReadFromApi() => _cachedSchemas.Value;
+    public static Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> ReadFromApiAsync() => _cachedSchemas.Value;
 
     /// <summary>
     /// Parses the OpenAPI specification from a raw JSON string.
@@ -67,10 +67,10 @@ internal static class OpenApiSchemaReader
         return result;
     }
 
-    private static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> FetchAndParse()
+    private static async Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> FetchAndParseAsync()
     {
         using HttpClient client = new();
-        string json = client.GetStringAsync(OpenApiUrl).GetAwaiter().GetResult();
+        string json = await client.GetStringAsync(OpenApiUrl).ConfigureAwait(false);
         return Parse(json);
     }
 
