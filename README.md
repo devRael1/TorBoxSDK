@@ -83,6 +83,54 @@ catch (TorBoxException ex)
 }
 ```
 
+## Standalone Usage
+
+For console apps, scripts, or scenarios where dependency injection is not needed, create the client directly:
+
+```csharp
+using TorBoxSDK;
+using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.User;
+
+string apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
+    ?? throw new InvalidOperationException("Set the TORBOX_API_KEY environment variable.");
+
+using TorBoxClient client = new(apiKey);
+using CancellationTokenSource cts = new(TimeSpan.FromSeconds(30));
+
+try
+{
+    TorBoxResponse<UserProfile> me = await client.Main.User.GetMeAsync(cancellationToken: cts.Token);
+    Console.WriteLine($"Authenticated as: {me.Data?.Email}");
+}
+catch (TorBoxException ex)
+{
+    Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
+}
+```
+
+For more control over options:
+
+```csharp
+using TorBoxClient client = new(new TorBoxClientOptions
+{
+    ApiKey = apiKey,
+    Timeout = TimeSpan.FromSeconds(60)
+});
+```
+
+Or use the builder pattern:
+
+```csharp
+using TorBoxClient client = new(options =>
+{
+    options.ApiKey = apiKey;
+    options.Timeout = TimeSpan.FromSeconds(60);
+});
+```
+
+`TorBoxClient` implements `IDisposable`. Always use a `using` statement to ensure HTTP resources are released. In DI mode, the container manages disposal automatically.
+
 ## Client Hierarchy
 
 The SDK is structured around a single root client with three API families:

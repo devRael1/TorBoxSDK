@@ -44,7 +44,11 @@ public sealed class TorBoxClientOptions
     /// <summary>
     /// Gets the fully-qualified Main API base URL including the version path.
     /// </summary>
-    internal string MainApiVersionedUrl
+    /// <remarks>
+    /// Computed from <see cref="MainApiBaseUrl"/> and <see cref="ApiVersion"/>.
+    /// For example, <c>https://api.torbox.app/v1/api/</c>.
+    /// </remarks>
+    public string MainApiVersionedUrl
     {
         get
         {
@@ -82,7 +86,11 @@ public sealed class TorBoxClientOptions
     /// <summary>
     /// Gets the fully-qualified Relay API base URL including the version path.
     /// </summary>
-    internal string RelayApiVersionedUrl
+    /// <remarks>
+    /// Computed from <see cref="RelayApiBaseUrl"/> and <see cref="ApiVersion"/>.
+    /// For example, <c>https://relay.torbox.app/v1/</c>.
+    /// </remarks>
+    public string RelayApiVersionedUrl
     {
         get
         {

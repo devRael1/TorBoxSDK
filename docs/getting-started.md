@@ -27,6 +27,34 @@ using ServiceProvider provider = services.BuildServiceProvider();
 ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
 ```
 
+## Use without dependency injection
+
+For console apps, scripts, or environments without a DI container, create the client directly:
+
+```csharp
+using TorBoxSDK;
+
+string apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
+    ?? throw new InvalidOperationException("Set the TORBOX_API_KEY environment variable.");
+
+using TorBoxClient client = new(apiKey);
+```
+
+You can also pass a `TorBoxClientOptions` instance or a configuration delegate:
+
+```csharp
+using TorBoxClient client = new(new TorBoxClientOptions
+{
+    ApiKey = apiKey,
+    Timeout = TimeSpan.FromSeconds(60)
+});
+```
+
+`TorBoxClient` implements `IDisposable`. Always use a `using` statement to ensure HTTP clients are properly released. In DI mode, the container manages the lifecycle automatically.
+
+> **When to choose standalone vs DI?**
+> Use standalone for simple console tools, scripts, and one-off programs. Use DI for ASP.NET Core apps, hosted services, and anything with `IServiceCollection`.
+
 ## Make your first requests
 
 ```csharp

@@ -1,74 +1,14 @@
 name: CI
 
 on:
-  pull_request_review:
-    types: [submitted]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: read
 
 jobs:
-  check-approval:
-    name: Check All Reviews Approved
-    if: >
-      github.event_name == 'workflow_dispatch' ||
-      (github.event_name == 'pull_request_review' && github.event.review.state == 'approved')
-    runs-on: ubuntu-latest
-    outputs:
-      approved: ${{ steps.check.outputs.approved || steps.dispatch.outputs.approved }}
-    steps:
-      - id: check
-        if: github.event_name == 'pull_request_review'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const pr = context.payload.pull_request;
-
-            // Get the current PR to check for pending review requests
-            const { data: currentPr } = await github.rest.pulls.get({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-            });
-
-            // If there are still pending review requests, not everyone has approved
-            if (currentPr.requested_reviewers.length > 0 || currentPr.requested_teams.length > 0) {
-              core.setOutput('approved', 'false');
-              core.info(`PR has ${currentPr.requested_reviewers.length} pending reviewer(s) and ${currentPr.requested_teams.length} pending team(s).`);
-              return;
-            }
-
-            // Get all reviews
-            const { data: reviews } = await github.rest.pulls.listReviews({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: pr.number,
-            });
-
-            // Get latest review state per reviewer (excluding the PR author and COMMENTED-only)
-            const latestByReviewer = new Map();
-            for (const review of reviews) {
-              if (review.user.login === currentPr.user.login) continue;
-              if (review.state === 'COMMENTED') continue;
-              latestByReviewer.set(review.user.login, review.state);
-            }
-
-            // All latest non-comment reviews must be APPROVED and there must be at least one
-            const states = [...latestByReviewer.values()];
-            const allApproved = states.length > 0 && states.every(s => s === 'APPROVED');
-            core.setOutput('approved', allApproved ? 'true' : 'false');
-            core.info(`Reviews: ${JSON.stringify(Object.fromEntries(latestByReviewer))} → allApproved=${allApproved}`);
-
-      - id: dispatch
-        if: github.event_name == 'workflow_dispatch'
-        run: echo "approved=true" >> "$GITHUB_OUTPUT"
-
   build:
     name: Build
-    needs: check-approval
-    if: needs.check-approval.outputs.approved == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

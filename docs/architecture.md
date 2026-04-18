@@ -46,7 +46,7 @@ flowchart TD
 - **Search API**: search-oriented endpoints for torrents, usenet, metadata, Torznab, and Newznab
 - **Relay API**: relay status and inactivity checks
 
-## DI and instantiation
+## Instantiation
 
 `AddTorBox()` registers only `ITorBoxClient` in the DI container. All sub-clients (`MainApiClient`, `SearchApiClient`, `RelayApiClient`, and resource clients like `TorrentsClient`) are `internal` and instantiated by `TorBoxClient` itself. They are **not** individually resolvable from the service provider.
 
@@ -61,6 +61,28 @@ client.Relay           // access Relay API
 provider.GetService<IMainApiClient>();     // null
 provider.GetService<ISearchApiClient>();   // null
 ```
+
+`TorBoxClient` also supports standalone instantiation when dependency injection is not needed:
+
+```csharp
+using TorBoxClient client = new("your-api-key");
+
+using TorBoxClient configuredClient = new(new TorBoxClientOptions
+{
+    ApiKey = "your-api-key",
+    Timeout = TimeSpan.FromSeconds(60)
+});
+
+using TorBoxClient builtClient = new(options =>
+{
+    options.ApiKey = "your-api-key";
+    options.Timeout = TimeSpan.FromSeconds(60);
+});
+```
+
+The DI-focused constructor is marked with `[ActivatorUtilitiesConstructor]` so ASP.NET Core and other `Microsoft.Extensions.DependencyInjection` consumers choose the `IHttpClientFactory` + `IOptions<TorBoxClientOptions>` path automatically when resolving `ITorBoxClient`.
+
+`TorBoxClient` implements `IDisposable`. In standalone mode, it owns and disposes the underlying `HttpClient` instances, so it should be wrapped in a `using` statement. In DI mode, `Dispose()` is a no-op because the container manages the HTTP client lifecycle.
 
 ## Cross-cutting behavior
 

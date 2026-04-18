@@ -98,11 +98,8 @@ public static class TorBoxServiceCollectionExtensions
             .AddHttpMessageHandler<AuthHandler>();
 
         // --- Only ITorBoxClient / TorBoxClient is registered in the DI container ---
-        services.AddScoped<ITorBoxClient>(sp =>
-        {
-            IHttpClientFactory httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
-            IOptions<TorBoxClientOptions> options = sp.GetRequiredService<IOptions<TorBoxClientOptions>>();
-            return new TorBoxClient(httpClientFactory, options);
-        });
+        // The container resolves the (IHttpClientFactory, IOptions<TorBoxClientOptions>) constructor
+        // automatically via [ActivatorUtilitiesConstructor].
+        services.AddScoped<ITorBoxClient, TorBoxClient>();
     }
 }

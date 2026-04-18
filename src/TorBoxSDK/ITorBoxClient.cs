@@ -11,7 +11,7 @@ namespace TorBoxSDK;
 /// Provides access to the Main, Search, and Relay API clients
 /// that together cover the full TorBox platform surface.
 /// </remarks>
-public interface ITorBoxClient
+public interface ITorBoxClient : IDisposable
 {
     /// <summary>
     /// Gets the Main API client, which exposes resource clients for
