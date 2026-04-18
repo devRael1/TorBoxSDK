@@ -1,6 +1,6 @@
 ---
 name: tests
-description: 'Use when writing or reviewing tests for TorBoxSDK: unit tests for HttpClient-based services, integration tests against TorBox, schema validation tests against the OpenAPI spec, serialization tests, and performance validation.'
+description: 'Use when writing or reviewing tests for TorBoxSDK: unit tests for HttpClient-based services, integration tests against TorBox, schema validation tests against the OpenAPI spec, and serialization tests.'
 argument-hint: 'Describe the service, model, or behavior to test, such as TorrentsService request mapping or TorBoxResponse deserialization.'
 user-invocable: true
 disable-model-invocation: false
@@ -20,7 +20,6 @@ Use this skill when you need to:
 - add integration tests that hit the real TorBox API
 - add or update schema validation tests against the TorBox OpenAPI specification
 - review whether a new endpoint implementation is sufficiently tested
-- add performance or throughput-oriented validation
 
 ## Strategy
 
@@ -28,12 +27,11 @@ Use the lightest test type that gives confidence:
 - unit tests for request construction, serialization, and error mapping
 - schema validation tests for bidirectional model consistency with the OpenAPI spec
 - integration tests for real API behavior and auth-sensitive flows
-- performance tests only for code paths where allocation or throughput matters
 
 ## Workflow
 
 1. Identify the risk.
-Decide whether the main risk is request shape, response mapping, error handling, auth behavior, nullable handling, or performance.
+Decide whether the main risk is request shape, response mapping, error handling, auth behavior, or nullable handling.
 
 2. Start with unit tests.
 Prefer unit tests using a mocked or fake HttpMessageHandler for:
@@ -67,12 +65,6 @@ When adding or modifying SDK models:
 
 The OpenAPI specification is fetched from `https://api.torbox.app/openapi.json` at test time — no local file is versioned.
 
-7. Add performance tests selectively.
-Use them for:
-- heavy serialization paths
-- bulk list deserialization
-- repeated request construction where allocation matters
-
 ## Checks
 
 A test set is sufficient when:
@@ -86,5 +78,5 @@ A test set is sufficient when:
 ## References
 
 - [HTTP client unit testing patterns](./references/http-client-unit-testing-patterns.md)
-- [Integration and performance testing guidance](./references/integration-and-performance-testing-guidance.md)
+- [Integration testing guidance](./references/integration-testing-guidance.md)
 - [Schema validation testing guidance](./references/schema-validation-testing-guidance.md)

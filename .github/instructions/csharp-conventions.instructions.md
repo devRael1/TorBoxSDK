@@ -507,14 +507,6 @@ public async Task GetMeAsync_WithRealApiKey_ReturnsUser()
 - Always clean up created resources at test end
 - `[Trait("Category", "Integration")]` on every integration test
 
-## Performance Tests (`TorBoxSDK.PerformanceTests`)
-
-- BenchmarkDotNet — no xUnit `[Fact]` on benchmark methods
-- `[MemoryDiagnoser]` on every benchmark class
-- One operation per benchmark
-- No I/O in baseline benchmarks unless measuring HTTP overhead
-- Do not delete existing benchmarks without justification
-
 ## Schema Validation Tests (`TorBoxSDK.SchemaValidationTests`)
 
 Schema tests verify bidirectional consistency between the TorBox OpenAPI specification and SDK model types. The OpenAPI spec is fetched at test time from `https://api.torbox.app/openapi.json` — no local copy is versioned.

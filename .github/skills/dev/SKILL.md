@@ -21,7 +21,7 @@ The global `/dev` workflow integrates these specialized skills:
 | Skill | Role | File |
 |------|------|------|
 | `architecture` | Client hierarchy, DI, namespaces, cross-cutting design | `.github/skills/architecture/SKILL.md` |
-| `tests` | Unit, integration, serialization, performance tests | `.github/skills/tests/SKILL.md` |
+| `tests` | Unit, integration, serialization, schema validation tests | `.github/skills/tests/SKILL.md` |
 | `code-review` | Final validation and severity-rated review | `.github/skills/code-review/SKILL.md` |
 | `docs` | README, docs pages, samples guidance, XML docs, diagrams, NuGet/release quality | `.github/skills/docs/SKILL.md` |
 
@@ -35,7 +35,7 @@ Endpoint implementation is now owned directly by `/dev` as **J2 — Endpoint** t
 |-----|---------|---------------|
 | **J1 — Architecture** | Designing or refactoring client structure, DI, namespacing, cross-cutting concerns | `architecture` skill |
 | **J2 — Endpoint** | Adding or extending an API endpoint (models + client method + tests) | Internal `/dev` endpoint workflow |
-| **J3 — Tests** | Writing unit, integration, schema validation, or performance tests for existing code | `tests` skill |
+| **J3 — Tests** | Writing unit, integration, or schema validation tests for existing code | `tests` skill |
 | **J4 — Review** | Reviewing or auditing C# code before merge | `code-review` skill |
 | **J5 — Docs & Packaging** | README, samples, XML docs, NuGet metadata, release readiness | `docs` skill |
 | **J6 — Foundation** | Scaffolding project infrastructure (csproj, build props, editorconfig, DI setup) | See [foundation jobs reference](./references/dev-jobs.md#j6--foundation-jobs) |

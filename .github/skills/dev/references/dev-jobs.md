@@ -110,7 +110,6 @@ For each endpoint:
 | Serialization tests | After each new model (J2 Phase 2) | `tests/TorboxSDK.UnitTests/Models/` |
 | Schema validation tests | After each new or modified model | `tests/TorBoxSDK.SchemaValidationTests/` |
 | Integration tests | After stabilization of a complete resource client | `tests/TorBoxSDK.IntegrationTests/` |
-| Performance tests | On critical paths (serialization, HTTP) | `tests/TorBoxSDK.PerformanceTests/` |
 
 **For each endpoint (unit tests):**
 - [ ] Happy path: `success: true` response deserialized correctly

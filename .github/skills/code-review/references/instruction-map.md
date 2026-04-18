@@ -46,5 +46,4 @@ Is the file in tests/?
 | Unit tests | `tests/TorboxSDK.UnitTests/` | 1 + 4 |
 | Integration tests | `tests/TorBoxSDK.IntegrationTests/` | 1 + 4 |
 | Schema validation tests | `tests/TorBoxSDK.SchemaValidationTests/` | 1 + 4 |
-| Performance tests | `tests/TorBoxSDK.PerformanceTests/` | 1 + 4 |
 | Samples | `samples/` | 1 + 5 |

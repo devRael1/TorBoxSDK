@@ -1,9 +1,9 @@
 ---
-description: "Use when developing tests for TorBoxSDK: create or review unit tests, integration tests, schema validation tests, and performance tests for the TorBox C# SDK based on changes in the core project."
+description: "Use when developing tests for TorBoxSDK: create or review unit tests, integration tests, and schema validation tests for the TorBox C# SDK based on changes in the core project."
 name: "Tests"
 tools: [vscode, execute, read, agent, edit, search, web, browser, 'com.postman/postman-mcp-server/*', 'github/*', 'microsoftdocs/mcp/*', vscode.mermaid-chat-features/renderMermaidDiagram, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/labels_fetch, github.vscode-pull-request-github/notification_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/pullRequestStatusChecks, github.vscode-pull-request-github/openPullRequest, todo]
 model: Claude Opus 4.6 (copilot)
-argument-hint: "Describe the test work to perform, such as add unit tests for a client, create integration coverage for an endpoint, or add performance benchmarks."
+argument-hint: "Describe the test work to perform, such as add unit tests for a client, create integration coverage for an endpoint, or add schema validation tests."
 agents: ["Docs"]
 user-invocable: true
 disable-model-invocation: false
@@ -18,7 +18,6 @@ Focus only on test development for TorBoxSDK:
 - unit tests
 - integration tests
 - schema validation tests (static OpenAPI comparison and live field detection)
-- performance tests
 
 Your responsibility is to validate the public behavior of the SDK while preserving the project's structure and conventions.
 
@@ -46,7 +45,6 @@ Use this agent for:
 - testing JSON serialization and deserialization behavior
 - adding or updating schema validation tests against the TorBox OpenAPI specification (static field/type coverage and live field detection)
 - adding integration tests against the live TorBox APIs when appropriate
-- adding or updating performance tests for hot serialization or HTTP-client code paths
 - reviewing whether current coverage matches changes in the core SDK
 
 ## Constraints
@@ -64,15 +62,14 @@ If a test requires a minimal production-code seam to become testable, keep that 
 
 ## Workflow
 
-1. Identify whether the task belongs to unit, integration, schema validation, or performance testing.
+1. Identify whether the task belongs to unit, integration, or schema validation testing.
 2. Inspect the production behavior under test before writing assertions.
 3. Prefer unit tests first, especially for request shape, response mapping, and error handling.
 4. When models change, update schema validation mappings in `SchemaModelMapping` and add live tests for new endpoints.
 5. Add integration tests only when live API behavior provides real value.
-6. Add performance tests only when they answer a concrete throughput or allocation question.
-7. If the task requires updating `README.md` or Markdown files under `docs/`, delegate that work to `Docs`.
-8. Run relevant tests or validate the test project setup before finishing when possible.
-9. Report any remaining gaps in coverage, flaky risks, or missing seams.
+6. If the task requires updating `README.md` or Markdown files under `docs/`, delegate that work to `Docs`.
+7. Run relevant tests or validate the test project setup before finishing when possible.
+8. Report any remaining gaps in coverage, flaky risks, or missing seams.
 
 ## Done When
 
@@ -81,7 +78,7 @@ A task is complete when:
 - success and failure paths are covered when relevant
 - the tests follow the repository's C# and xUnit conventions
 - test placement matches the API-first and client-first SDK structure
-- integration and performance tests remain appropriately isolated from ordinary unit-test workflows
+- integration tests remain appropriately isolated from ordinary unit-test workflows
 
 ## Return
 

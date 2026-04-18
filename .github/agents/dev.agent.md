@@ -49,7 +49,7 @@ Use this agent for:
 - preparing the SDK for multi-target support from .NET 6 through .NET 10
 - making narrow production-code changes required to support the SDK architecture and public API
 
-Use the `Tests` agent for creating, updating, or reviewing unit tests, integration tests, and performance tests.
+Use the `Tests` agent for creating, updating, or reviewing unit tests, integration tests, and schema validation tests.
 Use the `Docs` agent for updating `README.md` and Markdown files under `docs/`.
 
 ## Constraints
