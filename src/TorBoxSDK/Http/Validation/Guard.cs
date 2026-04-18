@@ -16,7 +16,7 @@ internal static class Guard
     /// <param name="value">The value to validate.</param>
     /// <param name="paramName">
     /// The name of the calling parameter. Automatically captured via
-    /// <see cref="CallerArgumentExpressionAttribute"/> when not provided.
+    /// the <c>CallerArgumentExpression</c> compiler feature when not provided.
     /// </param>
     /// <returns>The validated, non-null <paramref name="value"/>.</returns>
     /// <exception cref="ArgumentNullException">
