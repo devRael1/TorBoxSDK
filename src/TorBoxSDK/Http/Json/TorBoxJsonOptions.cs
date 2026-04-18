@@ -35,7 +35,7 @@ internal static class TorBoxJsonOptions
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         };
 
-        options.Converters.Add(new JsonStringEnumConverter(namingPolicy));
+        options.Converters.Add(new SnakeCaseEnumConverterFactory(namingPolicy));
         options.Converters.Add(new UtcDateTimeOffsetConverter());
         options.Converters.Add(new NullableUtcDateTimeOffsetConverter());
 

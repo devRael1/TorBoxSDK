@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.IntegrationTests.Helpers;
+using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
 
@@ -106,8 +106,7 @@ public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixtu
         using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
         // Act
-        TorBoxResponse<IReadOnlyList<Changelog>> response = await _fixture.Client.Main.General
-            .GetChangelogsJsonAsync(cts.Token);
+        TorBoxResponse<IReadOnlyList<Changelog>> response = await _fixture.Client.Main.General.GetChangelogsJsonAsync(cts.Token);
 
         // Assert
         Assert.NotNull(response);

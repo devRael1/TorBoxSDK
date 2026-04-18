@@ -4,7 +4,7 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 
 /// <summary>
 /// Verifies bidirectional field coverage between the TorBox OpenAPI specification
-/// (<c>open_api.json</c>) and the corresponding SDK model types.
+/// (fetched from <c>https://api.torbox.app/openapi.json</c>) and the corresponding SDK model types.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -25,19 +25,19 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// </remarks>
 public sealed class OpenApiFieldCoverageTests
 {
-    private static readonly string OpenApiFilePath = OpenApiSchemaReader.FindOpenApiFilePath();
-
-    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Schemas =
-        OpenApiSchemaReader.Read(OpenApiFilePath);
+    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> _schemas = OpenApiSchemaReader.ReadFromApi();
 
     /// <summary>
     /// Provides one row per schema→type mapping for the parameterised tests.
     /// </summary>
     public static TheoryData<string, Type> MappedSchemas()
     {
-        TheoryData<string, Type> data = new();
+        TheoryData<string, Type> data = [];
         foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
+        {
             data.Add(schemaName, modelType);
+        }
+
         return data;
     }
 
@@ -51,15 +51,15 @@ public sealed class OpenApiFieldCoverageTests
     {
         // Arrange
         Assert.True(
-            Schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
-            $"Schema '{schemaName}' was not found in open_api.json.");
+            _schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
+            $"Schema '{schemaName}' was not found in the OpenAPI specification.");
 
         IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
         IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
             .GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
         // Act
-        List<string> missingInSdk = schemaFields!.Keys
+        var missingInSdk = schemaFields!.Keys
             .Where(field => !sdkJsonNames.Contains(field) && !knownAbsent.Contains(field))
             .OrderBy(f => f, StringComparer.Ordinal)
             .ToList();
@@ -82,15 +82,15 @@ public sealed class OpenApiFieldCoverageTests
     {
         // Arrange
         Assert.True(
-            Schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
-            $"Schema '{schemaName}' was not found in open_api.json.");
+            _schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
+            $"Schema '{schemaName}' was not found in the OpenAPI specification.");
 
         IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
         IReadOnlySet<string> knownExtra = SchemaModelMapping.KnownSdkFieldsNotInOpenApi
             .GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
         // Act
-        List<string> extraInSdk = sdkJsonNames
+        var extraInSdk = sdkJsonNames
             .Where(field => !schemaFields!.ContainsKey(field) && !knownExtra.Contains(field))
             .OrderBy(f => f, StringComparer.Ordinal)
             .ToList();

@@ -34,39 +34,39 @@ internal static class SchemaModelMapping
         new Dictionary<string, Type>(StringComparer.Ordinal)
         {
             // ── RSS ─────────────────────────────────────────────────────────────────────
-            ["AddRss"]    = typeof(AddRssRequest),
+            ["AddRss"] = typeof(AddRssRequest),
             ["ModifyRss"] = typeof(ModifyRssRequest),
             ["ControlRss"] = typeof(ControlRssRequest),
 
             // ── Integrations ─────────────────────────────────────────────────────────
             // All AddToXxx schemas share CreateIntegrationJobRequest for the common fields.
             // Service-specific auth tokens are listed in KnownOpenApiFieldsNotInSdk.
-            ["AddTo1Fichier"]    = typeof(CreateIntegrationJobRequest),
-            ["AddToDropbox"]     = typeof(CreateIntegrationJobRequest),
-            ["AddToGofile"]      = typeof(CreateIntegrationJobRequest),
+            ["AddTo1Fichier"] = typeof(CreateIntegrationJobRequest),
+            ["AddToDropbox"] = typeof(CreateIntegrationJobRequest),
+            ["AddToGofile"] = typeof(CreateIntegrationJobRequest),
             ["AddToGoogleDrive"] = typeof(CreateIntegrationJobRequest),
-            ["AddToOnedrive"]    = typeof(CreateIntegrationJobRequest),
-            ["AddToPixeldrain"]  = typeof(CreateIntegrationJobRequest),
-            ["LinkedRolesData"]     = typeof(LinkedRolesRequest),
+            ["AddToOnedrive"] = typeof(CreateIntegrationJobRequest),
+            ["AddToPixeldrain"] = typeof(CreateIntegrationJobRequest),
+            ["LinkedRolesData"] = typeof(LinkedRolesRequest),
             ["OAuthRegisterRequest"] = typeof(OAuthRegisterRequest),
 
             // ── User ─────────────────────────────────────────────────────────────────
-            ["BaseSettingsModel"]   = typeof(UserSettings),
+            ["BaseSettingsModel"] = typeof(UserSettings),
             ["DeleteAccountSchema"] = typeof(DeleteAccountRequest),
-            ["DeviceTokenSchema"]   = typeof(DeviceTokenRequest),
-            ["RefreshTokenSchema"]  = typeof(RefreshTokenRequest),
+            ["DeviceTokenSchema"] = typeof(DeviceTokenRequest),
+            ["RefreshTokenSchema"] = typeof(RefreshTokenRequest),
             ["SearchEngineEditModel"] = typeof(ModifySearchEnginesRequest),
-            ["SearchEngineModel"]     = typeof(AddSearchEnginesRequest),
-            ["ControlSearchEngine"]   = typeof(ControlSearchEnginesRequest),
+            ["SearchEngineModel"] = typeof(AddSearchEnginesRequest),
+            ["ControlSearchEngine"] = typeof(ControlSearchEnginesRequest),
 
             // ── Torrents ─────────────────────────────────────────────────────────────
             ["Body_create_torrent_v1_api_torrents_createtorrent_post"] =
                 typeof(CreateTorrentRequest),
             ["Body_async_create_torrent_v1_api_torrents_asynccreatetorrent_post"] =
                 typeof(CreateTorrentRequest),
-            ["CheckCached"]  = typeof(CheckCachedRequest),
+            ["CheckCached"] = typeof(CheckCachedRequest),
             ["ControlTorrent"] = typeof(ControlTorrentRequest),
-            ["EditTorrent"]    = typeof(EditTorrentRequest),
+            ["EditTorrent"] = typeof(EditTorrentRequest),
             ["MagnetToTorrent"] = typeof(MagnetToFileRequest),
             ["Body_get_torrent_info_post_v1_api_torrents_torrentinfo_post"] =
                 typeof(TorrentInfoRequest),
@@ -77,7 +77,7 @@ internal static class SchemaModelMapping
             ["Body_async_create_usenet_download_v1_api_usenet_asynccreateusenetdownload_post"] =
                 typeof(CreateUsenetDownloadRequest),
             ["ControlUsenetDownload"] = typeof(ControlUsenetDownloadRequest),
-            ["EditUsenetDownload"]    = typeof(EditUsenetDownloadRequest),
+            ["EditUsenetDownload"] = typeof(EditUsenetDownloadRequest),
 
             // ── Web Downloads ─────────────────────────────────────────────────────────
             ["Body_create_web_download_v1_api_webdl_createwebdownload_post"] =
@@ -85,7 +85,7 @@ internal static class SchemaModelMapping
             ["Body_async_create_web_download_v1_api_webdl_asynccreatewebdownload_post"] =
                 typeof(CreateWebDownloadRequest),
             ["ControlWebDownload"] = typeof(ControlWebDownloadRequest),
-            ["EditWebDownload"]    = typeof(EditWebDownloadRequest),
+            ["EditWebDownload"] = typeof(EditWebDownloadRequest),
 
             // ── Queued ───────────────────────────────────────────────────────────────
             ["ControlQueuedDownload"] = typeof(ControlQueuedRequest),
@@ -120,12 +120,12 @@ internal static class SchemaModelMapping
         new Dictionary<string, IReadOnlySet<string>>(StringComparer.Ordinal)
         {
             // Integration service-specific auth tokens are not part of the shared request model.
-            ["AddTo1Fichier"]    = Set("onefichier_token"),
-            ["AddToDropbox"]     = Set("dropbox_token"),
-            ["AddToGofile"]      = Set("gofile_token"),
+            ["AddTo1Fichier"] = Set("onefichier_token"),
+            ["AddToDropbox"] = Set("dropbox_token"),
+            ["AddToGofile"] = Set("gofile_token"),
             ["AddToGoogleDrive"] = Set("google_token"),
-            ["AddToOnedrive"]    = Set("onedrive_token"),
-            ["AddToPixeldrain"]  = Set("pixeldrain_token"),
+            ["AddToOnedrive"] = Set("onedrive_token"),
+            ["AddToPixeldrain"] = Set("pixeldrain_token"),
 
             // File upload fields are decorated with [JsonIgnore] and sent as multipart form data.
             ["Body_create_torrent_v1_api_torrents_createtorrent_post"] = Set("file"),
@@ -181,26 +181,55 @@ internal static class SchemaModelMapping
     {
         Type underlying = Nullable.GetUnderlyingType(dotNetType) ?? dotNetType;
 
-        if (underlying == typeof(string)) return "string";
-        if (underlying == typeof(bool)) return "boolean";
+        if (underlying == typeof(string))
+        {
+            return "string";
+        }
+
+        if (underlying == typeof(bool))
+        {
+            return "boolean";
+        }
+
         if (underlying == typeof(int) || underlying == typeof(long) ||
             underlying == typeof(short) || underlying == typeof(uint) ||
-            underlying == typeof(ulong)) return "integer";
+            underlying == typeof(ulong))
+        {
+            return "integer";
+        }
+
         if (underlying == typeof(double) || underlying == typeof(float) ||
-            underlying == typeof(decimal)) return "number";
+            underlying == typeof(decimal))
+        {
+            return "number";
+        }
+
         if (underlying == typeof(DateTimeOffset) || underlying == typeof(DateTime))
+        {
             return "string";  // ISO-8601 strings in JSON
+        }
         // TorBoxJsonOptions.Default registers a global JsonStringEnumConverter with SnakeCaseLower,
         // so all enums serialize as strings regardless of per-type [JsonConverter] attributes.
-        if (underlying.IsEnum) return "string";
-        if (IsCollectionType(underlying)) return "array";
+        if (underlying.IsEnum)
+        {
+            return "string";
+        }
+
+        if (IsCollectionType(underlying))
+        {
+            return "array";
+        }
 
         return "object";
     }
 
     private static bool IsCollectionType(Type type)
     {
-        if (!type.IsGenericType) return false;
+        if (!type.IsGenericType)
+        {
+            return false;
+        }
+
         Type def = type.GetGenericTypeDefinition();
         return def == typeof(IReadOnlyList<>)
             || def == typeof(List<>)
@@ -209,6 +238,6 @@ internal static class SchemaModelMapping
             || def == typeof(ICollection<>);
     }
 
-    private static IReadOnlySet<string> Set(params string[] values) =>
-        new HashSet<string>(values, StringComparer.Ordinal);
+    private static HashSet<string> Set(params string[] values) =>
+        new(values, StringComparer.Ordinal);
 }

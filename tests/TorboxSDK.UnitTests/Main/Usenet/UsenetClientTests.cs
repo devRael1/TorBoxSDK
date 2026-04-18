@@ -1,7 +1,7 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.Usenet;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Usenet;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.Usenet;
 
@@ -300,7 +300,6 @@ public sealed class UsenetClientTests
     {
         // Arrange
         (UsenetClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
-        IReadOnlyList<string> hashes = ["hash1", "hash2"];
 
         // Act
         await client.CheckCachedAsync(["hash1", "hash2"]);
@@ -335,7 +334,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
     }
 
     [Fact]
@@ -345,7 +344,7 @@ public sealed class UsenetClientTests
         (UsenetClient client, _) = ClientTestBase.CreateClient<UsenetClient>(CachedJson);
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
+        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync(null!));
     }
 
     // --- CheckCachedByPostAsync ---

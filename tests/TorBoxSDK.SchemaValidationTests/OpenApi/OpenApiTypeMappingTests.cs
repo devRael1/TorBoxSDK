@@ -15,10 +15,7 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// </remarks>
 public sealed class OpenApiTypeMappingTests
 {
-    private static readonly string OpenApiFilePath = OpenApiSchemaReader.FindOpenApiFilePath();
-
-    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Schemas =
-        OpenApiSchemaReader.Read(OpenApiFilePath);
+    private static readonly IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> _schemas = OpenApiSchemaReader.ReadFromApi();
 
     /// <summary>
     /// Provides one row per (schema, type, fieldName, openApiType) tuple for the parameterised test.
@@ -26,12 +23,14 @@ public sealed class OpenApiTypeMappingTests
     /// </summary>
     public static TheoryData<string, Type, string, string> MappedFields()
     {
-        TheoryData<string, Type, string, string> data = new();
+        TheoryData<string, Type, string, string> data = [];
 
         foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
         {
-            if (!Schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields))
+            if (!_schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields))
+            {
                 continue;
+            }
 
             IReadOnlyDictionary<string, PropertyInfo> propMap =
                 ModelReflector.GetJsonPropertyMap(modelType);
@@ -43,13 +42,17 @@ public sealed class OpenApiTypeMappingTests
             {
                 // Skip fields intentionally not mapped in the SDK.
                 if (!propMap.ContainsKey(fieldName) || knownAbsent.Contains(fieldName))
+                {
                     continue;
+                }
 
                 // Skip fields with known type mismatches between OpenAPI spec and SDK serialization.
                 IReadOnlySet<string> knownMismatch = SchemaModelMapping.KnownTypeMismatches
                     .GetValueOrDefault(schemaName) ?? new HashSet<string>();
                 if (knownMismatch.Contains(fieldName))
+                {
                     continue;
+                }
 
                 data.Add(schemaName, modelType, fieldName, openApiType);
             }
@@ -95,7 +98,9 @@ public sealed class OpenApiTypeMappingTests
     private static string ExtractBaseType(string openApiType)
     {
         if (!openApiType.Contains('|'))
+        {
             return openApiType;
+        }
 
         string? nonNull = openApiType
             .Split('|')
@@ -111,12 +116,16 @@ public sealed class OpenApiTypeMappingTests
     private static bool AreCompatible(string dotNetCategory, string openApiBase)
     {
         if (string.Equals(dotNetCategory, openApiBase, StringComparison.Ordinal))
+        {
             return true;
+        }
 
         // integer ↔ number are both numeric in JSON — allow either direction.
         if ((dotNetCategory == "integer" && openApiBase == "number") ||
             (dotNetCategory == "number" && openApiBase == "integer"))
+        {
             return true;
+        }
 
         // DateTimeOffset is serialised as an ISO-8601 string, which is "string" in OpenAPI.
         // Enum types also serialise as strings.
@@ -127,7 +136,9 @@ public sealed class OpenApiTypeMappingTests
             openApiBase != "number" &&
             openApiBase != "array" &&
             openApiBase != "object")
+        {
             return true;
+        }
 
         return false;
     }

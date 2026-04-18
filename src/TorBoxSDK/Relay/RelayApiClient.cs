@@ -55,10 +55,7 @@ internal sealed class RelayApiClient : IRelayApiClient
 
         if (!httpResponse.IsSuccessStatusCode)
         {
-            throw new TorBoxException(
-                $"HTTP {(int)httpResponse.StatusCode}: {httpResponse.ReasonPhrase}",
-                TorBoxErrorCode.ServerError,
-                content);
+            throw new TorBoxException($"HTTP {(int)httpResponse.StatusCode}: {httpResponse.ReasonPhrase}", TorBoxErrorCode.ServerError, content);
         }
 
         // The relay status endpoint returns a non-standard response

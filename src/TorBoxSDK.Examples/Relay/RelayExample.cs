@@ -24,8 +24,7 @@ public static class RelayExample
             // ──────────────────────────────────────────────────────
             Console.WriteLine("Checking relay server status...");
 
-            TorBoxResponse<RelayStatus> statusResponse =
-                await client.Relay.GetStatusAsync(cts.Token);
+            TorBoxResponse<RelayStatus> statusResponse = await client.Relay.GetStatusAsync(cts.Token);
 
             if (statusResponse.Data is not null)
             {

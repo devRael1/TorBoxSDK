@@ -12,7 +12,7 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 /// </remarks>
 public sealed class SchemaLiveTestFixture : IAsyncLifetime
 {
-    private static readonly Uri TorBoxBaseUri = new("https://api.torbox.app");
+    private static readonly Uri _torBoxBaseUri = new("https://api.torbox.app");
 
     private HttpClient? _httpClient;
 
@@ -24,8 +24,7 @@ public sealed class SchemaLiveTestFixture : IAsyncLifetime
     /// <summary>
     /// Gets the <see cref="HttpClient"/> configured to call the live TorBox API.
     /// </summary>
-    public HttpClient HttpClient =>
-        _httpClient ?? throw new InvalidOperationException("Fixture has not been initialised.");
+    public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException("Fixture has not been initialised.");
 
     /// <summary>Initialises the fixture and creates the <see cref="HttpClient"/>.</summary>
     public SchemaLiveTestFixture()
@@ -33,7 +32,7 @@ public sealed class SchemaLiveTestFixture : IAsyncLifetime
         string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
         HasApiKey = !string.IsNullOrWhiteSpace(apiKey);
 
-        _httpClient = new HttpClient { BaseAddress = TorBoxBaseUri };
+        _httpClient = new HttpClient { BaseAddress = _torBoxBaseUri };
 
         if (HasApiKey)
         {

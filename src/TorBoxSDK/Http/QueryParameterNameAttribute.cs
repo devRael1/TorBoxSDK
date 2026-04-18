@@ -5,17 +5,16 @@ namespace TorBoxSDK.Http;
 /// This attribute is used on options model properties as metadata
 /// for API documentation and discoverability.
 /// </summary>
+/// <remarks>
+/// Initializes a new instance of the <see cref="QueryParameterNameAttribute"/> class.
+/// </remarks>
+/// <param name="name">The query parameter name used in the HTTP query string.</param>
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public sealed class QueryParameterNameAttribute : Attribute
+public sealed class QueryParameterNameAttribute(string name) : Attribute
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="QueryParameterNameAttribute"/> class.
-    /// </summary>
-    /// <param name="name">The query parameter name used in the HTTP query string.</param>
-    public QueryParameterNameAttribute(string name) => Name = name;
 
     /// <summary>
     /// Gets the query parameter name used in the HTTP query string.
     /// </summary>
-    public string Name { get; }
+    public string Name { get; } = name;
 }

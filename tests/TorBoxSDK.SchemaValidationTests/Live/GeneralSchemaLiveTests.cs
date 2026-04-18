@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
@@ -53,7 +53,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
 
         // Act
         using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/stats/30day", cts.Token)
+            .GetAsync("/v1/api/stats/30days", cts.Token)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -68,7 +68,7 @@ public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
         // Assert
         Assert.True(
             unmapped.Count == 0,
-            BuildMessage("GET /v1/api/stats/30day", typeof(DailyStats), unmapped));
+            BuildMessage("GET /v1/api/stats/30days", typeof(DailyStats), unmapped));
     }
 
     [SkippableFact]

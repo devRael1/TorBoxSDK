@@ -1,4 +1,3 @@
-﻿using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Relay;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
@@ -25,7 +24,7 @@ public sealed class RelaySchemaLiveTests(SchemaLiveTestFixture fixture)
 
         // Act
         using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/relay/status", cts.Token)
+            .GetAsync("https://relay.torbox.app/", cts.Token)
             .ConfigureAwait(false);
 
         response.EnsureSuccessStatusCode();
@@ -35,12 +34,12 @@ public sealed class RelaySchemaLiveTests(SchemaLiveTestFixture fixture)
             .ConfigureAwait(false);
 
         IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<RelayStatus>>(json);
+            UnmappedFieldDetector.FindUnmappedFields<RelayStatus>(json);
 
         // Assert
         Assert.True(
             unmapped.Count == 0,
-            BuildMessage("GET /v1/api/relay/status", typeof(RelayStatus), unmapped));
+            BuildMessage("GET https://relay.torbox.app/", typeof(RelayStatus), unmapped));
     }
 
     private static string BuildMessage(
