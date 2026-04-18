@@ -182,11 +182,11 @@ services.AddTorBox(configuration);
 
 ## Documentation and Examples
 
-- [Getting Started](docs/getting-started.md)
-- [Architecture Overview](docs/architecture.md)
-- [API Reference](docs/api-reference.md)
-- [Configuration Reference](docs/configuration.md)
-- [Error Handling](docs/error-handling.md)
+- [Getting Started](docs/articles/getting-started.md)
+- [Architecture Overview](docs/articles/architecture.md)
+- [API Reference](docs/articles/api-reference.md)
+- [Configuration Reference](docs/articles/configuration.md)
+- [Error Handling](docs/articles/error-handling.md)
 - [Examples project](src/TorBoxSDK.Examples/) with 37 runnable scenarios across Main, Search, Relay, and error-handling workflows
 
 ## Contributing

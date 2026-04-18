@@ -1,0 +1,43 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["src/TorBoxSDK/TorBoxSDK.csproj"],
+          "src": "../"
+        }
+      ],
+      "dest": "api",
+      "filter": "filterConfig.yml",
+      "properties": {
+        "TargetFramework": "net8.0"
+      }
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["**/*.{md,yml}"],
+        "exclude": ["_site/**"]
+      }
+    ],
+    "resource": [
+      {
+        "files": ["**/images/**"]
+      }
+    ],
+    "template": ["default", "modern", "templates/material"],
+    "globalMetadata": {
+      "_appTitle": "TorBoxSDK",
+      "_appFooter": "TorBoxSDK &mdash; Unofficial C# SDK for TorBox API",
+      "_enableSearch": true,
+      "_gitContribute": {
+        "repo": "https://github.com/devRael1/TorBoxSDK",
+        "branch": "main",
+        "apiSpecFolder": "docs/api"
+      }
+    },
+    "postProcessors": ["ExtractSearchIndex"],
+    "dest": "_site"
+  }
+}

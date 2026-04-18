@@ -1,3 +1,9 @@
+---
+uid: getting-started
+title: Getting Started
+description: Install TorBoxSDK and make your first request to the TorBox API.
+---
+
 # Getting Started
 
 This guide is for developers integrating TorBoxSDK into a .NET application for the first time.
@@ -40,7 +46,7 @@ string apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY")
 using TorBoxClient client = new(apiKey);
 ```
 
-You can also pass a `TorBoxClientOptions` instance or a configuration delegate:
+You can also pass a <xref:TorBoxSDK.TorBoxClientOptions> instance or a configuration delegate:
 
 ```csharp
 using TorBoxClient client = new(new TorBoxClientOptions
@@ -50,7 +56,7 @@ using TorBoxClient client = new(new TorBoxClientOptions
 });
 ```
 
-`TorBoxClient` implements `IDisposable`. Always use a `using` statement to ensure HTTP clients are properly released. In DI mode, the container manages the lifecycle automatically.
+<xref:TorBoxSDK.TorBoxClient> implements `IDisposable`. Always use a `using` statement to ensure HTTP clients are properly released. In DI mode, the container manages the lifecycle automatically.
 
 > **When to choose standalone vs DI?**
 > Use standalone for simple console tools, scripts, and one-off programs. Use DI for ASP.NET Core apps, hosted services, and anything with `IServiceCollection`.
@@ -68,8 +74,8 @@ TorBoxResponse<TorrentSearchResponse> results = await client.Search.SearchTorren
 
 ## What to expect from responses
 
-- Successful calls return `TorBoxResponse<T>`
-- API errors throw `TorBoxException`
+- Successful calls return <xref:TorBoxSDK.Models.Common.TorBoxResponse`1>
+- API errors throw <xref:TorBoxSDK.TorBoxException>
 - All SDK methods are asynchronous
 - All public async methods accept `CancellationToken`
 

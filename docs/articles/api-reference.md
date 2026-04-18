@@ -1,4 +1,10 @@
-# API Reference
+---
+uid: api-reference-guide
+title: API Reference Guide
+description: Comprehensive guide to the TorBoxSDK public API surface covering Main, Search, and Relay APIs.
+---
+
+# API Reference Guide
 
 This reference documents the full TorBoxSDK public API surface across the Main, Search, and Relay API families. All methods return the standard `TorBoxResponse` envelope, all async methods accept `CancellationToken cancellationToken = default`, and API failures may throw `TorBoxException`.
 

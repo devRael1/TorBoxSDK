@@ -1,9 +1,15 @@
+---
+uid: error-handling
+title: Error Handling
+description: Handle TorBox API errors and exceptions in TorBoxSDK.
+---
+
 # Error Handling
 
 TorBoxSDK uses two related patterns:
 
-- successful responses return `TorBoxResponse` or `TorBoxResponse<T>`
-- unsuccessful API responses throw `TorBoxException`
+- successful responses return <xref:TorBoxSDK.Models.Common.TorBoxResponse> or <xref:TorBoxSDK.Models.Common.TorBoxResponse`1>
+- unsuccessful API responses throw <xref:TorBoxSDK.TorBoxException>
 - transport failures and cancellations may still surface as `HttpRequestException` or `TaskCanceledException`
 
 ## Response envelope
@@ -17,13 +23,13 @@ The standard TorBox envelope includes:
 
 ## Exception model
 
-`TorBoxException` includes:
+<xref:TorBoxSDK.TorBoxException> includes:
 
 - `Message`
 - `ErrorCode`
 - `Detail`
 
-`ErrorCode` is a `TorBoxErrorCode` value, which exposes known TorBox API error codes in a strongly typed form.
+`ErrorCode` is a <xref:TorBoxSDK.Models.Common.TorBoxErrorCode> value, which exposes known TorBox API error codes in a strongly typed form.
 
 ## Basic example
 
@@ -59,6 +65,6 @@ catch (TorBoxException ex) when (ex.ErrorCode == TorBoxErrorCode.TooManyRequests
 ## Notes
 
 - All public async methods accept `CancellationToken`
-- API-level errors are normalized into `TorBoxException`
+- API-level errors are normalized into <xref:TorBoxSDK.TorBoxException>
 - Transport failures and cancellations may surface as `HttpRequestException` or `TaskCanceledException`
 - Unmapped API error strings fall back to `TorBoxErrorCode.Unknown`
