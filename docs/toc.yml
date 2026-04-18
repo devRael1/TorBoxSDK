@@ -1,4 +1,14 @@
+- name: Getting Started
+  href: articles/getting-started.md
 - name: Articles
   href: articles/
 - name: API Reference
   href: api/
+- name: Architecture
+  href: articles/architecture.md
+- name: GitHub
+  href: https://github.com/devRael1/TorBoxSDK
+- name: NuGet
+  href: https://www.nuget.org/packages/TorBoxSDK
+- name: TorBox API
+  href: https://api-docs.torbox.app/

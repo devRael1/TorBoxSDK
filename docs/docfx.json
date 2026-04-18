@@ -18,7 +18,7 @@
     "content": [
       {
         "files": ["**/*.{md,yml}"],
-        "exclude": ["_site/**"]
+        "exclude": ["_site/**", "filterConfig.yml"]
       }
     ],
     "resource": [
@@ -29,7 +29,8 @@
     "template": ["default", "modern", "templates/material"],
     "globalMetadata": {
       "_appTitle": "TorBoxSDK",
-      "_appFooter": "TorBoxSDK &mdash; Unofficial C# SDK for TorBox API",
+      "_appFooter": "Made by <a href='https://github.com/devRael1'>devRael1</a> with ❤️",
+      "_appFaviconPath": "images/favicon.svg",
       "_enableSearch": true,
       "_gitContribute": {
         "repo": "https://github.com/devRael1/TorBoxSDK",
