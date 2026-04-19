@@ -222,23 +222,25 @@ public sealed class UserClientTests
 	// --- AddReferralAsync ---
 
 	[Fact]
-	public async Task AddReferralAsync_WithCode_SendsPostRequest()
+	public async Task AddReferralAsync_WithRequest_SendsPostRequest()
 	{
 		// Arrange
 		(UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(SuccessJson);
+		AddReferralRequest request = new() { Referral = "REF-CODE-123" };
 
 		// Act
-		await client.AddReferralAsync("REF-CODE-123");
+		await client.AddReferralAsync(request);
 
 		// Assert
 		Assert.NotNull(handler.LastRequest);
 		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
 		Assert.Contains("user/addreferral", handler.LastRequest.RequestUri!.ToString());
 		Assert.Contains("referral=REF-CODE-123", handler.LastRequest.RequestUri!.ToString());
+		Assert.Null(handler.LastRequest.Content);
 	}
 
 	[Fact]
-	public async Task AddReferralAsync_WithNullCode_ThrowsArgumentNullException()
+	public async Task AddReferralAsync_WithNullRequest_ThrowsArgumentNullException()
 	{
 		// Arrange
 		(UserClient client, _) = ClientTestBase.CreateClient<UserClient>(SuccessJson);
@@ -248,13 +250,14 @@ public sealed class UserClientTests
 	}
 
 	[Fact]
-	public async Task AddReferralAsync_WithEmptyCode_ThrowsArgumentException()
+	public async Task AddReferralAsync_WithEmptyReferral_ThrowsArgumentException()
 	{
 		// Arrange
 		(UserClient client, _) = ClientTestBase.CreateClient<UserClient>(SuccessJson);
+		AddReferralRequest request = new() { Referral = string.Empty };
 
 		// Act & Assert
-		await Assert.ThrowsAsync<ArgumentException>(() => client.AddReferralAsync(""));
+		await Assert.ThrowsAsync<ArgumentException>(() => client.AddReferralAsync(request));
 	}
 
 	// --- StartDeviceAuthAsync ---

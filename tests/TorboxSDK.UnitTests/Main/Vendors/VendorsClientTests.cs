@@ -50,7 +50,7 @@ public sealed class VendorsClientTests
 	// --- RegisterAsync ---
 
 	[Fact]
-	public async Task RegisterAsync_WithValidRequest_SendsPostMultipart()
+	public async Task RegisterAsync_WithValidRequest_SendsPostJson()
 	{
 		// Arrange
 		(VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(VendorAccountJson);
@@ -63,7 +63,9 @@ public sealed class VendorsClientTests
 		Assert.NotNull(handler.LastRequest);
 		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
 		Assert.Contains("vendors/register", handler.LastRequest.RequestUri!.ToString());
-		Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+		Assert.NotNull(handler.LastRequest.Content);
+		Assert.Equal("application/json", handler.LastRequest.Content!.Headers.ContentType?.MediaType);
+		Assert.Contains("\"vendor_name\":\"My Vendor\"", handler.LastRequestContent);
 		Assert.True(result.Success);
 	}
 
@@ -109,7 +111,7 @@ public sealed class VendorsClientTests
 	// --- UpdateAccountAsync ---
 
 	[Fact]
-	public async Task UpdateAccountAsync_WithValidRequest_SendsPutMultipart()
+	public async Task UpdateAccountAsync_WithValidRequest_SendsPutJson()
 	{
 		// Arrange
 		(VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(VendorAccountJson);
@@ -122,7 +124,9 @@ public sealed class VendorsClientTests
 		Assert.NotNull(handler.LastRequest);
 		Assert.Equal(HttpMethod.Put, handler.LastRequest.Method);
 		Assert.Contains("vendors/updateaccount", handler.LastRequest.RequestUri!.ToString());
-		Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+		Assert.NotNull(handler.LastRequest.Content);
+		Assert.Equal("application/json", handler.LastRequest.Content!.Headers.ContentType?.MediaType);
+		Assert.Contains("\"vendor_name\":\"Updated Vendor\"", handler.LastRequestContent);
 		Assert.True(result.Success);
 	}
 
@@ -206,7 +210,7 @@ public sealed class VendorsClientTests
 	// --- RegisterUserAsync ---
 
 	[Fact]
-	public async Task RegisterUserAsync_WithValidRequest_SendsPostMultipart()
+	public async Task RegisterUserAsync_WithValidRequest_SendsPostJson()
 	{
 		// Arrange
 		(VendorsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<VendorsClient>(SuccessJson);
@@ -219,7 +223,9 @@ public sealed class VendorsClientTests
 		Assert.NotNull(handler.LastRequest);
 		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
 		Assert.Contains("vendors/registeruser", handler.LastRequest.RequestUri!.ToString());
-		Assert.IsType<MultipartFormDataContent>(handler.LastRequest.Content);
+		Assert.NotNull(handler.LastRequest.Content);
+		Assert.Equal("application/json", handler.LastRequest.Content!.Headers.ContentType?.MediaType);
+		Assert.Contains("\"user_email\":\"user@example.com\"", handler.LastRequestContent);
 		Assert.True(result.Success);
 	}
 

@@ -3,11 +3,11 @@ uid: index
 title: TorBoxSDK Documentation
 description: Unofficial C# SDK for the TorBox API with typed clients for Main, Search, and Relay APIs.
 ---
-
 # TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-website-04BF8A?logo=readthedocs&logoColor=white)](https://devrael1.github.io/TorBoxSDK/)
 [![.NET](https://img.shields.io/badge/.NET-net6.0%20%7C%20net7.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-purple)]()
 
 **Important:** This SDK is unofficial and is not affiliated with or endorsed by TorBox.

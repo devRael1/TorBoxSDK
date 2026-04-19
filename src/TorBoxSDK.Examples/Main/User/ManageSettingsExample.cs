@@ -121,11 +121,15 @@ public static class ManageSettingsExample
 			// Add a referral code.
 			// ──────────────────────────────────────────────────────
 			string referralCode = "EXAMPLE_REFERRAL"; // Replace with an actual referral code
+			AddReferralRequest referralRequest = new()
+			{
+				Referral = referralCode,
+			};
 
 			Console.WriteLine($"Adding referral code: {referralCode}...");
 
 			TorBoxResponse referralResponse =
-				await client.Main.User.AddReferralAsync(referralCode, cts.Token);
+				await client.Main.User.AddReferralAsync(referralRequest, cts.Token);
 
 			Console.WriteLine($"  Result: {referralResponse.Detail ?? "Success"}");
 		}

@@ -49,11 +49,12 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
 	}
 
 	/// <inheritdoc />
-	public async Task<TorBoxResponse> AddReferralAsync(string referralCode, CancellationToken cancellationToken = default)
+	public async Task<TorBoxResponse> AddReferralAsync(AddReferralRequest request, CancellationToken cancellationToken = default)
 	{
-		Guard.ThrowIfNullOrEmpty(referralCode, nameof(referralCode));
+		Guard.ThrowIfNull(request);
+		Guard.ThrowIfNullOrEmpty(request.Referral, nameof(request.Referral));
 
-		string query = TorBoxApiHelper.BuildQuery(("referral", referralCode));
+		string query = TorBoxApiHelper.BuildQuery(("referral", request.Referral));
 
 		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"user/addreferral{query}");
 		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);

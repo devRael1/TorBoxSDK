@@ -26,17 +26,10 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
 		Guard.ThrowIfNull(request);
 		Guard.ThrowIfNullOrEmpty(request.VendorName, nameof(request.VendorName));
 
-		MultipartFormDataContent content = new()
+		using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/register")
 		{
-			{ new StringContent(request.VendorName), "vendor_name" }
+			Content = TorBoxApiHelper.JsonContent(request),
 		};
-
-		if (request.VendorUrl is not null)
-		{
-			content.Add(new StringContent(request.VendorUrl), "vendor_url");
-		}
-
-		using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/register") { Content = content };
 		return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
 	}
 
@@ -57,19 +50,10 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
 			throw new ArgumentException("At least one of VendorName or VendorUrl must be provided.", nameof(request));
 		}
 
-		MultipartFormDataContent content = [];
-
-		if (!string.IsNullOrEmpty(request.VendorName))
+		using HttpRequestMessage httpRequest = new(HttpMethod.Put, "vendors/updateaccount")
 		{
-			content.Add(new StringContent(request.VendorName), "vendor_name");
-		}
-
-		if (!string.IsNullOrEmpty(request.VendorUrl))
-		{
-			content.Add(new StringContent(request.VendorUrl), "vendor_url");
-		}
-
-		using HttpRequestMessage httpRequest = new(HttpMethod.Put, "vendors/updateaccount") { Content = content };
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
 		return await TorBoxApiHelper.SendAsync<VendorAccount>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
 	}
 
@@ -97,12 +81,10 @@ internal sealed class VendorsClient(HttpClient httpClient) : IVendorsClient
 		Guard.ThrowIfNull(request);
 		Guard.ThrowIfNullOrEmpty(request.UserEmail, nameof(request.UserEmail));
 
-		MultipartFormDataContent content = new()
+		using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/registeruser")
 		{
-			{ new StringContent(request.UserEmail), "user_email" }
+			Content = TorBoxApiHelper.JsonContent(request),
 		};
-
-		using HttpRequestMessage httpRequest = new(HttpMethod.Post, "vendors/registeruser") { Content = content };
 		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
 	}
 

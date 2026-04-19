@@ -6,6 +6,26 @@ namespace TorboxSDK.UnitTests.Models.User;
 
 public sealed class UserModelTests
 {
+	// ──── AddReferralRequest ────
+
+	[Fact]
+	public void AddReferralRequest_Serialize_ProducesExpectedJson()
+	{
+		// Arrange
+		AddReferralRequest request = new()
+		{
+			Referral = "REF-CODE-123",
+		};
+
+		// Act
+		string json = JsonSerializer.Serialize(request, TorBoxJsonOptions.Default);
+
+		// Assert
+		using JsonDocument doc = JsonDocument.Parse(json);
+		JsonElement root = doc.RootElement;
+		Assert.Equal("REF-CODE-123", root.GetProperty("referral").GetString());
+	}
+
 	// ──── EditSettingsRequest ────
 
 	[Fact]

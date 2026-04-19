@@ -30,12 +30,13 @@ public interface IUserClient
 	Task<TorBoxResponse<UserProfile>> GetMeAsync(bool? settings = null, CancellationToken cancellationToken = default);
 
 	/// <summary>Adds a referral code to the user's account.</summary>
-	/// <param name="referralCode">The referral code to apply.</param>
+	/// <param name="request">The referral request.</param>
 	/// <param name="cancellationToken">Cancellation token.</param>
 	/// <returns>The API response.</returns>
-	/// <exception cref="ArgumentNullException">Thrown when <paramref name="referralCode"/> is <see langword="null"/>.</exception>
+	/// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
+	/// <exception cref="ArgumentException">Thrown when the referral code is empty.</exception>
 	/// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-	Task<TorBoxResponse> AddReferralAsync(string referralCode, CancellationToken cancellationToken = default);
+	Task<TorBoxResponse> AddReferralAsync(AddReferralRequest request, CancellationToken cancellationToken = default);
 
 	/// <summary>Starts the device authorization flow.</summary>
 	/// <param name="app">The application identifier, or <see langword="null"/> to omit.</param>
