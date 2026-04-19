@@ -3,109 +3,79 @@ using System.Text.Json.Serialization;
 namespace TorBoxSDK.Models.Stream;
 
 /// <summary>
-/// Represents audio track metadata from a stream.
-/// </summary>
-public sealed record AudioTrackInfo
-{
-    /// <summary>
-    /// Gets the audio track index.
-    /// </summary>
-    [JsonPropertyName("index")]
-    public int Index { get; init; }
-
-    /// <summary>
-    /// Gets the audio language code, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("lang")]
-    public string? Language { get; init; }
-
-    /// <summary>
-    /// Gets additional track information, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("extra")]
-    public object? Extra { get; init; }
-}
-
-/// <summary>
-/// Represents subtitle track metadata from a stream.
-/// </summary>
-public sealed record SubtitleTrackInfo
-{
-    /// <summary>
-    /// Gets the subtitle track index.
-    /// </summary>
-    [JsonPropertyName("index")]
-    public int Index { get; init; }
-
-    /// <summary>
-    /// Gets the subtitle language code, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("lang")]
-    public string? Language { get; init; }
-
-    /// <summary>
-    /// Gets the subtitle URL, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
-
-    /// <summary>
-    /// Gets additional subtitle information, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("extra")]
-    public object? Extra { get; init; }
-}
-
-/// <summary>
-/// Represents stream resolution option metadata.
-/// </summary>
-public sealed record ResolutionInfo
-{
-    /// <summary>
-    /// Gets the resolution index.
-    /// </summary>
-    [JsonPropertyName("index")]
-    public int Index { get; init; }
-
-    /// <summary>
-    /// Gets the resolution label (e.g., "1080p"), or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("label")]
-    public string? Label { get; init; }
-
-    /// <summary>
-    /// Gets additional resolution information, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("extra")]
-    public object? Extra { get; init; }
-}
-
-/// <summary>
 /// Represents the stream data response for direct playback.
 /// </summary>
 public sealed record StreamData
 {
     /// <summary>
-    /// Gets the streaming URL for playback.
+    /// Gets the HLS playback URL, or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("url")]
-    public string? Url { get; init; }
+    [JsonPropertyName("hls_url")]
+    public string? HlsUrl { get; init; }
 
     /// <summary>
-    /// Gets the list of available subtitle tracks.
+    /// Gets the stream domain, or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("subtitles")]
-    public IReadOnlyList<SubtitleTrackInfo> Subtitles { get; init; } = [];
+    [JsonPropertyName("domain")]
+    public string? Domain { get; init; }
 
     /// <summary>
-    /// Gets the list of available audio tracks.
+    /// Gets the presigned token for stream access, or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("audio_tracks")]
-    public IReadOnlyList<AudioTrackInfo> AudioTracks { get; init; } = [];
+    [JsonPropertyName("presigned_token")]
+    public string? PresignedToken { get; init; }
 
     /// <summary>
-    /// Gets the list of available resolutions.
+    /// Gets the selected subtitle track index, or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("resolutions")]
-    public IReadOnlyList<ResolutionInfo> Resolutions { get; init; } = [];
+    [JsonPropertyName("subtitle_index")]
+    public int? SubtitleIndex { get; init; }
+
+    /// <summary>
+    /// Gets the selected audio track index, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("audio_index")]
+    public int? AudioIndex { get; init; }
+
+    /// <summary>
+    /// Gets the selected resolution index, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("resolution_index")]
+    public int? ResolutionIndex { get; init; }
+
+    /// <summary>
+    /// Gets the file token, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("file_token")]
+    public string? FileToken { get; init; }
+
+    /// <summary>
+    /// Gets the stream token, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("token")]
+    public string? Token { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether transcoding is currently active.
+    /// </summary>
+    [JsonPropertyName("is_transcoding")]
+    public bool? IsTranscoding { get; init; }
+
+    /// <summary>
+    /// Gets a value indicating whether transcoding is required.
+    /// </summary>
+    [JsonPropertyName("needs_transcoding")]
+    public bool? NeedsTranscoding { get; init; }
+
+    /// <summary>
+    /// Gets nested stream metadata, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("metadata")]
+    public StreamMetadata? Metadata { get; init; }
+
+    /// <summary>
+    /// Gets search metadata payload, or <see langword="null"/> if not available.
+    /// </summary>
+    [JsonPropertyName("search_metadata")]
+    public object? SearchMetadata { get; init; }
 }

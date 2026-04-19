@@ -30,10 +30,11 @@ public static class AuthenticationExample
                 SessionToken = sessionToken,
             };
 
-            TorBoxResponse<RefreshToken> refreshResponse =
+            TorBoxResponse<string> refreshResponse =
                 await client.Main.User.RefreshTokenAsync(refreshRequest, cts.Token);
 
             Console.WriteLine($"  Result: {refreshResponse.Detail ?? "Token refreshed"}");
+            Console.WriteLine($"  New token: {refreshResponse.Data ?? "N/A"}");
 
             // ──────────────────────────────────────────────────────
             // Get account confirmation status.

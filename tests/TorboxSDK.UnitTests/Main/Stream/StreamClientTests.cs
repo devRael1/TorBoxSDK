@@ -22,9 +22,24 @@ public sealed class StreamClientTests
             "error": null,
             "detail": "Found.",
             "data": {
-                "url": "https://stream.torbox.app/play/abc123",
-                "subtitles": [],
-                "audio_tracks": []
+                "hls_url": "https://stream.torbox.app/abc123/stream.m3u8",
+                "domain": "https://stream.torbox.app",
+                "presigned_token": "pre-signed-token-abc",
+                "subtitle_index": 0,
+                "audio_index": 1,
+                "resolution_index": 2,
+                "file_token": "file-token-xyz",
+                "token": "auth-token-123",
+                "is_transcoding": false,
+                "needs_transcoding": true,
+                "metadata": {
+                    "video": {},
+                    "audios": [],
+                    "subtitles": [],
+                    "thumbnail": "thumbnail.png",
+                    "chapters": "chapters.vtt"
+                },
+                "search_metadata": {}
             }
         }
         """;
@@ -110,6 +125,13 @@ public sealed class StreamClientTests
         Assert.Contains("presigned_token=pre-signed-token-abc", url);
         Assert.Contains("token=auth-token-123", url);
         Assert.True(result.Success);
+        Assert.NotNull(result.Data);
+        Assert.Equal("https://stream.torbox.app/abc123/stream.m3u8", result.Data!.HlsUrl);
+        Assert.Equal("https://stream.torbox.app", result.Data.Domain);
+        Assert.Equal("file-token-xyz", result.Data.FileToken);
+        Assert.False(result.Data.IsTranscoding);
+        Assert.True(result.Data.NeedsTranscoding);
+        Assert.NotNull(result.Data.Metadata);
     }
 
     [Fact]

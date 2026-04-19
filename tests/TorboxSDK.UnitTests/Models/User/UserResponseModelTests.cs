@@ -521,10 +521,10 @@ public sealed class UserResponseModelTests
         Assert.Equal(0, result.PurchasesReferred);
     }
 
-    // ──── DeviceCodeResponse ────
+    // ──── DeviceCode ────
 
     [Fact]
-    public void DeviceCodeResponse_Deserialize_PopulatesAllProperties()
+    public void DeviceCode_Deserialize_PopulatesAllProperties()
     {
         // Arrange
         string json = """
@@ -539,12 +539,12 @@ public sealed class UserResponseModelTests
             """;
 
         // Act
-        DeviceCodeResponse? result = JsonSerializer.Deserialize<DeviceCodeResponse>(json, TorBoxJsonOptions.Default);
+        DeviceCode? result = JsonSerializer.Deserialize<DeviceCode>(json, TorBoxJsonOptions.Default);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("dev_abc123def456ghi789", result.DeviceCode);
-        Assert.Equal("ABCD-1234", result.Code);
+        Assert.Equal("dev_abc123def456ghi789", result.DeviceCodeValue);
+        Assert.Equal("ABCD-1234", result.UserCode);
         Assert.Equal("https://torbox.app/device", result.VerificationUrl);
         Assert.Equal("https://torbox.app/d", result.FriendlyVerificationUrl);
         Assert.Equal(new DateTimeOffset(2025, 6, 15, 10, 15, 0, TimeSpan.Zero), result.ExpiresAt);
@@ -552,7 +552,7 @@ public sealed class UserResponseModelTests
     }
 
     [Fact]
-    public void DeviceCodeResponse_Deserialize_WithNullOptionals_ReturnsNulls()
+    public void DeviceCode_Deserialize_WithNullOptionals_ReturnsNulls()
     {
         // Arrange
         string json = """
@@ -562,12 +562,12 @@ public sealed class UserResponseModelTests
             """;
 
         // Act
-        DeviceCodeResponse? result = JsonSerializer.Deserialize<DeviceCodeResponse>(json, TorBoxJsonOptions.Default);
+        DeviceCode? result = JsonSerializer.Deserialize<DeviceCode>(json, TorBoxJsonOptions.Default);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Null(result.DeviceCode);
-        Assert.Null(result.Code);
+        Assert.Null(result.DeviceCodeValue);
+        Assert.Null(result.UserCode);
         Assert.Null(result.VerificationUrl);
         Assert.Null(result.FriendlyVerificationUrl);
         Assert.Null(result.ExpiresAt);

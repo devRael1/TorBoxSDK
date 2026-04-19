@@ -21,7 +21,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
     private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
     /// <inheritdoc />
-    public async Task<TorBoxResponse<RefreshToken>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
+    public async Task<TorBoxResponse<string>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default)
     {
         Guard.ThrowIfNull(request);
 
@@ -29,7 +29,7 @@ internal sealed class UserClient(HttpClient httpClient) : IUserClient
         {
             Content = TorBoxApiHelper.JsonContent(request),
         };
-        return await TorBoxApiHelper.SendAsync<RefreshToken>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
     }
 
     /// <inheritdoc />

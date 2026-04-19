@@ -24,6 +24,27 @@ public sealed class UserClientTests
         }
         """;
 
+    private const string RefreshTokenJson = """
+        {
+            "success": true,
+            "error": null,
+            "detail": "Successfully refreshed your API key.",
+            "data": "new-api-token-123"
+        }
+        """;
+
+    private const string DeviceTokenJson = """
+        {
+            "success": true,
+            "error": null,
+            "detail": "Token has been successfully redeemed.",
+            "data": {
+                "access_token": "token-abc",
+                "token_type": "Bearer"
+            }
+        }
+        """;
+
     private const string UserProfileJson = """
         {
             "success": true,
@@ -110,23 +131,24 @@ public sealed class UserClientTests
     public async Task RefreshTokenAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
-        (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ObjectJson);
+        (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(RefreshTokenJson);
         RefreshTokenRequest request = new();
 
         // Act
-        await client.RefreshTokenAsync(request);
+        TorBoxResponse<string> result = await client.RefreshTokenAsync(request);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
         Assert.Contains("user/refreshtoken", handler.LastRequest.RequestUri!.ToString());
+        Assert.Equal("new-api-token-123", result.Data);
     }
 
     [Fact]
     public async Task RefreshTokenAsync_WithNullRequest_ThrowsArgumentNullException()
     {
         // Arrange
-        (UserClient client, _) = ClientTestBase.CreateClient<UserClient>(ObjectJson);
+        (UserClient client, _) = ClientTestBase.CreateClient<UserClient>(RefreshTokenJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.RefreshTokenAsync(null!));
@@ -273,23 +295,26 @@ public sealed class UserClientTests
     public async Task GetDeviceTokenAsync_WithValidRequest_SendsPostRequest()
     {
         // Arrange
-        (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(ObjectJson);
+        (UserClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<UserClient>(DeviceTokenJson);
         DeviceTokenRequest request = new();
 
         // Act
-        await client.GetDeviceTokenAsync(request);
+        TorBoxResponse<DeviceToken> result = await client.GetDeviceTokenAsync(request);
 
         // Assert
         Assert.NotNull(handler.LastRequest);
         Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
         Assert.Contains("user/auth/device/token", handler.LastRequest.RequestUri!.ToString());
+        Assert.NotNull(result.Data);
+        Assert.Equal("token-abc", result.Data!.AccessToken);
+        Assert.Equal("Bearer", result.Data.TokenType);
     }
 
     [Fact]
     public async Task GetDeviceTokenAsync_WithNullRequest_ThrowsArgumentNullException()
     {
         // Arrange
-        (UserClient client, _) = ClientTestBase.CreateClient<UserClient>(ObjectJson);
+        (UserClient client, _) = ClientTestBase.CreateClient<UserClient>(DeviceTokenJson);
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetDeviceTokenAsync(null!));

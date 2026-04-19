@@ -10,18 +10,12 @@ public sealed record DeviceToken
     /// <summary>
     /// Gets the access token, or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("token")]
-    public string? Token { get; init; }
+    [JsonPropertyName("access_token")]
+    public string? AccessToken { get; init; }
 
     /// <summary>
-    /// Gets the token expiration time, or <see langword="null"/> if not specified.
+    /// Gets the token type (usually <c>Bearer</c>), or <see langword="null"/> if not available.
     /// </summary>
-    [JsonPropertyName("expires_in")]
-    public int? ExpiresIn { get; init; }
-
-    /// <summary>
-    /// Gets additional token-related data, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("extra")]
-    public object? Extra { get; init; }
+    [JsonPropertyName("token_type")]
+    public string? TokenType { get; init; }
 }

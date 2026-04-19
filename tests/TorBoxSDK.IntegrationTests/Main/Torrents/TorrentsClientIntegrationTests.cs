@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.IntegrationTests.Helpers;
+using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Torrents;
 

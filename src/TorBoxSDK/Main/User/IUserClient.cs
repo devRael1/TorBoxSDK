@@ -14,7 +14,7 @@ public interface IUserClient
     /// <returns>The refreshed token data.</returns>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="request"/> is <see langword="null"/>.</exception>
     /// <exception cref="TorBoxException">Thrown when the API returns an error.</exception>
-    Task<TorBoxResponse<RefreshToken>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
+    Task<TorBoxResponse<string>> RefreshTokenAsync(RefreshTokenRequest request, CancellationToken cancellationToken = default);
 
     /// <summary>Gets the confirmation status for the authenticated user.</summary>
     /// <param name="cancellationToken">Cancellation token.</param>
