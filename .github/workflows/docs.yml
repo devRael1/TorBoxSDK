@@ -26,6 +26,10 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
 
+      - name: Sync README and docs homepage
+        shell: bash
+        run: ./scripts/sync-homepage-docs.sh
+
       - name: Build documentation
         run: dotnet tool run docfx docs/docfx.json
 
