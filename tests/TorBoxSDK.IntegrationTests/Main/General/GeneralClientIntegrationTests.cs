@@ -11,106 +11,106 @@ namespace TorBoxSDK.IntegrationTests.Main.General;
 [Trait("Category", "Integration")]
 public sealed class GeneralClientIntegrationTests(TorBoxIntegrationFixture fixture)
 {
-    private readonly TorBoxIntegrationFixture _fixture = fixture;
+	private readonly TorBoxIntegrationFixture _fixture = fixture;
 
-    [SkippableFact]
-    public async Task GetUpStatusAsync_WithValidApiKey_ReturnsSuccess()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetUpStatusAsync_WithValidApiKey_ReturnsSuccess()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<UpStatus> response = await _fixture.Client.Main.General.GetUpStatusAsync(cts.Token);
+		// Act
+		TorBoxResponse<UpStatus> response = await _fixture.Client.Main.General.GetUpStatusAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+	}
 
-    [SkippableFact]
-    public async Task GetStatsAsync_WithValidApiKey_ReturnsStats()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetStatsAsync_WithValidApiKey_ReturnsStats()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<Stats> response = await _fixture.Client.Main.General.GetStatsAsync(cts.Token);
+		// Act
+		TorBoxResponse<Stats> response = await _fixture.Client.Main.General.GetStatsAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task Get30DayStatsAsync_WithValidApiKey_ReturnsStats()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task Get30DayStatsAsync_WithValidApiKey_ReturnsStats()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<IReadOnlyList<DailyStats>> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
+		// Act
+		TorBoxResponse<IReadOnlyList<DailyStats>> response = await _fixture.Client.Main.General.Get30DayStatsAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task GetSpeedtestFilesAsync_WithValidApiKey_ReturnsResponse()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetSpeedtestFilesAsync_WithValidApiKey_ReturnsResponse()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<IReadOnlyList<SpeedtestServer>> response = await _fixture.Client.Main.General
-            .GetSpeedtestFilesAsync(cancellationToken: cts.Token);
+		// Act
+		TorBoxResponse<IReadOnlyList<SpeedtestServer>> response = await _fixture.Client.Main.General
+			.GetSpeedtestFilesAsync(cancellationToken: cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+	}
 
-    [SkippableFact]
-    public async Task GetChangelogsRssAsync_WithValidApiKey_ReturnsFeed()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetChangelogsRssAsync_WithValidApiKey_ReturnsFeed()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<ChangelogsRssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
+		// Act
+		TorBoxResponse<ChangelogsRssFeed> response = await _fixture.Client.Main.General.GetChangelogsRssAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task GetChangelogsJsonAsync_WithValidApiKey_ReturnsChangelogs()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetChangelogsJsonAsync_WithValidApiKey_ReturnsChangelogs()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<IReadOnlyList<Changelog>> response = await _fixture.Client.Main.General.GetChangelogsJsonAsync(cts.Token);
+		// Act
+		TorBoxResponse<IReadOnlyList<Changelog>> response = await _fixture.Client.Main.General.GetChangelogsJsonAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 }

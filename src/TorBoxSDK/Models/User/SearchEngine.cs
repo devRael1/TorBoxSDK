@@ -7,15 +7,15 @@ namespace TorBoxSDK.Models.User;
 /// </summary>
 public sealed record SearchEngine
 {
-    /// <summary>
-    /// Gets the name of the search engine, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("name")]
-    public string? Name { get; init; }
+	/// <summary>
+	/// Gets the name of the search engine, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("name")]
+	public string? Name { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the search engine is currently enabled.
-    /// </summary>
-    [JsonPropertyName("enabled")]
-    public bool Enabled { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the search engine is currently enabled.
+	/// </summary>
+	[JsonPropertyName("enabled")]
+	public bool Enabled { get; init; }
 }

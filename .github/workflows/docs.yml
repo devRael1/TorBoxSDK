@@ -32,7 +32,9 @@ jobs:
 
       - name: Sync README and docs homepage
         shell: bash
-        run: ./docs/scripts/sync-homepage-docs.sh
+        run: |
+          sed -i 's/\r$//' ./docs/scripts/sync-homepage-docs.sh
+          bash ./docs/scripts/sync-homepage-docs.sh
 
       - name: Build documentation
         run: dotnet tool run docfx docs/docfx.json

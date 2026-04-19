@@ -7,15 +7,15 @@ namespace TorBoxSDK.Models.General;
 /// </summary>
 public sealed record UpStatus
 {
-    /// <summary>
-    /// Gets the status message, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
+	/// <summary>
+	/// Gets the status message, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("status")]
+	public string? Status { get; init; }
 
-    /// <summary>
-    /// Gets the uptime data, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("uptime")]
-    public object? Uptime { get; init; }
+	/// <summary>
+	/// Gets the uptime data, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("uptime")]
+	public object? Uptime { get; init; }
 }

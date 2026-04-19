@@ -7,9 +7,9 @@ namespace TorBoxSDK.Models.Vendors;
 /// </summary>
 public sealed record RemoveVendorUserRequest
 {
-    /// <summary>
-    /// Gets the email address of the user to remove.
-    /// </summary>
-    [JsonPropertyName("user_email")]
-    public string UserEmail { get; init; } = string.Empty;
+	/// <summary>
+	/// Gets the email address of the user to remove.
+	/// </summary>
+	[JsonPropertyName("user_email")]
+	public string UserEmail { get; init; } = string.Empty;
 }

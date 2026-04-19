@@ -7,15 +7,15 @@ namespace TorBoxSDK.Models.User;
 /// </summary>
 public sealed record DeviceToken
 {
-    /// <summary>
-    /// Gets the access token, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("access_token")]
-    public string? AccessToken { get; init; }
+	/// <summary>
+	/// Gets the access token, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("access_token")]
+	public string? AccessToken { get; init; }
 
-    /// <summary>
-    /// Gets the token type (usually <c>Bearer</c>), or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("token_type")]
-    public string? TokenType { get; init; }
+	/// <summary>
+	/// Gets the token type (usually <c>Bearer</c>), or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("token_type")]
+	public string? TokenType { get; init; }
 }

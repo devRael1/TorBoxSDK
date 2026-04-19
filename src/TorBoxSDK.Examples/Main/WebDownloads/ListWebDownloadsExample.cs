@@ -9,52 +9,52 @@ namespace TorBoxSDK.Examples.Main.WebDownloads;
 /// </summary>
 public static class ListWebDownloadsExample
 {
-    public static async Task RunAsync()
-    {
-        ExampleHelper.PrintHeader("Web Downloads — List My Downloads");
+	public static async Task RunAsync()
+	{
+		ExampleHelper.PrintHeader("Web Downloads — List My Downloads");
 
-        ITorBoxClient client = ExampleHelper.CreateClient();
-        using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
+		ITorBoxClient client = ExampleHelper.CreateClient();
+		using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
 
-        try
-        {
-            // ──────────────────────────────────────────────────────
-            // Retrieve the full web download list.
-            // ──────────────────────────────────────────────────────
-            TorBoxResponse<IReadOnlyList<WebDownload>> response =
-                await client.Main.WebDownloads.GetMyWebDownloadListAsync(cancellationToken: cts.Token);
+		try
+		{
+			// ──────────────────────────────────────────────────────
+			// Retrieve the full web download list.
+			// ──────────────────────────────────────────────────────
+			TorBoxResponse<IReadOnlyList<WebDownload>> response =
+				await client.Main.WebDownloads.GetMyWebDownloadListAsync(cancellationToken: cts.Token);
 
-            if (response.Data is null || response.Data.Count == 0)
-            {
-                Console.WriteLine("No web downloads found in your account.");
-                return;
-            }
+			if (response.Data is null || response.Data.Count == 0)
+			{
+				Console.WriteLine("No web downloads found in your account.");
+				return;
+			}
 
-            Console.WriteLine($"Found {response.Data.Count} web download(s):");
-            Console.WriteLine();
+			Console.WriteLine($"Found {response.Data.Count} web download(s):");
+			Console.WriteLine();
 
-            foreach (WebDownload download in response.Data)
-            {
-                Console.WriteLine($"  [{download.Id}] {download.Name}");
-                Console.WriteLine($"       Size: {ExampleHelper.FormatBytes(download.Size)}");
-                Console.WriteLine($"       Progress: {download.Progress:P0}");
-                Console.WriteLine($"       Status: {download.DownloadState ?? "unknown"}");
-                Console.WriteLine($"       Speed: ↓ {ExampleHelper.FormatBytes(download.DownloadSpeed)}/s");
+			foreach (WebDownload download in response.Data)
+			{
+				Console.WriteLine($"  [{download.Id}] {download.Name}");
+				Console.WriteLine($"       Size: {ExampleHelper.FormatBytes(download.Size)}");
+				Console.WriteLine($"       Progress: {download.Progress:P0}");
+				Console.WriteLine($"       Status: {download.DownloadState ?? "unknown"}");
+				Console.WriteLine($"       Speed: ↓ {ExampleHelper.FormatBytes(download.DownloadSpeed)}/s");
 
-                if (download.Error is not null)
-                {
-                    Console.WriteLine($"       Error: {download.Error}");
-                }
+				if (download.Error is not null)
+				{
+					Console.WriteLine($"       Error: {download.Error}");
+				}
 
-                Console.WriteLine();
-            }
-        }
-        catch (TorBoxException ex)
-        {
-            Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
-        }
+				Console.WriteLine();
+			}
+		}
+		catch (TorBoxException ex)
+		{
+			Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
+		}
 
-        Console.WriteLine();
-        Console.WriteLine("List web downloads example completed.");
-    }
+		Console.WriteLine();
+		Console.WriteLine("List web downloads example completed.");
+	}
 }

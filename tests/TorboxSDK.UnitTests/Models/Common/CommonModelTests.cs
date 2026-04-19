@@ -6,13 +6,13 @@ namespace TorboxSDK.UnitTests.Models.Common;
 
 public sealed class CommonModelTests
 {
-    // ──── DownloadFile ────
+	// ──── DownloadFile ────
 
-    [Fact]
-    public void DownloadFile_Deserialize_PopulatesAllProperties()
-    {
-        // Arrange
-        string json = """
+	[Fact]
+	public void DownloadFile_Deserialize_PopulatesAllProperties()
+	{
+		// Arrange
+		string json = """
             {
                 "id": 1001,
                 "md5": "d41d8cd98f00b204e9800998ecf8427e",
@@ -29,30 +29,30 @@ public sealed class CommonModelTests
             }
             """;
 
-        // Act
-        DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
+		// Act
+		DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(1001L, result.Id);
-        Assert.Equal("d41d8cd98f00b204e9800998ecf8427e", result.Md5);
-        Assert.Equal("video/x-matroska", result.Mimetype);
-        Assert.Equal("Movie/movie.mkv", result.Name);
-        Assert.Equal("downloads/abc123/movie.mkv", result.S3Path);
-        Assert.Equal("movie.mkv", result.ShortName);
-        Assert.Equal(1073741824L, result.Size);
-        Assert.Equal("abc123def456", result.Hash);
-        Assert.False(result.Zipped);
-        Assert.False(result.Infected);
-        Assert.Equal("/mnt/storage/downloads/movie.mkv", result.AbsolutePath);
-        Assert.Equal("8e245d9679d31e12", result.OpensubtitlesHash);
-    }
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal(1001L, result.Id);
+		Assert.Equal("d41d8cd98f00b204e9800998ecf8427e", result.Md5);
+		Assert.Equal("video/x-matroska", result.Mimetype);
+		Assert.Equal("Movie/movie.mkv", result.Name);
+		Assert.Equal("downloads/abc123/movie.mkv", result.S3Path);
+		Assert.Equal("movie.mkv", result.ShortName);
+		Assert.Equal(1073741824L, result.Size);
+		Assert.Equal("abc123def456", result.Hash);
+		Assert.False(result.Zipped);
+		Assert.False(result.Infected);
+		Assert.Equal("/mnt/storage/downloads/movie.mkv", result.AbsolutePath);
+		Assert.Equal("8e245d9679d31e12", result.OpensubtitlesHash);
+	}
 
-    [Fact]
-    public void DownloadFile_Deserialize_WithNullOptionals_ReturnsNulls()
-    {
-        // Arrange
-        string json = """
+	[Fact]
+	public void DownloadFile_Deserialize_WithNullOptionals_ReturnsNulls()
+	{
+		// Arrange
+		string json = """
             {
                 "id": 1,
                 "name": "file.bin",
@@ -62,27 +62,27 @@ public sealed class CommonModelTests
             }
             """;
 
-        // Act
-        DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
+		// Act
+		DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(1L, result.Id);
-        Assert.Equal("file.bin", result.Name);
-        Assert.Null(result.Md5);
-        Assert.Null(result.Mimetype);
-        Assert.Null(result.S3Path);
-        Assert.Null(result.ShortName);
-        Assert.Null(result.Hash);
-        Assert.Null(result.AbsolutePath);
-        Assert.Null(result.OpensubtitlesHash);
-    }
+		// Assert
+		Assert.NotNull(result);
+		Assert.Equal(1L, result.Id);
+		Assert.Equal("file.bin", result.Name);
+		Assert.Null(result.Md5);
+		Assert.Null(result.Mimetype);
+		Assert.Null(result.S3Path);
+		Assert.Null(result.ShortName);
+		Assert.Null(result.Hash);
+		Assert.Null(result.AbsolutePath);
+		Assert.Null(result.OpensubtitlesHash);
+	}
 
-    [Fact]
-    public void DownloadFile_Deserialize_InfectedFile_ReturnsTrue()
-    {
-        // Arrange
-        string json = """
+	[Fact]
+	public void DownloadFile_Deserialize_InfectedFile_ReturnsTrue()
+	{
+		// Arrange
+		string json = """
             {
                 "id": 2,
                 "name": "suspicious.exe",
@@ -92,95 +92,95 @@ public sealed class CommonModelTests
             }
             """;
 
-        // Act
-        DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
+		// Act
+		DownloadFile? result = JsonSerializer.Deserialize<DownloadFile>(json, TorBoxJsonOptions.Default);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.True(result.Zipped);
-        Assert.True(result.Infected);
-    }
+		// Assert
+		Assert.NotNull(result);
+		Assert.True(result.Zipped);
+		Assert.True(result.Infected);
+	}
 
-    // ──── GetMyListOptions ────
+	// ──── GetMyListOptions ────
 
-    [Fact]
-    public void GetMyListOptions_Serialize_WithAllProperties_ProducesExpectedJson()
-    {
-        // Arrange
-        GetMyListOptions options = new()
-        {
-            Id = 42,
-            Offset = 10,
-            Limit = 25,
-            BypassCache = true,
-        };
+	[Fact]
+	public void GetMyListOptions_Serialize_WithAllProperties_ProducesExpectedJson()
+	{
+		// Arrange
+		GetMyListOptions options = new()
+		{
+			Id = 42,
+			Offset = 10,
+			Limit = 25,
+			BypassCache = true,
+		};
 
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
+		// Act
+		string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
 
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.Equal(42, root.GetProperty("id").GetInt64());
-        Assert.Equal(10, root.GetProperty("offset").GetInt32());
-        Assert.Equal(25, root.GetProperty("limit").GetInt32());
-        Assert.True(root.GetProperty("bypass_cache").GetBoolean());
-    }
+		// Assert
+		using JsonDocument doc = JsonDocument.Parse(json);
+		JsonElement root = doc.RootElement;
+		Assert.Equal(42, root.GetProperty("id").GetInt64());
+		Assert.Equal(10, root.GetProperty("offset").GetInt32());
+		Assert.Equal(25, root.GetProperty("limit").GetInt32());
+		Assert.True(root.GetProperty("bypass_cache").GetBoolean());
+	}
 
-    [Fact]
-    public void GetMyListOptions_Serialize_WithNullOptionals_OmitsNullProperties()
-    {
-        // Arrange
-        GetMyListOptions options = new();
+	[Fact]
+	public void GetMyListOptions_Serialize_WithNullOptionals_OmitsNullProperties()
+	{
+		// Arrange
+		GetMyListOptions options = new();
 
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
+		// Act
+		string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
 
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.False(root.TryGetProperty("id", out _));
-        Assert.False(root.TryGetProperty("offset", out _));
-        Assert.False(root.TryGetProperty("limit", out _));
-        Assert.False(root.TryGetProperty("bypass_cache", out _));
-    }
+		// Assert
+		using JsonDocument doc = JsonDocument.Parse(json);
+		JsonElement root = doc.RootElement;
+		Assert.False(root.TryGetProperty("id", out _));
+		Assert.False(root.TryGetProperty("offset", out _));
+		Assert.False(root.TryGetProperty("limit", out _));
+		Assert.False(root.TryGetProperty("bypass_cache", out _));
+	}
 
-    // ──── CheckCachedOptions ────
+	// ──── CheckCachedOptions ────
 
-    [Fact]
-    public void CheckCachedOptions_Serialize_WithAllProperties_ProducesExpectedJson()
-    {
-        // Arrange
-        CheckCachedOptions options = new()
-        {
-            Format = "object",
-            ListFiles = true,
-        };
+	[Fact]
+	public void CheckCachedOptions_Serialize_WithAllProperties_ProducesExpectedJson()
+	{
+		// Arrange
+		CheckCachedOptions options = new()
+		{
+			Format = "object",
+			ListFiles = true,
+		};
 
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
+		// Act
+		string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
 
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
+		// Assert
+		using JsonDocument doc = JsonDocument.Parse(json);
+		JsonElement root = doc.RootElement;
 
-        Assert.Equal("object", root.GetProperty("format").GetString());
-        Assert.True(root.GetProperty("list_files").GetBoolean());
-    }
+		Assert.Equal("object", root.GetProperty("format").GetString());
+		Assert.True(root.GetProperty("list_files").GetBoolean());
+	}
 
-    [Fact]
-    public void CheckCachedOptions_Serialize_WithNullOptionals_OmitsNullProperties()
-    {
-        // Arrange
-        CheckCachedOptions options = new();
+	[Fact]
+	public void CheckCachedOptions_Serialize_WithNullOptionals_OmitsNullProperties()
+	{
+		// Arrange
+		CheckCachedOptions options = new();
 
-        // Act
-        string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
+		// Act
+		string json = JsonSerializer.Serialize(options, TorBoxJsonOptions.Default);
 
-        // Assert
-        using JsonDocument doc = JsonDocument.Parse(json);
-        JsonElement root = doc.RootElement;
-        Assert.False(root.TryGetProperty("format", out _));
-        Assert.False(root.TryGetProperty("list_files", out _));
-    }
+		// Assert
+		using JsonDocument doc = JsonDocument.Parse(json);
+		JsonElement root = doc.RootElement;
+		Assert.False(root.TryGetProperty("format", out _));
+		Assert.False(root.TryGetProperty("list_files", out _));
+	}
 }

@@ -18,31 +18,31 @@ namespace TorBoxSDK.Main.Queued;
 /// </exception>
 internal sealed class QueuedClient(HttpClient httpClient) : IQueuedClient
 {
-    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
+	private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(GetQueuedOptions? options = null, CancellationToken cancellationToken = default)
-    {
-        string query = TorBoxApiHelper.BuildQuery(
-            ("id", options?.Id?.ToString()),
-            ("offset", options?.Offset?.ToString()),
-            ("limit", options?.Limit?.ToString()),
-            ("bypass_cache", options?.BypassCache?.ToString().ToLowerInvariant()),
-            ("type", options?.Type));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyList<QueuedDownload>>> GetQueuedAsync(GetQueuedOptions? options = null, CancellationToken cancellationToken = default)
+	{
+		string query = TorBoxApiHelper.BuildQuery(
+			("id", options?.Id?.ToString()),
+			("offset", options?.Offset?.ToString()),
+			("limit", options?.Limit?.ToString()),
+			("bypass_cache", options?.BypassCache?.ToString().ToLowerInvariant()),
+			("type", options?.Type));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"queued/getqueued{query}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<QueuedDownload>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"queued/getqueued{query}");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyList<QueuedDownload>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> ControlQueuedAsync(ControlQueuedRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> ControlQueuedAsync(ControlQueuedRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "queued/controlqueued")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "queued/controlqueued")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 }

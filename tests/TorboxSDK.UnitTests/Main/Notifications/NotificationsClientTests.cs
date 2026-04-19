@@ -1,13 +1,13 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.Notifications;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.Notifications;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.Notifications;
 
 public sealed class NotificationsClientTests
 {
-    private const string SuccessJson = """
+	private const string SuccessJson = """
         {
             "success": true,
             "error": null,
@@ -15,7 +15,7 @@ public sealed class NotificationsClientTests
         }
         """;
 
-    private const string NotificationRssXml = """
+	private const string NotificationRssXml = """
         <?xml version="1.0" ?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
           <channel>
@@ -32,7 +32,7 @@ public sealed class NotificationsClientTests
         </rss>
         """;
 
-    private const string NotificationsJson = """
+	private const string NotificationsJson = """
         {
             "success": true,
             "error": null,
@@ -52,7 +52,7 @@ public sealed class NotificationsClientTests
         }
         """;
 
-    private const string IntercomHashJson = """
+	private const string IntercomHashJson = """
         {
             "success": true,
             "error": null,
@@ -63,149 +63,149 @@ public sealed class NotificationsClientTests
         }
         """;
 
-    // --- GetNotificationRssAsync ---
+	// --- GetNotificationRssAsync ---
 
-    [Fact]
-    public async Task GetNotificationRssAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationRssXml);
+	[Fact]
+	public async Task GetNotificationRssAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationRssXml);
 
-        // Act
-        TorBoxResponse<NotificationRssFeed> result = await client.GetNotificationRssAsync();
+		// Act
+		TorBoxResponse<NotificationRssFeed> result = await client.GetNotificationRssAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("notifications/rss", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.Equal("TorBox Notifications", result.Data.Title);
-        Assert.NotEmpty(result.Data.Items);
-        Assert.Equal("Torrent Ready To Download", result.Data.Items[0].Title);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("notifications/rss", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.Equal("TorBox Notifications", result.Data.Title);
+		Assert.NotEmpty(result.Data.Items);
+		Assert.Equal("Torrent Ready To Download", result.Data.Items[0].Title);
+	}
 
-    // --- GetMyNotificationsAsync ---
+	// --- GetMyNotificationsAsync ---
 
-    [Fact]
-    public async Task GetMyNotificationsAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationsJson);
+	[Fact]
+	public async Task GetMyNotificationsAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(NotificationsJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<Notification>> result = await client.GetMyNotificationsAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<Notification>> result = await client.GetMyNotificationsAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("notifications/mynotifications", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("notifications/mynotifications", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+	}
 
-    // --- ClearAllNotificationsAsync ---
+	// --- ClearAllNotificationsAsync ---
 
-    [Fact]
-    public async Task ClearAllNotificationsAsync_WithNoParameters_SendsPostRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
+	[Fact]
+	public async Task ClearAllNotificationsAsync_WithNoParameters_SendsPostRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
 
-        // Act
-        TorBoxResponse result = await client.ClearAllNotificationsAsync();
+		// Act
+		TorBoxResponse result = await client.ClearAllNotificationsAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("notifications/clear", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("notifications/clear", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    // --- ClearNotificationAsync ---
+	// --- ClearNotificationAsync ---
 
-    [Fact]
-    public async Task ClearNotificationAsync_WithNotificationId_SendsPostRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
+	[Fact]
+	public async Task ClearNotificationAsync_WithNotificationId_SendsPostRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
 
-        // Act
-        TorBoxResponse result = await client.ClearNotificationAsync(42);
+		// Act
+		TorBoxResponse result = await client.ClearNotificationAsync(42);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("notifications/clear/42", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("notifications/clear/42", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    // --- SendTestNotificationAsync ---
+	// --- SendTestNotificationAsync ---
 
-    [Fact]
-    public async Task SendTestNotificationAsync_WithNoParameters_SendsPostRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
+	[Fact]
+	public async Task SendTestNotificationAsync_WithNoParameters_SendsPostRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(SuccessJson);
 
-        // Act
-        TorBoxResponse result = await client.SendTestNotificationAsync();
+		// Act
+		TorBoxResponse result = await client.SendTestNotificationAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("notifications/test", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("notifications/test", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    // --- GetIntercomHashAsync ---
+	// --- GetIntercomHashAsync ---
 
-    [Fact]
-    public async Task GetIntercomHashAsync_WithAuthIdAndEmail_SendsGetRequest()
-    {
-        // Arrange
-        (NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+	[Fact]
+	public async Task GetIntercomHashAsync_WithAuthIdAndEmail_SendsGetRequest()
+	{
+		// Arrange
+		(NotificationsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
-        // Act
-        TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync("auth-id", "test@test.com");
+		// Act
+		TorBoxResponse<IntercomHash> result = await client.GetIntercomHashAsync("auth-id", "test@test.com");
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("intercom/hash", handler.LastRequest.RequestUri!.ToString());
-        Assert.Contains("auth_id=auth-id", handler.LastRequest.RequestUri!.ToString());
-        Assert.Contains("email=test%40test.com", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("intercom/hash", handler.LastRequest.RequestUri!.ToString());
+		Assert.Contains("auth_id=auth-id", handler.LastRequest.RequestUri!.ToString());
+		Assert.Contains("email=test%40test.com", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    [Fact]
-    public async Task GetIntercomHashAsync_WithNullAuthId_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+	[Fact]
+	public async Task GetIntercomHashAsync_WithNullAuthId_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!, "test@test.com"));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.GetIntercomHashAsync(null!, "test@test.com"));
+	}
 
-    [Fact]
-    public async Task GetIntercomHashAsync_WithEmptyAuthId_ThrowsArgumentException()
-    {
-        // Arrange
-        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+	[Fact]
+	public async Task GetIntercomHashAsync_WithEmptyAuthId_ThrowsArgumentException()
+	{
+		// Arrange
+		(NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(string.Empty, "test@test.com"));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync(string.Empty, "test@test.com"));
+	}
 
-    [Fact]
-    public async Task GetIntercomHashAsync_WithEmptyEmail_ThrowsArgumentException()
-    {
-        // Arrange
-        (NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
+	[Fact]
+	public async Task GetIntercomHashAsync_WithEmptyEmail_ThrowsArgumentException()
+	{
+		// Arrange
+		(NotificationsClient client, _) = ClientTestBase.CreateClient<NotificationsClient>(IntercomHashJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync("auth-id", string.Empty));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentException>(() => client.GetIntercomHashAsync("auth-id", string.Empty));
+	}
 }

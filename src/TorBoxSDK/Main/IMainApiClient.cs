@@ -18,58 +18,58 @@ namespace TorBoxSDK.Main;
 /// </summary>
 public interface IMainApiClient
 {
-    /// <summary>
-    /// Gets the client for general API operations.
-    /// </summary>
-    IGeneralClient General { get; }
+	/// <summary>
+	/// Gets the client for general API operations.
+	/// </summary>
+	IGeneralClient General { get; }
 
-    /// <summary>
-    /// Gets the client for torrent-related operations.
-    /// </summary>
-    ITorrentsClient Torrents { get; }
+	/// <summary>
+	/// Gets the client for torrent-related operations.
+	/// </summary>
+	ITorrentsClient Torrents { get; }
 
-    /// <summary>
-    /// Gets the client for usenet-related operations.
-    /// </summary>
-    IUsenetClient Usenet { get; }
+	/// <summary>
+	/// Gets the client for usenet-related operations.
+	/// </summary>
+	IUsenetClient Usenet { get; }
 
-    /// <summary>
-    /// Gets the client for web download operations.
-    /// </summary>
-    IWebDownloadsClient WebDownloads { get; }
+	/// <summary>
+	/// Gets the client for web download operations.
+	/// </summary>
+	IWebDownloadsClient WebDownloads { get; }
 
-    /// <summary>
-    /// Gets the client for user account operations.
-    /// </summary>
-    IUserClient User { get; }
+	/// <summary>
+	/// Gets the client for user account operations.
+	/// </summary>
+	IUserClient User { get; }
 
-    /// <summary>
-    /// Gets the client for notification operations.
-    /// </summary>
-    INotificationsClient Notifications { get; }
+	/// <summary>
+	/// Gets the client for notification operations.
+	/// </summary>
+	INotificationsClient Notifications { get; }
 
-    /// <summary>
-    /// Gets the client for RSS feed operations.
-    /// </summary>
-    IRssClient Rss { get; }
+	/// <summary>
+	/// Gets the client for RSS feed operations.
+	/// </summary>
+	IRssClient Rss { get; }
 
-    /// <summary>
-    /// Gets the client for streaming operations.
-    /// </summary>
-    IStreamClient Stream { get; }
+	/// <summary>
+	/// Gets the client for streaming operations.
+	/// </summary>
+	IStreamClient Stream { get; }
 
-    /// <summary>
-    /// Gets the client for third-party integration operations.
-    /// </summary>
-    IIntegrationsClient Integrations { get; }
+	/// <summary>
+	/// Gets the client for third-party integration operations.
+	/// </summary>
+	IIntegrationsClient Integrations { get; }
 
-    /// <summary>
-    /// Gets the client for vendor-related operations.
-    /// </summary>
-    IVendorsClient Vendors { get; }
+	/// <summary>
+	/// Gets the client for vendor-related operations.
+	/// </summary>
+	IVendorsClient Vendors { get; }
 
-    /// <summary>
-    /// Gets the client for queued item operations.
-    /// </summary>
-    IQueuedClient Queued { get; }
+	/// <summary>
+	/// Gets the client for queued item operations.
+	/// </summary>
+	IQueuedClient Queued { get; }
 }

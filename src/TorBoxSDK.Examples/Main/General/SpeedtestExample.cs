@@ -9,67 +9,67 @@ namespace TorBoxSDK.Examples.Main.General;
 /// </summary>
 public static class SpeedtestExample
 {
-    public static async Task RunAsync()
-    {
-        ExampleHelper.PrintHeader("General — Speedtest Files");
+	public static async Task RunAsync()
+	{
+		ExampleHelper.PrintHeader("General — Speedtest Files");
 
-        ITorBoxClient client = ExampleHelper.CreateClient();
-        using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
+		ITorBoxClient client = ExampleHelper.CreateClient();
+		using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
 
-        try
-        {
-            // ──────────────────────────────────────────────────────
-            // Get speedtest files with default settings.
-            // Returns URLs to test files for measuring download speed.
-            // ──────────────────────────────────────────────────────
-            Console.WriteLine("Getting speedtest files (default settings)...");
+		try
+		{
+			// ──────────────────────────────────────────────────────
+			// Get speedtest files with default settings.
+			// Returns URLs to test files for measuring download speed.
+			// ──────────────────────────────────────────────────────
+			Console.WriteLine("Getting speedtest files (default settings)...");
 
-            TorBoxResponse<IReadOnlyList<SpeedtestServer>> defaultResponse =
-                await client.Main.General.GetSpeedtestFilesAsync(cancellationToken: cts.Token);
+			TorBoxResponse<IReadOnlyList<SpeedtestServer>> defaultResponse =
+				await client.Main.General.GetSpeedtestFilesAsync(cancellationToken: cts.Token);
 
-            Console.WriteLine($"  Result: {defaultResponse.Detail ?? "Speedtest files retrieved"}");
+			Console.WriteLine($"  Result: {defaultResponse.Detail ?? "Speedtest files retrieved"}");
 
-            // ──────────────────────────────────────────────────────
-            // Get speedtest files with custom options.
-            // You can specify region and test parameters.
-            // ──────────────────────────────────────────────────────
-            Console.WriteLine();
-            Console.WriteLine("Getting speedtest files (custom settings)...");
+			// ──────────────────────────────────────────────────────
+			// Get speedtest files with custom options.
+			// You can specify region and test parameters.
+			// ──────────────────────────────────────────────────────
+			Console.WriteLine();
+			Console.WriteLine("Getting speedtest files (custom settings)...");
 
-            SpeedtestOptions options = new()
-            {
-                Region = "us-east",   // Preferred server region
-                TestLength = "short", // Test length value (e.g. "short", "long")
-            };
+			SpeedtestOptions options = new()
+			{
+				Region = "us-east",   // Preferred server region
+				TestLength = "short", // Test length value (e.g. "short", "long")
+			};
 
-            TorBoxResponse<IReadOnlyList<SpeedtestServer>> customResponse =
-                await client.Main.General.GetSpeedtestFilesAsync(options, cts.Token);
+			TorBoxResponse<IReadOnlyList<SpeedtestServer>> customResponse =
+				await client.Main.General.GetSpeedtestFilesAsync(options, cts.Token);
 
-            Console.WriteLine($"  Result: {customResponse.Detail ?? "Custom speedtest files retrieved"}");
+			Console.WriteLine($"  Result: {customResponse.Detail ?? "Custom speedtest files retrieved"}");
 
-            // ──────────────────────────────────────────────────────
-            // Get speedtest files with specific user IP.
-            // Useful for testing from a specific network location.
-            // ──────────────────────────────────────────────────────
-            Console.WriteLine();
-            Console.WriteLine("Getting speedtest files (with user IP)...");
+			// ──────────────────────────────────────────────────────
+			// Get speedtest files with specific user IP.
+			// Useful for testing from a specific network location.
+			// ──────────────────────────────────────────────────────
+			Console.WriteLine();
+			Console.WriteLine("Getting speedtest files (with user IP)...");
 
-            SpeedtestOptions ipOptions = new()
-            {
-                UserIp = "203.0.113.1", // Documentation IP (RFC 5737) — replace with your actual public IP
-            };
+			SpeedtestOptions ipOptions = new()
+			{
+				UserIp = "203.0.113.1", // Documentation IP (RFC 5737) — replace with your actual public IP
+			};
 
-            TorBoxResponse<IReadOnlyList<SpeedtestServer>> ipResponse =
-                await client.Main.General.GetSpeedtestFilesAsync(ipOptions, cts.Token);
+			TorBoxResponse<IReadOnlyList<SpeedtestServer>> ipResponse =
+				await client.Main.General.GetSpeedtestFilesAsync(ipOptions, cts.Token);
 
-            Console.WriteLine($"  Result: {ipResponse.Detail ?? "IP-specific speedtest files retrieved"}");
-        }
-        catch (TorBoxException ex)
-        {
-            Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
-        }
+			Console.WriteLine($"  Result: {ipResponse.Detail ?? "IP-specific speedtest files retrieved"}");
+		}
+		catch (TorBoxException ex)
+		{
+			Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
+		}
 
-        Console.WriteLine();
-        Console.WriteLine("Speedtest example completed.");
-    }
+		Console.WriteLine();
+		Console.WriteLine("Speedtest example completed.");
+	}
 }

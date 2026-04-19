@@ -12,44 +12,44 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 /// </remarks>
 public sealed class SchemaLiveTestFixture : IAsyncLifetime
 {
-    private static readonly Uri _torBoxBaseUri = new("https://api.torbox.app");
+	private static readonly Uri _torBoxBaseUri = new("https://api.torbox.app");
 
-    private HttpClient? _httpClient;
+	private HttpClient? _httpClient;
 
-    /// <summary>
-    /// Gets a value indicating whether the <c>TORBOX_API_KEY</c> environment variable is set.
-    /// </summary>
-    public bool HasApiKey { get; }
+	/// <summary>
+	/// Gets a value indicating whether the <c>TORBOX_API_KEY</c> environment variable is set.
+	/// </summary>
+	public bool HasApiKey { get; }
 
-    /// <summary>
-    /// Gets the <see cref="HttpClient"/> configured to call the live TorBox API.
-    /// </summary>
-    public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException("Fixture has not been initialised.");
+	/// <summary>
+	/// Gets the <see cref="HttpClient"/> configured to call the live TorBox API.
+	/// </summary>
+	public HttpClient HttpClient => _httpClient ?? throw new InvalidOperationException("Fixture has not been initialised.");
 
-    /// <summary>Initialises the fixture and creates the <see cref="HttpClient"/>.</summary>
-    public SchemaLiveTestFixture()
-    {
-        string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
-        HasApiKey = !string.IsNullOrWhiteSpace(apiKey);
+	/// <summary>Initialises the fixture and creates the <see cref="HttpClient"/>.</summary>
+	public SchemaLiveTestFixture()
+	{
+		string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
+		HasApiKey = !string.IsNullOrWhiteSpace(apiKey);
 
-        _httpClient = new HttpClient { BaseAddress = _torBoxBaseUri };
+		_httpClient = new HttpClient { BaseAddress = _torBoxBaseUri };
 
-        if (HasApiKey)
-        {
-            // Non-null because HasApiKey is true only when apiKey is non-empty.
-            _httpClient.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", apiKey!);
-        }
-    }
+		if (HasApiKey)
+		{
+			// Non-null because HasApiKey is true only when apiKey is non-empty.
+			_httpClient.DefaultRequestHeaders.Authorization =
+				new AuthenticationHeaderValue("Bearer", apiKey!);
+		}
+	}
 
-    /// <inheritdoc />
-    public Task InitializeAsync() => Task.CompletedTask;
+	/// <inheritdoc />
+	public Task InitializeAsync() => Task.CompletedTask;
 
-    /// <inheritdoc />
-    public Task DisposeAsync()
-    {
-        _httpClient?.Dispose();
-        _httpClient = null;
-        return Task.CompletedTask;
-    }
+	/// <inheritdoc />
+	public Task DisposeAsync()
+	{
+		_httpClient?.Dispose();
+		_httpClient = null;
+		return Task.CompletedTask;
+	}
 }

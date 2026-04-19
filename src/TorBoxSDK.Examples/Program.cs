@@ -103,110 +103,110 @@ Console.WriteLine("""
 
 while (true)
 {
-    Console.Write("Select an example (0-38): ");
-    string? input = Console.ReadLine();
+	Console.Write("Select an example (0-38): ");
+	string? input = Console.ReadLine();
 
-    if (!int.TryParse(input, out int choice))
-    {
-        Console.WriteLine("Invalid input. Please enter a number between 0 and 38.");
-        continue;
-    }
+	if (!int.TryParse(input, out int choice))
+	{
+		Console.WriteLine("Invalid input. Please enter a number between 0 and 38.");
+		continue;
+	}
 
-    if (choice == 0)
-    {
-        Console.WriteLine("Goodbye!");
-        break;
-    }
+	if (choice == 0)
+	{
+		Console.WriteLine("Goodbye!");
+		break;
+	}
 
-    if (choice is < 1 or > 38)
-    {
-        Console.WriteLine("Invalid choice. Please enter a number between 0 and 38.");
-        continue;
-    }
+	if (choice is < 1 or > 38)
+	{
+		Console.WriteLine("Invalid choice. Please enter a number between 0 and 38.");
+		continue;
+	}
 
-    try
-    {
-        await (choice switch
-        {
-            // Getting Started
-            1 => BasicSetupExample.RunAsync(),
-            2 => ConfigurationExample.RunAsync(),
-            3 => StandaloneSetupExample.RunAsync(),
+	try
+	{
+		await (choice switch
+		{
+			// Getting Started
+			1 => BasicSetupExample.RunAsync(),
+			2 => ConfigurationExample.RunAsync(),
+			3 => StandaloneSetupExample.RunAsync(),
 
-            // Main > Torrents
-            4 => ListTorrentsExample.RunAsync(),
-            5 => CreateTorrentExample.RunAsync(),
-            6 => ControlTorrentExample.RunAsync(),
-            7 => DownloadTorrentExample.RunAsync(),
-            8 => CheckCachedExample.RunAsync(),
-            9 => EditTorrentExample.RunAsync(),
+			// Main > Torrents
+			4 => ListTorrentsExample.RunAsync(),
+			5 => CreateTorrentExample.RunAsync(),
+			6 => ControlTorrentExample.RunAsync(),
+			7 => DownloadTorrentExample.RunAsync(),
+			8 => CheckCachedExample.RunAsync(),
+			9 => EditTorrentExample.RunAsync(),
 
-            // Main > Usenet
-            10 => ListUsenetExample.RunAsync(),
-            11 => CreateUsenetExample.RunAsync(),
-            12 => UsenetAdvancedExample.RunAsync(),
+			// Main > Usenet
+			10 => ListUsenetExample.RunAsync(),
+			11 => CreateUsenetExample.RunAsync(),
+			12 => UsenetAdvancedExample.RunAsync(),
 
-            // Main > Web Downloads
-            13 => ListWebDownloadsExample.RunAsync(),
-            14 => CreateWebDownloadExample.RunAsync(),
-            15 => WebDownloadsAdvancedExample.RunAsync(),
+			// Main > Web Downloads
+			13 => ListWebDownloadsExample.RunAsync(),
+			14 => CreateWebDownloadExample.RunAsync(),
+			15 => WebDownloadsAdvancedExample.RunAsync(),
 
-            // Main > User
-            16 => GetProfileExample.RunAsync(),
-            17 => ManageSettingsExample.RunAsync(),
-            18 => AuthenticationExample.RunAsync(),
-            19 => SearchEnginesExample.RunAsync(),
-            20 => TransactionsExample.RunAsync(),
+			// Main > User
+			16 => GetProfileExample.RunAsync(),
+			17 => ManageSettingsExample.RunAsync(),
+			18 => AuthenticationExample.RunAsync(),
+			19 => SearchEnginesExample.RunAsync(),
+			20 => TransactionsExample.RunAsync(),
 
-            // Main > Notifications
-            21 => NotificationsExample.RunAsync(),
+			// Main > Notifications
+			21 => NotificationsExample.RunAsync(),
 
-            // Main > RSS
-            22 => RssFeedsExample.RunAsync(),
+			// Main > RSS
+			22 => RssFeedsExample.RunAsync(),
 
-            // Main > Integrations
-            23 => CloudIntegrationExample.RunAsync(),
-            24 => AllCloudProvidersExample.RunAsync(),
-            25 => OAuthExample.RunAsync(),
-            26 => JobManagementExample.RunAsync(),
+			// Main > Integrations
+			23 => CloudIntegrationExample.RunAsync(),
+			24 => AllCloudProvidersExample.RunAsync(),
+			25 => OAuthExample.RunAsync(),
+			26 => JobManagementExample.RunAsync(),
 
-            // Main > Vendors
-            27 => VendorExample.RunAsync(),
+			// Main > Vendors
+			27 => VendorExample.RunAsync(),
 
-            // Main > Queued
-            28 => QueuedDownloadsExample.RunAsync(),
+			// Main > Queued
+			28 => QueuedDownloadsExample.RunAsync(),
 
-            // Main > Stream
-            29 => StreamExample.RunAsync(),
+			// Main > Stream
+			29 => StreamExample.RunAsync(),
 
-            // Main > General
-            30 => GeneralExample.RunAsync(),
-            31 => SpeedtestExample.RunAsync(),
+			// Main > General
+			30 => GeneralExample.RunAsync(),
+			31 => SpeedtestExample.RunAsync(),
 
-            // Search
-            32 => SearchTorrentsExample.RunAsync(),
-            33 => SearchUsenetExample.RunAsync(),
-            34 => SearchMetaExample.RunAsync(),
-            35 => SearchTutorialsExample.RunAsync(),
-            36 => DownloadSearchResultsExample.RunAsync(),
+			// Search
+			32 => SearchTorrentsExample.RunAsync(),
+			33 => SearchUsenetExample.RunAsync(),
+			34 => SearchMetaExample.RunAsync(),
+			35 => SearchTutorialsExample.RunAsync(),
+			36 => DownloadSearchResultsExample.RunAsync(),
 
-            // Relay
-            37 => RelayExample.RunAsync(),
+			// Relay
+			37 => RelayExample.RunAsync(),
 
-            // Error Handling
-            38 => ErrorHandlingExample.RunAsync(),
+			// Error Handling
+			38 => ErrorHandlingExample.RunAsync(),
 
-            _ => Task.CompletedTask,
-        });
-    }
-    catch (Exception ex)
-    {
-        Console.Error.WriteLine($"Unexpected error: {ex.Message}");
-    }
+			_ => Task.CompletedTask,
+		});
+	}
+	catch (Exception ex)
+	{
+		Console.Error.WriteLine($"Unexpected error: {ex.Message}");
+	}
 
-    Console.WriteLine();
-    Console.WriteLine("Press Enter to return to the menu...");
-    Console.ReadLine();
+	Console.WriteLine();
+	Console.WriteLine("Press Enter to return to the menu...");
+	Console.ReadLine();
 }
 
 ExampleHelper.DisposeProvider();

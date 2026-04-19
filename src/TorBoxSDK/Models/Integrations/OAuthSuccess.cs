@@ -7,15 +7,15 @@ namespace TorBoxSDK.Models.Integrations;
 /// </summary>
 public sealed record OAuthSuccess
 {
-    /// <summary>
-    /// Gets the success status or result, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
+	/// <summary>
+	/// Gets the success status or result, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("status")]
+	public string? Status { get; init; }
 
-    /// <summary>
-    /// Gets success-specific data, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("data")]
-    public object? Data { get; init; }
+	/// <summary>
+	/// Gets success-specific data, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("data")]
+	public object? Data { get; init; }
 }

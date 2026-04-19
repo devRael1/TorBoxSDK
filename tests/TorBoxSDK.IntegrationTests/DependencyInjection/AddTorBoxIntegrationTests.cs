@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK.DependencyInjection;
 using TorBoxSDK.Main;
 using TorBoxSDK.Relay;
@@ -17,76 +17,76 @@ namespace TorBoxSDK.IntegrationTests.DependencyInjection;
 [Trait("Category", "Integration")]
 public sealed class AddTorBoxIntegrationTests : IDisposable
 {
-    private readonly ServiceProvider _provider;
+	private readonly ServiceProvider _provider;
 
-    public AddTorBoxIntegrationTests()
-    {
-        ServiceCollection services = new();
-        services.AddTorBox(options => options.ApiKey = "test-key");
-        _provider = services.BuildServiceProvider();
-    }
+	public AddTorBoxIntegrationTests()
+	{
+		ServiceCollection services = new();
+		services.AddTorBox(options => options.ApiKey = "test-key");
+		_provider = services.BuildServiceProvider();
+	}
 
-    public void Dispose() => _provider.Dispose();
+	public void Dispose() => _provider.Dispose();
 
-    [Fact]
-    public void AddTorBox_WithValidOptions_ResolvesITorBoxClient()
-    {
-        // Arrange — provider built in constructor
+	[Fact]
+	public void AddTorBox_WithValidOptions_ResolvesITorBoxClient()
+	{
+		// Arrange — provider built in constructor
 
-        // Act
-        ITorBoxClient client = _provider.GetRequiredService<ITorBoxClient>();
+		// Act
+		ITorBoxClient client = _provider.GetRequiredService<ITorBoxClient>();
 
-        // Assert
-        Assert.NotNull(client);
-    }
+		// Assert
+		Assert.NotNull(client);
+	}
 
-    [Fact]
-    public void AddTorBox_WithValidOptions_ResolvesAllMainApiResourceClients()
-    {
-        // Arrange — provider built in constructor
+	[Fact]
+	public void AddTorBox_WithValidOptions_ResolvesAllMainApiResourceClients()
+	{
+		// Arrange — provider built in constructor
 
-        // Act
-        ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
-        IMainApiClient mainClient = torBoxClient.Main;
+		// Act
+		ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
+		IMainApiClient mainClient = torBoxClient.Main;
 
-        // Assert
-        Assert.NotNull(mainClient);
-        Assert.NotNull(mainClient.Torrents);
-        Assert.NotNull(mainClient.Usenet);
-        Assert.NotNull(mainClient.WebDownloads);
-        Assert.NotNull(mainClient.User);
-        Assert.NotNull(mainClient.Notifications);
-        Assert.NotNull(mainClient.Rss);
-        Assert.NotNull(mainClient.Stream);
-        Assert.NotNull(mainClient.Integrations);
-        Assert.NotNull(mainClient.Vendors);
-        Assert.NotNull(mainClient.Queued);
-        Assert.NotNull(mainClient.General);
-    }
+		// Assert
+		Assert.NotNull(mainClient);
+		Assert.NotNull(mainClient.Torrents);
+		Assert.NotNull(mainClient.Usenet);
+		Assert.NotNull(mainClient.WebDownloads);
+		Assert.NotNull(mainClient.User);
+		Assert.NotNull(mainClient.Notifications);
+		Assert.NotNull(mainClient.Rss);
+		Assert.NotNull(mainClient.Stream);
+		Assert.NotNull(mainClient.Integrations);
+		Assert.NotNull(mainClient.Vendors);
+		Assert.NotNull(mainClient.Queued);
+		Assert.NotNull(mainClient.General);
+	}
 
-    [Fact]
-    public void AddTorBox_WithValidOptions_ResolvesSearchAndRelayClients()
-    {
-        // Arrange — provider built in constructor
+	[Fact]
+	public void AddTorBox_WithValidOptions_ResolvesSearchAndRelayClients()
+	{
+		// Arrange — provider built in constructor
 
-        // Act
-        ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
-        ISearchApiClient searchClient = torBoxClient.Search;
-        IRelayApiClient relayClient = torBoxClient.Relay;
+		// Act
+		ITorBoxClient torBoxClient = _provider.GetRequiredService<ITorBoxClient>();
+		ISearchApiClient searchClient = torBoxClient.Search;
+		IRelayApiClient relayClient = torBoxClient.Relay;
 
-        // Assert
-        Assert.NotNull(searchClient);
-        Assert.NotNull(relayClient);
-    }
+		// Assert
+		Assert.NotNull(searchClient);
+		Assert.NotNull(relayClient);
+	}
 
-    [Fact]
-    public void AddTorBox_WithValidOptions_SubClientsNotDirectlyRegistered()
-    {
-        // Arrange — provider built in constructor
+	[Fact]
+	public void AddTorBox_WithValidOptions_SubClientsNotDirectlyRegistered()
+	{
+		// Arrange — provider built in constructor
 
-        // Act & Assert — sub-clients should not be resolvable directly
-        Assert.Null(_provider.GetService<IMainApiClient>());
-        Assert.Null(_provider.GetService<ISearchApiClient>());
-        Assert.Null(_provider.GetService<IRelayApiClient>());
-    }
+		// Act & Assert — sub-clients should not be resolvable directly
+		Assert.Null(_provider.GetService<IMainApiClient>());
+		Assert.Null(_provider.GetService<ISearchApiClient>());
+		Assert.Null(_provider.GetService<IRelayApiClient>());
+	}
 }

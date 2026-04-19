@@ -9,16 +9,16 @@ namespace TorBoxSDK.Http.Json;
 /// </summary>
 internal sealed class UtcDateTimeOffsetConverter : JsonConverter<DateTimeOffset>
 {
-    /// <inheritdoc />
-    public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-    {
-        DateTimeOffset value = reader.GetDateTimeOffset();
-        return value.ToUniversalTime();
-    }
+	/// <inheritdoc />
+	public override DateTimeOffset Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	{
+		DateTimeOffset value = reader.GetDateTimeOffset();
+		return value.ToUniversalTime();
+	}
 
-    /// <inheritdoc />
-    public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
-    {
-        writer.WriteStringValue(value.ToUniversalTime());
-    }
+	/// <inheritdoc />
+	public override void Write(Utf8JsonWriter writer, DateTimeOffset value, JsonSerializerOptions options)
+	{
+		writer.WriteStringValue(value.ToUniversalTime());
+	}
 }

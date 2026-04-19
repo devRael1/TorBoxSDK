@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.Models.Common;
+using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.User;
 
 namespace TorBoxSDK.IntegrationTests.Standalone;
@@ -16,43 +16,43 @@ namespace TorBoxSDK.IntegrationTests.Standalone;
 [Trait("Category", "Integration")]
 public sealed class StandaloneClientTests
 {
-    [SkippableFact]
-    public async Task StandaloneClient_WithValidApiKey_CanCallApi()
-    {
-        // Skip when no API key is available.
-        string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task StandaloneClient_WithValidApiKey_CanCallApi()
+	{
+		// Skip when no API key is available.
+		string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
+		Skip.If(string.IsNullOrEmpty(apiKey), "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using var client = new TorBoxClient(apiKey!);
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using var client = new TorBoxClient(apiKey!);
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<UserProfile> response = await client.Main.User.GetMeAsync(
-            cancellationToken: cts.Token);
+		// Act
+		TorBoxResponse<UserProfile> response = await client.Main.User.GetMeAsync(
+			cancellationToken: cts.Token);
 
-        // Assert
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task StandaloneClient_WithOptions_CanCallApi()
-    {
-        // Skip when no API key is available.
-        string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
-        Skip.If(string.IsNullOrEmpty(apiKey), "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task StandaloneClient_WithOptions_CanCallApi()
+	{
+		// Skip when no API key is available.
+		string? apiKey = Environment.GetEnvironmentVariable("TORBOX_API_KEY");
+		Skip.If(string.IsNullOrEmpty(apiKey), "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using var client = new TorBoxClient(new TorBoxClientOptions { ApiKey = apiKey! });
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using var client = new TorBoxClient(new TorBoxClientOptions { ApiKey = apiKey! });
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<UserProfile> response = await client.Main.User.GetMeAsync(
-            cancellationToken: cts.Token);
+		// Act
+		TorBoxResponse<UserProfile> response = await client.Main.User.GetMeAsync(
+			cancellationToken: cts.Token);
 
-        // Assert
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 }

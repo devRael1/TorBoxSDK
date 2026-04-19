@@ -7,15 +7,15 @@ namespace TorBoxSDK.Models.User;
 /// </summary>
 public sealed record Confirmation
 {
-    /// <summary>
-    /// Gets the confirmation status, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
+	/// <summary>
+	/// Gets the confirmation status, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("status")]
+	public string? Status { get; init; }
 
-    /// <summary>
-    /// Gets confirmation details, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("details")]
-    public object? Details { get; init; }
+	/// <summary>
+	/// Gets confirmation details, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("details")]
+	public object? Details { get; init; }
 }

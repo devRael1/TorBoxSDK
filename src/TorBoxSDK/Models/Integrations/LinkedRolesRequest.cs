@@ -7,9 +7,9 @@ namespace TorBoxSDK.Models.Integrations;
 /// </summary>
 public sealed record LinkedRolesRequest
 {
-    /// <summary>
-    /// Gets the Discord OAuth token for linked roles.
-    /// </summary>
-    [JsonPropertyName("discord_token")]
-    public string DiscordToken { get; init; } = string.Empty;
+	/// <summary>
+	/// Gets the Discord OAuth token for linked roles.
+	/// </summary>
+	[JsonPropertyName("discord_token")]
+	public string DiscordToken { get; init; } = string.Empty;
 }

@@ -8,30 +8,30 @@ namespace TorBoxSDK.Models.Search;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MediaType
 {
-    /// <summary>Unknown or unspecified media type.</summary>
-    Unknown = 0,
+	/// <summary>Unknown or unspecified media type.</summary>
+	Unknown = 0,
 
-    /// <summary>Movie content.</summary>
-    Movie,
+	/// <summary>Movie content.</summary>
+	Movie,
 
-    /// <summary>Television content.</summary>
-    Tv,
+	/// <summary>Television content.</summary>
+	Tv,
 
-    /// <summary>Anime content.</summary>
-    Anime,
+	/// <summary>Anime content.</summary>
+	Anime,
 
-    /// <summary>Music content.</summary>
-    Music,
+	/// <summary>Music content.</summary>
+	Music,
 
-    /// <summary>Game content.</summary>
-    Game,
+	/// <summary>Game content.</summary>
+	Game,
 
-    /// <summary>Book content.</summary>
-    Book,
+	/// <summary>Book content.</summary>
+	Book,
 
-    /// <summary>Software content.</summary>
-    Software,
+	/// <summary>Software content.</summary>
+	Software,
 
-    /// <summary>Other or uncategorized content.</summary>
-    Other
+	/// <summary>Other or uncategorized content.</summary>
+	Other
 }

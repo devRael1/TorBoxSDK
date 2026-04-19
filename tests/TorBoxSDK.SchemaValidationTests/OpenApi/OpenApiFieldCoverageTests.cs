@@ -25,85 +25,85 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// </remarks>
 public sealed class OpenApiFieldCoverageTests
 {
-    private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromApiAsync);
+	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromApiAsync);
 
-    /// <summary>
-    /// Provides one row per schema→type mapping for the parameterised tests.
-    /// </summary>
-    public static TheoryData<string, Type> MappedSchemas()
-    {
-        TheoryData<string, Type> data = [];
-        foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
-        {
-            data.Add(schemaName, modelType);
-        }
+	/// <summary>
+	/// Provides one row per schema→type mapping for the parameterised tests.
+	/// </summary>
+	public static TheoryData<string, Type> MappedSchemas()
+	{
+		TheoryData<string, Type> data = [];
+		foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
+		{
+			data.Add(schemaName, modelType);
+		}
 
-        return data;
-    }
+		return data;
+	}
 
-    /// <summary>
-    /// Every field defined in the OpenAPI schema must have a corresponding
-    /// <c>[JsonPropertyName]</c> on the SDK model type (unless it is listed as a known exclusion).
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(MappedSchemas))]
-    public async Task OpenApiSchema_AllFieldsMappedInSdk(string schemaName, Type modelType)
-    {
-        // Arrange
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> schemas = await _schemas.Value;
-        Assert.True(
-            schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
-            $"Schema '{schemaName}' was not found in the OpenAPI specification.");
-        Assert.NotNull(schemaFields);
+	/// <summary>
+	/// Every field defined in the OpenAPI schema must have a corresponding
+	/// <c>[JsonPropertyName]</c> on the SDK model type (unless it is listed as a known exclusion).
+	/// </summary>
+	[Theory]
+	[MemberData(nameof(MappedSchemas))]
+	public async Task OpenApiSchema_AllFieldsMappedInSdk(string schemaName, Type modelType)
+	{
+		// Arrange
+		IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> schemas = await _schemas.Value;
+		Assert.True(
+			schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
+			$"Schema '{schemaName}' was not found in the OpenAPI specification.");
+		Assert.NotNull(schemaFields);
 
-        IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
-        IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
-            .GetValueOrDefault(schemaName) ?? new HashSet<string>();
+		IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
+		IReadOnlySet<string> knownAbsent = SchemaModelMapping.KnownOpenApiFieldsNotInSdk
+			.GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
-        // Act
-        List<string> missingInSdk = schemaFields.Keys
-            .Where(field => !sdkJsonNames.Contains(field) && !knownAbsent.Contains(field))
-            .OrderBy(f => f, StringComparer.Ordinal)
-            .ToList();
+		// Act
+		List<string> missingInSdk = schemaFields.Keys
+			.Where(field => !sdkJsonNames.Contains(field) && !knownAbsent.Contains(field))
+			.OrderBy(f => f, StringComparer.Ordinal)
+			.ToList();
 
-        // Assert
-        Assert.True(
-            missingInSdk.Count == 0,
-            $"OpenAPI schema '{schemaName}' has {missingInSdk.Count} field(s) not mapped in " +
-            $"'{modelType.Name}':{Environment.NewLine}" +
-            string.Join(Environment.NewLine, missingInSdk.Select(f => $"  - {f}")));
-    }
+		// Assert
+		Assert.True(
+			missingInSdk.Count == 0,
+			$"OpenAPI schema '{schemaName}' has {missingInSdk.Count} field(s) not mapped in " +
+			$"'{modelType.Name}':{Environment.NewLine}" +
+			string.Join(Environment.NewLine, missingInSdk.Select(f => $"  - {f}")));
+	}
 
-    /// <summary>
-    /// The SDK model must not declare JSON properties that do not exist in the OpenAPI schema
-    /// (unless they are listed as known SDK extensions).
-    /// </summary>
-    [Theory]
-    [MemberData(nameof(MappedSchemas))]
-    public async Task SdkModel_NoExtraFieldsBeyondOpenApiSchema(string schemaName, Type modelType)
-    {
-        // Arrange
-        IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> schemas = await _schemas.Value;
-        Assert.True(
-            schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
-            $"Schema '{schemaName}' was not found in the OpenAPI specification.");
-        Assert.NotNull(schemaFields);
+	/// <summary>
+	/// The SDK model must not declare JSON properties that do not exist in the OpenAPI schema
+	/// (unless they are listed as known SDK extensions).
+	/// </summary>
+	[Theory]
+	[MemberData(nameof(MappedSchemas))]
+	public async Task SdkModel_NoExtraFieldsBeyondOpenApiSchema(string schemaName, Type modelType)
+	{
+		// Arrange
+		IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> schemas = await _schemas.Value;
+		Assert.True(
+			schemas.TryGetValue(schemaName, out IReadOnlyDictionary<string, string>? schemaFields),
+			$"Schema '{schemaName}' was not found in the OpenAPI specification.");
+		Assert.NotNull(schemaFields);
 
-        IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
-        IReadOnlySet<string> knownExtra = SchemaModelMapping.KnownSdkFieldsNotInOpenApi
-            .GetValueOrDefault(schemaName) ?? new HashSet<string>();
+		IReadOnlySet<string> sdkJsonNames = ModelReflector.GetJsonPropertyNames(modelType);
+		IReadOnlySet<string> knownExtra = SchemaModelMapping.KnownSdkFieldsNotInOpenApi
+			.GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
-        // Act
-        List<string> extraInSdk = sdkJsonNames
-            .Where(field => !schemaFields.ContainsKey(field) && !knownExtra.Contains(field))
-            .OrderBy(f => f, StringComparer.Ordinal)
-            .ToList();
+		// Act
+		List<string> extraInSdk = sdkJsonNames
+			.Where(field => !schemaFields.ContainsKey(field) && !knownExtra.Contains(field))
+			.OrderBy(f => f, StringComparer.Ordinal)
+			.ToList();
 
-        // Assert
-        Assert.True(
-            extraInSdk.Count == 0,
-            $"SDK model '{modelType.Name}' has {extraInSdk.Count} JSON property name(s) not " +
-            $"defined in OpenAPI schema '{schemaName}':{Environment.NewLine}" +
-            string.Join(Environment.NewLine, extraInSdk.Select(f => $"  - {f}")));
-    }
+		// Assert
+		Assert.True(
+			extraInSdk.Count == 0,
+			$"SDK model '{modelType.Name}' has {extraInSdk.Count} JSON property name(s) not " +
+			$"defined in OpenAPI schema '{schemaName}':{Environment.NewLine}" +
+			string.Join(Environment.NewLine, extraInSdk.Select(f => $"  - {f}")));
+	}
 }

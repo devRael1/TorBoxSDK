@@ -14,7 +14,7 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 /// from the OpenAPI schema. These may be undocumented API parameters or SDK-only extensions.
 /// </param>
 internal sealed record SchemaComparisonResult(
-    string SchemaName,
-    Type ModelType,
-    IReadOnlyList<string> FieldsMissingInSdk,
-    IReadOnlyList<string> FieldsExtraInSdk);
+	string SchemaName,
+	Type ModelType,
+	IReadOnlyList<string> FieldsMissingInSdk,
+	IReadOnlyList<string> FieldsExtraInSdk);

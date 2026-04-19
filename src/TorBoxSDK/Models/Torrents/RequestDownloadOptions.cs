@@ -12,45 +12,45 @@ namespace TorBoxSDK.Models.Torrents;
 /// </remarks>
 public sealed record RequestDownloadOptions
 {
-    /// <summary>
-    /// Gets the identifier of a specific file within the torrent to download,
-    /// or <see langword="null"/> to download all files.
-    /// </summary>
-    [QueryParameterName("file_id")]
-    public long? FileId { get; init; }
+	/// <summary>
+	/// Gets the identifier of a specific file within the torrent to download,
+	/// or <see langword="null"/> to download all files.
+	/// </summary>
+	[QueryParameterName("file_id")]
+	public long? FileId { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether to return a zip download link,
-    /// or <see langword="null"/> to use the default behavior.
-    /// </summary>
-    [QueryParameterName("zip_link")]
-    public bool? ZipLink { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether to return a zip download link,
+	/// or <see langword="null"/> to use the default behavior.
+	/// </summary>
+	[QueryParameterName("zip_link")]
+	public bool? ZipLink { get; init; }
 
-    /// <summary>
-    /// Gets the IP address of the user requesting the download,
-    /// or <see langword="null"/> to omit.
-    /// </summary>
-    [QueryParameterName("user_ip")]
-    public string? UserIp { get; init; }
+	/// <summary>
+	/// Gets the IP address of the user requesting the download,
+	/// or <see langword="null"/> to omit.
+	/// </summary>
+	[QueryParameterName("user_ip")]
+	public string? UserIp { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether to redirect to the download URL,
-    /// or <see langword="null"/> to return the URL in the response body.
-    /// </summary>
-    [QueryParameterName("redirect")]
-    public bool? Redirect { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether to redirect to the download URL,
+	/// or <see langword="null"/> to return the URL in the response body.
+	/// </summary>
+	[QueryParameterName("redirect")]
+	public bool? Redirect { get; init; }
 
-    /// <summary>
-    /// Gets the API token to use for authentication,
-    /// or <see langword="null"/> to use the client's default token.
-    /// </summary>
-    [QueryParameterName("token")]
-    public string? Token { get; init; }
+	/// <summary>
+	/// Gets the API token to use for authentication,
+	/// or <see langword="null"/> to use the client's default token.
+	/// </summary>
+	[QueryParameterName("token")]
+	public string? Token { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether to append the file name to the download URL,
-    /// or <see langword="null"/> to use the default behavior.
-    /// </summary>
-    [QueryParameterName("append_name")]
-    public bool? AppendName { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether to append the file name to the download URL,
+	/// or <see langword="null"/> to use the default behavior.
+	/// </summary>
+	[QueryParameterName("append_name")]
+	public bool? AppendName { get; init; }
 }
