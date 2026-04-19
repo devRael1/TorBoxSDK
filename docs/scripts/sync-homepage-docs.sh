@@ -7,10 +7,11 @@ repository="${2:-TorBoxSDK}"
 branch="${3:-main}"
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-repository_root="$(cd -- "$script_dir/.." && pwd)"
+docs_root="$(cd -- "$script_dir/.." && pwd)"
+repository_root="$(cd -- "$docs_root/.." && pwd)"
 source_path="$script_dir/homepage-content.md"
 readme_path="$repository_root/README.md"
-docs_index_path="$repository_root/docs/index.md"
+docs_index_path="$docs_root/index.md"
 
 shared_content="$(perl -0pe 's/\s+\z//' "$source_path")"
 

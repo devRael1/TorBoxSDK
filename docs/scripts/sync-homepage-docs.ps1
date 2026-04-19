@@ -6,10 +6,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-$repositoryRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$docsRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
+$repositoryRoot = (Resolve-Path (Join-Path $docsRoot "..")).Path
 $sourcePath = Join-Path $PSScriptRoot "homepage-content.md"
 $readmePath = Join-Path $repositoryRoot "README.md"
-$docsIndexPath = Join-Path $repositoryRoot "docs/index.md"
+$docsIndexPath = Join-Path $docsRoot "index.md"
 
 function Convert-MarkdownLinksForDocs {
     param(

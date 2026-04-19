@@ -38,3 +38,14 @@
       href: architecture/dependency-injection.md
     - name: Responses and Exceptions
       href: architecture/responses-and-exceptions.md
+- name: Examples
+  href: examples.md
+  items:
+    - name: Running the Examples Project
+      href: examples/running-the-examples-project.md
+    - name: Setup and Configuration Examples
+      href: examples/setup-and-configuration-examples.md
+    - name: Main API Examples
+      href: examples/main-api-examples.md
+    - name: Search, Relay, and Error Handling Examples
+      href: examples/search-relay-and-error-handling-examples.md

@@ -62,7 +62,8 @@ var result = await client.Main.User.GetMeAsync();
 - [Architecture Overview](guides/architecture.md) - Understand the client hierarchy
 - [Configuration Overview](guides/configuration.md) - Configure options and base URLs
 - [Error Handling Overview](guides/error-handling.md) - Handle API errors
-- [Examples](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples/) - 38 runnable scenarios
+- [Examples Overview](guides/examples.md) - Browse runnable examples by scenario
+- [Examples Source Project](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples/) - 38 runnable scenarios
 
 ## Contributing
 
