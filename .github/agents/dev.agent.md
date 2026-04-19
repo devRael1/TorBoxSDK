@@ -2,7 +2,6 @@
 description: "Use when developing TorBoxSDK: design the SDK architecture, implement Main/Search/Relay API clients, add resource clients and models, and make core code and packaging changes for the TorBox C# SDK."
 name: "Dev"
 tools: [vscode, execute, read, agent, edit, search, web, browser, 'com.postman/postman-mcp-server/*', 'github/*', 'microsoftdocs/mcp/*', vscode.mermaid-chat-features/renderMermaidDiagram, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/labels_fetch, github.vscode-pull-request-github/notification_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/pullRequestStatusChecks, github.vscode-pull-request-github/openPullRequest, todo]
-model: Claude Opus 4.6 (copilot)
 argument-hint: "Describe the SDK work to perform, such as scaffold Main/Search/Relay clients, implement a TorBox endpoint, or make core packaging changes."
 agents: ["Tests", "Docs"]
 user-invocable: true
