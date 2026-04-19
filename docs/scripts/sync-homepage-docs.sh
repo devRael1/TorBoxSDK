@@ -4,7 +4,7 @@ set -euo pipefail
 
 owner="${1:-devRael1}"
 repository="${2:-TorBoxSDK}"
-branch="${3:-main}"
+branch="${3:-master}"
 
 script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 docs_root="$(cd -- "$script_dir/.." && pwd)"

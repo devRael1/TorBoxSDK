@@ -1,7 +1,7 @@
 param(
     [string]$Owner = "devRael1",
     [string]$Repository = "TorBoxSDK",
-    [string]$Branch = "main"
+    [string]$Branch = "master"
 )
 
 $ErrorActionPreference = "Stop"

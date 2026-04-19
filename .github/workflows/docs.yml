@@ -34,7 +34,7 @@ jobs:
         shell: bash
         run: |
           sed -i 's/\r$//' ./docs/scripts/sync-homepage-docs.sh
-          bash ./docs/scripts/sync-homepage-docs.sh
+          bash ./docs/scripts/sync-homepage-docs.sh "${{ github.repository_owner }}" "${{ github.event.repository.name }}" "${{ github.ref_name }}"
 
       - name: Build documentation
         run: dotnet tool run docfx docs/docfx.json
