@@ -7,7 +7,7 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 /// </summary>
 internal static class UnmappedFieldDetector
 {
-    /// <inheritdoc cref="TestUtilities.UnmappedFieldDetector.FindUnmappedFields{T}"/>
-    public static IReadOnlyList<string> FindUnmappedFields<T>(string json) =>
-        TestUtilities.UnmappedFieldDetector.FindUnmappedFields<T>(json);
+	/// <inheritdoc cref="TestUtilities.UnmappedFieldDetector.FindUnmappedFields{T}"/>
+	public static IReadOnlyList<string> FindUnmappedFields<T>(string json) =>
+		TestUtilities.UnmappedFieldDetector.FindUnmappedFields<T>(json);
 }

@@ -1,6 +1,10 @@
 name: Documentation
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
 
 permissions:
   pages: write
@@ -26,6 +30,12 @@ jobs:
       - name: Restore tools
         run: dotnet tool restore
 
+      - name: Sync README and docs homepage
+        shell: bash
+        run: |
+          sed -i 's/\r$//' ./docs/scripts/sync-homepage-docs.sh
+          bash ./docs/scripts/sync-homepage-docs.sh "${{ github.repository_owner }}" "${{ github.event.repository.name }}" "${{ github.ref_name }}"
+
       - name: Build documentation
         run: dotnet tool run docfx docs/docfx.json
 
@@ -36,6 +46,7 @@ jobs:
 
   deploy:
     name: Deploy to GitHub Pages
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     needs: build-docs
     runs-on: ubuntu-latest
     environment:

@@ -7,9 +7,9 @@ namespace TorBoxSDK.Models.User;
 /// </summary>
 public sealed record RefreshTokenRequest
 {
-    /// <summary>
-    /// Gets the current session token to refresh.
-    /// </summary>
-    [JsonPropertyName("session_token")]
-    public string SessionToken { get; init; } = string.Empty;
+	/// <summary>
+	/// Gets the current session token to refresh.
+	/// </summary>
+	[JsonPropertyName("session_token")]
+	public string SessionToken { get; init; } = string.Empty;
 }

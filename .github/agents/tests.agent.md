@@ -2,7 +2,6 @@
 description: "Use when developing tests for TorBoxSDK: create or review unit tests, integration tests, and schema validation tests for the TorBox C# SDK based on changes in the core project."
 name: "Tests"
 tools: [vscode, execute, read, agent, edit, search, web, browser, 'com.postman/postman-mcp-server/*', 'github/*', 'microsoftdocs/mcp/*', vscode.mermaid-chat-features/renderMermaidDiagram, github.vscode-pull-request-github/issue_fetch, github.vscode-pull-request-github/labels_fetch, github.vscode-pull-request-github/notification_fetch, github.vscode-pull-request-github/doSearch, github.vscode-pull-request-github/activePullRequest, github.vscode-pull-request-github/pullRequestStatusChecks, github.vscode-pull-request-github/openPullRequest, todo]
-model: Claude Opus 4.6 (copilot)
 argument-hint: "Describe the test work to perform, such as add unit tests for a client, create integration coverage for an endpoint, or add schema validation tests."
 agents: ["Docs"]
 user-invocable: true

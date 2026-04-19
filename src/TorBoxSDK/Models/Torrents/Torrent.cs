@@ -8,239 +8,239 @@ namespace TorBoxSDK.Models.Torrents;
 /// </summary>
 public sealed record Torrent
 {
-    /// <summary>
-    /// Gets the unique identifier of the torrent.
-    /// </summary>
-    [JsonPropertyName("id")]
-    public long Id { get; init; }
+	/// <summary>
+	/// Gets the unique identifier of the torrent.
+	/// </summary>
+	[JsonPropertyName("id")]
+	public long Id { get; init; }
 
-    /// <summary>
-    /// Gets the authentication identifier of the user who owns this torrent,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("auth_id")]
-    public string? AuthId { get; init; }
+	/// <summary>
+	/// Gets the authentication identifier of the user who owns this torrent,
+	/// or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("auth_id")]
+	public string? AuthId { get; init; }
 
-    /// <summary>
-    /// Gets the info hash of the torrent, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("hash")]
-    public string? Hash { get; init; }
+	/// <summary>
+	/// Gets the info hash of the torrent, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("hash")]
+	public string? Hash { get; init; }
 
-    /// <summary>
-    /// Gets the display name of the torrent.
-    /// </summary>
-    [JsonPropertyName("name")]
-    public string Name { get; init; } = string.Empty;
+	/// <summary>
+	/// Gets the display name of the torrent.
+	/// </summary>
+	[JsonPropertyName("name")]
+	public string Name { get; init; } = string.Empty;
 
-    /// <summary>
-    /// Gets the magnet URI of the torrent, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("magnet")]
-    public string? Magnet { get; init; }
+	/// <summary>
+	/// Gets the magnet URI of the torrent, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("magnet")]
+	public string? Magnet { get; init; }
 
-    /// <summary>
-    /// Gets the total size of the torrent in bytes.
-    /// </summary>
-    [JsonPropertyName("size")]
-    public long Size { get; init; }
+	/// <summary>
+	/// Gets the total size of the torrent in bytes.
+	/// </summary>
+	[JsonPropertyName("size")]
+	public long Size { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the torrent is currently active.
-    /// </summary>
-    [JsonPropertyName("active")]
-    public bool Active { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the torrent is currently active.
+	/// </summary>
+	[JsonPropertyName("active")]
+	public bool Active { get; init; }
 
-    /// <summary>
-    /// Gets the date and time when the torrent was created, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("created_at")]
-    public DateTimeOffset? CreatedAt { get; init; }
+	/// <summary>
+	/// Gets the date and time when the torrent was created, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("created_at")]
+	public DateTimeOffset? CreatedAt { get; init; }
 
-    /// <summary>
-    /// Gets the date and time when the torrent was last updated, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("updated_at")]
-    public DateTimeOffset? UpdatedAt { get; init; }
+	/// <summary>
+	/// Gets the date and time when the torrent was last updated, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("updated_at")]
+	public DateTimeOffset? UpdatedAt { get; init; }
 
-    /// <summary>
-    /// Gets the date and time when the torrent will expire, or <see langword="null"/> if not set.
-    /// </summary>
-    [JsonPropertyName("expires_at")]
-    public DateTimeOffset? ExpiresAt { get; init; }
+	/// <summary>
+	/// Gets the date and time when the torrent will expire, or <see langword="null"/> if not set.
+	/// </summary>
+	[JsonPropertyName("expires_at")]
+	public DateTimeOffset? ExpiresAt { get; init; }
 
-    /// <summary>
-    /// Gets the current download state as a string descriptor,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("download_state")]
-    public string? DownloadState { get; init; }
+	/// <summary>
+	/// Gets the current download state as a string descriptor,
+	/// or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("download_state")]
+	public string? DownloadState { get; init; }
 
-    /// <summary>
-    /// Gets the current download speed in bytes per second.
-    /// </summary>
-    [JsonPropertyName("download_speed")]
-    public long DownloadSpeed { get; init; }
+	/// <summary>
+	/// Gets the current download speed in bytes per second.
+	/// </summary>
+	[JsonPropertyName("download_speed")]
+	public long DownloadSpeed { get; init; }
 
-    /// <summary>
-    /// Gets the current upload speed in bytes per second.
-    /// </summary>
-    [JsonPropertyName("upload_speed")]
-    public long UploadSpeed { get; init; }
+	/// <summary>
+	/// Gets the current upload speed in bytes per second.
+	/// </summary>
+	[JsonPropertyName("upload_speed")]
+	public long UploadSpeed { get; init; }
 
-    /// <summary>
-    /// Gets the number of seeds connected to this torrent.
-    /// </summary>
-    [JsonPropertyName("seeds")]
-    public int Seeds { get; init; }
+	/// <summary>
+	/// Gets the number of seeds connected to this torrent.
+	/// </summary>
+	[JsonPropertyName("seeds")]
+	public int Seeds { get; init; }
 
-    /// <summary>
-    /// Gets the number of peers connected to this torrent.
-    /// </summary>
-    [JsonPropertyName("peers")]
-    public int Peers { get; init; }
+	/// <summary>
+	/// Gets the number of peers connected to this torrent.
+	/// </summary>
+	[JsonPropertyName("peers")]
+	public int Peers { get; init; }
 
-    /// <summary>
-    /// Gets the upload-to-download ratio of the torrent.
-    /// </summary>
-    [JsonPropertyName("ratio")]
-    public double Ratio { get; init; }
+	/// <summary>
+	/// Gets the upload-to-download ratio of the torrent.
+	/// </summary>
+	[JsonPropertyName("ratio")]
+	public double Ratio { get; init; }
 
-    /// <summary>
-    /// Gets the download progress as a value between 0.0 and 1.0.
-    /// </summary>
-    [JsonPropertyName("progress")]
-    public double Progress { get; init; }
+	/// <summary>
+	/// Gets the download progress as a value between 0.0 and 1.0.
+	/// </summary>
+	[JsonPropertyName("progress")]
+	public double Progress { get; init; }
 
-    /// <summary>
-    /// Gets the availability of the torrent data across connected peers.
-    /// </summary>
-    [JsonPropertyName("availability")]
-    public double Availability { get; init; }
+	/// <summary>
+	/// Gets the availability of the torrent data across connected peers.
+	/// </summary>
+	[JsonPropertyName("availability")]
+	public double Availability { get; init; }
 
-    /// <summary>
-    /// Gets the estimated time of arrival (completion) in seconds.
-    /// </summary>
-    [JsonPropertyName("eta")]
-    public long Eta { get; init; }
+	/// <summary>
+	/// Gets the estimated time of arrival (completion) in seconds.
+	/// </summary>
+	[JsonPropertyName("eta")]
+	public long Eta { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the download has finished.
-    /// </summary>
-    [JsonPropertyName("download_finished")]
-    public bool DownloadFinished { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the download has finished.
+	/// </summary>
+	[JsonPropertyName("download_finished")]
+	public bool DownloadFinished { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the downloaded data is present on the server.
-    /// </summary>
-    [JsonPropertyName("download_present")]
-    public bool DownloadPresent { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the downloaded data is present on the server.
+	/// </summary>
+	[JsonPropertyName("download_present")]
+	public bool DownloadPresent { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the original torrent file is available.
-    /// </summary>
-    [JsonPropertyName("torrent_file")]
-    public bool TorrentFile { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the original torrent file is available.
+	/// </summary>
+	[JsonPropertyName("torrent_file")]
+	public bool TorrentFile { get; init; }
 
-    /// <summary>
-    /// Gets the inactive check interval in seconds.
-    /// </summary>
-    [JsonPropertyName("inactive_check")]
-    public long InactiveCheck { get; init; }
+	/// <summary>
+	/// Gets the inactive check interval in seconds.
+	/// </summary>
+	[JsonPropertyName("inactive_check")]
+	public long InactiveCheck { get; init; }
 
-    /// <summary>
-    /// Gets the server identifier where the torrent is hosted.
-    /// </summary>
-    [JsonPropertyName("server")]
-    public int Server { get; init; }
+	/// <summary>
+	/// Gets the server identifier where the torrent is hosted.
+	/// </summary>
+	[JsonPropertyName("server")]
+	public int Server { get; init; }
 
-    /// <summary>
-    /// Gets the list of files contained in this torrent.
-    /// </summary>
-    [JsonPropertyName("files")]
-    public IReadOnlyList<DownloadFile> Files { get; init; } = [];
+	/// <summary>
+	/// Gets the list of files contained in this torrent.
+	/// </summary>
+	[JsonPropertyName("files")]
+	public IReadOnlyList<DownloadFile> Files { get; init; } = [];
 
-    /// <summary>
-    /// Gets the download path identifier for this torrent, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("download_path")]
-    public string? DownloadPath { get; init; }
+	/// <summary>
+	/// Gets the download path identifier for this torrent, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("download_path")]
+	public string? DownloadPath { get; init; }
 
-    /// <summary>
-    /// Gets the tracker URL for this torrent, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("tracker")]
-    public string? Tracker { get; init; }
+	/// <summary>
+	/// Gets the tracker URL for this torrent, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("tracker")]
+	public string? Tracker { get; init; }
 
-    /// <summary>
-    /// Gets the total number of bytes uploaded for this torrent.
-    /// </summary>
-    [JsonPropertyName("total_uploaded")]
-    public long TotalUploaded { get; init; }
+	/// <summary>
+	/// Gets the total number of bytes uploaded for this torrent.
+	/// </summary>
+	[JsonPropertyName("total_uploaded")]
+	public long TotalUploaded { get; init; }
 
-    /// <summary>
-    /// Gets the total number of bytes downloaded for this torrent.
-    /// </summary>
-    [JsonPropertyName("total_downloaded")]
-    public long TotalDownloaded { get; init; }
+	/// <summary>
+	/// Gets the total number of bytes downloaded for this torrent.
+	/// </summary>
+	[JsonPropertyName("total_downloaded")]
+	public long TotalDownloaded { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether this torrent is cached on the server.
-    /// </summary>
-    [JsonPropertyName("cached")]
-    public bool Cached { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether this torrent is cached on the server.
+	/// </summary>
+	[JsonPropertyName("cached")]
+	public bool Cached { get; init; }
 
-    /// <summary>
-    /// Gets the owner identifier (UUID) of this torrent, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("owner")]
-    public string? Owner { get; init; }
+	/// <summary>
+	/// Gets the owner identifier (UUID) of this torrent, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("owner")]
+	public string? Owner { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether this torrent should be seeded after completion.
-    /// </summary>
-    [JsonPropertyName("seed_torrent")]
-    public bool SeedTorrent { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether this torrent should be seeded after completion.
+	/// </summary>
+	[JsonPropertyName("seed_torrent")]
+	public bool SeedTorrent { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether zipped downloads are allowed for this torrent.
-    /// </summary>
-    [JsonPropertyName("allow_zipped")]
-    public bool AllowZipped { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether zipped downloads are allowed for this torrent.
+	/// </summary>
+	[JsonPropertyName("allow_zipped")]
+	public bool AllowZipped { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether long-term seeding is enabled for this torrent.
-    /// </summary>
-    [JsonPropertyName("long_term_seeding")]
-    public bool LongTermSeeding { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether long-term seeding is enabled for this torrent.
+	/// </summary>
+	[JsonPropertyName("long_term_seeding")]
+	public bool LongTermSeeding { get; init; }
 
-    /// <summary>
-    /// Gets the tracker message for this torrent, or <see langword="null"/> if none.
-    /// </summary>
-    [JsonPropertyName("tracker_message")]
-    public string? TrackerMessage { get; init; }
+	/// <summary>
+	/// Gets the tracker message for this torrent, or <see langword="null"/> if none.
+	/// </summary>
+	[JsonPropertyName("tracker_message")]
+	public string? TrackerMessage { get; init; }
 
-    /// <summary>
-    /// Gets the date and time when the torrent was cached, or <see langword="null"/> if not cached.
-    /// </summary>
-    [JsonPropertyName("cached_at")]
-    public DateTimeOffset? CachedAt { get; init; }
+	/// <summary>
+	/// Gets the date and time when the torrent was cached, or <see langword="null"/> if not cached.
+	/// </summary>
+	[JsonPropertyName("cached_at")]
+	public DateTimeOffset? CachedAt { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether this torrent uses a private tracker.
-    /// </summary>
-    [JsonPropertyName("private")]
-    public bool IsPrivate { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether this torrent uses a private tracker.
+	/// </summary>
+	[JsonPropertyName("private")]
+	public bool IsPrivate { get; init; }
 
-    /// <summary>
-    /// Gets the list of alternative hashes for this torrent.
-    /// </summary>
-    [JsonPropertyName("alternative_hashes")]
-    public IReadOnlyList<string> AlternativeHashes { get; init; } = [];
+	/// <summary>
+	/// Gets the list of alternative hashes for this torrent.
+	/// </summary>
+	[JsonPropertyName("alternative_hashes")]
+	public IReadOnlyList<string> AlternativeHashes { get; init; } = [];
 
-    /// <summary>
-    /// Gets the list of tags associated with this torrent.
-    /// </summary>
-    [JsonPropertyName("tags")]
-    public IReadOnlyList<string> Tags { get; init; } = [];
+	/// <summary>
+	/// Gets the list of tags associated with this torrent.
+	/// </summary>
+	[JsonPropertyName("tags")]
+	public IReadOnlyList<string> Tags { get; init; } = [];
 }

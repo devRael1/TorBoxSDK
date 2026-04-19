@@ -7,9 +7,9 @@ namespace TorBoxSDK.Models.User;
 /// </summary>
 public sealed record DeviceTokenRequest
 {
-    /// <summary>
-    /// Gets the device code obtained from the device authorization flow.
-    /// </summary>
-    [JsonPropertyName("device_code")]
-    public string DeviceCode { get; init; } = string.Empty;
+	/// <summary>
+	/// Gets the device code obtained from the device authorization flow.
+	/// </summary>
+	[JsonPropertyName("device_code")]
+	public string DeviceCode { get; init; } = string.Empty;
 }

@@ -3,11 +3,11 @@ uid: index
 title: TorBoxSDK Documentation
 description: Unofficial C# SDK for the TorBox API with typed clients for Main, Search, and Relay APIs.
 ---
-
 # TorBoxSDK
 
 [![NuGet](https://img.shields.io/badge/NuGet-TorBoxSDK-blue?logo=nuget)](https://www.nuget.org/packages/TorBoxSDK)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](https://github.com/devRael1/TorBoxSDK/blob/main/LICENSE)
+[![Documentation](https://img.shields.io/badge/docs-website-04BF8A?logo=readthedocs&logoColor=white)](https://devrael1.github.io/TorBoxSDK/)
 [![.NET](https://img.shields.io/badge/.NET-net6.0%20%7C%20net7.0%20%7C%20net8.0%20%7C%20net9.0%20%7C%20net10.0-purple)]()
 
 **Important:** This SDK is unofficial and is not affiliated with or endorsed by TorBox.
@@ -62,8 +62,8 @@ var result = await client.Main.User.GetMeAsync();
 - [Architecture Overview](guides/architecture.md) - Understand the client hierarchy
 - [Configuration Overview](guides/configuration.md) - Configure options and base URLs
 - [Error Handling Overview](guides/error-handling.md) - Handle API errors
-- [API Reference](api/TorBoxSDK.yml) - Full API documentation
-- [Examples](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples/) - 37 runnable scenarios
+- [Examples Overview](guides/examples.md) - Browse runnable examples by scenario
+- [Examples Source Project](https://github.com/devRael1/TorBoxSDK/tree/main/src/TorBoxSDK.Examples/) - 38 runnable scenarios
 
 ## Contributing
 
@@ -71,6 +71,14 @@ Contributions are welcome! Read the [Contributing Guide](https://github.com/devR
 
 - [Report vulnerabilities](https://github.com/devRael1/TorBoxSDK/blob/main/SECURITY.md) privately
 - [File issues and feature requests](https://github.com/devRael1/TorBoxSDK/issues)
+
+## Versioning
+
+This package follows [Semantic Versioning (SemVer)](https://semver.org) and uses the `MAJOR.MINOR.PATCH` format:
+
+- `MAJOR` for incompatible API changes
+- `MINOR` for new backward-compatible functionality
+- `PATCH` for backward-compatible bug fixes
 
 ## License
 

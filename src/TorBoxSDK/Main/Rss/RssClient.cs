@@ -18,57 +18,57 @@ namespace TorBoxSDK.Main.Rss;
 /// </exception>
 internal sealed class RssClient(HttpClient httpClient) : IRssClient
 {
-    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
+	private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> AddRssAsync(AddRssRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> AddRssAsync(AddRssRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/addrss")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/addrss")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> ControlRssAsync(ControlRssRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> ControlRssAsync(ControlRssRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/controlrss")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/controlrss")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> ModifyRssAsync(ModifyRssRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> ModifyRssAsync(ModifyRssRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/modifyrss")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "rss/modifyrss")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<RssFeed>>> GetFeedsAsync(CancellationToken cancellationToken = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "rss/getfeeds");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<RssFeed>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyList<RssFeed>>> GetFeedsAsync(CancellationToken cancellationToken = default)
+	{
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "rss/getfeeds");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyList<RssFeed>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<RssFeedItem>>> GetFeedItemsAsync(long rssFeedId, CancellationToken cancellationToken = default)
-    {
-        string query = TorBoxApiHelper.BuildQuery(("rss_feed_id", rssFeedId.ToString()));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyList<RssFeedItem>>> GetFeedItemsAsync(long rssFeedId, CancellationToken cancellationToken = default)
+	{
+		string query = TorBoxApiHelper.BuildQuery(("rss_feed_id", rssFeedId.ToString()));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"rss/getfeeditems{query}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<RssFeedItem>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"rss/getfeeditems{query}");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyList<RssFeedItem>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 }

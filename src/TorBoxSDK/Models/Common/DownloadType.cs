@@ -8,15 +8,15 @@ namespace TorBoxSDK.Models.Common;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum DownloadType
 {
-    /// <summary>An unknown or unmapped download type was returned.</summary>
-    Unknown = 0,
+	/// <summary>An unknown or unmapped download type was returned.</summary>
+	Unknown = 0,
 
-    /// <summary>A torrent download.</summary>
-    Torrent,
+	/// <summary>A torrent download.</summary>
+	Torrent,
 
-    /// <summary>A Usenet download.</summary>
-    Usenet,
+	/// <summary>A Usenet download.</summary>
+	Usenet,
 
-    /// <summary>A web (direct link / hoster) download.</summary>
-    WebDownload,
+	/// <summary>A web (direct link / hoster) download.</summary>
+	WebDownload,
 }

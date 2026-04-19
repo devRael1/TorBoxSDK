@@ -13,125 +13,125 @@ namespace TorBoxSDK.SchemaValidationTests.Live;
 [Trait("Category", "Live")]
 public sealed class GeneralSchemaLiveTests(SchemaLiveTestFixture fixture)
 {
-    private readonly SchemaLiveTestFixture _fixture = fixture;
+	private readonly SchemaLiveTestFixture _fixture = fixture;
 
-    [SkippableFact]
-    public async Task GetStats_ResponseFields_AllMappedInSdkModel()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetStats_ResponseFields_AllMappedInSdkModel()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/stats", cts.Token)
-            .ConfigureAwait(false);
+		// Act
+		using HttpResponseMessage response = await _fixture.HttpClient
+			.GetAsync("/v1/api/stats", cts.Token)
+			.ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+		response.EnsureSuccessStatusCode();
 
-        string json = await response.Content
-            .ReadAsStringAsync(cts.Token)
-            .ConfigureAwait(false);
+		string json = await response.Content
+			.ReadAsStringAsync(cts.Token)
+			.ConfigureAwait(false);
 
-        IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<Stats>>(json);
+		IReadOnlyList<string> unmapped =
+			UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<Stats>>(json);
 
-        // Assert
-        Assert.True(
-            unmapped.Count == 0,
-            BuildMessage("GET /v1/api/stats", typeof(Stats), unmapped));
-    }
+		// Assert
+		Assert.True(
+			unmapped.Count == 0,
+			BuildMessage("GET /v1/api/stats", typeof(Stats), unmapped));
+	}
 
-    [SkippableFact]
-    public async Task Get30DayStats_ResponseFields_AllMappedInSdkModel()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task Get30DayStats_ResponseFields_AllMappedInSdkModel()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/stats/30days", cts.Token)
-            .ConfigureAwait(false);
+		// Act
+		using HttpResponseMessage response = await _fixture.HttpClient
+			.GetAsync("/v1/api/stats/30days", cts.Token)
+			.ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+		response.EnsureSuccessStatusCode();
 
-        string json = await response.Content
-            .ReadAsStringAsync(cts.Token)
-            .ConfigureAwait(false);
+		string json = await response.Content
+			.ReadAsStringAsync(cts.Token)
+			.ConfigureAwait(false);
 
-        IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<DailyStats>>>(json);
+		IReadOnlyList<string> unmapped =
+			UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<DailyStats>>>(json);
 
-        // Assert
-        Assert.True(
-            unmapped.Count == 0,
-            BuildMessage("GET /v1/api/stats/30days", typeof(DailyStats), unmapped));
-    }
+		// Assert
+		Assert.True(
+			unmapped.Count == 0,
+			BuildMessage("GET /v1/api/stats/30days", typeof(DailyStats), unmapped));
+	}
 
-    [SkippableFact]
-    public async Task GetSpeedtestFiles_ResponseFields_AllMappedInSdkModel()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetSpeedtestFiles_ResponseFields_AllMappedInSdkModel()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/speedtest", cts.Token)
-            .ConfigureAwait(false);
+		// Act
+		using HttpResponseMessage response = await _fixture.HttpClient
+			.GetAsync("/v1/api/speedtest", cts.Token)
+			.ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+		response.EnsureSuccessStatusCode();
 
-        string json = await response.Content
-            .ReadAsStringAsync(cts.Token)
-            .ConfigureAwait(false);
+		string json = await response.Content
+			.ReadAsStringAsync(cts.Token)
+			.ConfigureAwait(false);
 
-        IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<SpeedtestServer>>>(json);
+		IReadOnlyList<string> unmapped =
+			UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<SpeedtestServer>>>(json);
 
-        // Assert
-        Assert.True(
-            unmapped.Count == 0,
-            BuildMessage("GET /v1/api/speedtest", typeof(SpeedtestServer), unmapped));
-    }
+		// Assert
+		Assert.True(
+			unmapped.Count == 0,
+			BuildMessage("GET /v1/api/speedtest", typeof(SpeedtestServer), unmapped));
+	}
 
-    [SkippableFact]
-    public async Task GetChangelogsJson_ResponseFields_AllMappedInSdkModel()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetChangelogsJson_ResponseFields_AllMappedInSdkModel()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        using HttpResponseMessage response = await _fixture.HttpClient
-            .GetAsync("/v1/api/changelogs/json", cts.Token)
-            .ConfigureAwait(false);
+		// Act
+		using HttpResponseMessage response = await _fixture.HttpClient
+			.GetAsync("/v1/api/changelogs/json", cts.Token)
+			.ConfigureAwait(false);
 
-        response.EnsureSuccessStatusCode();
+		response.EnsureSuccessStatusCode();
 
-        string json = await response.Content
-            .ReadAsStringAsync(cts.Token)
-            .ConfigureAwait(false);
+		string json = await response.Content
+			.ReadAsStringAsync(cts.Token)
+			.ConfigureAwait(false);
 
-        IReadOnlyList<string> unmapped =
-            UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<Changelog>>>(json);
+		IReadOnlyList<string> unmapped =
+			UnmappedFieldDetector.FindUnmappedFields<TorBoxResponse<IReadOnlyList<Changelog>>>(json);
 
-        // Assert
-        Assert.True(
-            unmapped.Count == 0,
-            BuildMessage("GET /v1/api/changelogs/json", typeof(Changelog), unmapped));
-    }
+		// Assert
+		Assert.True(
+			unmapped.Count == 0,
+			BuildMessage("GET /v1/api/changelogs/json", typeof(Changelog), unmapped));
+	}
 
-    private static string BuildMessage(
-        string endpoint,
-        Type modelType,
-        IReadOnlyList<string> unmapped) =>
-        $"Endpoint '{endpoint}' returned {unmapped.Count} unmapped field path(s) " +
-        $"not covered by '{modelType.Name}' (including nested types):{Environment.NewLine}" +
-        string.Join(Environment.NewLine, unmapped.Select(f => $"  - {f}"));
+	private static string BuildMessage(
+		string endpoint,
+		Type modelType,
+		IReadOnlyList<string> unmapped) =>
+		$"Endpoint '{endpoint}' returned {unmapped.Count} unmapped field path(s) " +
+		$"not covered by '{modelType.Name}' (including nested types):{Environment.NewLine}" +
+		string.Join(Environment.NewLine, unmapped.Select(f => $"  - {f}"));
 }

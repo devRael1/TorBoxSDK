@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using TorBoxSDK.DependencyInjection;
 using TorBoxSDK.Models.Common;
 
@@ -12,28 +12,28 @@ namespace TorBoxSDK.IntegrationTests.Auth;
 [Trait("Category", "Integration")]
 public sealed class AuthFailureIntegrationTests
 {
-    [SkippableFact]
-    public async Task GetMeAsync_WithInvalidApiKey_ThrowsTorBoxException()
-    {
-        // Skip in environments where outbound HTTP is unavailable.
-        Skip.If(
-            Environment.GetEnvironmentVariable("TORBOX_INTEGRATION_TESTS_ENABLED") is null
-                && Environment.GetEnvironmentVariable("TORBOX_API_KEY") is null,
-            "Integration test environment not configured.");
+	[SkippableFact]
+	public async Task GetMeAsync_WithInvalidApiKey_ThrowsTorBoxException()
+	{
+		// Skip in environments where outbound HTTP is unavailable.
+		Skip.If(
+			Environment.GetEnvironmentVariable("TORBOX_INTEGRATION_TESTS_ENABLED") is null
+				&& Environment.GetEnvironmentVariable("TORBOX_API_KEY") is null,
+			"Integration test environment not configured.");
 
-        // Arrange
-        ServiceCollection services = new();
-        services.AddTorBox(options => options.ApiKey = "invalid-api-key");
+		// Arrange
+		ServiceCollection services = new();
+		services.AddTorBox(options => options.ApiKey = "invalid-api-key");
 
-        await using ServiceProvider provider = services.BuildServiceProvider();
-        ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
+		await using ServiceProvider provider = services.BuildServiceProvider();
+		ITorBoxClient client = provider.GetRequiredService<ITorBoxClient>();
 
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act & Assert
-        TorBoxException exception = await Assert.ThrowsAsync<TorBoxException>(
-            () => client.Main.User.GetMeAsync(cancellationToken: cts.Token));
+		// Act & Assert
+		TorBoxException exception = await Assert.ThrowsAsync<TorBoxException>(
+			() => client.Main.User.GetMeAsync(cancellationToken: cts.Token));
 
-        Assert.Equal(TorBoxErrorCode.BadToken, exception.ErrorCode);
-    }
+		Assert.Equal(TorBoxErrorCode.BadToken, exception.ErrorCode);
+	}
 }

@@ -1,4 +1,4 @@
-﻿using TorBoxSDK.IntegrationTests.Helpers;
+using TorBoxSDK.IntegrationTests.Helpers;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.WebDownloads;
 
@@ -11,60 +11,60 @@ namespace TorBoxSDK.IntegrationTests.Main.WebDownloads;
 [Trait("Category", "Integration")]
 public sealed class WebDownloadsClientIntegrationTests(TorBoxIntegrationFixture fixture)
 {
-    private readonly TorBoxIntegrationFixture _fixture = fixture;
+	private readonly TorBoxIntegrationFixture _fixture = fixture;
 
-    [SkippableFact]
-    public async Task GetMyWebDownloadListAsync_WithValidApiKey_ReturnsResponse()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetMyWebDownloadListAsync_WithValidApiKey_ReturnsResponse()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<IReadOnlyList<WebDownload>> response = await _fixture.Client.Main.WebDownloads
-            .GetMyWebDownloadListAsync(cancellationToken: cts.Token);
+		// Act
+		TorBoxResponse<IReadOnlyList<WebDownload>> response = await _fixture.Client.Main.WebDownloads
+			.GetMyWebDownloadListAsync(cancellationToken: cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task GetHostersAsync_WithValidApiKey_ReturnsHosters()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task GetHostersAsync_WithValidApiKey_ReturnsHosters()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
 
-        // Act
-        TorBoxResponse<IReadOnlyList<Hoster>> response = await _fixture.Client.Main.WebDownloads
-            .GetHostersAsync(cts.Token);
+		// Act
+		TorBoxResponse<IReadOnlyList<Hoster>> response = await _fixture.Client.Main.WebDownloads
+			.GetHostersAsync(cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-        Assert.NotNull(response.Data);
-        Assert.NotEmpty(response.Data);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+		Assert.NotNull(response.Data);
+		Assert.NotEmpty(response.Data);
+	}
 
-    [SkippableFact]
-    public async Task CheckCachedAsync_WithDummyHashes_ReturnsResponse()
-    {
-        Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
+	[SkippableFact]
+	public async Task CheckCachedAsync_WithDummyHashes_ReturnsResponse()
+	{
+		Skip.If(!_fixture.HasApiKey, "TORBOX_API_KEY not set.");
 
-        // Arrange
-        using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
-        IReadOnlyList<string> hashes = ["abc123def456"];
+		// Arrange
+		using CancellationTokenSource cts = new(TimeSpan.FromMinutes(1));
+		IReadOnlyList<string> hashes = ["abc123def456"];
 
-        // Act
-        TorBoxResponse<object> response = await _fixture.Client.Main.WebDownloads
-            .CheckCachedAsync(hashes, cancellationToken: cts.Token);
+		// Act
+		TorBoxResponse<CheckWebCached> response = await _fixture.Client.Main.WebDownloads
+			.CheckCachedAsync(hashes, cancellationToken: cts.Token);
 
-        // Assert
-        Assert.NotNull(response);
-        Assert.True(response.Success);
-    }
+		// Assert
+		Assert.NotNull(response);
+		Assert.True(response.Success);
+	}
 }

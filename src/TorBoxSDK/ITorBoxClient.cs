@@ -13,19 +13,19 @@ namespace TorBoxSDK;
 /// </remarks>
 public interface ITorBoxClient : IDisposable
 {
-    /// <summary>
-    /// Gets the Main API client, which exposes resource clients for
-    /// torrents, usenet, web downloads, user management, and more.
-    /// </summary>
-    IMainApiClient Main { get; }
+	/// <summary>
+	/// Gets the Main API client, which exposes resource clients for
+	/// torrents, usenet, web downloads, user management, and more.
+	/// </summary>
+	IMainApiClient Main { get; }
 
-    /// <summary>
-    /// Gets the Search API client for querying torrent and usenet indexers.
-    /// </summary>
-    ISearchApiClient Search { get; }
+	/// <summary>
+	/// Gets the Search API client for querying torrent and usenet indexers.
+	/// </summary>
+	ISearchApiClient Search { get; }
 
-    /// <summary>
-    /// Gets the Relay API client for relay-based operations.
-    /// </summary>
-    IRelayApiClient Relay { get; }
+	/// <summary>
+	/// Gets the Relay API client for relay-based operations.
+	/// </summary>
+	IRelayApiClient Relay { get; }
 }

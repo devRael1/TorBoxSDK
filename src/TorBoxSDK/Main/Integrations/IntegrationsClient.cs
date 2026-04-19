@@ -18,175 +18,175 @@ namespace TorBoxSDK.Main.Integrations;
 /// </exception>
 internal sealed class IntegrationsClient(HttpClient httpClient) : IIntegrationsClient
 {
-    private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
+	private readonly HttpClient _httpClient = Guard.ThrowIfNull(httpClient);
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "integration/oauth/me");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyDictionary<string, bool>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyDictionary<string, bool>>> GetOAuthMeAsync(CancellationToken cancellationToken = default)
+	{
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "integration/oauth/me");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyDictionary<string, bool>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreateGoogleDriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreateGoogleDriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/googledrive")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/googledrive")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreateDropboxJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreateDropboxJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/dropbox")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/dropbox")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreateOnedriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreateOnedriveJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/onedrive")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/onedrive")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreateGofileJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreateGofileJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/gofile")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/gofile")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreateOneFichierJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreateOneFichierJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/1fichier")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/1fichier")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> CreatePixeldrainJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> CreatePixeldrainJobAsync(CreateIntegrationJobRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/pixeldrain")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/pixeldrain")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IntegrationJob>> GetJobAsync(long jobId, CancellationToken cancellationToken = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/job/{jobId}");
-        return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IntegrationJob>> GetJobAsync(long jobId, CancellationToken cancellationToken = default)
+	{
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/job/{jobId}");
+		return await TorBoxApiHelper.SendAsync<IntegrationJob>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> DeleteJobAsync(long jobId, CancellationToken cancellationToken = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"integration/job/{jobId}");
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> DeleteJobAsync(long jobId, CancellationToken cancellationToken = default)
+	{
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"integration/job/{jobId}");
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<IntegrationJob>>> GetJobsAsync(CancellationToken cancellationToken = default)
-    {
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "integration/jobs");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<IntegrationJob>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyList<IntegrationJob>>> GetJobsAsync(CancellationToken cancellationToken = default)
+	{
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, "integration/jobs");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyList<IntegrationJob>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<IReadOnlyList<IntegrationJob>>> GetJobsByHashAsync(string hash, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNullOrEmpty(hash, nameof(hash));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<IReadOnlyList<IntegrationJob>>> GetJobsByHashAsync(string hash, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNullOrEmpty(hash, nameof(hash));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/jobs/{Uri.EscapeDataString(hash)}");
-        return await TorBoxApiHelper.SendAsync<IReadOnlyList<IntegrationJob>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/jobs/{Uri.EscapeDataString(hash)}");
+		return await TorBoxApiHelper.SendAsync<IReadOnlyList<IntegrationJob>>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<string>> OAuthRedirectAsync(string provider, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<string>> OAuthRedirectAsync(string provider, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}");
-        return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}");
+		return await TorBoxApiHelper.SendAsync<string>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<OAuthCallback>> OAuthCallbackAsync(string provider, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/callback");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/callback");
+		return await TorBoxApiHelper.SendAsync<OAuthCallback>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<OAuthSuccess>> OAuthSuccessAsync(string provider, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/success");
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Get, $"integration/oauth/{Uri.EscapeDataString(provider)}/success");
+		return await TorBoxApiHelper.SendAsync<OAuthSuccess>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
-        Guard.ThrowIfNullOrEmpty(request.Provider, nameof(request.Provider));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> OAuthRegisterAsync(OAuthRegisterRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
+		Guard.ThrowIfNullOrEmpty(request.Provider, nameof(request.Provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(request.Provider)}/register")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, $"integration/oauth/{Uri.EscapeDataString(request.Provider)}/register")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse> OAuthUnregisterAsync(string provider, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
+	/// <inheritdoc />
+	public async Task<TorBoxResponse> OAuthUnregisterAsync(string provider, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNullOrEmpty(provider, nameof(provider));
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"integration/oauth/{Uri.EscapeDataString(provider)}/unregister");
-        return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Delete, $"integration/oauth/{Uri.EscapeDataString(provider)}/unregister");
+		return await TorBoxApiHelper.SendAsync(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 
-    /// <inheritdoc />
-    public async Task<TorBoxResponse<object>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
-    {
-        Guard.ThrowIfNull(request);
+	/// <inheritdoc />
+	public async Task<TorBoxResponse<LinkedDiscordRoles>> GetLinkedDiscordRolesAsync(LinkedRolesRequest request, CancellationToken cancellationToken = default)
+	{
+		Guard.ThrowIfNull(request);
 
-        using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles")
-        {
-            Content = TorBoxApiHelper.JsonContent(request),
-        };
-        return await TorBoxApiHelper.SendAsync<object>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
-    }
+		using var httpRequest = new HttpRequestMessage(HttpMethod.Post, "integration/oauth/discord/linked_roles")
+		{
+			Content = TorBoxApiHelper.JsonContent(request),
+		};
+		return await TorBoxApiHelper.SendAsync<LinkedDiscordRoles>(_httpClient, httpRequest, cancellationToken).ConfigureAwait(false);
+	}
 }

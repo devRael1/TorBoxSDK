@@ -12,23 +12,23 @@ namespace TorBoxSDK.Models.Common;
 /// </remarks>
 public sealed record TorBoxResponse
 {
-    /// <summary>
-    /// Gets a value indicating whether the API request was successful.
-    /// </summary>
-    [JsonPropertyName("success")]
-    public bool Success { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the API request was successful.
+	/// </summary>
+	[JsonPropertyName("success")]
+	public bool Success { get; init; }
 
-    /// <summary>
-    /// Gets the error message returned by the API, or <see langword="null"/> if no error occurred.
-    /// </summary>
-    [JsonPropertyName("error")]
-    public string? Error { get; init; }
+	/// <summary>
+	/// Gets the error message returned by the API, or <see langword="null"/> if no error occurred.
+	/// </summary>
+	[JsonPropertyName("error")]
+	public string? Error { get; init; }
 
-    /// <summary>
-    /// Gets additional detail about the response or error, or <see langword="null"/> if none was provided.
-    /// </summary>
-    [JsonPropertyName("detail")]
-    public string? Detail { get; init; }
+	/// <summary>
+	/// Gets additional detail about the response or error, or <see langword="null"/> if none was provided.
+	/// </summary>
+	[JsonPropertyName("detail")]
+	public string? Detail { get; init; }
 }
 
 /// <summary>
@@ -42,27 +42,27 @@ public sealed record TorBoxResponse
 /// </remarks>
 public sealed record TorBoxResponse<T>
 {
-    /// <summary>
-    /// Gets a value indicating whether the API request was successful.
-    /// </summary>
-    [JsonPropertyName("success")]
-    public bool Success { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the API request was successful.
+	/// </summary>
+	[JsonPropertyName("success")]
+	public bool Success { get; init; }
 
-    /// <summary>
-    /// Gets the error message returned by the API, or <see langword="null"/> if no error occurred.
-    /// </summary>
-    [JsonPropertyName("error")]
-    public string? Error { get; init; }
+	/// <summary>
+	/// Gets the error message returned by the API, or <see langword="null"/> if no error occurred.
+	/// </summary>
+	[JsonPropertyName("error")]
+	public string? Error { get; init; }
 
-    /// <summary>
-    /// Gets additional detail about the response or error, or <see langword="null"/> if none was provided.
-    /// </summary>
-    [JsonPropertyName("detail")]
-    public string? Detail { get; init; }
+	/// <summary>
+	/// Gets additional detail about the response or error, or <see langword="null"/> if none was provided.
+	/// </summary>
+	[JsonPropertyName("detail")]
+	public string? Detail { get; init; }
 
-    /// <summary>
-    /// Gets the deserialized data payload, or <see langword="null"/> if the response contained no data.
-    /// </summary>
-    [JsonPropertyName("data")]
-    public T? Data { get; init; }
+	/// <summary>
+	/// Gets the deserialized data payload, or <see langword="null"/> if the response contained no data.
+	/// </summary>
+	[JsonPropertyName("data")]
+	public T? Data { get; init; }
 }

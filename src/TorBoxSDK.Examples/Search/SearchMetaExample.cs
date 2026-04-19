@@ -9,84 +9,84 @@ namespace TorBoxSDK.Examples.Search;
 /// </summary>
 public static class SearchMetaExample
 {
-    public static async Task RunAsync()
-    {
-        ExampleHelper.PrintHeader("Search — Meta Search (Movies, TV, etc.)");
+	public static async Task RunAsync()
+	{
+		ExampleHelper.PrintHeader("Search — Meta Search (Movies, TV, etc.)");
 
-        ITorBoxClient client = ExampleHelper.CreateClient();
-        using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
+		ITorBoxClient client = ExampleHelper.CreateClient();
+		using CancellationTokenSource cts = ExampleHelper.CreateTimeout();
 
-        try
-        {
-            // ──────────────────────────────────────────────────────
-            // Basic meta search.
-            // ──────────────────────────────────────────────────────
-            string query = "Inception"; // Replace with your search query
+		try
+		{
+			// ──────────────────────────────────────────────────────
+			// Basic meta search.
+			// ──────────────────────────────────────────────────────
+			string query = "Inception"; // Replace with your search query
 
-            Console.WriteLine($"Meta searching for: \"{query}\"...");
+			Console.WriteLine($"Meta searching for: \"{query}\"...");
 
-            TorBoxResponse<IReadOnlyList<MetaSearchResult>> searchResponse =
-                await client.Search.SearchMetaAsync(query, cancellationToken: cts.Token);
+			TorBoxResponse<IReadOnlyList<MetaSearchResult>> searchResponse =
+				await client.Search.SearchMetaAsync(query, cancellationToken: cts.Token);
 
-            if (searchResponse.Data is null || searchResponse.Data.Count == 0)
-            {
-                Console.WriteLine("No meta results found.");
-                return;
-            }
+			if (searchResponse.Data is null || searchResponse.Data.Count == 0)
+			{
+				Console.WriteLine("No meta results found.");
+				return;
+			}
 
-            Console.WriteLine($"Found {searchResponse.Data.Count} meta result(s):");
-            Console.WriteLine();
+			Console.WriteLine($"Found {searchResponse.Data.Count} meta result(s):");
+			Console.WriteLine();
 
-            foreach (MetaSearchResult result in searchResponse.Data)
-            {
-                Console.WriteLine($"  {result}");
-                Console.WriteLine();
-            }
+			foreach (MetaSearchResult result in searchResponse.Data)
+			{
+				Console.WriteLine($"  {result}");
+				Console.WriteLine();
+			}
 
-            // ──────────────────────────────────────────────────────
-            // Meta search with type filter.
-            // ──────────────────────────────────────────────────────
-            Console.WriteLine("Searching with type filter...");
+			// ──────────────────────────────────────────────────────
+			// Meta search with type filter.
+			// ──────────────────────────────────────────────────────
+			Console.WriteLine("Searching with type filter...");
 
-            MetaSearchOptions metaOptions = new()
-            {
-                Type = "movie", // Filter by content type (e.g., "movie", "tv")
-            };
+			MetaSearchOptions metaOptions = new()
+			{
+				Type = "movie", // Filter by content type (e.g., "movie", "tv")
+			};
 
-            TorBoxResponse<IReadOnlyList<MetaSearchResult>> filteredResponse =
-                await client.Search.SearchMetaAsync(query, metaOptions, cts.Token);
+			TorBoxResponse<IReadOnlyList<MetaSearchResult>> filteredResponse =
+				await client.Search.SearchMetaAsync(query, metaOptions, cts.Token);
 
-            Console.WriteLine($"Filtered meta results: {filteredResponse.Data?.Count ?? 0}");
+			Console.WriteLine($"Filtered meta results: {filteredResponse.Data?.Count ?? 0}");
 
-            // ──────────────────────────────────────────────────────
-            // Torznab and Newznab search (for indexer integration).
-            // ──────────────────────────────────────────────────────
-            Console.WriteLine("Using Torznab search...");
+			// ──────────────────────────────────────────────────────
+			// Torznab and Newznab search (for indexer integration).
+			// ──────────────────────────────────────────────────────
+			Console.WriteLine("Using Torznab search...");
 
-            TorBoxResponse<string> torznabResponse =
-                await client.Search.SearchTorznabAsync(query, cancellationToken: cts.Token);
+			TorBoxResponse<string> torznabResponse =
+				await client.Search.SearchTorznabAsync(query, cancellationToken: cts.Token);
 
-            if (torznabResponse.Data is not null)
-            {
-                Console.WriteLine($"  Torznab XML response length: {torznabResponse.Data.Length} chars");
-            }
+			if (torznabResponse.Data is not null)
+			{
+				Console.WriteLine($"  Torznab XML response length: {torznabResponse.Data.Length} chars");
+			}
 
-            Console.WriteLine("Using Newznab search...");
+			Console.WriteLine("Using Newznab search...");
 
-            TorBoxResponse<string> newznabResponse =
-                await client.Search.SearchNewznabAsync(query, cancellationToken: cts.Token);
+			TorBoxResponse<string> newznabResponse =
+				await client.Search.SearchNewznabAsync(query, cancellationToken: cts.Token);
 
-            if (newznabResponse.Data is not null)
-            {
-                Console.WriteLine($"  Newznab XML response length: {newznabResponse.Data.Length} chars");
-            }
-        }
-        catch (TorBoxException ex)
-        {
-            Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
-        }
+			if (newznabResponse.Data is not null)
+			{
+				Console.WriteLine($"  Newznab XML response length: {newznabResponse.Data.Length} chars");
+			}
+		}
+		catch (TorBoxException ex)
+		{
+			Console.Error.WriteLine($"API error [{ex.ErrorCode}]: {ex.Detail ?? ex.Message}");
+		}
 
-        Console.WriteLine();
-        Console.WriteLine("Meta search example completed.");
-    }
+		Console.WriteLine();
+		Console.WriteLine("Meta search example completed.");
+	}
 }

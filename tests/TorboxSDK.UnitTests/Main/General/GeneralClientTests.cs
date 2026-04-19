@@ -1,14 +1,14 @@
 using System.Globalization;
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.General;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.General;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.General;
 
 public sealed class GeneralClientTests
 {
-    private const string ObjectJson = """
+	private const string ObjectJson = """
         {
             "success": true,
             "error": null,
@@ -17,7 +17,7 @@ public sealed class GeneralClientTests
         }
         """;
 
-    private const string StatsJson = """
+	private const string StatsJson = """
         {
             "success": true,
             "error": null,
@@ -29,7 +29,7 @@ public sealed class GeneralClientTests
         }
         """;
 
-    private const string ChangelogsRssXml = """
+	private const string ChangelogsRssXml = """
         <?xml version="1.0" ?>
         <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
           <channel>
@@ -47,7 +47,7 @@ public sealed class GeneralClientTests
         </rss>
         """;
 
-    private const string DailyStatsJson = """
+	private const string DailyStatsJson = """
         {
             "success": true,
             "error": null,
@@ -66,7 +66,7 @@ public sealed class GeneralClientTests
         }
         """;
 
-    private const string SpeedtestJson = """
+	private const string SpeedtestJson = """
         {
             "success": true,
             "error": null,
@@ -88,7 +88,7 @@ public sealed class GeneralClientTests
         }
         """;
 
-    private const string ChangelogsJson = """
+	private const string ChangelogsJson = """
         {
             "success": true,
             "error": null,
@@ -106,162 +106,162 @@ public sealed class GeneralClientTests
         }
         """;
 
-    // --- GetUpStatusAsync ---
+	// --- GetUpStatusAsync ---
 
-    [Fact]
-    public async Task GetUpStatusAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
+	[Fact]
+	public async Task GetUpStatusAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ObjectJson);
 
-        // Act
-        TorBoxResponse<object> result = await client.GetUpStatusAsync();
+		// Act
+		TorBoxResponse<UpStatus> result = await client.GetUpStatusAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.True(result.Success);
+	}
 
-    // --- GetStatsAsync ---
+	// --- GetStatsAsync ---
 
-    [Fact]
-    public async Task GetStatsAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StatsJson);
+	[Fact]
+	public async Task GetStatsAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(StatsJson);
 
-        // Act
-        TorBoxResponse<Stats> result = await client.GetStatsAsync();
+		// Act
+		TorBoxResponse<Stats> result = await client.GetStatsAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("stats", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("stats", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    // --- Get30DayStatsAsync ---
+	// --- Get30DayStatsAsync ---
 
-    [Fact]
-    public async Task Get30DayStatsAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(DailyStatsJson);
+	[Fact]
+	public async Task Get30DayStatsAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(DailyStatsJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<DailyStats>> result = await client.Get30DayStatsAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<DailyStats>> result = await client.Get30DayStatsAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("stats/30days", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("stats/30days", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+	}
 
-    // --- GetSpeedtestFilesAsync ---
+	// --- GetSpeedtestFilesAsync ---
 
-    [Fact]
-    public async Task GetSpeedtestFilesAsync_WithNoOptions_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
+	[Fact]
+	public async Task GetSpeedtestFilesAsync_WithNoOptions_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<SpeedtestServer>> result = await client.GetSpeedtestFilesAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<SpeedtestServer>> result = await client.GetSpeedtestFilesAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("speedtest", handler.LastRequest.RequestUri!.ToString());
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("speedtest", handler.LastRequest.RequestUri!.ToString());
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+	}
 
-    [Fact]
-    public async Task GetSpeedtestFilesAsync_WithOptions_IncludesInQueryString()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
-        SpeedtestOptions options = new() { UserIp = "1.2.3.4", Region = "us-east", TestLength = "short" };
+	[Fact]
+	public async Task GetSpeedtestFilesAsync_WithOptions_IncludesInQueryString()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
+		SpeedtestOptions options = new() { UserIp = "1.2.3.4", Region = "us-east", TestLength = "short" };
 
-        // Act
-        await client.GetSpeedtestFilesAsync(options);
+		// Act
+		await client.GetSpeedtestFilesAsync(options);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        string url = handler.LastRequest.RequestUri!.ToString();
-        Assert.Contains("user_ip=1.2.3.4", url);
-        Assert.Contains("region=us-east", url);
-        Assert.Contains("test_length=short", url);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		string url = handler.LastRequest.RequestUri!.ToString();
+		Assert.Contains("user_ip=1.2.3.4", url);
+		Assert.Contains("region=us-east", url);
+		Assert.Contains("test_length=short", url);
+	}
 
-    [Fact]
-    public async Task GetSpeedtestFilesAsync_WithNullOptions_OmitsQueryParams()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
+	[Fact]
+	public async Task GetSpeedtestFilesAsync_WithNullOptions_OmitsQueryParams()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(SpeedtestJson);
 
-        // Act
-        await client.GetSpeedtestFilesAsync(null);
+		// Act
+		await client.GetSpeedtestFilesAsync(null);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        string url = handler.LastRequest.RequestUri!.ToString();
-        Assert.DoesNotContain("user_ip", url);
-        Assert.DoesNotContain("region", url);
-        Assert.DoesNotContain("test_length", url);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		string url = handler.LastRequest.RequestUri!.ToString();
+		Assert.DoesNotContain("user_ip", url);
+		Assert.DoesNotContain("region", url);
+		Assert.DoesNotContain("test_length", url);
+	}
 
-    // --- GetChangelogsRssAsync ---
+	// --- GetChangelogsRssAsync ---
 
-    [Fact]
-    public async Task GetChangelogsRssAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsRssXml);
+	[Fact]
+	public async Task GetChangelogsRssAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsRssXml);
 
-        // Act
-        TorBoxResponse<ChangelogsRssFeed> result = await client.GetChangelogsRssAsync();
+		// Act
+		TorBoxResponse<ChangelogsRssFeed> result = await client.GetChangelogsRssAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("changelogs/rss", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotNull(result.Data.Channel);
-        Assert.Equal("TorBox Changelogs", result.Data.Channel.Title);
-        Assert.NotEmpty(result.Data.Channel.Items);
-        Assert.Equal("v2.9 - Feature Release", result.Data.Channel.Items[0].Title);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("changelogs/rss", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotNull(result.Data.Channel);
+		Assert.Equal("TorBox Changelogs", result.Data.Channel.Title);
+		Assert.NotEmpty(result.Data.Channel.Items);
+		Assert.Equal("v2.9 - Feature Release", result.Data.Channel.Items[0].Title);
+	}
 
-    // --- GetChangelogsJsonAsync ---
+	// --- GetChangelogsJsonAsync ---
 
-    [Fact]
-    public async Task GetChangelogsJsonAsync_WithNoParameters_SendsGetRequest()
-    {
-        // Arrange
-        (GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsJson);
+	[Fact]
+	public async Task GetChangelogsJsonAsync_WithNoParameters_SendsGetRequest()
+	{
+		// Arrange
+		(GeneralClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<GeneralClient>(ChangelogsJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<Changelog>> result = await client.GetChangelogsJsonAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<Changelog>> result = await client.GetChangelogsJsonAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("changelogs/json", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-        Changelog first = result.Data[0];
-        Assert.Equal("1", first.Id);
-        Assert.Equal("v8.4.3", first.Name);
-        Assert.Equal("<p>Major update</p>", first.Html);
-        Assert.Equal("**Major update**", first.Markdown);
-        Assert.Equal("https://torbox.app/changelogs/v8.4.3", first.Link);
-        Assert.Equal(DateTimeOffset.Parse("2024-07-10T07:12:36Z", CultureInfo.InvariantCulture), first.CreatedAt);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("changelogs/json", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+		Changelog first = result.Data[0];
+		Assert.Equal("1", first.Id);
+		Assert.Equal("v8.4.3", first.Name);
+		Assert.Equal("<p>Major update</p>", first.Html);
+		Assert.Equal("**Major update**", first.Markdown);
+		Assert.Equal("https://torbox.app/changelogs/v8.4.3", first.Link);
+		Assert.Equal(DateTimeOffset.Parse("2024-07-10T07:12:36Z", CultureInfo.InvariantCulture), first.CreatedAt);
+	}
 }

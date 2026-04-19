@@ -13,8 +13,8 @@ namespace TorBoxSDK.Http;
 public sealed class QueryParameterNameAttribute(string name) : Attribute
 {
 
-    /// <summary>
-    /// Gets the query parameter name used in the HTTP query string.
-    /// </summary>
-    public string Name { get; } = name;
+	/// <summary>
+	/// Gets the query parameter name used in the HTTP query string.
+	/// </summary>
+	public string Name { get; } = name;
 }

@@ -7,22 +7,22 @@ namespace TorBoxSDK.Models.Relay;
 /// </summary>
 public sealed record InactiveCheckResult
 {
-    /// <summary>
-    /// Gets the status message of the inactivity check, or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("status")]
-    public string? Status { get; init; }
+	/// <summary>
+	/// Gets the status message of the inactivity check, or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("status")]
+	public string? Status { get; init; }
 
-    /// <summary>
-    /// Gets a value indicating whether the torrent is currently inactive.
-    /// </summary>
-    [JsonPropertyName("is_inactive")]
-    public bool IsInactive { get; init; }
+	/// <summary>
+	/// Gets a value indicating whether the torrent is currently inactive.
+	/// </summary>
+	[JsonPropertyName("is_inactive")]
+	public bool IsInactive { get; init; }
 
-    /// <summary>
-    /// Gets the date and time when the torrent was last active,
-    /// or <see langword="null"/> if not available.
-    /// </summary>
-    [JsonPropertyName("last_active")]
-    public DateTimeOffset? LastActive { get; init; }
+	/// <summary>
+	/// Gets the date and time when the torrent was last active,
+	/// or <see langword="null"/> if not available.
+	/// </summary>
+	[JsonPropertyName("last_active")]
+	public DateTimeOffset? LastActive { get; init; }
 }

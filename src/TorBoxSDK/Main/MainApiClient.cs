@@ -25,62 +25,62 @@ namespace TorBoxSDK.Main;
 /// </remarks>
 internal sealed class MainApiClient : IMainApiClient
 {
-    /// <inheritdoc />
-    public IGeneralClient General { get; }
+	/// <inheritdoc />
+	public IGeneralClient General { get; }
 
-    /// <inheritdoc />
-    public ITorrentsClient Torrents { get; }
+	/// <inheritdoc />
+	public ITorrentsClient Torrents { get; }
 
-    /// <inheritdoc />
-    public IUsenetClient Usenet { get; }
+	/// <inheritdoc />
+	public IUsenetClient Usenet { get; }
 
-    /// <inheritdoc />
-    public IWebDownloadsClient WebDownloads { get; }
+	/// <inheritdoc />
+	public IWebDownloadsClient WebDownloads { get; }
 
-    /// <inheritdoc />
-    public IUserClient User { get; }
+	/// <inheritdoc />
+	public IUserClient User { get; }
 
-    /// <inheritdoc />
-    public INotificationsClient Notifications { get; }
+	/// <inheritdoc />
+	public INotificationsClient Notifications { get; }
 
-    /// <inheritdoc />
-    public IRssClient Rss { get; }
+	/// <inheritdoc />
+	public IRssClient Rss { get; }
 
-    /// <inheritdoc />
-    public IStreamClient Stream { get; }
+	/// <inheritdoc />
+	public IStreamClient Stream { get; }
 
-    /// <inheritdoc />
-    public IIntegrationsClient Integrations { get; }
+	/// <inheritdoc />
+	public IIntegrationsClient Integrations { get; }
 
-    /// <inheritdoc />
-    public IVendorsClient Vendors { get; }
+	/// <inheritdoc />
+	public IVendorsClient Vendors { get; }
 
-    /// <inheritdoc />
-    public IQueuedClient Queued { get; }
+	/// <inheritdoc />
+	public IQueuedClient Queued { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MainApiClient"/> class.
-    /// </summary>
-    /// <param name="httpClient">The HTTP client configured for the Main API.</param>
-    /// <param name="apiKey">The TorBox API key, used by sub-clients that require it as a query parameter.</param>
-    /// <param name="baseUrl">The root Main API URL (without version), used by endpoints that target the API root.</param>
-    /// <exception cref="ArgumentNullException">
-    /// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
-    /// </exception>
-    internal MainApiClient(HttpClient httpClient, string apiKey, string baseUrl)
-    {
-        Guard.ThrowIfNull(httpClient);
+	/// <summary>
+	/// Initializes a new instance of the <see cref="MainApiClient"/> class.
+	/// </summary>
+	/// <param name="httpClient">The HTTP client configured for the Main API.</param>
+	/// <param name="apiKey">The TorBox API key, used by sub-clients that require it as a query parameter.</param>
+	/// <param name="baseUrl">The root Main API URL (without version), used by endpoints that target the API root.</param>
+	/// <exception cref="ArgumentNullException">
+	/// Thrown when <paramref name="httpClient"/> is <see langword="null"/>.
+	/// </exception>
+	internal MainApiClient(HttpClient httpClient, string apiKey, string baseUrl)
+	{
+		Guard.ThrowIfNull(httpClient);
 
-        General = new GeneralClient(httpClient, baseUrl);
-        Torrents = new TorrentsClient(httpClient);
-        Usenet = new UsenetClient(httpClient);
-        WebDownloads = new WebDownloadsClient(httpClient);
-        User = new UserClient(httpClient);
-        Notifications = new NotificationsClient(httpClient, apiKey);
-        Rss = new RssClient(httpClient);
-        Stream = new StreamClient(httpClient);
-        Integrations = new IntegrationsClient(httpClient);
-        Vendors = new VendorsClient(httpClient);
-        Queued = new QueuedClient(httpClient);
-    }
+		General = new GeneralClient(httpClient, baseUrl);
+		Torrents = new TorrentsClient(httpClient);
+		Usenet = new UsenetClient(httpClient);
+		WebDownloads = new WebDownloadsClient(httpClient);
+		User = new UserClient(httpClient);
+		Notifications = new NotificationsClient(httpClient, apiKey);
+		Rss = new RssClient(httpClient);
+		Stream = new StreamClient(httpClient);
+		Integrations = new IntegrationsClient(httpClient);
+		Vendors = new VendorsClient(httpClient);
+		Queued = new QueuedClient(httpClient);
+	}
 }

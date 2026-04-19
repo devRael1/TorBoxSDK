@@ -8,15 +8,15 @@ namespace TorBoxSDK.Models.Search;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum SearchType
 {
-    /// <summary>Unknown or unspecified search type.</summary>
-    Unknown = 0,
+	/// <summary>Unknown or unspecified search type.</summary>
+	Unknown = 0,
 
-    /// <summary>Search for torrent results.</summary>
-    Torrent,
+	/// <summary>Search for torrent results.</summary>
+	Torrent,
 
-    /// <summary>Search for usenet results.</summary>
-    Usenet,
+	/// <summary>Search for usenet results.</summary>
+	Usenet,
 
-    /// <summary>Search for metadata results.</summary>
-    Meta
+	/// <summary>Search for metadata results.</summary>
+	Meta
 }

@@ -7,24 +7,24 @@ namespace TorBoxSDK.Models.General;
 /// </summary>
 public sealed record SpeedtestOptions
 {
-    /// <summary>
-    /// Gets the user's IP address for the speedtest,
-    /// or <see langword="null"/> to use the caller's IP.
-    /// </summary>
-    [QueryParameterName("user_ip")]
-    public string? UserIp { get; init; }
+	/// <summary>
+	/// Gets the user's IP address for the speedtest,
+	/// or <see langword="null"/> to use the caller's IP.
+	/// </summary>
+	[QueryParameterName("user_ip")]
+	public string? UserIp { get; init; }
 
-    /// <summary>
-    /// Gets the region for the speedtest,
-    /// or <see langword="null"/> to auto-detect.
-    /// </summary>
-    [QueryParameterName("region")]
-    public string? Region { get; init; }
+	/// <summary>
+	/// Gets the region for the speedtest,
+	/// or <see langword="null"/> to auto-detect.
+	/// </summary>
+	[QueryParameterName("region")]
+	public string? Region { get; init; }
 
-    /// <summary>
-    /// Gets the test length value (e.g. "short", "long"),
-    /// or <see langword="null"/> to use the default.
-    /// </summary>
-    [QueryParameterName("test_length")]
-    public string? TestLength { get; init; }
+	/// <summary>
+	/// Gets the test length value (e.g. "short", "long"),
+	/// or <see langword="null"/> to use the default.
+	/// </summary>
+	[QueryParameterName("test_length")]
+	public string? TestLength { get; init; }
 }

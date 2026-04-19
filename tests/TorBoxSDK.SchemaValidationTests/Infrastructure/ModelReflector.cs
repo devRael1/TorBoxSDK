@@ -8,11 +8,11 @@ namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 /// </summary>
 internal static class ModelReflector
 {
-    /// <inheritdoc cref="TestUtilities.ModelReflector.GetJsonPropertyNames"/>
-    public static IReadOnlySet<string> GetJsonPropertyNames(Type type) =>
-        TestUtilities.ModelReflector.GetJsonPropertyNames(type);
+	/// <inheritdoc cref="TestUtilities.ModelReflector.GetJsonPropertyNames"/>
+	public static IReadOnlySet<string> GetJsonPropertyNames(Type type) =>
+		TestUtilities.ModelReflector.GetJsonPropertyNames(type);
 
-    /// <inheritdoc cref="TestUtilities.ModelReflector.GetJsonPropertyMap"/>
-    public static IReadOnlyDictionary<string, PropertyInfo> GetJsonPropertyMap(Type type) =>
-        TestUtilities.ModelReflector.GetJsonPropertyMap(type);
+	/// <inheritdoc cref="TestUtilities.ModelReflector.GetJsonPropertyMap"/>
+	public static IReadOnlyDictionary<string, PropertyInfo> GetJsonPropertyMap(Type type) =>
+		TestUtilities.ModelReflector.GetJsonPropertyMap(type);
 }

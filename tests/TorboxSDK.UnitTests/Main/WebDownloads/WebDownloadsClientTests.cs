@@ -1,13 +1,13 @@
+using TorboxSDK.UnitTests.Helpers;
 using TorBoxSDK.Main.WebDownloads;
 using TorBoxSDK.Models.Common;
 using TorBoxSDK.Models.WebDownloads;
-using TorboxSDK.UnitTests.Helpers;
 
 namespace TorboxSDK.UnitTests.Main.WebDownloads;
 
 public sealed class WebDownloadsClientTests
 {
-    private const string WebDownloadListJson = """
+	private const string WebDownloadListJson = """
         {
             "success": true,
             "error": null,
@@ -29,7 +29,7 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    private const string SingleWebDownloadJson = """
+	private const string SingleWebDownloadJson = """
         {
             "success": true,
             "error": null,
@@ -49,7 +49,7 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    private const string SuccessJson = """
+	private const string SuccessJson = """
         {
             "success": true,
             "error": null,
@@ -57,7 +57,7 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    private const string DownloadJson = """
+	private const string DownloadJson = """
         {
             "success": true,
             "error": null,
@@ -66,7 +66,7 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    private const string CachedJson = """
+	private const string CachedJson = """
         {
             "success": true,
             "error": null,
@@ -75,7 +75,7 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    private const string HostersJson = """
+	private const string HostersJson = """
         {
             "success": true,
             "error": null,
@@ -91,317 +91,317 @@ public sealed class WebDownloadsClientTests
         }
         """;
 
-    // --- CreateWebDownloadAsync ---
+	// --- CreateWebDownloadAsync ---
 
-    [Fact]
-    public async Task CreateWebDownloadAsync_WithValidRequest_SendsPostRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
-        CreateWebDownloadRequest request = new() { Link = "https://example.com/file.zip" };
+	[Fact]
+	public async Task CreateWebDownloadAsync_WithValidRequest_SendsPostRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
+		CreateWebDownloadRequest request = new() { Link = "https://example.com/file.zip" };
 
-        // Act
-        TorBoxResponse<WebDownload> result = await client.CreateWebDownloadAsync(request);
+		// Act
+		TorBoxResponse<WebDownload> result = await client.CreateWebDownloadAsync(request);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("webdl/createwebdownload", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("webdl/createwebdownload", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    [Fact]
-    public async Task CreateWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
+	[Fact]
+	public async Task CreateWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateWebDownloadAsync(null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.CreateWebDownloadAsync(null!));
+	}
 
-    // --- ControlWebDownloadAsync ---
+	// --- ControlWebDownloadAsync ---
 
-    [Fact]
-    public async Task ControlWebDownloadAsync_WithValidRequest_SendsPostRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
-        ControlWebDownloadRequest request = new() { WebdlId = 1, Operation = ControlOperation.Delete };
+	[Fact]
+	public async Task ControlWebDownloadAsync_WithValidRequest_SendsPostRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
+		ControlWebDownloadRequest request = new() { WebdlId = 1, Operation = ControlOperation.Delete };
 
-        // Act
-        TorBoxResponse result = await client.ControlWebDownloadAsync(request);
+		// Act
+		TorBoxResponse result = await client.ControlWebDownloadAsync(request);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("webdl/controlwebdownload", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("webdl/controlwebdownload", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    [Fact]
-    public async Task ControlWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
+	[Fact]
+	public async Task ControlWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.ControlWebDownloadAsync(null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.ControlWebDownloadAsync(null!));
+	}
 
-    // --- RequestDownloadAsync ---
+	// --- RequestDownloadAsync ---
 
-    [Fact]
-    public async Task RequestDownloadAsync_WithValidOptions_SendsGetRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
-        RequestWebDownloadOptions options = new() { };
+	[Fact]
+	public async Task RequestDownloadAsync_WithValidOptions_SendsGetRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
+		RequestWebDownloadOptions options = new() { };
 
-        // Act
-        TorBoxResponse<string> result = await client.RequestDownloadAsync(1, options);
+		// Act
+		TorBoxResponse<string> result = await client.RequestDownloadAsync(1, options);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("webdl/requestdl", handler.LastRequest.RequestUri!.ToString());
-        Assert.Contains("web_id=1", handler.LastRequest.RequestUri!.ToString());
-        Assert.Equal("https://download.torbox.app/file/abc123", result.Data);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("webdl/requestdl", handler.LastRequest.RequestUri!.ToString());
+		Assert.Contains("web_id=1", handler.LastRequest.RequestUri!.ToString());
+		Assert.Equal("https://download.torbox.app/file/abc123", result.Data);
+	}
 
-    [Fact]
-    public async Task RequestDownloadAsync_WithAllOptions_IncludesInQueryString()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
-        RequestWebDownloadOptions options = new()
-        {
-            Token = "custom-token",
-            AppendName = true,
-            Redirect = false,
-        };
+	[Fact]
+	public async Task RequestDownloadAsync_WithAllOptions_IncludesInQueryString()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
+		RequestWebDownloadOptions options = new()
+		{
+			Token = "custom-token",
+			AppendName = true,
+			Redirect = false,
+		};
 
-        // Act
-        await client.RequestDownloadAsync(42, options);
+		// Act
+		await client.RequestDownloadAsync(42, options);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        string url = handler.LastRequest.RequestUri!.ToString();
-        Assert.Contains("web_id=42", url);
-        Assert.Contains("token=custom-token", url);
-        Assert.Contains("append_name=true", url);
-        Assert.Contains("redirect=false", url);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		string url = handler.LastRequest.RequestUri!.ToString();
+		Assert.Contains("web_id=42", url);
+		Assert.Contains("token=custom-token", url);
+		Assert.Contains("append_name=true", url);
+		Assert.Contains("redirect=false", url);
+	}
 
-    [Fact]
-    public async Task RequestDownloadAsync_WithNoOptions_SendsGetRequestWithIdOnly()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
+	[Fact]
+	public async Task RequestDownloadAsync_WithNoOptions_SendsGetRequestWithIdOnly()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(DownloadJson);
 
-        // Act
-        await client.RequestDownloadAsync(1);
+		// Act
+		await client.RequestDownloadAsync(1);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Contains("web_id=1", handler.LastRequest.RequestUri!.ToString());
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Contains("web_id=1", handler.LastRequest.RequestUri!.ToString());
+	}
 
-    // --- GetMyWebDownloadListAsync ---
+	// --- GetMyWebDownloadListAsync ---
 
-    [Fact]
-    public async Task GetMyWebDownloadListAsync_WithValidResponse_ReturnsList()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
+	[Fact]
+	public async Task GetMyWebDownloadListAsync_WithValidResponse_ReturnsList()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<WebDownload>> result = await client.GetMyWebDownloadListAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<WebDownload>> result = await client.GetMyWebDownloadListAsync();
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-        Assert.Equal("my-web-download", result.Data[0].Name);
-    }
+		// Assert
+		Assert.NotNull(result);
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+		Assert.Equal("my-web-download", result.Data[0].Name);
+	}
 
-    [Fact]
-    public async Task GetMyWebDownloadListAsync_WithAllParams_IncludesInQueryString()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
+	[Fact]
+	public async Task GetMyWebDownloadListAsync_WithAllParams_IncludesInQueryString()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
 
-        // Act
-        await client.GetMyWebDownloadListAsync(new GetMyListOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true });
+		// Act
+		await client.GetMyWebDownloadListAsync(new GetMyListOptions { Id = 42, Offset = 10, Limit = 50, BypassCache = true });
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        string url = handler.LastRequest.RequestUri!.ToString();
-        Assert.Contains("id=42", url);
-        Assert.Contains("offset=10", url);
-        Assert.Contains("limit=50", url);
-        Assert.Contains("bypass_cache=true", url);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		string url = handler.LastRequest.RequestUri!.ToString();
+		Assert.Contains("id=42", url);
+		Assert.Contains("offset=10", url);
+		Assert.Contains("limit=50", url);
+		Assert.Contains("bypass_cache=true", url);
+	}
 
-    [Fact]
-    public async Task GetMyWebDownloadListAsync_WithNullParams_OmitsFromQueryString()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
+	[Fact]
+	public async Task GetMyWebDownloadListAsync_WithNullParams_OmitsFromQueryString()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(WebDownloadListJson);
 
-        // Act
-        await client.GetMyWebDownloadListAsync();
+		// Act
+		await client.GetMyWebDownloadListAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        string url = handler.LastRequest.RequestUri!.ToString();
-        Assert.DoesNotContain("id=", url);
-        Assert.DoesNotContain("offset=", url);
-        Assert.DoesNotContain("limit=", url);
-        Assert.DoesNotContain("bypass_cache", url);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		string url = handler.LastRequest.RequestUri!.ToString();
+		Assert.DoesNotContain("id=", url);
+		Assert.DoesNotContain("offset=", url);
+		Assert.DoesNotContain("limit=", url);
+		Assert.DoesNotContain("bypass_cache", url);
+	}
 
-    // --- CheckCachedAsync ---
+	// --- CheckCachedAsync ---
 
-    [Fact]
-    public async Task CheckCachedAsync_WithHashes_SendsGetRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
+	[Fact]
+	public async Task CheckCachedAsync_WithHashes_SendsGetRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
-        // Act
-        await client.CheckCachedAsync(["hash1", "hash2"]);
+		// Act
+		await client.CheckCachedAsync(["hash1", "hash2"]);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("webdl/checkcached", handler.LastRequest.RequestUri!.ToString());
-        Assert.Contains("hash=hash1%2Chash2", handler.LastRequest.RequestUri!.ToString());
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("webdl/checkcached", handler.LastRequest.RequestUri!.ToString());
+		Assert.Contains("hash=hash1%2Chash2", handler.LastRequest.RequestUri!.ToString());
+	}
 
-    [Fact]
-    public async Task CheckCachedAsync_WithNullOptions_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
+	[Fact]
+	public async Task CheckCachedAsync_WithNullOptions_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
+	}
 
-    [Fact]
-    public async Task CheckCachedAsync_WithNullHashes_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
+	[Fact]
+	public async Task CheckCachedAsync_WithNullHashes_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedAsync((IReadOnlyList<string>)null!));
+	}
 
-    // --- CheckCachedByPostAsync ---
+	// --- CheckCachedByPostAsync ---
 
-    [Fact]
-    public async Task CheckCachedByPostAsync_WithValidRequest_SendsPostRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
-        CheckWebCachedRequest request = new();
+	[Fact]
+	public async Task CheckCachedByPostAsync_WithValidRequest_SendsPostRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
+		CheckWebCachedRequest request = new();
 
-        // Act
-        await client.CheckCachedByPostAsync(request);
+		// Act
+		await client.CheckCachedByPostAsync(request);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("webdl/checkcached", handler.LastRequest.RequestUri!.ToString());
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("webdl/checkcached", handler.LastRequest.RequestUri!.ToString());
+	}
 
-    [Fact]
-    public async Task CheckCachedByPostAsync_WithNullRequest_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
+	[Fact]
+	public async Task CheckCachedByPostAsync_WithNullRequest_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(CachedJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedByPostAsync(null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.CheckCachedByPostAsync(null!));
+	}
 
-    // --- GetHostersAsync ---
+	// --- GetHostersAsync ---
 
-    [Fact]
-    public async Task GetHostersAsync_WithValidResponse_ReturnsHosters()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(HostersJson);
+	[Fact]
+	public async Task GetHostersAsync_WithValidResponse_ReturnsHosters()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(HostersJson);
 
-        // Act
-        TorBoxResponse<IReadOnlyList<Hoster>> result = await client.GetHostersAsync();
+		// Act
+		TorBoxResponse<IReadOnlyList<Hoster>> result = await client.GetHostersAsync();
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
-        Assert.Contains("webdl/hosters", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-        Assert.NotNull(result.Data);
-        Assert.NotEmpty(result.Data);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Get, handler.LastRequest.Method);
+		Assert.Contains("webdl/hosters", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+		Assert.NotNull(result.Data);
+		Assert.NotEmpty(result.Data);
+	}
 
-    // --- EditWebDownloadAsync ---
+	// --- EditWebDownloadAsync ---
 
-    [Fact]
-    public async Task EditWebDownloadAsync_WithValidRequest_SendsPutRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
-        EditWebDownloadRequest request = new() { WebdlId = 1, Name = "new-name" };
+	[Fact]
+	public async Task EditWebDownloadAsync_WithValidRequest_SendsPutRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
+		EditWebDownloadRequest request = new() { WebdlId = 1, Name = "new-name" };
 
-        // Act
-        TorBoxResponse result = await client.EditWebDownloadAsync(request);
+		// Act
+		TorBoxResponse result = await client.EditWebDownloadAsync(request);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Put, handler.LastRequest.Method);
-        Assert.Contains("webdl/editwebdownload", handler.LastRequest.RequestUri!.ToString());
-        Assert.True(result.Success);
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Put, handler.LastRequest.Method);
+		Assert.Contains("webdl/editwebdownload", handler.LastRequest.RequestUri!.ToString());
+		Assert.True(result.Success);
+	}
 
-    [Fact]
-    public async Task EditWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
+	[Fact]
+	public async Task EditWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SuccessJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.EditWebDownloadAsync(null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.EditWebDownloadAsync(null!));
+	}
 
-    // --- AsyncCreateWebDownloadAsync ---
+	// --- AsyncCreateWebDownloadAsync ---
 
-    [Fact]
-    public async Task AsyncCreateWebDownloadAsync_WithValidRequest_SendsPostRequest()
-    {
-        // Arrange
-        (WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
-        CreateWebDownloadRequest request = new() { Link = "https://example.com/file.zip" };
+	[Fact]
+	public async Task AsyncCreateWebDownloadAsync_WithValidRequest_SendsPostRequest()
+	{
+		// Arrange
+		(WebDownloadsClient client, MockHttpMessageHandler handler) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
+		CreateWebDownloadRequest request = new() { Link = "https://example.com/file.zip" };
 
-        // Act
-        await client.AsyncCreateWebDownloadAsync(request);
+		// Act
+		await client.AsyncCreateWebDownloadAsync(request);
 
-        // Assert
-        Assert.NotNull(handler.LastRequest);
-        Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
-        Assert.Contains("webdl/asynccreatewebdownload", handler.LastRequest.RequestUri!.ToString());
-    }
+		// Assert
+		Assert.NotNull(handler.LastRequest);
+		Assert.Equal(HttpMethod.Post, handler.LastRequest.Method);
+		Assert.Contains("webdl/asynccreatewebdownload", handler.LastRequest.RequestUri!.ToString());
+	}
 
-    [Fact]
-    public async Task AsyncCreateWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
-    {
-        // Arrange
-        (WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
+	[Fact]
+	public async Task AsyncCreateWebDownloadAsync_WithNullRequest_ThrowsArgumentNullException()
+	{
+		// Arrange
+		(WebDownloadsClient client, _) = ClientTestBase.CreateClient<WebDownloadsClient>(SingleWebDownloadJson);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateWebDownloadAsync(null!));
-    }
+		// Act & Assert
+		await Assert.ThrowsAsync<ArgumentNullException>(() => client.AsyncCreateWebDownloadAsync(null!));
+	}
 }
