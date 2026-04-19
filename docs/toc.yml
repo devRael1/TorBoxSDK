@@ -1,7 +1,5 @@
 - name: Guides
   href: guides/
-- name: Roadmap
-  href: TODO.md
 - name: API Reference
   href: api/TorBoxSDK.yml
 - name: TorBox API
