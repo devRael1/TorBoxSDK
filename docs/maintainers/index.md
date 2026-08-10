@@ -242,6 +242,7 @@ Une version n'est prête que si toutes les affirmations suivantes sont vraies :
 - [Compatibilité .NET](dotnet-compatibility.md)
 - [Tests et publication NuGet](testing-and-release.md)
 - [Développement de la v2](v2-development-workflow.md)
+- [Pilotage Kanban privé de la v2](v2-program-control.md)
 - [Décisions à valider](decisions.md)
 
 ## Sources officielles

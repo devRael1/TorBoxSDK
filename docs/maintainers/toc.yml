@@ -10,5 +10,7 @@
   href: testing-and-release.md
 - name: Développement de la v2
   href: v2-development-workflow.md
+- name: Pilotage Kanban de la v2
+  href: v2-program-control.md
 - name: Décisions à valider
   href: decisions.md

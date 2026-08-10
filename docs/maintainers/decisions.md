@@ -25,7 +25,7 @@ Pour valider une décision, renseigner : option choisie, date, auteur, justifica
 | DEC-015 | Source de version et AssemblyVersion | En attente | release |
 | DEC-016 | Authentification et approbation NuGet | En attente | publication |
 | DEC-017 | Périmètre CI, couverture et tests live | En attente | barrières qualité |
-| DEC-018 | Politique Git, tags et intégration des worktrees | En attente | intégration/release |
+| DEC-018 | Politique Git, tags et intégration des worktrees | Partiellement validée : rebase & merge, fallback merge commit | intégration/release |
 | DEC-019 | Identité et métadonnées du package | En attente | package/documentation |
 | DEC-020 | Priorité entre OpenAPI, Postman et observations live | Validée : live arbitre | contrat effectif |
 | DEC-021 | Types publics pour binaire et objet/liste | En attente | signatures de réponse |
@@ -204,7 +204,20 @@ Les documents OpenAPI amont sont conservés sans modification comme preuves dat�
 
 ## DEC-018 — Politique Git, tags et worktrees
 
-**À décider.** Squash, rebase ou merge commits ; branche de release ou intégration continue ; tags annotés et/ou signés ; personne autorisée à créer le tag ; règle de nettoyage des worktrees après intégration.
+**Décision partielle du propriétaire — 10 août 2026.** L'intégration privilégie
+`rebase & merge`. Si le rebase n'est pas possible ou ne peut pas préserver un
+historique vérifiable, le repli autorisé est un `merge commit`. Le motif du
+repli doit être consigné dans la carte GitHub Project du lot. Le squash n'est
+pas retenu comme méthode d'intégration normale.
+
+En local, l'équivalent attendu est : rebaser la branche du lot sur le dernier
+commit validé de `v2.0.0`, relancer les contrôles, puis avancer `v2.0.0` par
+fusion `--ff-only`. Sur GitHub, utiliser **Rebase and merge** ; utiliser
+**Create a merge commit** uniquement en repli documenté.
+
+**Restent à décider.** Tags annotés et/ou signés ; personne autorisée à créer
+le tag ; règles exactes de nettoyage des branches et worktrees ; éventuelle
+branche de release distincte.
 
 ## DEC-019 — Identité et métadonnées du package
 

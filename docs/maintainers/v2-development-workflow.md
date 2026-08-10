@@ -1,8 +1,10 @@
 # Développement local de TorBoxSDK v2
 
-Ce guide fixe l'organisation locale du chantier v2 sans anticiper les choix
-encore ouverts dans [DEC-018](decisions.md#dec-018--politique-git-tags-et-worktrees).
-Il ne donne aucune autorisation de pousser, fusionner, taguer ou publier.
+Ce guide fixe l'organisation locale du chantier v2. Il applique la méthode
+d'intégration validée dans
+[DEC-018](decisions.md#dec-018--politique-git-tags-et-worktrees), sans anticiper
+les choix de tags et de release encore ouverts. Il ne donne aucune autorisation
+de pousser, taguer ou publier.
 
 ## État initial
 
@@ -11,6 +13,7 @@ Il ne donne aucune autorisation de pousser, fusionner, taguer ou publier.
 | `TorBoxSDK` | `master` | Référence v1 et état utilisateur à préserver |
 | `TorBoxSDK-docs-modernization` | `codex/sdk-modernization-plan` | Historique du plan de modernisation |
 | `TorBoxSDK-v2` | `v2.0.0` | Branche locale d'intégration du chantier v2 |
+| `TorBoxSDK-v2-program-control` | `codex/v2-program-control` | Contrôle de programme et suivi Kanban |
 
 La branche `v2.0.0` part du commit `67e7253`, qui contient le plan v2, les
 décisions déjà rendues et le référentiel initial des divergences API. Aucun
@@ -35,9 +38,15 @@ par les travaux v2.
 - Aucune branche ou worktree n'est supprimé tant que son état n'est pas propre
   et que son travail n'est pas intégré ou explicitement abandonné.
 
-La méthode d'intégration — squash, rebase ou merge commit — reste indéterminée.
-Avant la première intégration fonctionnelle, DEC-018 doit être complétée. En
-attendant, chaque lot reste dans sa branche et aucun historique n'est réécrit.
+L'intégration normale suit `rebase & merge` : la branche du lot est rebasée sur
+le dernier `v2.0.0`, validée à nouveau, puis intégrée par avance rapide en
+local ou par **Rebase and merge** sur GitHub. Si cette méthode n'est pas
+possible, un `merge commit` est autorisé à condition d'enregistrer la cause
+dans la carte du lot. Le squash n'est pas utilisé comme méthode normale.
+
+Le [Kanban privé v2](v2-program-control.md) est la source de vérité pour
+l'état d'exécution, les agents, les branches et les preuves. Ce dépôt reste la
+source de vérité pour le contrat, les décisions et les règles techniques.
 
 ## Création d'un lot de travail
 
@@ -127,9 +136,10 @@ Le lot est prêt à être présenté pour intégration lorsque :
   résultats et les contrôles non exécutés ;
 - aucune décision ouverte n'a été prise implicitement dans le code.
 
-L'intégration n'est effectuée qu'après le choix explicite de la méthode prévue
-par DEC-018. Les validations finales sont alors relancées sur `v2.0.0` : un
-résultat obtenu uniquement sur la branche du lot n'est pas une preuve
+Avant intégration, la branche est rebasée sur le dernier `v2.0.0` puis toutes
+les validations applicables sont relancées. Après l'avance rapide ou le merge
+commit de repli, les validations finales sont encore relancées sur `v2.0.0` :
+un résultat obtenu uniquement sur la branche du lot n'est pas une preuve
 suffisante.
 
 ## Publication et tags
