@@ -2,111 +2,100 @@ using System.Text.Json;
 
 namespace TorBoxSDK.SchemaValidationTests.Infrastructure;
 
-/// <summary>
-/// Reads and parses the TorBox OpenAPI specification to extract schema property definitions.
-/// The specification is fetched from the public TorBox API endpoint and cached for the
-/// lifetime of the process.
-/// </summary>
 internal static class OpenApiSchemaReader
 {
-	/// <summary>
-	/// Public URL of the TorBox OpenAPI specification.
-	/// </summary>
-	internal const string OpenApiUrl = "https://api.torbox.app/openapi.json";
+	internal const string MainOpenApiSnapshotId = "main-openapi";
 
-	private static readonly HttpClient _httpClient = new();
-	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _cachedSchemas = new(FetchAndParseAsync);
+	private static readonly Lazy<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> _cachedSchemas =
+		new(ReadAndParseBaseline);
 
-	/// <summary>
-	/// Returns all schema definitions from the TorBox OpenAPI specification.
-	/// The specification is downloaded once from <see cref="OpenApiUrl"/> and cached
-	/// for the lifetime of the process.
-	/// </summary>
-	/// <returns>
-	/// A dictionary keyed by schema name. Each value is a dictionary of property name
-	/// to its OpenAPI type string (e.g., <c>"string"</c>, <c>"integer"</c>,
-	/// <c>"boolean"</c>, <c>"array"</c>, <c>"object"</c>, or a <c>$ref</c> type name).
-	/// </returns>
-	public static Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> ReadFromApiAsync() => _cachedSchemas.Value;
+	internal static Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> ReadFromBaselineAsync() =>
+		Task.FromResult(_cachedSchemas.Value);
 
-	/// <summary>
-	/// Parses the OpenAPI specification from a raw JSON string.
-	/// </summary>
-	/// <param name="json">The raw JSON content of the OpenAPI specification.</param>
-	public static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Parse(string json)
+	// Retained while the static test files migrate to the explicit baseline name.
+	internal static Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> ReadFromApiAsync() =>
+		ReadFromBaselineAsync();
+
+	internal static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> Parse(string json)
 	{
-		using var doc = JsonDocument.Parse(json);
+		ArgumentNullException.ThrowIfNull(json);
 
-		Dictionary<string, IReadOnlyDictionary<string, string>> result = [];
-
-		if (!doc.RootElement.TryGetProperty("components", out JsonElement components))
+		using JsonDocument document = JsonDocument.Parse(json);
+		Dictionary<string, IReadOnlyDictionary<string, string>> result = new(StringComparer.Ordinal);
+		if (!document.RootElement.TryGetProperty("components", out JsonElement components) ||
+			components.ValueKind != JsonValueKind.Object ||
+			!components.TryGetProperty("schemas", out JsonElement schemas) ||
+			schemas.ValueKind != JsonValueKind.Object)
 		{
 			return result;
 		}
 
-		if (!components.TryGetProperty("schemas", out JsonElement schemas))
+		foreach (JsonProperty schema in schemas.EnumerateObject().OrderBy(property => property.Name, StringComparer.Ordinal))
 		{
-			return result;
-		}
-
-		foreach (JsonProperty schema in schemas.EnumerateObject())
-		{
-			if (!schema.Value.TryGetProperty("properties", out JsonElement props))
+			if (!schema.Value.TryGetProperty("properties", out JsonElement properties) ||
+				properties.ValueKind != JsonValueKind.Object)
 			{
 				continue;
 			}
 
-			Dictionary<string, string> properties = [];
-			foreach (JsonProperty prop in props.EnumerateObject())
+			Dictionary<string, string> fields = new(StringComparer.Ordinal);
+			foreach (JsonProperty property in properties.EnumerateObject().OrderBy(property => property.Name, StringComparer.Ordinal))
 			{
-				properties[prop.Name] = ExtractType(prop.Value);
+				fields[property.Name] = ExtractType(property.Value);
 			}
 
-			result[schema.Name] = properties;
+			result[schema.Name] = fields;
 		}
 
 		return result;
 	}
 
-	private static async Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>> FetchAndParseAsync()
+	private static IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>> ReadAndParseBaseline()
 	{
-		string json = await _httpClient.GetStringAsync(OpenApiUrl).ConfigureAwait(false);
-		return Parse(json);
+		ContractBaseline baseline = ContractBaselineReader.Load();
+		ContractSnapshot snapshot = baseline.GetSnapshot(MainOpenApiSnapshotId);
+		return Parse(snapshot.ReadUtf8Text());
 	}
 
-	private static string ExtractType(JsonElement propDef)
+	private static string ExtractType(JsonElement propertyDefinition)
 	{
-		if (propDef.TryGetProperty("type", out JsonElement typeElem))
+		if (propertyDefinition.TryGetProperty("type", out JsonElement type))
 		{
-			return typeElem.GetString() ?? "unknown";
+			return type.GetString() ?? "unknown";
 		}
 
-		if (propDef.TryGetProperty("$ref", out JsonElement refElem))
+		if (propertyDefinition.TryGetProperty("$ref", out JsonElement reference))
 		{
-			return refElem.GetString()?.Split('/').Last() ?? "unknown";
+			return ExtractReference(reference.GetString());
 		}
 
-		if (propDef.TryGetProperty("anyOf", out JsonElement anyOf))
+		if (propertyDefinition.TryGetProperty("anyOf", out JsonElement anyOf) &&
+			anyOf.ValueKind == JsonValueKind.Array)
 		{
 			List<string> parts = [];
 			foreach (JsonElement item in anyOf.EnumerateArray())
 			{
-				if (item.TryGetProperty("type", out JsonElement t))
+				if (item.TryGetProperty("type", out JsonElement itemType))
 				{
-					parts.Add(t.GetString() ?? "null");
+					parts.Add(itemType.GetString() ?? "null");
 				}
-				else if (item.TryGetProperty("$ref", out JsonElement r))
+				else if (item.TryGetProperty("$ref", out JsonElement itemReference))
 				{
-					parts.Add(r.GetString()?.Split('/').Last() ?? "unknown");
+					parts.Add(ExtractReference(itemReference.GetString()));
 				}
 				else
 				{
-					parts.Add("null");
+					parts.Add("unknown");
 				}
 			}
+
+			parts.Sort(StringComparer.Ordinal);
 			return string.Join("|", parts);
 		}
 
 		return "unknown";
 	}
+
+	private static string ExtractReference(string? reference) =>
+		reference?.Split('/').Last() ?? "unknown";
 }

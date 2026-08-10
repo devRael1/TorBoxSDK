@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "baselineId": "2026-08-10",
+  "createdAtUtc": "2026-08-10T12:07:20.7613400+00:00",
+  "sources": [
+    {
+      "id": "main-openapi",
+      "family": "main",
+      "format": "openapi",
+      "availability": "captured",
+      "artifactPath": "main.openapi.json",
+      "sourceUrl": "https://api.torbox.app/openapi.json",
+      "requestMethod": "GET",
+      "capturedAtUtc": "2026-08-10T12:07:19.8630956+00:00",
+      "responseStatus": 200,
+      "contentType": "application/json",
+      "etag": null,
+      "lastModified": null,
+      "contentLength": 96363,
+      "sha256": "6017d1e0162a24315398eff9378b942a01816c305b9b122ee301182e932a94a4"
+    },
+    {
+      "id": "relay-openapi",
+      "family": "relay",
+      "format": "openapi",
+      "availability": "captured",
+      "artifactPath": "relay.openapi.json",
+      "sourceUrl": "https://relay.torbox.app/openapi.json",
+      "requestMethod": "GET",
+      "capturedAtUtc": "2026-08-10T12:07:20.2176419+00:00",
+      "responseStatus": 200,
+      "contentType": "application/json",
+      "etag": null,
+      "lastModified": null,
+      "contentLength": 1360,
+      "sha256": "71e5eeb37ab6cf0c8284e477c966367b71ba0fcd7becb8f79fe66ddaa4c4bb1e"
+    },
+    {
+      "id": "main-postman",
+      "family": "main",
+      "format": "postman-public-api-collection",
+      "availability": "captured",
+      "artifactPath": "main.postman.collection.json",
+      "sourceUrl": "https://www.postman.com/_api/collection/29572726-4244cdaf-ece6-4b6d-a2ca-463a3af48f54?populate=true",
+      "requestMethod": "GET",
+      "requestHeaders": {
+        "x-app-version": "12.23.0-260810-0232",
+        "x-entity-team-id": "0"
+      },
+      "capturedAtUtc": "2026-08-10T12:07:20.7613400+00:00",
+      "responseStatus": 200,
+      "contentType": "application/json; charset=utf-8",
+      "etag": null,
+      "lastModified": null,
+      "contentLength": 2012155,
+      "sha256": "82699519a936b9f8dfd83e0a9871b4a222a9a97a5a56fa5e72f73cfad512c0b6"
+    },
+    {
+      "id": "search-openapi",
+      "family": "search",
+      "format": "openapi",
+      "availability": "unavailable",
+      "reason": "No current official Search OpenAPI endpoint was verified during this acquisition. No URL, response body, or substitute contract was fabricated."
+    },
+    {
+      "id": "search-postman",
+      "family": "search",
+      "format": "postman-public-api-collection",
+      "availability": "unavailable",
+      "sourceUrl": "https://www.postman.com/torbox/torbox-api/documentation/u47iwao/search-api",
+      "responseStatus": 200,
+      "contentType": "text/html",
+      "reason": "The public documentation landing page was reachable, but it did not expose a verified raw collection-export endpoint in this acquisition. No collection was fabricated from the page."
+    },
+    {
+      "id": "relay-postman",
+      "family": "relay",
+      "format": "postman-public-api-collection",
+      "availability": "unavailable",
+      "sourceUrl": "https://www.postman.com/torbox/torbox-api/documentation/tagtekq/relay-api",
+      "responseStatus": 200,
+      "contentType": "text/html",
+      "reason": "The public documentation landing page was reachable, but it did not expose a verified raw collection-export endpoint in this acquisition. No collection was fabricated from the page."
+    }
+  ]
+}
