@@ -1,6 +1,6 @@
 # Stratégie de tests et publication NuGet
 
-> Aucune commande de publication ne doit être exécutée dans le cadre du chantier local sans validation explicite. Le canal candidat et la politique SemVer dépendent de [DEC-001, DEC-009 et DEC-010](decisions.md).
+> Aucune commande de publication ne doit être exécutée dans le cadre du chantier local sans validation explicite. V2-100 applique [DEC-009](decisions.md#dec-009--canal-de-release-candidate), [DEC-015](decisions.md#dec-015--source-de-version-et-assemblyversion), [DEC-016](decisions.md#dec-016--authentification-et-approbation-nuget) et la portée déterministe de DEC-017 ; DEC-010 reste nécessaire avant une release finale.
 
 ## Diagnostic de la chaîne actuelle
 
@@ -66,6 +66,26 @@ flowchart LR
 ```
 
 Le job de publication ne doit jamais reconstruire. Il télécharge l'artefact testé, vérifie son empreinte, sa version et sa provenance, puis le pousse après approbation.
+
+## Chaîne appliquée par V2-100
+
+- `ci.yml` s'exécute sur pull request, sur l'intégration `v2.0.0` et manuellement. Il restaure en mode verrouillé, construit, puis exécute les tests unitaires et les tests de schéma non-live pour chaque TFM déclaré.
+- `publish.yml` est déclenché par un tag `v*`, mais refuse tout tag qui n'est pas exactement `v2.minor.patch` avec un suffixe de préversion NuGet facultatif, ou qui ne cible pas un commit atteignable depuis `v2.0.0`. Le job `candidate` construit, teste et empaquette une seule fois, génère le manifeste et les SHA-256, puis conserve le tout comme artefact interne pendant 14 jours.
+- Le job `publish` ne reçoit que cet artefact : il vérifie que le tag pointe toujours vers le commit candidat, recalcule les hashes, contrôle le manifeste et pousse les chemins complets des deux fichiers. Il ne contient ni `dotnet build`, ni `dotnet pack`, wildcard ou `--skip-duplicate`.
+- Les tags de préversion restent des candidates locales : le job de publication stable est ignoré. Un tag stable attend l'environnement `release` avant d'obtenir un jeton OIDC NuGet temporaire. Le propriétaire conserve explicitement le bypass administrateur GitHub ; toute utilisation est une dérogation à documenter dans le rapport de release.
+
+### Préconfiguration administrative obligatoire
+
+Avant d'autoriser un tag stable, le propriétaire configure les deux protections externes suivantes :
+
+1. Dans NuGet.org, créer une politique **Trusted Publishing** détenue par `devRael1`, limitée au dépôt `devRael1/TorBoxSDK`, au fichier `publish.yml` et à l'environnement `release`.
+2. Dans GitHub, créer l'environnement `release`, ajouter `devRael1` comme approbateur requis et limiter les déploiements aux tags `v2.*`. Configurer ensuite la règle de branche de `v2.0.0` pour exiger le check `CI / Verify` et une pull request revue avant intégration.
+
+La politique NuGet n'utilise aucune clé API de longue durée. Le job OIDC demande seulement `id-token: write` au moment de la promotion ; les jobs de CI et de candidate restent en lecture seule.
+
+### Dépendance transitoire V2-110
+
+Sur le commit de base de V2-100, les tests de schéma lisent encore une spécification OpenAPI distante et peuvent donc échouer sur une variante amont. V2-110 fournit le baseline versionné qui rend ce test reproductible. V2-100 conserve le test comme barrière stricte : aucun filtre, saut ou succès artificiel ne doit masquer l'échec actuel. La preuve finale de CI est relancée après l'intégration de V2-110 et le rebase de V2-100.
 
 ## Pyramide de tests
 
@@ -183,9 +203,9 @@ plateforme ni un planning d'exécution. V2-110 n'ajoute ni workflow, ni
 déclencheur, ni gate : DEC-017 doit d'abord définir le périmètre CI, les
 autorisations live et une éventuelle cadence.
 
-### `pr.yml`
+### `ci.yml`
 
-Déclenchement sur pull request et intégration. Exécute niveaux 1 à 7, sans secret TorBox ni NuGet. Les checks nécessaires deviennent obligatoires sur `master`.
+Déclenchement sur pull request et intégration. Exécute la restauration verrouillée, le build Release, les tests unitaires et les tests de schéma non-live pour chaque TFM déclaré, sans secret TorBox ni NuGet. La validation finale du package intervient dans le job `candidate` après le `pack`; les tests consommateurs restent du ressort du lot qui les introduira. Le check `CI / Verify` devient obligatoire sur `v2.0.0` après le premier run vert incluant le baseline de V2-110.
 
 ### `contract-watch.yml`
 
@@ -200,17 +220,13 @@ Scénario possible seulement après décision DEC-017. Une éventuelle suite liv
 de lecture devra alors définir son environnement protégé, son compte dédié, ses
 autorisations et le traitement de l'indisponibilité externe.
 
-### `release-candidate.yml`
-
-Déclenchement manuel sur un commit exact et une version candidate explicite. Exécute tous les contrôles, crée le `.nupkg` une fois, génère SBOM/attestations si retenus, calcule les hashes et conserve l'artefact.
-
 ### `publish.yml`
 
-Télécharge un candidat approuvé, vérifie commit, hash et version, attend l'approbation de l'environnement `release`, puis pousse des chemins de fichiers exacts. Aucune wildcard et aucune reconstruction.
+Le job `candidate` du workflow produit l'artefact unique depuis le tag exact. Le job `publish` télécharge ce candidat, vérifie commit, hash et version, attend l'approbation de l'environnement `release`, puis pousse des chemins de fichiers exacts. Aucune wildcard et aucune reconstruction.
 
-Le comportement face à un package déjà existant doit être un échec explicite, sauf opération de reprise documentée. `--skip-duplicate` n'est pas un contrôle de version.
+Le comportement face à un package déjà existant est un échec explicite, sauf reprise vérifiée : si le push du `.nupkg` échoue, le job télécharge le package NuGet portant le même id/version et compare son SHA-256 au manifeste candidat. Il ne poursuit vers le `.snupkg` que si les hashes sont identiques ; une absence, une indisponibilité ou une différence échoue. `--skip-duplicate` n'est jamais utilisé.
 
-L'authentification relève de DEC-016 : Trusted Publishing/OIDC limite la durée du jeton ; une clé API reste possible si elle est restreinte au package, au droit de push, avec expiration et rotation.
+L'authentification relève de DEC-016 : Trusted Publishing/OIDC fournit un jeton temporaire au seul job de promotion. Aucune clé API NuGet de longue durée n'est admise dans le dépôt, les secrets GitHub ou le workflow.
 
 ## Source unique de version
 
@@ -220,13 +236,15 @@ Une seule mécanique doit être choisie et documentée, par exemple :
 - version dérivée d'un tag strict après que le candidat a été approuvé ;
 - outil de versionnement Git configuré et verrouillé.
 
-Quelle que soit l'option, les invariants sont identiques :
+V2-100 retient le tag strict `v2.<minor>.<patch>` comme source unique. Les invariants sont :
 
 - format SemVer validé ;
 - tag éventuel exactement égal à `v` + version du package ;
 - version d'assembly et d'information cohérentes selon la politique ;
-- aucun fichier du dépôt ne peut réintroduire silencieusement `1.0.0` ;
+- aucun fichier du dépôt ne peut réintroduire silencieusement `1.0.0` comme version de release ;
 - réexécuter la publication ne fabrique pas un autre binaire.
+
+La publication NuGet de l'archive principale et des symboles n'est pas atomique. Après une interruption entre les deux, relancer le job `publish` échoué du même run est la seule reprise autorisée : il récupère le candidat immuable, prouve que le `.nupkg` déjà visible sur NuGet.org a le hash du manifeste, puis tente exclusivement le `.snupkg` candidat. Une version existante dont le hash diffère reste un incident et bloque la promotion.
 
 La mécanique exacte est validée avec DEC-010.
 

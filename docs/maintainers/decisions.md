@@ -16,15 +16,15 @@ Pour valider une décision, renseigner : option choisie, date, auteur, justifica
 | DEC-006 | Champs inconnus et sémantique absent/null | En attente | modèles et sérialisation |
 | DEC-007 | Un package ou packages séparés | En attente | organisation NuGet |
 | DEC-008 | Langue de la documentation | En attente | documentation publique |
-| DEC-009 | Canal de release candidate | En attente | validation de publication |
+| DEC-009 | Canal de release candidate | Validée : `.nupkg` candidat local | validation de publication |
 | DEC-010 | Numéro et cadence de la prochaine version | En attente | release finale |
 | DEC-011 | Conservation de fixtures de réponses | En attente | tests de modèles |
 | DEC-012 | Engagement trimming et Native AOT | En attente | compatibilité et CI |
 | DEC-013 | Dépendances Microsoft.Extensions et découpage DI | En attente | TFMs, packaging |
 | DEC-014 | Extension des interfaces publiques | En attente | ajout des opérations |
-| DEC-015 | Source de version et AssemblyVersion | En attente | release |
-| DEC-016 | Authentification et approbation NuGet | En attente | publication |
-| DEC-017 | Périmètre CI, couverture et tests live | En attente | barrières qualité |
+| DEC-015 | Source de version et AssemblyVersion | Validée : tag strict, AssemblyVersion v2 stable | release |
+| DEC-016 | Authentification et approbation NuGet | Validée : Trusted Publishing/OIDC, approbation `devRael1` | publication |
+| DEC-017 | Périmètre CI, couverture et tests live | Partiellement validée : barrière déterministe V2-100 | barrières qualité |
 | DEC-018 | Politique Git, tags et intégration des worktrees | Partiellement validée : rebase & merge, fallback merge commit | intégration/release |
 | DEC-019 | Identité et métadonnées du package | En attente | package/documentation |
 | DEC-020 | Priorité entre OpenAPI, Postman et observations live | Validée : live arbitre | contrat effectif |
@@ -150,7 +150,9 @@ Les documents OpenAPI amont sont conservés sans modification comme preuves dat�
 
 ## DEC-009 — Canal de release candidate
 
-**Options.** `.nupkg` local uniquement ; flux NuGet.org en préversion ; registre GitHub Packages ; combinaison définie avec critères de promotion.
+**Décision du propriétaire — 10 août 2026.** Option A validée : une release candidate reste un `.nupkg`/`.snupkg` interne, conservé comme artefact GitHub Actions. Elle n'est jamais publiée sur NuGet.org ou GitHub Packages.
+
+Une version stable ne peut être promue qu'après l'approbation séparée de l'environnement `release` et sans reconstruire le candidat. Les tags de préversion servent uniquement à produire et contrôler le candidat ; ils ne déclenchent pas de push NuGet.
 
 ## DEC-010 — Numéro et cadence
 
@@ -186,21 +188,23 @@ Les documents OpenAPI amont sont conservés sans modification comme preuves dat�
 
 ## DEC-015 — Source de version et AssemblyVersion
 
-**Options de source.** Propriété modifiée dans le dépôt avec vérification ; version dérivée d'un tag strict ; paramètre de pipeline candidat ; MinVer ; Nerdbank.GitVersioning ; autre outil approuvé.
+**Décision du propriétaire — 10 août 2026.** La source unique est un tag strict `v2.<minor>.<patch>`, avec, facultativement, un suffixe de préversion NuGet-compatible. Le commit visé doit être atteignable depuis `v2.0.0`. Les métadonnées SemVer `+...`, les nombres à zéros initiaux et les identifiants numériques de préversion à zéros initiaux sont refusés.
 
-**Options d'assembly.** Suivre chaque version NuGet ; maintenir `AssemblyVersion` stable pendant une version majeure et utiliser `FileVersion`/`InformationalVersion` pour le détail.
+`AssemblyVersion` reste `2.0.0.0` pendant toute la ligne majeure v2. `FileVersion` suit la partie numérique de la version du package (`major.minor.patch.0`) ; `InformationalVersion` contient la version du package et l'identifiant de révision SourceLink.
 
-**Invariant obligatoire.** Le pipeline échoue si tag, `.nuspec`, nom du package et versions d'assembly attendues sont incohérents.
+**Invariant obligatoire.** Le pipeline échoue si tag, `.nuspec`, noms des `.nupkg`/`.snupkg`, `AssemblyVersion`, `FileVersion`, manifeste et empreintes SHA-256 sont incohérents.
 
 ## DEC-016 — Authentification et approbation NuGet
 
-**Options d'authentification.** Trusted Publishing/OIDC avec jeton temporaire ; clé API limitée au seul package, au push et avec expiration/rotation.
+**Décision du propriétaire — 10 août 2026.** Utiliser NuGet Trusted Publishing/OIDC, sans clé API de longue durée. La politique NuGet est liée au dépôt `devRael1/TorBoxSDK`, au workflow `publish.yml` et à l'environnement GitHub `release`.
 
-**À renseigner.** Nombre et identité des approbateurs de l'environnement `release`, propriétaires habilités à pousser/déprécier/délister, délai d'approbation et procédure d'urgence.
+L'environnement `release` requiert l'approbation de `devRael1` avant tout push. Le propriétaire conserve explicitement la possibilité GitHub de contourner cette protection en tant qu'administrateur ; tout contournement est une dérogation à justifier dans l'historique de déploiement et la carte de release. Le propriétaire habilité à pousser, déprécier ou délister reste `devRael1`; une urgence suit la procédure de retour documentée dans [Tests et publication NuGet](testing-and-release.md#retour-après-incident-nuget).
 
 ## DEC-017 — Périmètre CI, couverture et tests live
 
-**À décider.** OS obligatoires ; TFMs obligatoires ; seuil fixe ou ratchet de couverture ; éventuel mutation testing ; fréquence de surveillance OpenAPI ; autorisation, compte et budget des tests live de lecture/écriture/destructifs ; gestion d'une panne TorBox ; durée de conservation des rapports.
+**Décision partielle du propriétaire — 10 août 2026 (V2-100).** La barrière déterministe s'exécute sous Ubuntu et couvre une restauration verrouillée, le build Release de chaque TFM déclaré, les tests unitaires et de schéma non-live, la validation API/package contre `TorBoxSDK 1.0.0`, le pack et le contrôle de l'artefact candidat. Les résultats sont conservés 14 jours.
+
+Les tests live, les seuils de couverture, le mutation testing, la surveillance distante, les OS consommateurs supplémentaires et leur budget restent à décider dans les lots concernés. Aucun de ces contrôles ne devient implicitement obligatoire pour V2-100.
 
 ## DEC-018 — Politique Git, tags et worktrees
 

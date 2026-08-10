@@ -1,4 +1,4 @@
-name: Publish to NuGet
+name: Validate and publish NuGet release
 
 on:
   push:
@@ -9,37 +9,189 @@ permissions:
   contents: read
 
 jobs:
-  publish:
-    name: Pack & Publish
+  candidate:
+    name: Build release candidate
     runs-on: ubuntu-latest
-
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      is_prerelease: ${{ steps.version.outputs.is_prerelease }}
+      release_commit: ${{ steps.commit.outputs.release_commit }}
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout tagged commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.ref }}
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
         with:
           dotnet-version: |
-            6.x
-            7.x
-            8.x
-            9.x
-            10.x
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
+            10.0.302
 
-      - name: Restore
-        run: dotnet restore
+      - name: Resolve and validate release tag
+        id: version
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: ./eng/Resolve-NuGetReleaseTag.ps1 -Tag $env:RELEASE_TAG -GitHubOutput $env:GITHUB_OUTPUT
 
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
+      - name: Resolve tagged commit
+        id: commit
+        shell: pwsh
+        run: |
+          $releaseCommit = git rev-parse HEAD
 
-      - name: Pack
-        run: dotnet pack src/TorBoxSDK/TorBoxSDK.csproj --configuration Release --no-build --output ./nupkg
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
 
-      - name: Push to NuGet
-        run: dotnet nuget push "./nupkg/*.nupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          if ($releaseCommit -notmatch '^[0-9a-f]{40}$') {
+            throw "Resolved release commit '$releaseCommit' is not a full Git SHA."
+          }
 
-      - name: Push symbols to NuGet
-        run: dotnet nuget push "./nupkg/*.snupkg" --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          "release_commit=$releaseCommit" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Verify tagged commit belongs to v2.0.0
+        shell: pwsh
+        env:
+          RELEASE_COMMIT: ${{ steps.commit.outputs.release_commit }}
+          RELEASE_BRANCH: v2.0.0
+        run: |
+          $remoteBranch = "refs/remotes/origin/$($env:RELEASE_BRANCH)"
+          git fetch --no-tags --force origin "+refs/heads/$($env:RELEASE_BRANCH):$remoteBranch"
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          git merge-base --is-ancestor $env:RELEASE_COMMIT $remoteBranch
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "Tagged commit '$env:RELEASE_COMMIT' is not reachable from '$env:RELEASE_BRANCH'."
+          }
+
+      - name: Run deterministic checks
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_FILE_VERSION: ${{ steps.version.outputs.file_version }}
+        run: >
+          ./eng/Invoke-DeterministicChecks.ps1
+          -Version $env:RELEASE_VERSION
+          -FileVersion $env:RELEASE_FILE_VERSION
+          -ResultsDirectory artifacts/release/test-results
+
+      - name: Pack candidate exactly once
+        shell: pwsh
+        env:
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+          RELEASE_FILE_VERSION: ${{ steps.version.outputs.file_version }}
+        run: |
+          dotnet pack src/TorBoxSDK/TorBoxSDK.csproj --configuration Release --no-build --no-restore --output artifacts/release/packages "-p:Version=$env:RELEASE_VERSION" "-p:PackageVersion=$env:RELEASE_VERSION" "-p:FileVersion=$env:RELEASE_FILE_VERSION"
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+      - name: Validate candidate and write manifest
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >
+          ./eng/Test-NuGetReleaseArtifact.ps1
+          -Tag $env:RELEASE_TAG
+          -Commit ${{ steps.commit.outputs.release_commit }}
+          -PackageDirectory artifacts/release/packages
+          -ManifestPath artifacts/release/release-manifest.json
+          -WriteManifest
+
+      - name: Upload immutable candidate
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nuget-candidate-${{ steps.version.outputs.version }}-${{ steps.commit.outputs.release_commit }}
+          path: artifacts/release
+          if-no-files-found: error
+          retention-days: 14
+
+  publish:
+    name: Publish exact stable candidate
+    needs: candidate
+    if: needs.candidate.outputs.is_prerelease == 'false'
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      actions: read
+      contents: read
+      id-token: write
+    steps:
+      - name: Checkout tagged verifier
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ needs.candidate.outputs.release_commit }}
+          persist-credentials: false
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@67a3573c9a986a3f9c594539f4ab511d57bb3ce9
+        with:
+          dotnet-version: 10.0.302
+
+      - name: Verify tag still resolves to the candidate commit
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+          EXPECTED_COMMIT: ${{ needs.candidate.outputs.release_commit }}
+        run: |
+          $verificationRef = 'refs/torboxsdk/release-tag-verification'
+          git fetch --no-tags --force origin "refs/tags/$($env:RELEASE_TAG):$verificationRef"
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          $tagCommit = git rev-parse "$verificationRef^{commit}"
+
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          if ($tagCommit -cne $env:EXPECTED_COMMIT) {
+            throw "Tag '$env:RELEASE_TAG' no longer resolves to candidate commit '$env:EXPECTED_COMMIT'."
+          }
+
+      - name: Download candidate
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0
+        with:
+          name: nuget-candidate-${{ needs.candidate.outputs.version }}-${{ needs.candidate.outputs.release_commit }}
+          path: artifacts/release
+
+      - name: Reverify candidate
+        shell: pwsh
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: >
+          ./eng/Test-NuGetReleaseArtifact.ps1
+          -Tag $env:RELEASE_TAG
+          -Commit ${{ needs.candidate.outputs.release_commit }}
+          -PackageDirectory artifacts/release/packages
+          -ManifestPath artifacts/release/release-manifest.json
+
+      - name: Authenticate to NuGet with OIDC
+        id: nuget-login
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841
+        with:
+          user: devRael1
+
+      - name: Push exact package files
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: >
+          ./eng/Push-NuGetReleaseArtifact.ps1
+          -PackageDirectory artifacts/release/packages
+          -ManifestPath artifacts/release/release-manifest.json
