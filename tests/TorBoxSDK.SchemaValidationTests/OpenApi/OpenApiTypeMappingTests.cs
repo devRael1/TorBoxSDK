@@ -13,9 +13,10 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// because the API specification does not encode the full precision of C# types
 /// (e.g., <c>long</c> vs <c>int</c> are both <c>integer</c> in OpenAPI).
 /// </remarks>
+[Trait("Category", "Contract")]
 public sealed class OpenApiTypeMappingTests
 {
-	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromApiAsync);
+	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromBaselineAsync);
 
 	/// <summary>
 	/// Provides one row per schema→type mapping for the parameterised tests.
@@ -25,6 +26,11 @@ public sealed class OpenApiTypeMappingTests
 		TheoryData<string, Type> data = [];
 		foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
 		{
+			if (SchemaModelMapping.KnownSchemaMappingsNotInMainBaseline.Contains(schemaName))
+			{
+				continue;
+			}
+
 			data.Add(schemaName, modelType);
 		}
 

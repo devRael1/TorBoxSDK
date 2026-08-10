@@ -100,6 +100,20 @@ internal static class SchemaModelMapping
 		};
 
 	/// <summary>
+	/// Gets mappings represented by the SDK but absent from the captured Main OpenAPI baseline.
+	/// </summary>
+	/// <remarks>
+	/// The <c>main-openapi</c> snapshot in baseline <c>2026-08-10</c> retains the observed
+	/// variant without the Search Engine schemas. This is a named DEC-004 / DIV-001 divergence,
+	/// not an instruction to remove the corresponding SDK models or infer an OpenAPI union.
+	/// </remarks>
+	public static IReadOnlySet<string> KnownSchemaMappingsNotInMainBaseline { get; } =
+		Set(
+			"ControlSearchEngine",
+			"SearchEngineEditModel",
+			"SearchEngineModel");
+
+	/// <summary>
 	/// Gets the set of OpenAPI field names that are intentionally not mapped in the SDK
 	/// for each schema. The coverage tests will not flag these as "missing in SDK".
 	/// </summary>
@@ -133,6 +147,14 @@ internal static class SchemaModelMapping
 			["Body_create_usenet_download_v1_api_usenet_createusenetdownload_post"] = Set("file"),
 			["Body_async_create_usenet_download_v1_api_usenet_asynccreateusenetdownload_post"] = Set("file"),
 			["Body_get_torrent_info_post_v1_api_torrents_torrentinfo_post"] = Set("file"),
+
+			// Captured Main baseline 2026-08-10 (`main-openapi`) declares these fields while
+			// the current SDK models do not. They are recorded as DEC-004 / DIV-001 evidence,
+			// not as a model change or proof that another OpenAPI variant is the effective contract.
+			["BaseSettingsModel"] = Set("subscribed_email_segments"),
+			["EditTorrent"] = Set("airlocked"),
+			["EditUsenetDownload"] = Set("airlocked"),
+			["EditWebDownload"] = Set("airlocked"),
 		};
 
 	/// <summary>

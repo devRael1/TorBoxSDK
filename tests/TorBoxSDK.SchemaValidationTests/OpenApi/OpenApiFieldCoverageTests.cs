@@ -4,7 +4,7 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 
 /// <summary>
 /// Verifies bidirectional field coverage between the TorBox OpenAPI specification
-/// (fetched from <c>https://api.torbox.app/openapi.json</c>) and the corresponding SDK model types.
+/// retained in the versioned Main baseline and the corresponding SDK model types.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -23,9 +23,10 @@ namespace TorBoxSDK.SchemaValidationTests.OpenApi;
 /// excluded from both tests. Update that class when the SDK intentionally diverges from the spec.
 /// </para>
 /// </remarks>
+[Trait("Category", "Contract")]
 public sealed class OpenApiFieldCoverageTests
 {
-	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromApiAsync);
+	private static readonly Lazy<Task<IReadOnlyDictionary<string, IReadOnlyDictionary<string, string>>>> _schemas = new(OpenApiSchemaReader.ReadFromBaselineAsync);
 
 	/// <summary>
 	/// Provides one row per schema→type mapping for the parameterised tests.
@@ -35,6 +36,11 @@ public sealed class OpenApiFieldCoverageTests
 		TheoryData<string, Type> data = [];
 		foreach ((string schemaName, Type modelType) in SchemaModelMapping.SchemaToType)
 		{
+			if (SchemaModelMapping.KnownSchemaMappingsNotInMainBaseline.Contains(schemaName))
+			{
+				continue;
+			}
+
 			data.Add(schemaName, modelType);
 		}
 
