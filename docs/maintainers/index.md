@@ -249,6 +249,7 @@ Une version n'est prête que si toutes les affirmations suivantes sont vraies :
 
 - [Contrat API et modèles](api-contract-and-models.md)
 - [Baseline de contrat V2-110](contract-baseline.md)
+- [Génération interne des contrats V2-200](internal-contract-generation.md)
 - [Divergences API observées](api-divergences.md)
 - [Compatibilité .NET](dotnet-compatibility.md)
 - [Tests et publication NuGet](testing-and-release.md)

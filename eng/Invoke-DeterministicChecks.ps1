@@ -27,6 +27,8 @@ function Invoke-DotNet {
     }
 }
 
+& (Join-Path $PSScriptRoot 'Invoke-GenerateInternalContracts.ps1') -Verify
+
 $fullResultsDirectory = [System.IO.Path]::GetFullPath($ResultsDirectory)
 [System.IO.Directory]::CreateDirectory($fullResultsDirectory) | Out-Null
 
