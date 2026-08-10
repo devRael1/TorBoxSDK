@@ -76,7 +76,13 @@ La documentation est préparée dans un worktree distinct, sans modification de 
 ```text
 TorBoxSDK                         master, état utilisateur inchangé
 TorBoxSDK-docs-modernization      codex/sdk-modernization-plan
+TorBoxSDK-v2                      v2.0.0, intégration locale de la v2
 ```
+
+La branche `v2.0.0` a été créée depuis le commit documentaire validé
+`67e7253`. Son [guide de développement](v2-development-workflow.md) définit
+le cadre local applicable tant que DEC-018 n'a pas fixé la stratégie
+d'intégration et de tags définitive.
 
 Après validation du plan, chaque lot doit rester borné et isolé. Les noms ci-dessous sont des exemples de découpage, pas des branches déjà décidées :
 
@@ -235,6 +241,7 @@ Une version n'est prête que si toutes les affirmations suivantes sont vraies :
 - [Divergences API observées](api-divergences.md)
 - [Compatibilité .NET](dotnet-compatibility.md)
 - [Tests et publication NuGet](testing-and-release.md)
+- [Développement de la v2](v2-development-workflow.md)
 - [Décisions à valider](decisions.md)
 
 ## Sources officielles

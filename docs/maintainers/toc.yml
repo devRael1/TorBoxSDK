@@ -8,5 +8,7 @@
   href: dotnet-compatibility.md
 - name: Tests et publication NuGet
   href: testing-and-release.md
+- name: Développement de la v2
+  href: v2-development-workflow.md
 - name: Décisions à valider
   href: decisions.md
