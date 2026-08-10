@@ -238,14 +238,30 @@ internal static class ContractSnapshotComparer
 
 		foreach (JsonProperty response in responses.EnumerateObject().OrderBy(property => property.Name, StringComparer.Ordinal))
 		{
+			string responseScope = $"{operationKey}:{response.Name}";
+			AddFact(facts, "response", responseScope, BuildResponseSignature(response.Value));
+
 			if (response.Value.ValueKind != JsonValueKind.Object ||
 				!response.Value.TryGetProperty("content", out JsonElement content))
 			{
 				continue;
 			}
 
-			AddContentFacts(facts, "response-content", $"{operationKey}:{response.Name}", content);
+			AddContentFacts(facts, "response-content", responseScope, content);
 		}
+	}
+
+	private static string BuildResponseSignature(JsonElement response)
+	{
+		if (response.ValueKind != JsonValueKind.Object)
+		{
+			return CanonicalizeValue(response);
+		}
+
+		return $"{{{string.Join(",", response.EnumerateObject()
+			.Where(property => !string.Equals(property.Name, "content", StringComparison.Ordinal))
+			.OrderBy(property => property.Name, StringComparer.Ordinal)
+			.Select(property => $"{JsonSerializer.Serialize(property.Name)}:{CanonicalizeValue(property.Value)}"))}}}";
 	}
 
 	private static void AddContentFacts(
