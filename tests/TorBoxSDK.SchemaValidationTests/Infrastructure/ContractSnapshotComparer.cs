@@ -205,7 +205,12 @@ internal static class ContractSnapshotComparer
 			string content = parameter.TryGetProperty("content", out JsonElement contentElement)
 				? BuildContentSignature(contentElement)
 				: string.Empty;
-			string value = $"required={required};schema={schema};content={content}";
+			string style = GetOptionalPropertySignature(parameter, "style");
+			string explode = GetOptionalPropertySignature(parameter, "explode");
+			string allowReserved = GetOptionalPropertySignature(parameter, "allowReserved");
+			string value =
+				$"required={required};style={style};explode={explode};allowReserved={allowReserved};" +
+				$"schema={schema};content={content}";
 			AddFact(facts, "parameter", $"{operationKey}:{location}:{name}", value);
 		}
 	}
@@ -216,14 +221,23 @@ internal static class ContractSnapshotComparer
 		JsonElement operation)
 	{
 		if (!operation.TryGetProperty("requestBody", out JsonElement requestBody) ||
-			requestBody.ValueKind != JsonValueKind.Object ||
-			!requestBody.TryGetProperty("content", out JsonElement content))
+			requestBody.ValueKind != JsonValueKind.Object)
+		{
+			return;
+		}
+
+		AddFact(facts, "request-body", operationKey, BuildRequestBodySignature(requestBody));
+		if (!requestBody.TryGetProperty("content", out JsonElement content))
 		{
 			return;
 		}
 
 		AddContentFacts(facts, "request-content", operationKey, content);
 	}
+
+	private static string BuildRequestBodySignature(JsonElement requestBody) =>
+		$"required={GetOptionalPropertySignature(requestBody, "required")};" +
+		$"$ref={GetOptionalPropertySignature(requestBody, "$ref")}";
 
 	private static void AddResponseContentFacts(
 		Dictionary<string, ContractFact> facts,
@@ -263,6 +277,12 @@ internal static class ContractSnapshotComparer
 			.OrderBy(property => property.Name, StringComparer.Ordinal)
 			.Select(property => $"{JsonSerializer.Serialize(property.Name)}:{CanonicalizeValue(property.Value)}"))}}}";
 	}
+
+	private static string GetOptionalPropertySignature(JsonElement element, string propertyName) =>
+		element.ValueKind == JsonValueKind.Object &&
+		element.TryGetProperty(propertyName, out JsonElement property)
+			? CanonicalizeValue(property)
+			: "absent";
 
 	private static void AddContentFacts(
 		Dictionary<string, ContractFact> facts,
@@ -563,6 +583,8 @@ internal static class ContractSnapshotComparer
 			"nullable",
 			"oneOf",
 			"pattern",
+			"properties",
+			"required",
 			"type",
 			"uniqueItems"
 		];
@@ -575,9 +597,14 @@ internal static class ContractSnapshotComparer
 				continue;
 			}
 
-			string value = propertyName is "allOf" or "anyOf" or "enum" or "oneOf"
-				? CanonicalizeSet(property)
-				: CanonicalizeValue(property);
+			string value = propertyName switch
+			{
+				"allOf" or "anyOf" or "oneOf" => CanonicalizeSchemaSet(property),
+				"additionalProperties" or "items" => CanonicalizeSchemaValue(property),
+				"enum" or "required" => CanonicalizeSet(property),
+				"properties" => CanonicalizeProperties(property),
+				_ => CanonicalizeValue(property)
+			};
 			parts.Add($"{propertyName}={value}");
 		}
 
@@ -592,6 +619,36 @@ internal static class ContractSnapshotComparer
 		}
 
 		return $"[{string.Join(",", value.EnumerateArray().Select(CanonicalizeValue).OrderBy(item => item, StringComparer.Ordinal))}]";
+	}
+
+	private static string CanonicalizeSchemaSet(JsonElement value)
+	{
+		if (value.ValueKind != JsonValueKind.Array)
+		{
+			return CanonicalizeSchemaValue(value);
+		}
+
+		return $"[{string.Join(",", value.EnumerateArray()
+			.Select(CanonicalizeSchemaValue)
+			.OrderBy(item => item, StringComparer.Ordinal))}]";
+	}
+
+	private static string CanonicalizeSchemaValue(JsonElement value) =>
+		value.ValueKind == JsonValueKind.Object
+			? BuildSchemaSignature(value)
+			: CanonicalizeValue(value);
+
+	private static string CanonicalizeProperties(JsonElement properties)
+	{
+		if (properties.ValueKind != JsonValueKind.Object)
+		{
+			return CanonicalizeValue(properties);
+		}
+
+		return $"{{{string.Join(",", properties.EnumerateObject()
+			.OrderBy(property => property.Name, StringComparer.Ordinal)
+			.Select(property =>
+				$"{JsonSerializer.Serialize(property.Name)}:{CanonicalizeSchemaValue(property.Value)}"))}}}";
 	}
 
 	private static string CanonicalizeValue(JsonElement value) => value.ValueKind switch

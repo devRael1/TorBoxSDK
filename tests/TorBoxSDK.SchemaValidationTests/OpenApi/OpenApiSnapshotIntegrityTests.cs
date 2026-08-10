@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using TorBoxSDK.SchemaValidationTests.Infrastructure;
 
 namespace TorBoxSDK.SchemaValidationTests.OpenApi;
@@ -107,23 +108,7 @@ public sealed class OpenApiSnapshotIntegrityTests
 		using TemporaryBaselineDirectory temporaryDirectory = new();
 		const string artifactContent = """{"openapi":"3.0.0"}""";
 		long contentLength = Encoding.UTF8.GetByteCount(artifactContent);
-		string manifest = $$"""
-			{
-			  "schemaVersion": 1,
-			  "sources": [
-			    {
-			      "id": "main-openapi",
-			      "family": "main",
-			      "format": "openapi",
-			      "availability": "captured",
-			      "artifactPath": "main.openapi.json",
-			      "sourceUrl": "https://api.example.test/openapi.json",
-			      "contentLength": {{contentLength}},
-			      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
-			    }
-			  ]
-			}
-			""";
+		string manifest = CreateCapturedManifest("main.openapi.json", contentLength);
 		temporaryDirectory.WriteFile("manifest.json", manifest);
 		temporaryDirectory.WriteFile("main.openapi.json", artifactContent);
 		Action action = () => ContractBaselineReader.Load(temporaryDirectory.Path);
@@ -134,6 +119,58 @@ public sealed class OpenApiSnapshotIntegrityTests
 		// Assert
 		Assert.Contains("SHA-256", exception.Message);
 	}
+
+	[Fact]
+	public void Load_AbsoluteArtifactPath_ThrowsIntegrityError()
+	{
+		// Arrange
+		using TemporaryBaselineDirectory temporaryDirectory = new();
+		string artifactPath = Path.GetFullPath(
+			Path.Combine(Path.GetTempPath(), "outside.openapi.json"));
+		temporaryDirectory.WriteFile("manifest.json", CreateCapturedManifest(artifactPath, contentLength: 0));
+		Action action = () => ContractBaselineReader.Load(temporaryDirectory.Path);
+
+		// Act
+		InvalidDataException exception = Assert.Throws<InvalidDataException>(action);
+
+		// Assert
+		Assert.Contains("must be relative", exception.Message);
+	}
+
+	[Fact]
+	public void Load_TraversalArtifactPath_ThrowsIntegrityError()
+	{
+		// Arrange
+		using TemporaryBaselineDirectory temporaryDirectory = new();
+		temporaryDirectory.WriteFile(
+			"manifest.json",
+			CreateCapturedManifest("../outside.openapi.json", contentLength: 0));
+		Action action = () => ContractBaselineReader.Load(temporaryDirectory.Path);
+
+		// Act
+		InvalidDataException exception = Assert.Throws<InvalidDataException>(action);
+
+		// Assert
+		Assert.Contains("escapes the baseline directory", exception.Message);
+	}
+
+	private static string CreateCapturedManifest(string artifactPath, long contentLength) => $$"""
+		{
+		  "schemaVersion": 1,
+		  "sources": [
+			{
+			  "id": "main-openapi",
+			  "family": "main",
+			  "format": "openapi",
+			  "availability": "captured",
+			  "artifactPath": {{JsonSerializer.Serialize(artifactPath)}},
+			  "sourceUrl": "https://api.example.test/openapi.json",
+			  "contentLength": {{contentLength}},
+			  "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+			}
+		  ]
+		}
+		""";
 
 	private sealed class TemporaryBaselineDirectory : IDisposable
 	{

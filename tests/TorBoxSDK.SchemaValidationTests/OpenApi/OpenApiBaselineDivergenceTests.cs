@@ -65,10 +65,10 @@ public sealed class OpenApiBaselineDivergenceTests
 			.GetValueOrDefault(schemaName) ?? new HashSet<string>();
 
 		// Act
-		bool schemaExists = schemas.TryGetValue(
+		bool fieldExists = schemas.TryGetValue(
 			schemaName,
-			out IReadOnlyDictionary<string, string>? schemaFields);
-		bool fieldExists = schemaExists && schemaFields!.ContainsKey(fieldName);
+			out IReadOnlyDictionary<string, string>? schemaFields) &&
+			schemaFields?.ContainsKey(fieldName) == true;
 		bool fieldIsMapped = ModelReflector.GetJsonPropertyNames(modelType).Contains(fieldName);
 
 		// Assert

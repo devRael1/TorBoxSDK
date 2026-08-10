@@ -217,7 +217,8 @@ public sealed class OpenApiContractComparisonTests
 			"Removed:request-content:GET /widgets/{id}:application/json",
 			"Added:request-content:GET /widgets/{id}:application/xml",
 			"Removed:response-content:GET /widgets/{id}:200:application/json",
-			"Added:response-content:GET /widgets/{id}:200:text/plain"
+			"Added:response-content:GET /widgets/{id}:200:text/plain",
+			"Modified:schema:Widget"
 		];
 
 		// Act
@@ -234,6 +235,379 @@ public sealed class OpenApiContractComparisonTests
 		Assert.False(result.IsEquivalent);
 		Assert.Equal(expectedDifferences, differences);
 		Assert.Equal(expectedDifferences, repeatedDifferences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_ContentlessResponsesChanged_ReturnsStableResponseDifferences()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "get": {
+			        "responses": {
+			          "202": { "description": "Accepted" },
+			          "204": { "description": "No content" },
+			          "404": { "description": "Widget was not found" }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "get": {
+			        "responses": {
+			          "201": { "description": "Created" },
+			          "202": { "description": "Accepted" },
+			          "404": { "description": "No matching widget was found" }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+		string[] expectedDifferences =
+		[
+			"Added:response:GET /widgets:201",
+			"Removed:response:GET /widgets:204",
+			"Modified:response:GET /widgets:404"
+		];
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractComparisonResult repeatedResult = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		string[] differences = result.Differences.Select(DescribeDifference).ToArray();
+		string[] repeatedDifferences = repeatedResult.Differences.Select(DescribeDifference).ToArray();
+
+		// Assert
+		Assert.False(result.IsEquivalent);
+		Assert.Equal(expectedDifferences, differences);
+		Assert.Equal(expectedDifferences, repeatedDifferences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_RequestBodyRequiredChanged_ReturnsStableRequestBodyDifference()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "required": false,
+			          "content": {
+			            "application/json": { "schema": { "type": "object" } }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "required": true,
+			          "content": {
+			            "application/json": { "schema": { "type": "object" } }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractComparisonResult repeatedResult = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractDifference difference = Assert.Single(result.Differences);
+
+		// Assert
+		Assert.False(result.IsEquivalent);
+		Assert.Equal("Modified:request-body:POST /widgets", DescribeDifference(difference));
+		Assert.Equal("required=false;$ref=absent", difference.BaselineValue);
+		Assert.Equal("required=true;$ref=absent", difference.CandidateValue);
+		Assert.Equal(result.Differences, repeatedResult.Differences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_RequestBodyReferenceChanged_ReturnsStableRequestBodyDifference()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": { "$ref": "#/components/requestBodies/CreateWidget" }
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": { "$ref": "#/components/requestBodies/UpdateWidget" }
+			      }
+			    }
+			  }
+			}
+			""";
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractComparisonResult repeatedResult = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractDifference difference = Assert.Single(result.Differences);
+
+		// Assert
+		Assert.False(result.IsEquivalent);
+		Assert.Equal("Modified:request-body:POST /widgets", DescribeDifference(difference));
+		Assert.Contains("#/components/requestBodies/CreateWidget", difference.BaselineValue);
+		Assert.Contains("#/components/requestBodies/UpdateWidget", difference.CandidateValue);
+		Assert.Equal(result.Differences, repeatedResult.Differences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_ParameterSerializationChanged_ReturnsStableParameterDifference()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "get": {
+			        "parameters": [
+			          {
+			            "name": "ids",
+			            "in": "query",
+			            "style": "form",
+			            "explode": true,
+			            "allowReserved": false,
+			            "schema": { "type": "array", "items": { "type": "string" } }
+			          }
+			        ]
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "get": {
+			        "parameters": [
+			          {
+			            "name": "ids",
+			            "in": "query",
+			            "style": "pipeDelimited",
+			            "explode": false,
+			            "allowReserved": true,
+			            "schema": { "type": "array", "items": { "type": "string" } }
+			          }
+			        ]
+			      }
+			    }
+			  }
+			}
+			""";
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractComparisonResult repeatedResult = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractDifference difference = Assert.Single(result.Differences);
+
+		// Assert
+		Assert.False(result.IsEquivalent);
+		Assert.Equal("Modified:parameter:GET /widgets:query:ids", DescribeDifference(difference));
+		Assert.Contains("style=\"form\"", difference.BaselineValue);
+		Assert.Contains("explode=true", difference.BaselineValue);
+		Assert.Contains("allowReserved=false", difference.BaselineValue);
+		Assert.Contains("style=\"pipeDelimited\"", difference.CandidateValue);
+		Assert.Contains("explode=false", difference.CandidateValue);
+		Assert.Contains("allowReserved=true", difference.CandidateValue);
+		Assert.Equal(result.Differences, repeatedResult.Differences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_ReorderedInlineObjectSchema_ReturnsEquivalent()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "content": {
+			            "application/json": {
+			              "schema": {
+			                "type": "object",
+			                "required": ["name", "metadata"],
+			                "properties": {
+			                  "name": { "type": "string" },
+			                  "metadata": {
+			                    "type": "object",
+			                    "required": ["createdAt", "tags"],
+			                    "properties": {
+			                      "createdAt": { "type": "string", "format": "date-time" },
+			                      "tags": { "type": "array", "items": { "type": "string" } }
+			                    }
+			                  }
+			                }
+			              }
+			            }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "content": {
+			            "application/json": {
+			              "schema": {
+			                "properties": {
+			                  "metadata": {
+			                    "properties": {
+			                      "tags": { "items": { "type": "string" }, "type": "array" },
+			                      "createdAt": { "format": "date-time", "type": "string" }
+			                    },
+			                    "required": ["tags", "createdAt"],
+			                    "type": "object"
+			                  },
+			                  "name": { "type": "string" }
+			                },
+			                "required": ["metadata", "name"],
+			                "type": "object"
+			              }
+			            }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+
+		// Assert
+		Assert.True(result.IsEquivalent);
+		Assert.Empty(result.Differences);
+	}
+
+	[Fact]
+	public void CompareOpenApi_InlineNestedObjectPropertiesAndRequiredChanged_ReturnsContentDifference()
+	{
+		// Arrange
+		const string baselineJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "content": {
+			            "application/json": {
+			              "schema": {
+			                "type": "object",
+			                "properties": {
+			                  "metadata": {
+			                    "type": "object",
+			                    "required": ["name"],
+			                    "properties": { "name": { "type": "string" } }
+			                  }
+			                }
+			              }
+			            }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+		const string candidateJson = """
+			{
+			  "paths": {
+			    "/widgets": {
+			      "post": {
+			        "requestBody": {
+			          "content": {
+			            "application/json": {
+			              "schema": {
+			                "type": "object",
+			                "properties": {
+			                  "metadata": {
+			                    "type": "object",
+			                    "required": ["kind", "name"],
+			                    "properties": {
+			                      "kind": { "type": "string" },
+			                      "name": { "type": "string" }
+			                    }
+			                  }
+			                }
+			              }
+			            }
+			          }
+			        }
+			      }
+			    }
+			  }
+			}
+			""";
+
+		// Act
+		ContractComparisonResult result = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractComparisonResult repeatedResult = ContractSnapshotComparer.CompareOpenApi(
+			baselineJson,
+			candidateJson);
+		ContractDifference difference = Assert.Single(result.Differences);
+
+		// Assert
+		Assert.False(result.IsEquivalent);
+		Assert.Equal("Modified:request-content:POST /widgets:application/json", DescribeDifference(difference));
+		Assert.Equal(result.Differences, repeatedResult.Differences);
 	}
 
 	[Fact]
