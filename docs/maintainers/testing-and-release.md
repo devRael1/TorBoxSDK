@@ -1,6 +1,6 @@
 # Stratégie de tests et publication NuGet
 
-> Aucune commande de publication ne doit être exécutée dans le cadre du chantier local sans validation explicite. V2-100 applique [DEC-009](decisions.md#dec-009--canal-de-release-candidate), [DEC-015](decisions.md#dec-015--source-de-version-et-assemblyversion), [DEC-016](decisions.md#dec-016--authentification-et-approbation-nuget) et la portée déterministe de DEC-017 ; DEC-010 reste nécessaire avant une release finale.
+> Aucune commande de publication ne doit être exécutée dans le cadre du chantier local sans validation explicite. V2-100 applique [DEC-009](decisions.md#dec-009--canal-de-release-candidate), [DEC-015](decisions.md#dec-015--source-de-version-et-assemblyversion) et [DEC-016](decisions.md#dec-016--authentification-et-approbation-nuget) ; V2-210 met en œuvre la portée déterministe déjà validée de DEC-017 sans l'étendre. DEC-010 reste nécessaire avant une release finale.
 
 ## Diagnostic de la chaîne actuelle
 
@@ -67,9 +67,9 @@ flowchart LR
 
 Le job de publication ne doit jamais reconstruire. Il télécharge l'artefact testé, vérifie son empreinte, sa version et sa provenance, puis le pousse après approbation.
 
-## Chaîne appliquée par V2-100
+## Chaîne appliquée par V2-100 et V2-210
 
-- `ci.yml` s'exécute sur pull request, sur l'intégration `v2.0.0` et manuellement. Il restaure en mode verrouillé, construit, puis exécute les tests unitaires et les tests de schéma non-live pour chaque TFM déclaré.
+- `ci.yml` s'exécute sur pull request, sur l'intégration `v2.0.0` et manuellement. Il vérifie la génération interne, restaure en mode verrouillé, construit, puis exécute les tests unitaires déterministes (dont sérialisation et transport simulé) et les tests de schéma `Category=Contract` pour chaque TFM déclaré. Il packe ensuite un unique artefact de validation local : `EnablePackageValidation` le compare à `TorBoxSDK 1.0.0`, puis `Test-NuGetReleaseArtifact.ps1` vérifie les paquets `.nupkg`/`.snupkg`, leurs actifs, XML, PDB, versions, commit de provenance et empreintes. Les TRX, paquets et manifeste restent dans l'artefact CI pendant 14 jours ; ce ne sont pas des candidats de release.
 - `publish.yml` est déclenché par un tag `v*`, mais refuse tout tag qui n'est pas exactement `v2.minor.patch` avec un suffixe de préversion NuGet facultatif, ou qui ne cible pas un commit atteignable depuis `v2.0.0`. Le job `candidate` construit, teste et empaquette une seule fois, génère le manifeste et les SHA-256, puis conserve le tout comme artefact interne pendant 14 jours.
 - Le job `publish` ne reçoit que cet artefact : il vérifie que le tag pointe toujours vers le commit candidat, recalcule les hashes, contrôle le manifeste et pousse les chemins complets des deux fichiers. Il ne contient ni `dotnet build`, ni `dotnet pack`, wildcard ou `--skip-duplicate`.
 - Les tags de préversion restent des candidates locales : le job de publication stable est ignoré. Un tag stable attend l'environnement `release` avant d'obtenir un jeton OIDC NuGet temporaire. Le propriétaire conserve explicitement le bypass administrateur GitHub ; toute utilisation est une dérogation à documenter dans le rapport de release.
@@ -85,7 +85,7 @@ La politique NuGet n'utilise aucune clé API de longue durée. Le job OIDC deman
 
 ### Dépendance transitoire V2-110
 
-Sur le commit de base de V2-100, les tests de schéma lisent encore une spécification OpenAPI distante et peuvent donc échouer sur une variante amont. V2-110 fournit le baseline versionné qui rend ce test reproductible. V2-100 conserve le test comme barrière stricte : aucun filtre, saut ou succès artificiel ne doit masquer l'échec actuel. La preuve finale de CI est relancée après l'intégration de V2-110 et le rebase de V2-100.
+Sur le commit de base de V2-100, les tests de schéma lisent encore une spécification OpenAPI distante et peuvent donc échouer sur une variante amont. V2-110 fournit le baseline versionné qui rend ce test reproductible. V2-210 sélectionne explicitement `Category=Contract`, seule suite de schéma hors ligne : ce filtre de frontière ne saute aucun test de contrat et ne masque aucun échec. La preuve finale de CI est relancée après l'intégration de V2-110 et le rebase de V2-100.
 
 ## Pyramide de tests
 
@@ -205,7 +205,19 @@ autorisations live et une éventuelle cadence.
 
 ### `ci.yml`
 
-Déclenchement sur pull request et intégration. Exécute la restauration verrouillée, le build Release, les tests unitaires et les tests de schéma non-live pour chaque TFM déclaré, sans secret TorBox ni NuGet. La validation finale du package intervient dans le job `candidate` après le `pack`; les tests consommateurs restent du ressort du lot qui les introduira. Le check `CI / Verify` devient obligatoire sur `v2.0.0` après le premier run vert incluant le baseline de V2-110.
+Déclenchement sur pull request et intégration. Exécute la restauration verrouillée, le build Release, les tests unitaires sans catégories `Live` ou `Integration`, puis les seuls tests de schéma `Category=Contract` pour chaque TFM déclaré. Il packe et valide aussi un artefact local contre la baseline API/package `1.0.0`, sans secret TorBox ni jeton NuGet. Les tests consommateurs restent du ressort du lot qui les introduira.
+
+### Gate local
+
+Depuis la racine du dépôt :
+
+```powershell
+pwsh ./eng/Invoke-DeterministicChecks.ps1 -ResultsDirectory artifacts/test-results
+```
+
+Cette commande ne crée ni tag ni publication. Elle produit les TRX par projet et TFM, un `.nupkg`, un `.snupkg` et `package-manifest.json` sous `package-validation/<version>` dans le répertoire de résultats ; cette isolation rend les relances avec des versions différentes indépendantes. Le job `candidate` utilise `-SkipPackageValidation`, puis crée et valide son unique package depuis le tag exact ; il évite ainsi un second `dotnet pack`.
+
+Le check `CI / Verify` devient obligatoire sur `v2.0.0` après le premier run vert incluant le baseline de V2-110.
 
 ### `contract-watch.yml`
 

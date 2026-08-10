@@ -85,6 +85,7 @@ jobs:
           ./eng/Invoke-DeterministicChecks.ps1
           -Version $env:RELEASE_VERSION
           -FileVersion $env:RELEASE_FILE_VERSION
+          -SkipPackageValidation
           -ResultsDirectory artifacts/release/test-results
 
       - name: Pack candidate exactly once
