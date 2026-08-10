@@ -67,7 +67,7 @@ flowchart TD
 ## API families
 
 - **Main API**: the largest surface, split into 11 resource clients
-- **Search API**: search-oriented endpoints for torrents, usenet, metadata, Torznab, and Newznab
+- **Search API**: access-restricted search endpoints for approved projects and whitelisted source IPs
 - **Relay API**: relay status and inactivity checks
 
 ## Instantiation

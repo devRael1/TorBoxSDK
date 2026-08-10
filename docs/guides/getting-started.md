@@ -72,6 +72,10 @@ TorBoxResponse<IReadOnlyList<Torrent>> torrents = await client.Main.Torrents.Get
 TorBoxResponse<TorrentSearchResponse> results = await client.Search.SearchTorrentsAsync("ubuntu");
 ```
 
+The Search call requires a TorBox-approved project and a whitelisted outbound
+IP. It is not available to general SDK consumers; the Main API call does not
+have this Search-specific restriction.
+
 ## What to expect from responses
 
 - Successful calls return <xref:TorBoxSDK.Models.Common.TorBoxResponse`1>

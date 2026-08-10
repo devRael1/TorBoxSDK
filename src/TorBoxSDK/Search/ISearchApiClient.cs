@@ -7,6 +7,19 @@ namespace TorBoxSDK.Search;
 /// Defines the Search API client for querying torrent and usenet indexers
 /// and metadata through the TorBox Search API.
 /// </summary>
+/// <remarks>
+/// <para>
+/// The TorBox Search API is not generally public. Since May 20, 2026,
+/// TorBox restricts it to approved projects and whitelisted source IP addresses.
+/// These methods are usable only when the calling application's outbound IP has
+/// been authorized by TorBox; a TorBox account or API key alone does not grant access.
+/// </para>
+/// <para>
+/// Availability, DNS resolution, and individual operations may differ for
+/// non-whitelisted callers. Contact TorBox support to request project access
+/// before depending on this API.
+/// </para>
+/// </remarks>
 public interface ISearchApiClient
 {
 	/// <summary>Retrieves the torrent search tutorial and information page.</summary>

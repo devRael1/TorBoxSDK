@@ -12,6 +12,12 @@ Beyond `Main`, TorBoxSDK exposes two dedicated API families through the root cli
 
 Access via <xref:TorBoxSDK.Search.ISearchApiClient> (`client.Search`).
 
+> [!IMPORTANT]
+> The TorBox Search API is not generally public. Since May 20, 2026, TorBox
+> restricts access to approved projects and whitelisted source IP addresses.
+> Installing TorBoxSDK or supplying a paid-account API key does not grant
+> access. The application server's outbound IP must be approved by TorBox.
+
 Typical scenarios:
 
 - torrent search and detailed torrent retrieval
@@ -23,6 +29,10 @@ Typical scenarios:
 TorBoxResponse<TorrentSearchResponse> searchResults =
     await client.Search.SearchTorrentsAsync("ubuntu", cancellationToken: cancellationToken);
 ```
+
+This example applies only to an authorized deployment. DNS resolution or API
+access can fail for other callers. Contact TorBox support before making Search
+API availability a production dependency.
 
 ## Relay API
 

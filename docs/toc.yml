@@ -1,5 +1,7 @@
 - name: Guides
   href: guides/
+- name: Modernisation du SDK
+  href: maintainers/
 - name: API Reference
   href: api/TorBoxSDK.yml
 - name: TorBox API

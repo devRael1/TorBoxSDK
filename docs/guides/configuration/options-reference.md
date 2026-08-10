@@ -15,7 +15,7 @@ TorBoxSDK is configured by <xref:TorBoxSDK.TorBoxClientOptions>.
 | `ApiKey` | Yes | `TORBOX_API_KEY` | Required for authenticated calls |
 | `MainApiBaseUrl` | No | `https://api.torbox.app/` | Host only, trailing slash recommended |
 | `ApiVersion` | Yes | `v1` | Used to compute versioned main/relay URLs |
-| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Search host URL |
+| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Restricted Search host; requires TorBox project and source-IP approval |
 | `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Relay host URL |
 | `Timeout` | No | `00:00:30` | Shared HTTP timeout |
 

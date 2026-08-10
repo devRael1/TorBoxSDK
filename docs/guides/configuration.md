@@ -16,10 +16,16 @@ TorBoxSDK is configured through <xref:TorBoxSDK.TorBoxClientOptions>.
 | `MainApiBaseUrl` | No | `https://api.torbox.app/` | Host URL for the Main API. Trailing slash should be preserved. |
 | `ApiVersion` | Yes | `v1` | Version segment used to compute versioned Main and Relay API URLs |
 | `MainApiVersionedUrl` | — | Computed | Full Main API URL with version (e.g. `https://api.torbox.app/v1/api/`). Read-only. |
-| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Trailing slash should be preserved |
+| `SearchApiBaseUrl` | No | `https://search-api.torbox.app/` | Restricted host; requires TorBox project and source-IP approval |
 | `RelayApiBaseUrl` | No | `https://relay.torbox.app/` | Host URL for the Relay API. Trailing slash should be preserved. |
 | `RelayApiVersionedUrl` | — | Computed | Full Relay API URL with version (e.g. `https://relay.torbox.app/v1/`). Read-only. |
 | `Timeout` | No | `00:00:30` | Applied to all configured `HttpClient` instances |
+
+> [!IMPORTANT]
+> The Search API is not generally public. TorBox must approve the project and
+> whitelist the calling application's outbound IP. Configuration alone does
+> not grant access, and the default Search hostname may not resolve for an
+> unapproved caller.
 
 ## Configure with code
 

@@ -14,6 +14,10 @@ Correct base URLs are critical because SDK endpoints use relative paths.
 - Relay host + API version produces Relay versioned URL
 - Search uses its own host directly
 
+The Search host is access-restricted. TorBox must approve the project and the
+calling application's outbound IP; changing `SearchApiBaseUrl` or providing an
+API key does not bypass that requirement.
+
 ## Trailing slash guidance
 
 Keep trailing slashes in base URLs.
@@ -40,4 +44,6 @@ Customize only if:
 - routing through an internal proxy
 - validating future API versions in controlled environments
 
-For most users, official defaults are best.
+For Main and Relay, the official defaults are normally appropriate. The Search
+default is meaningful only for a deployment whose source IP has been approved
+by TorBox.

@@ -1,0 +1,12 @@
+- name: Vue d'ensemble
+  href: index.md
+- name: Contrat API et modèles
+  href: api-contract-and-models.md
+- name: Divergences API observées
+  href: api-divergences.md
+- name: Compatibilité .NET
+  href: dotnet-compatibility.md
+- name: Tests et publication NuGet
+  href: testing-and-release.md
+- name: Décisions à valider
+  href: decisions.md

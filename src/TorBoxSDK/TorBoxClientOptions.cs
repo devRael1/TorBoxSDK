@@ -67,7 +67,10 @@ public sealed class TorBoxClientOptions
 	/// </summary>
 	/// <remarks>
 	/// Defaults to <c>https://search-api.torbox.app/</c>.
-	/// Override this value for testing or when using a custom endpoint.
+	/// TorBox restricts this service to approved projects and whitelisted source
+	/// IP addresses; configuring this URL or an API key does not grant access.
+	/// Override this value only for testing or when TorBox has supplied an
+	/// authorized endpoint for the calling project.
 	/// The trailing slash is required for correct relative URI resolution.
 	/// </remarks>
 	public string SearchApiBaseUrl { get; set; } = "https://search-api.torbox.app/";

@@ -21,7 +21,7 @@ The project currently contains 38 runnable scenarios grouped by onboarding, Main
 - standalone `TorBoxClient` usage without DI
 - configuration binding from `appsettings.json`
 - end-to-end Main API workflows such as creating, listing, editing, and controlling downloads
-- Search API workflows for torrents, Usenet, metadata, tutorials, and download handoff
+- Search API workflows for TorBox-approved projects running from whitelisted source IPs
 - Relay API monitoring calls
 - production-oriented error handling and cancellation patterns
 

@@ -22,6 +22,11 @@ public interface ITorBoxClient : IDisposable
 	/// <summary>
 	/// Gets the Search API client for querying torrent and usenet indexers.
 	/// </summary>
+	/// <remarks>
+	/// TorBox restricts the Search API to approved projects and whitelisted
+	/// source IP addresses. Access is not included automatically with this SDK
+	/// or with a TorBox account.
+	/// </remarks>
 	ISearchApiClient Search { get; }
 
 	/// <summary>

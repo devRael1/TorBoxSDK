@@ -12,6 +12,11 @@ These examples cover the remaining SDK families outside the Main API and the cro
 
 The Search API examples show how to query torrents, Usenet, metadata, and tutorials, then retrieve or hand off results.
 
+> [!IMPORTANT]
+> Run these examples only from a project and outbound IP approved by TorBox.
+> Search is no longer a generally public API, and an API key alone is
+> insufficient. Unapproved environments can fail DNS resolution or access.
+
 | Scenario | Source file |
 |---|---|
 | Search torrents and fetch result details by ID | [SearchTorrentsExample.cs](https://github.com/devRael1/TorBoxSDK/blob/master/src/TorBoxSDK.Examples/Search/SearchTorrentsExample.cs) |
