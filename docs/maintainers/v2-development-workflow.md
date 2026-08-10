@@ -10,19 +10,21 @@ de pousser, taguer ou publier.
 
 | Dossier | Branche | Rôle |
 |---|---|---|
-| `TorBoxSDK` | `master` | Référence v1 et état utilisateur à préserver |
+| `TorBoxSDK` | `master` | Référence v1 plus migration Codex `1951c26` |
 | `TorBoxSDK-docs-modernization` | `codex/sdk-modernization-plan` | Historique du plan de modernisation |
 | `TorBoxSDK-v2` | `v2.0.0` | Branche locale d'intégration du chantier v2 |
 | `TorBoxSDK-v2-program-control` | `codex/v2-program-control` | Contrôle de programme et suivi Kanban |
+| `TorBoxSDK-v2-agent-infrastructure` | `codex/v2-agent-infrastructure` | Agents et skills adaptés à la v2 |
 
 La branche `v2.0.0` part du commit `67e7253`, qui contient le plan v2, les
 décisions déjà rendues et le référentiel initial des divergences API. Aucun
 tag n'est associé à cette branche : son nom ne constitue pas une version
 NuGet publiable.
 
-Le dossier `.codex/` non suivi présent dans le worktree `master` est un état
-local de l'utilisateur. Il ne doit être ni copié, ni ajouté à Git, ni supprimé
-par les travaux v2.
+Les agents et skills sont suivis sous `.codex/agents/` et `.agents/skills/`.
+La v2 contient en plus `AGENTS.md` et des adaptations à sa matrice .NET, à son
+contrat reproductible et à son Kanban. Ne pas remplacer ces adaptations par
+une copie mécanique ultérieure de `master`.
 
 ## Règles de branchement
 

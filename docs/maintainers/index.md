@@ -22,7 +22,9 @@ Ce document est un plan d'exécution. Il n'autorise ni rupture d'API publique, n
 ### État de la publication
 
 - La seule version NuGet observée est `1.0.0`, publiée le 24 avril 2026.
-- Le tag `v1.0.0`, la branche locale `master` et le commit audité désignent le même état.
+- Le tag `v1.0.0` et le commit SDK audité désignent `fd2acda`. La branche
+  `master` pointe désormais sur `1951c26`, qui ajoute uniquement la migration
+  des agents/skills Copilot vers Codex sans modifier le code du SDK publié.
 - `Directory.Build.props` fixe actuellement `Version` à `1.0.0`.
 - le flux de publication se déclenche manuellement à partir d'un tag `v*`, construit puis envoie immédiatement le package avec `--skip-duplicate` ;
 - aucun test ne constitue aujourd'hui un prérequis de ce flux.
