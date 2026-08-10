@@ -1,6 +1,6 @@
 # Endpoint Implementation Checklist
 
-Use this checklist when executing **J2 — Endpoint** inside `/dev`.
+Use this checklist when executing **J2 — Endpoint** inside `$dev`.
 
 ## Contract
 

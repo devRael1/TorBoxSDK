@@ -1,9 +1,6 @@
 ---
 name: docs
 description: 'Use when documenting, packaging, or preparing TorBoxSDK for release: README updates, docs pages, samples guidance, XML documentation, Mermaid diagrams, NuGet metadata, and release readiness. Global entry point for all documentation jobs.'
-argument-hint: 'Describe the documentation task, such as README quick start, XML docs for a client, architecture diagram, sample guidance, or NuGet release readiness.'
-user-invocable: true
-disable-model-invocation: false
 ---
 
 # Docs
@@ -64,7 +61,7 @@ D6 Architecture context → D2 Docs Pages / D7 DocFX Site Operations → D1 READ
 ```
 
 3. Read the relevant code and roadmap first.
-Documentation must reflect the actual or explicitly planned SDK surface. Inspect code, instructions, and `docs/TODO.md` before writing.
+Documentation must reflect the actual or explicitly planned SDK surface. Inspect code, instructions, `docs/maintainers/index.md`, and the relevant decision records before writing.
 
 4. Load only the relevant references.
 Use the job table above. Do not load every reference by default.
@@ -111,7 +108,7 @@ Guardrails:
 
 ## Output Contract
 
-Every `/docs` execution should end with:
+Every `$docs` execution should end with:
 
 1. **Job classification** — which D1–D7 jobs apply
 2. **Audience** — who the documentation is for

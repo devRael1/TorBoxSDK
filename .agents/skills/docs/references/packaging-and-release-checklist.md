@@ -4,7 +4,7 @@ Use this reference for **D5 — Packaging & Release**.
 
 ## Package Quality
 
-- Multi-target support is configured for .NET 6 through .NET 10.
+- Multi-target support is configured for `netstandard2.0` and .NET 6 through .NET 10, with the consumer matrix defined in `docs/maintainers/dotnet-compatibility.md`.
 - Nullable and warnings configuration are intentional.
 - XML documentation generation is enabled.
 - Repository metadata is present.

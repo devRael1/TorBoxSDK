@@ -11,7 +11,7 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 **When to use:** an endpoint needs to be added to an already existing resource client.
 
 **Sequence:**
-1. `/dev` executes J2 with [endpoint-placement-and-naming.md](./endpoint-placement-and-naming.md) and [endpoint-implementation-checklist.md](./endpoint-implementation-checklist.md)
+1. `$dev` executes J2 with [endpoint-placement-and-naming.md](./endpoint-placement-and-naming.md) and [endpoint-implementation-checklist.md](./endpoint-implementation-checklist.md)
 2. `tests`
 3. `code-review`
 4. `docs` if the endpoint is user-facing or warrants a sample/README update
@@ -38,8 +38,8 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 **When to use:** a new capability family requires structure + models + endpoints + tests.
 
 **Sequence:**
-1. `architecture`
-2. `/dev` executes J2 endpoint workflow
+1. `$dev` executes the J1 architecture workflow
+2. `$dev` executes J2 endpoint workflow
 3. `tests`
 4. `code-review`
 5. `docs`
@@ -65,7 +65,7 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 **When to use:** change of structure, conventions, DI, or hierarchy without a major endpoint addition.
 
 **Sequence:**
-1. `architecture`
+1. `$dev` executes the J1 architecture workflow
 2. `tests` (update / add protective tests)
 3. `code-review`
 4. `docs` if the public API or samples change
@@ -79,10 +79,10 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 
 ## Playbook D — Stabilize a roadmap phase
 
-**When to use:** end of a phase in `docs/TODO.md`.
+**When to use:** end of a phase in `docs/maintainers/index.md`.
 
 **Sequence:**
-1. `/dev` triages the remaining jobs of the phase
+1. `$dev` triages the remaining jobs of the phase
 2. `tests` to fill in missing coverage
 3. `code-review` on modified files or the relevant directory
 4. `docs` to align README, samples, XML docs
@@ -132,8 +132,8 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 
 ## Skill handoff rules
 
-- `architecture` delivers a target structure and placement constraints.
-- `/dev` in J2 delivers compilable endpoint code, typed models, and correct placement in the client hierarchy.
+- J1 inside `$dev` delivers a target structure and placement constraints.
+- `$dev` in J2 delivers compilable endpoint code, typed models, and correct placement in the client hierarchy.
 - `tests` delivers tests that lock down public behavior.
 - `code-review` delivers an actionable verdict to decide merge or rework.
 - `docs` delivers a user-facing surface consistent with the actually shipped code.

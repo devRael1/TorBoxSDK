@@ -1,9 +1,6 @@
 ---
 name: tests
 description: 'Use when writing or reviewing tests for TorBoxSDK: unit tests for HttpClient-based services, integration tests against TorBox, schema validation tests against the OpenAPI spec, and serialization tests.'
-argument-hint: 'Describe the service, model, or behavior to test, such as TorrentsService request mapping or TorBoxResponse deserialization.'
-user-invocable: true
-disable-model-invocation: false
 ---
 
 # Tests
@@ -63,7 +60,10 @@ When adding or modifying SDK models:
 - ensure static schema tests pass by running with `--filter "Category!=Live"`
 - add live schema tests when a new endpoint is mapped, using `SchemaAssert.FindUnmappedFieldsAsync<T>()`
 
-The OpenAPI specification is fetched from `https://api.torbox.app/openapi.json` at test time — no local file is versioned.
+Deterministic tests use versioned OpenAPI/Postman snapshots with recorded
+provenance and hashes. Fetching `https://api.torbox.app/openapi.json` is a
+separate monitoring or explicitly live operation; it must never silently
+replace the snapshot used by a build or release candidate.
 
 ## Checks
 

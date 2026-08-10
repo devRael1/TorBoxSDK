@@ -1,7 +1,6 @@
 ---
 name: code-review
 description: "Perform an exhaustive TorBoxSDK code review. Use when: reviewing C# files, auditing SDK code, check my code, code review, validate a development, check my PR, inspect src/ tests/ or samples/. Produces a structured report with severity-rated findings and a final verdict."
-argument-hint: "File path, folder, or description of what to review (e.g. 'src/TorBoxSDK/Clients/TorrentsClient.cs')"
 ---
 
 # TorBoxSDK Code Review Skill
