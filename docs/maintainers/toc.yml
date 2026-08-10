@@ -2,6 +2,8 @@
   href: index.md
 - name: Contrat API et modèles
   href: api-contract-and-models.md
+- name: Baseline de contrat V2-110
+  href: contract-baseline.md
 - name: Divergences API observées
   href: api-divergences.md
 - name: Compatibilité .NET

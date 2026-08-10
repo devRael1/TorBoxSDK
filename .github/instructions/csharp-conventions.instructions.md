@@ -509,21 +509,34 @@ public async Task GetMeAsync_WithRealApiKey_ReturnsUser()
 
 ## Schema Validation Tests (`TorBoxSDK.SchemaValidationTests`)
 
-Schema tests verify bidirectional consistency between the TorBox OpenAPI specification and SDK model types. The OpenAPI spec is fetched at test time from `https://api.torbox.app/openapi.json` — no local copy is versioned.
+Schema tests verify bidirectional consistency between SDK model types and the
+versioned contract baseline. `contracts/baseline/manifest.json` is the
+authority for raw source artifacts, availability, provenance and SHA-256 hashes.
+Captured artifacts are intentionally versioned; unavailable sources are
+recorded as unavailable rather than fabricated.
+
+The baseline is a source-contract record, not a response fixture. V2-110 does
+not add response fixtures or decide their retention (DEC-011 remains open).
 
 ### Static Schema Tests (`OpenApi/`)
 
-Static schema tests compare the downloaded OpenAPI specification against SDK model types without calling the API:
+Static schema tests load the recorded Main OpenAPI baseline and compare it with
+SDK model types without calling the API:
 
 - `OpenApiFieldCoverageTests` — verifies all OpenAPI fields are mapped in the SDK and vice-versa
 - `OpenApiTypeMappingTests` — verifies C# property types are compatible with OpenAPI type declarations
 
 Key rules:
-- Use `OpenApiSchemaReader.ReadFromApi()` for all spec access — never read from a local file
+- Use `ContractBaselineReader.Load()` for baseline integrity and provenance, and
+  `OpenApiSchemaReader.ReadFromBaselineAsync()` for Main OpenAPI schema access.
+  Do not add a remote OpenAPI fetch to deterministic tests.
+- Keep each approved artifact and its `manifest.json` provenance/hash entry in
+  the same reviewed change. A remote observation never replaces either one.
 - Register new schema-to-type mappings in `SchemaModelMapping.SchemaToType`
 - Record intentional field discrepancies in `SchemaModelMapping.KnownOpenApiFieldsNotInSdk` or `KnownSdkFieldsNotInOpenApi`
 - Record intentional type mismatches in `SchemaModelMapping.KnownTypeMismatches`
-- Filter static tests in CI with `--filter "Category!=Live"`
+- Run the deterministic suite with `--filter "Category=Contract"`; it must
+  work offline and without `TORBOX_API_KEY`.
 
 ### Live Schema Tests (`Live/`)
 
@@ -535,12 +548,30 @@ Live schema tests call real TorBox API endpoints and check for unmapped fields:
 - Use `SchemaAssert.FindUnmappedFieldsAsync<T>()` for field detection
 - Use `EnsureSuccessStatusCode()` and `using` on every `HttpResponseMessage`
 
+### Remote Contract Monitoring
+
+Remote contract monitoring is separate from both deterministic and live schema
+tests. It is manual and opt-in:
+
+```powershell
+pwsh ./eng/Invoke-ContractMonitor.ps1 -AllowNetwork -OutputPath <path-outside-contracts/baseline> [-FailOnDrift]
+```
+
+Without `-AllowNetwork`, the monitor refuses to run. Its report is written
+outside `contracts/baseline`; it never replaces snapshots or `manifest.json`.
+Drift is a review signal, not an automatic SDK or contract change. Do not infer
+a CI schedule, required gate or live-monitor policy from this convention:
+DEC-017 remains open.
+
 ### Shared Infrastructure
 
 Infrastructure classes in `Infrastructure/` delegate to `TorBoxSDK.TestUtilities`:
 - `ModelReflector` — `[JsonPropertyName]` reflection
 - `UnmappedFieldDetector` — recursive unmapped JSON field detection
-- `OpenApiSchemaReader` — OpenAPI spec download and parsing (cached per process)
+- `ContractBaselineReader` — validates and loads the versioned baseline manifest
+  and captured artifacts
+- `OpenApiSchemaReader` — parses the recorded Main OpenAPI baseline (cached per
+  process)
 - `SchemaModelMapping` — schema-to-type map with known exclusions and type mismatches
 
 ---

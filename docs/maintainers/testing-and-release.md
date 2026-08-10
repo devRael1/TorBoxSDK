@@ -117,11 +117,17 @@ Ils utilisent des instantanés OpenAPI approuvés, jamais la version distante t�
 - schémas de requête ;
 - classification documentée de chaque opération non exposée.
 
-Les variantes distantes font l'objet d'un job de surveillance distinct. Une dérive ouvre un rapport ou échoue avec un diagnostic, mais ne change pas le code généré.
+La [baseline de contrat V2-110](contract-baseline.md) met en œuvre cette
+séparation avec la catégorie offline `Contract`. Son monitor distant est
+manuel et opt-in : une dérive produit un rapport de revue, mais ne change ni
+le code ni les snapshots. V2-110 n'ajoute aucun job, calendrier ou gate CI ;
+ces choix restent soumis à DEC-017.
 
 ### Niveau 5 — Fixtures de réponse
 
-Fixtures synthétiques ou anonymisées selon DEC-011. Elles valident :
+Ce niveau est conditionnel à DEC-011 et ne fait pas partie de V2-110. Si des
+fixtures synthétiques ou anonymisées sont ultérieurement autorisées, elles
+pourront valider :
 
 - modèles minimaux et complets ;
 - objet contre collection ;
@@ -149,12 +155,15 @@ Ils doivent interdire le repli accidentel sur une version de NuGet.org afin de p
 
 Deux catégories :
 
-- **lecture seule**, exécutable périodiquement avec un compte dédié ;
+- **lecture seule**, pouvant être exécutée avec un compte dédié si DEC-017
+  définit l'autorisation et le mode d'exécution ;
 - **mutante**, seulement manuelle, avec ressources isolées et nettoyage contrôlé.
 
 Chaque test live déclare : permissions, coût potentiel, données créées, stratégie de nettoyage et codes de réponse acceptés. Un `403` ne doit pas être traité comme preuve de conformité du modèle.
 
-Les secrets ne sont jamais imprimés. Les réponses capturées passent par anonymisation avant de devenir des fixtures.
+Les secrets ne sont jamais imprimés. Si DEC-011 autorise ultérieurement des
+fixtures de réponse, les réponses capturées doivent passer par anonymisation
+avant d'en devenir.
 
 ### Niveau 9 — Tests post-publication
 
@@ -169,7 +178,10 @@ Après disponibilité sur NuGet :
 
 ## Organisation CI proposée
 
-Les noms sont illustratifs et ne constituent pas une décision sur la plateforme.
+Les noms ci-dessous sont illustratifs et ne constituent ni une décision sur la
+plateforme ni un planning d'exécution. V2-110 n'ajoute ni workflow, ni
+déclencheur, ni gate : DEC-017 doit d'abord définir le périmètre CI, les
+autorisations live et une éventuelle cadence.
 
 ### `pr.yml`
 
@@ -177,11 +189,16 @@ Déclenchement sur pull request et intégration. Exécute niveaux 1 à 7, sans s
 
 ### `contract-watch.yml`
 
-Déclenchement planifié et manuel. Télécharge plusieurs fois les contrats distants, conserve leurs métadonnées comme artefacts, compare aux snapshots et produit un rapport. Il ne pousse aucun changement automatiquement.
+Scénario possible seulement après décision DEC-017. V2-110 fournit aujourd'hui
+un monitor local manuel et opt-in qui compare les sources capturées à la
+baseline et produit un rapport hors de celle-ci ; il ne pousse ni snapshot ni
+changement de code.
 
 ### `live-readonly.yml`
 
-Déclenchement planifié et manuel, environnement protégé et compte TorBox dédié. Exécute uniquement la suite live de lecture. L'indisponibilité externe est distinguée d'une régression SDK.
+Scénario possible seulement après décision DEC-017. Une éventuelle suite live
+de lecture devra alors définir son environnement protégé, son compte dédié, ses
+autorisations et le traitement de l'indisponibilité externe.
 
 ### `release-candidate.yml`
 

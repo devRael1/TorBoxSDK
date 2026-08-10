@@ -142,10 +142,16 @@ Critère de sortie : il est impossible de pousser un package dont la version dif
 
 Livrables :
 
-- instantanés datés et hachés des spécifications Main, Search et Relay effectivement retenues ;
+- instantanés datés et hachés des sources Main et Relay effectivement retenues,
+  avec indisponibilités Search/Relay explicitement enregistrées lorsqu'aucune
+  source brute vérifiée n'est disponible ;
 - rapport machine des routes, paramètres, types de contenu et champs ajoutés/supprimés ;
 - séparation entre tests reproductibles sur instantané et surveillance distante ;
 - procédure de mise à jour qui ouvre une revue au lieu de modifier automatiquement l'API publique.
+
+La [baseline de contrat V2-110](contract-baseline.md) décrit les artefacts,
+la provenance, les hashes, l'exécution hors ligne et le monitor manuel
+opt-in. Elle ne fabrique pas les sources indisponibles.
 
 Critère de sortie : deux exécutions sur le même commit donnent le même résultat, même si TorBox sert une autre variante OpenAPI.
 
@@ -169,7 +175,8 @@ Livrables conditionnés par DEC-003, DEC-004 et DEC-006 :
 - représentation des champs absents, explicitement nuls et renseignés ;
 - conservation facultative des champs inconnus ;
 - ajout des routes manquantes et traitement des routes conditionnelles ;
-- fixtures de réponse anonymisées pour les schémas absents d'OpenAPI ;
+- fixtures de réponse anonymisées pour les schémas absents d'OpenAPI, seulement
+  si DEC-011 les autorise ; elles ne font pas partie de V2-110 ;
 - guide de migration et justification ApiCompat de chaque rupture autorisée par DEC-001 pour la ligne 2.0.
 
 Critère de sortie : matrice des opérations couverte, rapport de compatibilité publique accepté, aucun changement non documenté dans le package.
@@ -214,7 +221,7 @@ Critère de sortie : la version visible sur NuGet est installable, son contenu c
 | Risque | Impact | Contrôle attendu |
 |---|---|---|
 | Variante OpenAPI différente entre deux jobs | tests aléatoires et API générée incohérente | instantané versionné + surveillance séparée |
-| Réponses absentes de la spécification | modèles faux ou incomplets | fixtures anonymisées + données supplémentaires + tests en direct contrôlés |
+| Réponses absentes de la spécification | modèles faux ou incomplets | données supplémentaires + tests en direct contrôlés ; fixtures seulement après DEC-011 |
 | Changement de modèle cassant | applications clientes incompatibles | validation de package sur baseline `1.0.0` + stratégie DEC-001 |
 | Mauvaise version NuGet | version dupliquée ou artefact introuvable | source unique de version + comparaison tag/package |
 | Route instable exposée comme stable | promesse publique impossible à tenir | décision DEC-005 + niveau de stabilité documenté |
@@ -230,7 +237,8 @@ Une version n'est prête que si toutes les affirmations suivantes sont vraies :
 - le diff de contrat officiel a été revu ;
 - le rapport de compatibilité avec `1.0.0` ne contient aucune rupture non approuvée ;
 - les tests unitaires, de protocole, de contrat, de package et consommateurs sont verts ;
-- les tests en direct requis ont réussi avec les autorisations attendues, ou une dérogation écrite existe ;
+- les tests en direct exigés par une décision applicable ont réussi avec les
+  autorisations attendues, ou une dérogation écrite existe ;
 - la documentation publique et les notes de migration correspondent au package ;
 - le tag, la version NuGet, l'assembly et le `.nupkg` portent la même version ;
 - l'artefact testé est exactement celui qui sera publié ;
@@ -240,6 +248,7 @@ Une version n'est prête que si toutes les affirmations suivantes sont vraies :
 ## Documents associés
 
 - [Contrat API et modèles](api-contract-and-models.md)
+- [Baseline de contrat V2-110](contract-baseline.md)
 - [Divergences API observées](api-divergences.md)
 - [Compatibilité .NET](dotnet-compatibility.md)
 - [Tests et publication NuGet](testing-and-release.md)

@@ -57,7 +57,8 @@ Mark them clearly so they can be excluded in default local and CI runs when cred
 When adding or modifying SDK models:
 - add or update mappings in `SchemaModelMapping.SchemaToType`
 - register any intentional field or type discrepancies in the appropriate known exclusion sets
-- ensure static schema tests pass by running with `--filter "Category!=Live"`
+- ensure deterministic contract tests pass by running with `--filter "Category=Contract"`
+  offline; `Category=Live` remains a separate, opt-in suite
 - add live schema tests when a new endpoint is mapped, using `SchemaAssert.FindUnmappedFieldsAsync<T>()`
 
 Deterministic tests use versioned OpenAPI/Postman snapshots with recorded

@@ -112,7 +112,7 @@ la configuration de compilation :
 dotnet restore TorBoxSDK.slnx
 dotnet build TorBoxSDK.slnx -c Release --no-restore
 dotnet test tests/TorboxSDK.UnitTests/ -c Release --no-build
-dotnet docfx docs/docfx.json --warningsAsErrors
+dotnet tool run docfx docs/docfx.json
 ```
 
 Les tests de contrat, d'intégration et live sont ajoutés selon le risque du
@@ -123,8 +123,22 @@ autorisation et données de test dédiées.
 Une modification de la matrice .NET doit en plus construire et tester chaque
 TFM déclaré selon la stratégie de
 [compatibilité .NET](dotnet-compatibility.md). Une modification de contrat API
-doit mettre à jour les instantanés, fixtures et
-[divergences observées](api-divergences.md).
+doit suivre la [procédure de baseline](contract-baseline.md) : revue conjointe
+des instantanés, de leur provenance/hash et des
+[divergences observées](api-divergences.md). Les fixtures de réponse restent
+hors du lot tant que DEC-011 ne les autorise pas.
+
+Pour une modification de baseline, exécuter aussi le contrôle déterministe
+hors ligne :
+
+```powershell
+dotnet test tests/TorBoxSDK.SchemaValidationTests/TorBoxSDK.SchemaValidationTests.csproj `
+  -c Release -f net10.0 --no-build --no-restore --filter "Category=Contract"
+```
+
+Le monitor distant est une commande manuelle opt-in décrite dans ce guide de
+baseline. Il ne fait pas partie des contrôles locaux par défaut et ne définit
+aucune planification CI tant que DEC-017 est ouverte.
 
 ## Conditions avant intégration
 

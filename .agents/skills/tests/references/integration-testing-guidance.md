@@ -20,7 +20,12 @@ Use integration tests only where live behavior matters:
 Schema validation tests compare SDK models against the TorBox OpenAPI specification. See [schema-validation-testing-guidance.md](./schema-validation-testing-guidance.md) for full details.
 
 Key points:
-- The OpenAPI spec is fetched from `https://api.torbox.app/openapi.json` — no local file.
-- Static tests (field coverage, type mapping) run without API key.
+- Deterministic schema tests use the versioned baseline declared by
+  `contracts/baseline/manifest.json`, not a remote download.
+- Static field-coverage and type-mapping tests run offline with
+  `--filter "Category=Contract"`, without an API key.
+- Remote contract monitoring is a separate manual opt-in command; it writes a
+  report outside `contracts/baseline` and never replaces a snapshot.
+  It does not establish a CI schedule or gate while DEC-017 remains open.
 - Live tests (unmapped field detection) require `TORBOX_API_KEY` and skip gracefully when absent.
 - When adding new models, register them in `SchemaModelMapping.SchemaToType`.

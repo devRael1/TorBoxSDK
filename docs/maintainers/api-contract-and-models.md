@@ -48,6 +48,12 @@ Une sonde anonyme répétée sur `GET /v1/api/user/settings/searchengines` a ég
 
 Le SDK ne doit pas générer ou supprimer automatiquement des membres publics à partir du document téléchargé pendant un build. Une telle opération rendrait un même commit non reproductible. Les téléchargements distants doivent alimenter un rapport de dérive ; seuls des instantanés révisés doivent alimenter le build et les tests déterministes.
 
+La [baseline de contrat V2-110](contract-baseline.md) rend cette règle
+opérationnelle : son manifeste versionné lie chaque artefact brut à sa
+provenance et à son hash, et enregistre les sources indisponibles sans les
+fabriquer. Son monitor distant est manuel, opt-in et purement informatif ; il
+ne modifie ni la baseline ni le SDK, et ne définit aucune planification CI.
+
 ## Limites du contrat de réponse
 
 Dans les variantes observées, les 93 ou 97 opérations déclarent des réponses JSON `200` sans propriétés de schéma utiles. L'OpenAPI permet donc de vérifier de nombreux éléments de requête :
@@ -67,6 +73,8 @@ Il ne permet pas de prouver :
 - les réponses binaires ou de redirection lorsqu'elles sont décrites de façon incomplète.
 
 Les réponses doivent être documentées par un second corpus : documentation textuelle, captures de réponses anonymisées, tests live autorisés et comportement constaté. Ce corpus est soumis à DEC-011.
+
+V2-110 ne crée pas ce corpus ni de fixture de réponse : DEC-011 reste ouverte.
 
 ## Matrice des opérations
 
@@ -370,11 +378,13 @@ Le détecteur de champs non mappés ne doit pas s'arrêter au premier élément 
 
 1. Identifier l'opération dans un snapshot approuvé.
 2. Vérifier sa stabilité et son package selon DEC-004, DEC-005 et DEC-007.
-3. Capturer les preuves manquantes de réponse conformément à DEC-011.
+3. Capturer les preuves manquantes de réponse seulement lorsqu'une décision
+   DEC-011 applicable l'autorise.
 4. Définir séparément requête, réponse, erreur et transport.
 5. Évaluer l'impact public par rapport au package `1.0.0`.
 6. Implémenter le client ou l'adaptateur dans un worktree borné.
-7. Ajouter tests de requête, fixtures de réponse, contrat et consommation du package.
+7. Ajouter les tests de requête, de contrat et de consommation du package ;
+   ajouter des fixtures de réponse seulement si DEC-011 les a autorisées.
 8. Documenter l'opération, sa stabilité, ses permissions et ses limites.
 9. Mettre à jour la matrice de couverture.
 10. Faire revoir avant intégration ; ne pas publier depuis le worktree.
