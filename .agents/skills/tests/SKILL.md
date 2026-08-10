@@ -1,9 +1,6 @@
 ---
 name: tests
 description: 'Use when writing or reviewing tests for TorBoxSDK: unit tests for HttpClient-based services, integration tests against TorBox, schema validation tests against the OpenAPI spec, and serialization tests.'
-argument-hint: 'Describe the service, model, or behavior to test, such as TorrentsService request mapping or TorBoxResponse deserialization.'
-user-invocable: true
-disable-model-invocation: false
 ---
 
 # Tests

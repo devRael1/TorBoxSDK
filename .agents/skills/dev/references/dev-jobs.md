@@ -23,7 +23,7 @@ Complete definition of the 6 recurring job types for TorBoxSDK, including their 
 
 **When:** before writing code for a new component, or when the existing structure is being refactored.
 
-**Skill to load:** `.github/skills/architecture/SKILL.md`
+**Workflow to use:** J1 inside `$dev`. Read `.github/instructions/csharp-conventions.instructions.md`, inspect the current hierarchy and implementations, and preserve the established public surface unless the task explicitly requires a redesign.
 
 **Recurring jobs:**
 - Define or adapt the `TorBoxClient → Main/Search/Relay → resource clients` hierarchy
@@ -45,7 +45,7 @@ Complete definition of the 6 recurring job types for TorBoxSDK, including their 
 
 **When:** for each TorBox endpoint to add according to the development plan (`docs/TODO.md`).
 
-**Workflow to use:** `J2` in `/dev`, with references:
+**Workflow to use:** `J2` in `$dev`, with references:
 - `./endpoint-placement-and-naming.md`
 - `./endpoint-implementation-checklist.md`
 
@@ -100,7 +100,7 @@ For each endpoint:
 
 **When:** immediately after each implemented endpoint (J2), or to improve existing coverage.
 
-**Skill to load:** `.github/skills/tests/SKILL.md`
+**Skill to load:** `.agents/skills/tests/SKILL.md`
 
 **Recurring jobs and cadence:**
 
@@ -132,7 +132,7 @@ For each endpoint:
 
 **When:** before considering a development complete. **Always after J2 and J3.**
 
-**Skill to load:** `.github/skills/code-review/SKILL.md`
+**Skill to load:** `.agents/skills/code-review/SKILL.md`
 
 **Recurring jobs:**
 - Review of a modified file before merge
@@ -154,7 +154,7 @@ For each endpoint:
 
 **When:** after stabilization of a complete resource client, and mandatory before any NuGet release.
 
-**Skill to load:** `.github/skills/docs/SKILL.md`
+**Skill to load:** `.agents/skills/docs/SKILL.md`
 
 **Recurring jobs:**
 - README update after each completed phase

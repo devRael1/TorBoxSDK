@@ -1,6 +1,6 @@
 # Endpoint Placement and Naming
 
-Use these rules when executing **J2 — Endpoint** inside `/dev`.
+Use these rules when executing **J2 — Endpoint** inside `$dev`.
 
 ## Ownership
 

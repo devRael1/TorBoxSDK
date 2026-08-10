@@ -1,9 +1,6 @@
 ---
 name: docs
 description: 'Use when documenting, packaging, or preparing TorBoxSDK for release: README updates, docs pages, samples guidance, XML documentation, Mermaid diagrams, NuGet metadata, and release readiness. Global entry point for all documentation jobs.'
-argument-hint: 'Describe the documentation task, such as README quick start, XML docs for a client, architecture diagram, sample guidance, or NuGet release readiness.'
-user-invocable: true
-disable-model-invocation: false
 ---
 
 # Docs
@@ -111,7 +108,7 @@ Guardrails:
 
 ## Output Contract
 
-Every `/docs` execution should end with:
+Every `$docs` execution should end with:
 
 1. **Job classification** — which D1–D7 jobs apply
 2. **Audience** — who the documentation is for

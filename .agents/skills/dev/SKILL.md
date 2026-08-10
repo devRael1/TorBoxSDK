@@ -1,7 +1,6 @@
 ---
 name: dev
 description: "Orchestrate TorBoxSDK development work. Use when: starting or planning a development task, choosing the next job, implementing a feature, adding an endpoint, writing tests, reviewing code, updating docs, preparing a release, or when unsure which skill to use. Entry point for all SDK dev jobs and skill orchestration."
-argument-hint: "Describe the work to do, e.g. 'implement Torrents.CreateTorrentAsync', 'add unit tests for UserClient', 'prepare NuGet release', 'scaffold Phase 1 foundations'"
 ---
 
 # TorBoxSDK — Dev Skill
@@ -16,25 +15,24 @@ This skill does not replace the specialized skills. It orchestrates them, decide
 
 ## Integrated Skills
 
-The global `/dev` workflow integrates these specialized skills:
+The global `$dev` workflow integrates these specialized skills:
 
 | Skill | Role | File |
 |------|------|------|
-| `architecture` | Client hierarchy, DI, namespaces, cross-cutting design | `.github/skills/architecture/SKILL.md` |
-| `tests` | Unit, integration, serialization, schema validation tests | `.github/skills/tests/SKILL.md` |
-| `code-review` | Final validation and severity-rated review | `.github/skills/code-review/SKILL.md` |
-| `docs` | README, docs pages, samples guidance, XML docs, diagrams, NuGet/release quality | `.github/skills/docs/SKILL.md` |
+| `tests` | Unit, integration, serialization, schema validation tests | `.agents/skills/tests/SKILL.md` |
+| `code-review` | Final validation and severity-rated review | `.agents/skills/code-review/SKILL.md` |
+| `docs` | README, docs pages, samples guidance, XML docs, diagrams, NuGet/release quality | `.agents/skills/docs/SKILL.md` |
 
-Use `/dev` as the default entry point whenever the scope is not already obvious. Invoke a specialized skill directly only when the job type is already certain.
+Use `$dev` as the default entry point whenever the scope is not already obvious. Invoke a specialized skill directly only when the job type is already certain.
 
-Endpoint implementation is now owned directly by `/dev` as **J2 — Endpoint** through its internal references and playbooks.
+Architecture and endpoint implementation are owned directly by `$dev` as **J1 — Architecture** and **J2 — Endpoint** through the repository conventions, existing code, internal references, and playbooks.
 
 ## Job Types
 
 | Job | Trigger | Skill to load |
 |-----|---------|---------------|
-| **J1 — Architecture** | Designing or refactoring client structure, DI, namespacing, cross-cutting concerns | `architecture` skill |
-| **J2 — Endpoint** | Adding or extending an API endpoint (models + client method + tests) | Internal `/dev` endpoint workflow |
+| **J1 — Architecture** | Designing or refactoring client structure, DI, namespacing, cross-cutting concerns | Internal `$dev` architecture workflow |
+| **J2 — Endpoint** | Adding or extending an API endpoint (models + client method + tests) | Internal `$dev` endpoint workflow |
 | **J3 — Tests** | Writing unit, integration, or schema validation tests for existing code | `tests` skill |
 | **J4 — Review** | Reviewing or auditing C# code before merge | `code-review` skill |
 | **J5 — Docs & Packaging** | README, samples, XML docs, NuGet metadata, release readiness | `docs` skill |
@@ -52,9 +50,9 @@ J1 Architecture → J6 Foundation → J2 Endpoint → J3 Tests → J4 Review →
 
 ### Step 2 — Load the specialized skill or internal workflow
 
-For J1, J3, J4, and J5, load the corresponding skill file and follow its workflow. Do not duplicate specialized skill content here — delegate fully.
+For J1, stay inside `$dev`: inspect `.github/instructions/csharp-conventions.instructions.md`, the current client hierarchy, and the relevant implementation before proposing a design. For J3, J4, and J5, load the corresponding skill file and follow its workflow.
 
-For J2, stay inside `/dev` and use these internal references:
+For J2, stay inside `$dev` and use these internal references:
 - [Endpoint placement and naming](./references/endpoint-placement-and-naming.md)
 - [Endpoint implementation checklist](./references/endpoint-implementation-checklist.md)
 - [Development playbooks](./references/development-playbooks.md)
@@ -76,7 +74,7 @@ Regardless of job type, every change must respect:
 
 ### Step 4 — Define the expected output before coding
 
-Before implementing, state what this `/dev` run must produce:
+Before implementing, state what this `$dev` run must produce:
 - the selected job type(s)
 - the specialized skill(s) to load
 - the deliverables to create or modify
@@ -95,7 +93,7 @@ If the task adds public capability, also decide whether it must hand off to `doc
 
 ## Output Contract
 
-Every `/dev` execution should end with these concrete outputs:
+Every `$dev` execution should end with these concrete outputs:
 
 1. **Job classification** — which J1–J6 jobs apply
 2. **Execution order** — which specialized skills run, and in what sequence
@@ -109,16 +107,16 @@ Every `/dev` execution should end with these concrete outputs:
 - [Development playbooks](./references/development-playbooks.md) — standard multi-skill sequences for recurring work
 - [Endpoint placement and naming](./references/endpoint-placement-and-naming.md) — ownership, placement, and naming rules for J2
 - [Endpoint implementation checklist](./references/endpoint-implementation-checklist.md) — completion checklist for J2
-- [Project roadmap](../../docs/TODO.md) — all pending tasks by phase
+- [Project roadmap](../../../docs/TODO.md) — all pending tasks by phase
 
 ## Quick Decision Guide
 
 ```
 Is this about the client structure, DI, or namespacing?
-  YES → J1: load architecture skill
+  YES → J1: stay in `$dev`, inspect the conventions and current code
 
 Is this about adding or modifying an API endpoint?
-  YES → J2: stay in `/dev`, apply the endpoint references
+  YES → J2: stay in `$dev`, apply the endpoint references
          then J3: load tests skill for the new endpoint
 
 Is this about writing tests only?
@@ -134,5 +132,5 @@ Is this about project infrastructure (csproj, build, editorconfig)?
   YES → J6: follow foundation jobs reference
 
 Is this a broader delivery slice with multiple steps (design + implementation + tests + review + docs)?
-  YES → stay in `/dev` and use the development playbooks
+  YES → stay in `$dev` and use the development playbooks
 ```
