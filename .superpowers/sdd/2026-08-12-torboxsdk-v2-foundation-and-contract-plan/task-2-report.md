@@ -90,3 +90,38 @@ Verdict: `APPROVED`.
 - The snapshot is intentionally time-bound to the retrieval timestamp above; a future intentional refresh must review the changed bytes, manifest, and mapping separately.
 - `family` and `resource` are temporary `Unassigned` values by explicit Task 2 scope. They are not valid for Task 3/release coverage validation and must be assigned there.
 - `responseMode` remains `requires-validation` until snapshot or reviewed behavior supports `json`, `stream`, or `redirect`; no live behavior was inferred.
+
+## Fix round 1/5 — contract validation hardening
+
+### Findings closed
+
+- `-Refresh` now downloads into a uniquely named temporary snapshot, derives and writes a temporary manifest, and validates the complete candidate baseline before publication. Existing snapshot and manifest files are replaced through same-volume replacement files with backups and rollback; backups are removed only after both replacements complete. A failed download, invalid JSON, invalid manifest, or coverage mismatch therefore leaves the existing baseline untouched.
+- `-Validate` and `ContractBaseline.Load` now require a coverage JSON array with one non-empty, unique `operationKey` per record and exact set equality with the OpenAPI `METHOD path` keys. They do not regenerate or modify coverage.
+- Both paths now require the official source URL, an explicitly UTC `retrievedAtUtc` string, non-empty OpenAPI version matching the snapshot, byte length, and SHA-256. The PowerShell loader preserves the raw timestamp string because `ConvertFrom-Json` otherwise converts it to local time before validation.
+
+### Test files
+
+- `tests/TorBoxSDK.V2.ContractTests/ContractSnapshotFileTests.cs`
+- `tests/TorBoxSDK.V2.ContractTests/Infrastructure/ContractBaseline.cs`
+
+The targeted tests include rejection of an untrusted source URL, a non-UTC timestamp, a missing OpenAPI version, a missing snapshot operation in coverage, and a duplicate coverage key. They use temporary copies only and make no HTTP calls.
+
+### Commands and results
+
+1. `dotnet test tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj --configuration Release --filter FullyQualifiedName~ContractSnapshotFileTests`
+   - Red: after the new refusal tests compiled, five tests failed on each target because the old loader accepted all malformed artifacts.
+   - Green/final: exit `0`; 7 tests passed on each of `net6.0`, `net7.0`, `net8.0`, `net9.0`, and `net10.0`.
+2. `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -Validate`
+   - Exit `0`; offline validation accepted the checked-in snapshot, manifest, and coverage inventory.
+3. Isolated temporary-copy checks invoking `-Validate`:
+   - Expected rejections observed for an untrusted manifest `sourceUrl` and an incomplete `coverage.json`; the checked-in baseline was not modified and no HTTP call was made.
+4. `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -InitializeCoverage`
+   - Expected exit `1`; it refused to overwrite the existing reviewed coverage mapping.
+
+### Commit
+
+`test: harden TorBox V2 contract validation` (corrective commit following `1d2c3dedc9bae012a57bb14875fccfc904c1c055`)
+
+### Remaining concern
+
+The snapshot remains intentionally pinned to its recorded retrieval time. Any future approved `-Refresh` must be reviewed with its resulting mapping changes; `-Validate` stays fully offline.
