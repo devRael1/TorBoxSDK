@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/items/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj" />
+    <Project Path="src/TorBoxSDK.V2.Examples/TorBoxSDK.V2.Examples.csproj" />
+    <Project Path="src/TorBoxSDK.V2/TorBoxSDK.V2.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj" />
+    <Project Path="tests/TorBoxSDK.V2.IntegrationTests/TorBoxSDK.V2.IntegrationTests.csproj" />
+    <Project Path="tests/TorBoxSDK.V2.Testing/TorBoxSDK.V2.Testing.csproj" />
+    <Project Path="tests/TorBoxSDK.V2.UnitTests/TorBoxSDK.V2.UnitTests.csproj" />
+  </Folder>
+</Solution>

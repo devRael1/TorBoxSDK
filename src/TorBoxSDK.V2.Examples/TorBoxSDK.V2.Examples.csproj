@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../TorBoxSDK.V2/TorBoxSDK.V2.csproj" />
+    <ProjectReference Include="../TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj" />
+  </ItemGroup>
+</Project>

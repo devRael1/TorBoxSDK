@@ -12,6 +12,7 @@
     <PackageVersion Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="10.0.6" />
     <PackageVersion Include="Microsoft.Extensions.Options.DataAnnotations" Version="10.0.6" />
     <PackageVersion Include="Microsoft.SourceLink.GitHub" Version="10.0.202" />
+    <PackageVersion Include="System.Text.Json" Version="10.0.6" />
   </ItemGroup>
 
   <!-- net6.0/net7.0 overrides to keep support for older TFMs -->
