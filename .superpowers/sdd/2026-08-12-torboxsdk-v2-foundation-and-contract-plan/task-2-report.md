@@ -164,3 +164,52 @@ PowerShell now requires `retrievedAtUtc` to end with the explicit `Z` UTC marker
 ### Remaining concern
 
 The journal directory is an intentional recovery artifact. If an interruption occurs, read-only validation remains coherent through its candidate; a subsequent authorized writer completes physical publication. A manually damaged journal is rejected rather than silently repaired.
+
+## Fix round 3/5 — safe journal retirement and coverage-write guard
+
+### Revised transaction and interruption protocol
+
+The transaction journal remains the only selector of a candidate generation. Candidate cleanup now has an explicit safe ordering:
+
+1. A transaction that can publish `coverage.json` records `schemaVersion: 2`, `expectedCoverageExists`, and (when it existed) the SHA-256 present when the transaction began.
+2. Before publishing any durable artifact, recovery validates the complete candidate and tests that coverage still has that expected state. It tests the same expectation again immediately before replacing coverage. If it changed or appeared, recovery refuses without modifying a durable artifact and leaves `journal.json` plus the full candidate available for inspection/reconciliation.
+3. After the three durable artifacts validate as one baseline, recovery renames `journal.json` to a non-selector `journal.retired.<guid>.json`. No candidate file is removed before this rename returns.
+4. Only with no `journal.json` visible does cleanup remove the transaction directory recursively. An interruption during cleanup therefore leaves no selector and readers use the already validated durable baseline. A later authorized writer clears that retired residue before publishing a new candidate.
+
+Thus an interruption around journal retirement has only two reader-visible states: `journal.json` with a complete candidate, or no active journal with a complete durable baseline. `-Validate` and the C# loader remain read-only. For a legacy active journal without the new coverage expectation, `-Validate` still reads its complete candidate; an authorized physical recovery refuses rather than risking a coverage overwrite.
+
+The comparison is an integrity guard, not a cross-process lock: an unrelated, non-cooperating writer can still theoretically modify `coverage.json` in the tiny interval after the final hash comparison and before the filesystem replacement. The script detects all changes present at recovery/publication checks, but cannot provide compare-and-swap semantics across arbitrary external writers without a shared locking protocol.
+
+### Test files and scenarios
+
+- `tests/TorBoxSDK.V2.ContractTests/ContractSnapshotFileTests.cs`
+  - Adds `ContractTransaction_WhenJournalIsRetired_LoadsDurableBaselineWithoutTheCandidate`, proving that after the selector is retired a missing candidate cannot affect the readable durable generation.
+  - The existing incomplete-active-candidate test remains the complementary refusal proof: a visible `journal.json` without all candidate artifacts is rejected.
+- Isolated temporary-copy PowerShell transaction checks (no HTTP):
+  - Red before the fix: a pending `publishCoverage` journal overwrote an externally modified valid coverage mapping and removed its journal.
+  - Green after the fix: the same mutation returns a non-zero recovery result, preserves the external coverage hash, and leaves both journal and candidate intact.
+  - A matching expectation completes recovery, removes the transaction directory only after journal retirement, and a following `-Validate` accepts the durable baseline.
+  - A legacy journal with a full candidate is accepted by `-Validate` without changing the deliberately damaged durable snapshot.
+
+### Commands and results
+
+1. Isolated temporary-copy PowerShell red scenario (pre-fix)
+   - Expected safe-refusal assertion failed as intended: `exit=1 hashPreserved=False journalExists=False`, proving the old recovery overwrote coverage and removed the active journal.
+2. Isolated temporary-copy PowerShell recovery scenarios (post-fix)
+   - Exit `0`; `round3-transaction-scenarios=passed`. The changed-coverage path refused and retained journal/candidate; the matching path retired then removed the journaled transaction and `-Validate` passed.
+3. Isolated legacy-journal read-only check
+   - Exit `0`; `legacy-journal-read-only-validation=passed` while the durable snapshot remained `{}`.
+4. `dotnet test tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj --no-restore --filter FullyQualifiedName~ContractSnapshotFileTests`
+   - Exit `0`; 11 tests passed on each of `net6.0`, `net7.0`, `net8.0`, `net9.0`, and `net10.0`.
+5. `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -Validate`
+   - Exit `0`; normal baseline validation remained offline and read-only.
+6. `git diff --check`
+   - Exit `0`.
+
+### Commit
+
+`test: guard TorBox V2 contract transaction cleanup` (corrective commit following `e059f689c61da010c7f6748925b632aa4991f92b`)
+
+### Remaining concern
+
+The hash guard safely rejects a transaction if coverage has changed before either publication check, including a mapping that appeared after an initialization transaction started. It cannot impose a lock on arbitrary external writers between the final check and the file replacement; that would require a wider shared-locking decision outside this task's offline contract scope.

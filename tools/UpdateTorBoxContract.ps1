@@ -204,6 +204,43 @@ function Get-ContractTransaction() {
     return $journal
 }
 
+function Get-CoverageExpectation() {
+    $coverageExists = Test-Path -LiteralPath $coveragePath
+    return [pscustomobject]@{
+        Exists = $coverageExists
+        Sha256 = if ($coverageExists) { (Get-FileHash -LiteralPath $coveragePath -Algorithm SHA256).Hash } else { $null }
+    }
+}
+
+function Test-CoverageExpectation([object] $transaction) {
+    if (-not [bool] $transaction.publishCoverage) {
+        return
+    }
+
+    if ($null -eq $transaction.PSObject.Properties['expectedCoverageExists'] -or
+        $null -eq $transaction.PSObject.Properties['expectedCoverageSha256']) {
+        throw 'The contract transaction journal does not preserve the expected coverage state.'
+    }
+
+    $expectedCoverageExists = [bool] $transaction.expectedCoverageExists
+    $coverageExists = Test-Path -LiteralPath $coveragePath
+    if ($coverageExists -ne $expectedCoverageExists) {
+        throw 'Coverage changed since the transaction began. Refusing to overwrite a reviewed mapping.'
+    }
+
+    if ($expectedCoverageExists) {
+        $expectedSha256 = [string] $transaction.expectedCoverageSha256
+        if ([string]::IsNullOrWhiteSpace($expectedSha256)) {
+            throw 'The contract transaction journal does not preserve the expected coverage hash.'
+        }
+
+        $actualSha256 = (Get-FileHash -LiteralPath $coveragePath -Algorithm SHA256).Hash
+        if ($actualSha256 -cne $expectedSha256) {
+            throw 'Coverage changed since the transaction began. Refusing to overwrite a reviewed mapping.'
+        }
+    }
+}
+
 function Get-ContractPaths([object] $transaction) {
     if ($null -eq $transaction) {
         return [pscustomobject]@{
@@ -249,30 +286,57 @@ function Publish-File([string] $sourcePath, [string] $destinationPath) {
     }
 }
 
+function Remove-RetiredContractTransaction() {
+    $journalPath = Join-Path $transactionDirectory 'journal.json'
+    if (Test-Path -LiteralPath $journalPath) {
+        throw 'The active contract transaction journal must be retired before cleanup.'
+    }
+
+    if (Test-Path -LiteralPath $transactionDirectory) {
+        Remove-Item -LiteralPath $transactionDirectory -Recurse -Force
+    }
+}
+
+function Retire-ContractTransactionJournal() {
+    $journalPath = Join-Path $transactionDirectory 'journal.json'
+    if (-not (Test-Path -LiteralPath $journalPath)) {
+        throw 'The active contract transaction journal is missing before retirement.'
+    }
+
+    $retiredJournalPath = Join-Path $transactionDirectory ("journal.retired.$([Guid]::NewGuid().ToString('N')).json")
+    Move-Item -LiteralPath $journalPath -Destination $retiredJournalPath
+}
+
 function Complete-ContractTransaction() {
     $transaction = Get-ContractTransaction
     if ($null -eq $transaction) {
+        Remove-RetiredContractTransaction
         return
     }
 
     $candidatePaths = Get-ContractPaths $transaction
     [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
 
+    Test-CoverageExpectation $transaction
+
     Publish-File $candidatePaths.SnapshotPath $snapshotPath
     Publish-File $candidatePaths.ManifestPath $manifestPath
     if ([bool] $transaction.publishCoverage) {
+        Test-CoverageExpectation $transaction
         Publish-File $candidatePaths.CoveragePath $coveragePath
     }
 
     [void] (Test-Baseline $snapshotPath $manifestPath $coveragePath)
-    Remove-Item -LiteralPath $transactionDirectory -Recurse -Force
+    Retire-ContractTransactionJournal
+    Remove-RetiredContractTransaction
 }
 
 function Publish-ContractTransaction(
     [string] $candidateSnapshotPath,
     [string] $candidateManifestPath,
     [string] $candidateCoveragePath,
-    [bool] $publishCoverage) {
+    [bool] $publishCoverage,
+    [object] $coverageExpectation) {
     if (Test-Path -LiteralPath $transactionDirectory) {
         throw "The contract transaction directory '$transactionDirectory' must be completed before publishing another candidate."
     }
@@ -293,8 +357,11 @@ function Publish-ContractTransaction(
         [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
 
         $journal = [ordered]@{
+            schemaVersion = 2
             activeGeneration = 'candidate'
             publishCoverage = $publishCoverage
+            expectedCoverageExists = [bool] $coverageExpectation.Exists
+            expectedCoverageSha256 = $coverageExpectation.Sha256
         }
         $journal | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $stagingDirectory 'journal.json') -Encoding utf8
         Move-Item -LiteralPath $stagingDirectory -Destination $transactionDirectory
@@ -316,7 +383,8 @@ try {
         Complete-ContractTransaction
     }
 
-    if ($InitializeCoverage -and (Test-Path -LiteralPath $coveragePath)) {
+    $coverageExpectation = Get-CoverageExpectation
+    if ($InitializeCoverage -and $coverageExpectation.Exists) {
         throw "Coverage already exists at '$coveragePath'. Refusing to overwrite a reviewed mapping."
     }
 
@@ -346,7 +414,7 @@ try {
     }
 
     if ($Refresh -or $InitializeCoverage) {
-        Publish-ContractTransaction $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath $InitializeCoverage.IsPresent
+        Publish-ContractTransaction $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath $InitializeCoverage.IsPresent $coverageExpectation
     }
 
     if ($Validate) {

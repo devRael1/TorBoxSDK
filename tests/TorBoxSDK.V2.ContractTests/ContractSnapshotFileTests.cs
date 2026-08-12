@@ -172,6 +172,23 @@ public sealed class ContractSnapshotFileTests
         Assert.Throws<InvalidDataException>(load);
     }
 
+    [Fact]
+    public void ContractTransaction_WhenJournalIsRetired_LoadsDurableBaselineWithoutTheCandidate()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        string expectedSha256 = ContractBaseline.Load(temporaryContract.BaselineDirectory).CalculateSha256();
+        temporaryContract.CreateCandidateTransaction();
+        File.Move(temporaryContract.TransactionJournalPath, temporaryContract.RetiredTransactionJournalPath);
+        Directory.Delete(temporaryContract.TransactionCandidateDirectory, recursive: true);
+
+        // Act
+        ContractBaseline baseline = ContractBaseline.Load(temporaryContract.BaselineDirectory);
+
+        // Assert
+        Assert.Equal(expectedSha256, baseline.CalculateSha256());
+    }
+
     private static JsonObject ReadJsonObject(string path)
     {
         JsonNode? node = JsonNode.Parse(File.ReadAllText(path));
@@ -207,7 +224,13 @@ public sealed class ContractSnapshotFileTests
 
         internal string CoveragePath { get; }
 
+        internal string TransactionDirectory => Path.Combine(RootDirectory, "contracts", "torbox", ".update-transaction");
+
         internal string TransactionCandidateDirectory => Path.Combine(RootDirectory, "contracts", "torbox", ".update-transaction", "candidate");
+
+        internal string TransactionJournalPath => Path.Combine(TransactionDirectory, "journal.json");
+
+        internal string RetiredTransactionJournalPath => Path.Combine(TransactionDirectory, "journal.retired.test.json");
 
         internal static TemporaryContractDirectory Create()
         {
@@ -225,7 +248,6 @@ public sealed class ContractSnapshotFileTests
 
         internal void CreateCandidateTransaction()
         {
-            string transactionDirectory = Path.Combine(RootDirectory, "contracts", "torbox", ".update-transaction");
             string candidateBaselineDirectory = Path.Combine(TransactionCandidateDirectory, "baseline");
             Directory.CreateDirectory(candidateBaselineDirectory);
 
@@ -238,7 +260,7 @@ public sealed class ContractSnapshotFileTests
                 ["activeGeneration"] = "candidate",
                 ["publishCoverage"] = true
             };
-            WriteJson(Path.Combine(transactionDirectory, "journal.json"), journal);
+            WriteJson(TransactionJournalPath, journal);
         }
 
         public void Dispose()
