@@ -125,3 +125,42 @@ The targeted tests include rejection of an untrusted source URL, a non-UTC times
 ### Remaining concern
 
 The snapshot remains intentionally pinned to its recorded retrieval time. Any future approved `-Refresh` must be reviewed with its resulting mapping changes; `-Validate` stays fully offline.
+
+## Fix round 2/5 — durable transaction recovery and explicit UTC
+
+### State protocol
+
+Publication now uses `contracts/torbox/.update-transaction/` as a durable journaled state, which is created only after all three complete candidate artifacts have been copied and validated:
+
+1. The writer stages candidate `baseline/openapi.json`, `baseline/manifest.json`, and `coverage.json` outside the live transaction path, validates them locally, writes `journal.json` (`activeGeneration: candidate`, `publishCoverage`), then atomically renames the complete transaction directory into place.
+2. While `journal.json` exists, the C# contract loader and `-Validate` resolve the full candidate generation inside the transaction directory. They never validate the sequentially replaced durable files, so an interruption cannot make a mixed durable state appear valid.
+3. A later authorized writer (`-Refresh` or `-InitializeCoverage`) resumes the physical files from that candidate using an atomic replacement per file while retaining the journal. It validates the durable set, then removes the journal. Re-running recovery is idempotent: an interruption leaves the same complete candidate and journal for the next attempt.
+4. An interruption before the journal rename leaves the previous durable baseline untouched. A malformed or incomplete journal/candidate is rejected by both readers rather than guessed or repaired from mixed files.
+
+This deliberately does not claim filesystem-level multi-file atomic replacement. Coherence is provided by the durable, complete candidate selected by the journal. `-Validate` remains offline and read-only; it validates that logical candidate. Physical recovery occurs only on an already authorized writing command. Existing coverage is physically rewritten only when the journal records that the interrupted operation was `-InitializeCoverage`.
+
+### UTC rule
+
+PowerShell now requires `retrievedAtUtc` to end with the explicit `Z` UTC marker before invariant parsing and zero-offset verification. A timestamp without a zone is rejected even when the host timezone is UTC.
+
+### Tests and commands
+
+- `tests/TorBoxSDK.V2.ContractTests/ContractSnapshotFileTests.cs`
+  - Red evidence: with a journaled candidate, the prior loader failed on a deliberately mixed durable snapshot and accepted an incomplete candidate.
+  - Green evidence: the loader now reads the complete candidate and rejects an incomplete candidate. It also rejects a timestamp without `Z`.
+- `dotnet test tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj --configuration Release --filter FullyQualifiedName~ContractSnapshotFileTests`
+  - Final exit `0`; 10 tests passed on each of `net6.0`, `net7.0`, `net8.0`, `net9.0`, and `net10.0`.
+- `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -Validate`
+  - Final exit `0`; validated the normal durable baseline without a network call.
+- Isolated temporary-copy PowerShell transaction test
+  - `-Validate` accepted a full candidate while the durable snapshot had been deliberately replaced with `{}` and left that durable file unchanged.
+  - The next `-InitializeCoverage` invocation resumed the pending transaction physically, then correctly refused to overwrite the already present coverage mapping; the transaction journal was removed.
+  - `-Validate` rejected a manifest timestamp lacking the explicit `Z` marker. No test made an HTTP request.
+
+### Commit
+
+`test: recover TorBox V2 contract transactions`
+
+### Remaining concern
+
+The journal directory is an intentional recovery artifact. If an interruption occurs, read-only validation remains coherent through its candidate; a subsequent authorized writer completes physical publication. A manually damaged journal is rejected rather than silently repaired.

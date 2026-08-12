@@ -6,6 +6,8 @@ namespace TorBoxSDK.V2.ContractTests.Infrastructure;
 internal sealed class ContractBaseline
 {
     private const string OfficialSourceUrl = "https://api.torbox.app/openapi.json";
+    private const string TransactionDirectoryName = ".update-transaction";
+    private const string CandidateGenerationName = "candidate";
 
     private static readonly HashSet<string> HttpMethods = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -32,8 +34,16 @@ internal sealed class ContractBaseline
 
     internal static ContractBaseline Load(string baselineDirectory)
     {
-        string snapshotPath = Path.Combine(baselineDirectory, "openapi.json");
-        string manifestPath = Path.Combine(baselineDirectory, "manifest.json");
+        DirectoryInfo? contractDirectory = Directory.GetParent(baselineDirectory);
+        if (contractDirectory is null)
+        {
+            throw new InvalidDataException("The contract baseline directory does not have a contract directory parent.");
+        }
+
+        string effectiveContractDirectory = ResolveEffectiveContractDirectory(contractDirectory.FullName);
+        string effectiveBaselineDirectory = Path.Combine(effectiveContractDirectory, "baseline");
+        string snapshotPath = Path.Combine(effectiveBaselineDirectory, "openapi.json");
+        string manifestPath = Path.Combine(effectiveBaselineDirectory, "manifest.json");
 
         if (!File.Exists(snapshotPath))
         {
@@ -57,7 +67,7 @@ internal sealed class ContractBaseline
         using JsonDocument document = JsonDocument.Parse(snapshotBytes);
         IReadOnlySet<string> operationKeys = GetOperationKeys(document.RootElement);
         ValidateManifest(manifest, snapshotBytes, document.RootElement);
-        ValidateCoverage(baselineDirectory, operationKeys);
+        ValidateCoverage(effectiveBaselineDirectory, operationKeys);
         return new ContractBaseline(snapshotBytes, manifest, operationKeys);
     }
 
@@ -93,6 +103,35 @@ internal sealed class ContractBaseline
         }
 
         return operationKeys;
+    }
+
+    private static string ResolveEffectiveContractDirectory(string contractDirectory)
+    {
+        string transactionDirectory = Path.Combine(contractDirectory, TransactionDirectoryName);
+        string journalPath = Path.Combine(transactionDirectory, "journal.json");
+        if (!File.Exists(journalPath))
+        {
+            return contractDirectory;
+        }
+
+        using JsonDocument journal = JsonDocument.Parse(File.ReadAllBytes(journalPath));
+        if (!journal.RootElement.TryGetProperty("activeGeneration", out JsonElement activeGeneration) ||
+            activeGeneration.ValueKind != JsonValueKind.String ||
+            !string.Equals(activeGeneration.GetString(), CandidateGenerationName, StringComparison.Ordinal))
+        {
+            throw new InvalidDataException("The contract transaction journal does not identify a supported complete generation.");
+        }
+
+        string candidateDirectory = Path.Combine(transactionDirectory, CandidateGenerationName);
+        string candidateSnapshotPath = Path.Combine(candidateDirectory, "baseline", "openapi.json");
+        string candidateManifestPath = Path.Combine(candidateDirectory, "baseline", "manifest.json");
+        string candidateCoveragePath = Path.Combine(candidateDirectory, "coverage.json");
+        if (!File.Exists(candidateSnapshotPath) || !File.Exists(candidateManifestPath) || !File.Exists(candidateCoveragePath))
+        {
+            throw new InvalidDataException("The contract transaction candidate is incomplete and cannot be recovered safely.");
+        }
+
+        return candidateDirectory;
     }
 
     private static void ValidateManifest(ContractManifest manifest, byte[] snapshotBytes, JsonElement root)

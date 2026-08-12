@@ -15,14 +15,11 @@ $baselineDirectory = Join-Path $contractDirectory 'baseline'
 $snapshotPath = Join-Path $baselineDirectory 'openapi.json'
 $manifestPath = Join-Path $baselineDirectory 'manifest.json'
 $coveragePath = Join-Path $contractDirectory 'coverage.json'
+$transactionDirectory = Join-Path $contractDirectory '.update-transaction'
 $httpMethods = @('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace')
 
 if (-not ($Refresh -or $InitializeCoverage -or $Validate)) {
     throw 'Specify at least one of -Refresh, -InitializeCoverage, or -Validate.'
-}
-
-if ($InitializeCoverage -and (Test-Path -LiteralPath $coveragePath)) {
-    throw "Coverage already exists at '$coveragePath'. Refusing to overwrite a reviewed mapping."
 }
 
 function Get-SnapshotFacts([string] $candidateSnapshotPath) {
@@ -76,7 +73,8 @@ function Test-Manifest([object] $snapshotFacts, [object] $manifest) {
 
     [string] $retrievedAtText = [string] (Get-RequiredManifestValue $manifest 'retrievedAtUtc')
     [DateTimeOffset] $retrievedAtUtc = [DateTimeOffset]::MinValue
-    if (-not [DateTimeOffset]::TryParse(
+    if (-not $retrievedAtText.EndsWith('Z', [System.StringComparison]::Ordinal) -or
+        -not [DateTimeOffset]::TryParse(
             $retrievedAtText,
             [System.Globalization.CultureInfo]::InvariantCulture,
             [System.Globalization.DateTimeStyles]::RoundtripKind,
@@ -188,48 +186,124 @@ function Write-Coverage([object] $openApiDocument, [string] $candidateCoveragePa
     @($coverage | Sort-Object -Property operationKey) | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $candidateCoveragePath -Encoding utf8
 }
 
-function Publish-Baseline([string] $temporarySnapshotPath, [string] $temporaryManifestPath) {
-    $temporarySuffix = [Guid]::NewGuid().ToString('N')
-    $snapshotBackupPath = "$snapshotPath.$temporarySuffix.backup"
-    $manifestBackupPath = "$manifestPath.$temporarySuffix.backup"
-    $snapshotExists = Test-Path -LiteralPath $snapshotPath
-    $manifestExists = Test-Path -LiteralPath $manifestPath
-    $published = $false
-
-    if ($snapshotExists -ne $manifestExists) {
-        throw 'The existing baseline is incomplete; refusing to replace only one baseline artifact.'
+function Get-ContractTransaction() {
+    $journalPath = Join-Path $transactionDirectory 'journal.json'
+    if (-not (Test-Path -LiteralPath $journalPath)) {
+        return $null
     }
 
+    $journal = Get-Content -LiteralPath $journalPath -Raw | ConvertFrom-Json -Depth 10
+    if ($null -eq $journal -or [string] $journal.activeGeneration -cne 'candidate') {
+        throw 'The contract transaction journal does not identify a supported complete generation.'
+    }
+
+    if ($null -eq $journal.PSObject.Properties['publishCoverage']) {
+        throw 'The contract transaction journal does not state whether coverage must be published.'
+    }
+
+    return $journal
+}
+
+function Get-ContractPaths([object] $transaction) {
+    if ($null -eq $transaction) {
+        return [pscustomobject]@{
+            SnapshotPath = $snapshotPath
+            ManifestPath = $manifestPath
+            CoveragePath = $coveragePath
+        }
+    }
+
+    $candidateDirectory = Join-Path $transactionDirectory 'candidate'
+    $candidatePaths = [pscustomobject]@{
+        SnapshotPath = Join-Path $candidateDirectory 'baseline/openapi.json'
+        ManifestPath = Join-Path $candidateDirectory 'baseline/manifest.json'
+        CoveragePath = Join-Path $candidateDirectory 'coverage.json'
+    }
+
+    if (-not (Test-Path -LiteralPath $candidatePaths.SnapshotPath) -or
+        -not (Test-Path -LiteralPath $candidatePaths.ManifestPath) -or
+        -not (Test-Path -LiteralPath $candidatePaths.CoveragePath)) {
+        throw 'The contract transaction candidate is incomplete and cannot be recovered safely.'
+    }
+
+    return $candidatePaths
+}
+
+function Publish-File([string] $sourcePath, [string] $destinationPath) {
+    $destinationDirectory = Split-Path -Parent $destinationPath
+    New-Item -ItemType Directory -Force -Path $destinationDirectory | Out-Null
+
+    $temporaryDestinationPath = "$destinationPath.$([Guid]::NewGuid().ToString('N')).tmp"
+    $backupDestinationPath = "$destinationPath.$([Guid]::NewGuid().ToString('N')).backup"
     try {
-        if ($snapshotExists) {
-            [System.IO.File]::Replace($temporarySnapshotPath, $snapshotPath, $snapshotBackupPath)
-            [System.IO.File]::Replace($temporaryManifestPath, $manifestPath, $manifestBackupPath)
+        Copy-Item -LiteralPath $sourcePath -Destination $temporaryDestinationPath
+        if (Test-Path -LiteralPath $destinationPath) {
+            [System.IO.File]::Replace($temporaryDestinationPath, $destinationPath, $backupDestinationPath)
         }
         else {
-            Move-Item -LiteralPath $temporarySnapshotPath -Destination $snapshotPath
-            Move-Item -LiteralPath $temporaryManifestPath -Destination $manifestPath
+            Move-Item -LiteralPath $temporaryDestinationPath -Destination $destinationPath
         }
-
-        $published = $true
-    }
-    catch {
-        if (Test-Path -LiteralPath $snapshotBackupPath) {
-            [System.IO.File]::Replace($snapshotBackupPath, $snapshotPath, $null)
-        }
-
-        if (Test-Path -LiteralPath $manifestBackupPath) {
-            [System.IO.File]::Replace($manifestBackupPath, $manifestPath, $null)
-        }
-
-        throw
     }
     finally {
-        if ($published) {
-            Remove-Item -LiteralPath $snapshotBackupPath, $manifestBackupPath -Force -ErrorAction SilentlyContinue
-        }
-
-        Remove-Item -LiteralPath $temporarySnapshotPath, $temporaryManifestPath -Force -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $temporaryDestinationPath, $backupDestinationPath -Force -ErrorAction SilentlyContinue
     }
+}
+
+function Complete-ContractTransaction() {
+    $transaction = Get-ContractTransaction
+    if ($null -eq $transaction) {
+        return
+    }
+
+    $candidatePaths = Get-ContractPaths $transaction
+    [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
+
+    Publish-File $candidatePaths.SnapshotPath $snapshotPath
+    Publish-File $candidatePaths.ManifestPath $manifestPath
+    if ([bool] $transaction.publishCoverage) {
+        Publish-File $candidatePaths.CoveragePath $coveragePath
+    }
+
+    [void] (Test-Baseline $snapshotPath $manifestPath $coveragePath)
+    Remove-Item -LiteralPath $transactionDirectory -Recurse -Force
+}
+
+function Publish-ContractTransaction(
+    [string] $candidateSnapshotPath,
+    [string] $candidateManifestPath,
+    [string] $candidateCoveragePath,
+    [bool] $publishCoverage) {
+    if (Test-Path -LiteralPath $transactionDirectory) {
+        throw "The contract transaction directory '$transactionDirectory' must be completed before publishing another candidate."
+    }
+
+    $stagingDirectory = "$transactionDirectory.$([Guid]::NewGuid().ToString('N')).staging"
+    $candidateDirectory = Join-Path $stagingDirectory 'candidate'
+    try {
+        New-Item -ItemType Directory -Force -Path (Join-Path $candidateDirectory 'baseline') | Out-Null
+        Copy-Item -LiteralPath $candidateSnapshotPath -Destination (Join-Path $candidateDirectory 'baseline/openapi.json')
+        Copy-Item -LiteralPath $candidateManifestPath -Destination (Join-Path $candidateDirectory 'baseline/manifest.json')
+        Copy-Item -LiteralPath $candidateCoveragePath -Destination (Join-Path $candidateDirectory 'coverage.json')
+
+        $candidatePaths = [pscustomobject]@{
+            SnapshotPath = Join-Path $candidateDirectory 'baseline/openapi.json'
+            ManifestPath = Join-Path $candidateDirectory 'baseline/manifest.json'
+            CoveragePath = Join-Path $candidateDirectory 'coverage.json'
+        }
+        [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
+
+        $journal = [ordered]@{
+            activeGeneration = 'candidate'
+            publishCoverage = $publishCoverage
+        }
+        $journal | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $stagingDirectory 'journal.json') -Encoding utf8
+        Move-Item -LiteralPath $stagingDirectory -Destination $transactionDirectory
+    }
+    finally {
+        Remove-Item -LiteralPath $stagingDirectory -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    Complete-ContractTransaction
 }
 
 $temporarySuffix = [Guid]::NewGuid().ToString('N')
@@ -238,6 +312,14 @@ $temporaryManifestPath = "$manifestPath.$temporarySuffix.tmp"
 $temporaryCoveragePath = "$coveragePath.$temporarySuffix.tmp"
 
 try {
+    if ($Refresh -or $InitializeCoverage) {
+        Complete-ContractTransaction
+    }
+
+    if ($InitializeCoverage -and (Test-Path -LiteralPath $coveragePath)) {
+        throw "Coverage already exists at '$coveragePath'. Refusing to overwrite a reviewed mapping."
+    }
+
     if ($Refresh) {
         New-Item -ItemType Directory -Force -Path $baselineDirectory | Out-Null
         Invoke-WebRequest -Uri $officialSourceUrl -OutFile $temporarySnapshotPath
@@ -263,16 +345,14 @@ try {
         [void] (Test-Baseline $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath)
     }
 
-    if ($Refresh) {
-        Publish-Baseline $temporarySnapshotPath $temporaryManifestPath
-    }
-
-    if ($InitializeCoverage) {
-        Move-Item -LiteralPath $temporaryCoveragePath -Destination $coveragePath
+    if ($Refresh -or $InitializeCoverage) {
+        Publish-ContractTransaction $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath $InitializeCoverage.IsPresent
     }
 
     if ($Validate) {
-        [void] (Test-Baseline $snapshotPath $manifestPath $coveragePath)
+        $transaction = Get-ContractTransaction
+        $effectivePaths = Get-ContractPaths $transaction
+        [void] (Test-Baseline $effectivePaths.SnapshotPath $effectivePaths.ManifestPath $effectivePaths.CoveragePath)
     }
 }
 finally {

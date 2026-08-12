@@ -74,6 +74,22 @@ public sealed class ContractSnapshotFileTests
     }
 
     [Fact]
+    public void BaselineManifest_WhenRetrievedAtUtcHasNoUtcMarker_RejectsManifest()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        JsonObject manifest = ReadJsonObject(temporaryContract.ManifestPath);
+        manifest["retrievedAtUtc"] = "2026-08-12T21:27:10.4501753";
+        WriteJson(temporaryContract.ManifestPath, manifest);
+
+        // Act
+        Action load = () => ContractBaseline.Load(temporaryContract.BaselineDirectory);
+
+        // Assert
+        Assert.Throws<InvalidDataException>(load);
+    }
+
+    [Fact]
     public void BaselineManifest_WhenRequiredOpenApiVersionIsMissing_RejectsManifest()
     {
         // Arrange
@@ -125,6 +141,37 @@ public sealed class ContractSnapshotFileTests
         Assert.Throws<InvalidDataException>(load);
     }
 
+    [Fact]
+    public void ContractTransaction_WhenDurableFilesAreMixed_LoadsCompleteCandidate()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        string expectedSha256 = ContractBaseline.Load(temporaryContract.BaselineDirectory).CalculateSha256();
+        temporaryContract.CreateCandidateTransaction();
+        File.WriteAllText(Path.Combine(temporaryContract.BaselineDirectory, "openapi.json"), "{}");
+
+        // Act
+        ContractBaseline baseline = ContractBaseline.Load(temporaryContract.BaselineDirectory);
+
+        // Assert
+        Assert.Equal(expectedSha256, baseline.CalculateSha256());
+    }
+
+    [Fact]
+    public void ContractTransaction_WhenCandidateIsIncomplete_RejectsUnrecoverableTransaction()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        temporaryContract.CreateCandidateTransaction();
+        File.Delete(Path.Combine(temporaryContract.TransactionCandidateDirectory, "coverage.json"));
+
+        // Act
+        Action load = () => ContractBaseline.Load(temporaryContract.BaselineDirectory);
+
+        // Assert
+        Assert.Throws<InvalidDataException>(load);
+    }
+
     private static JsonObject ReadJsonObject(string path)
     {
         JsonNode? node = JsonNode.Parse(File.ReadAllText(path));
@@ -160,6 +207,8 @@ public sealed class ContractSnapshotFileTests
 
         internal string CoveragePath { get; }
 
+        internal string TransactionCandidateDirectory => Path.Combine(RootDirectory, "contracts", "torbox", ".update-transaction", "candidate");
+
         internal static TemporaryContractDirectory Create()
         {
             string rootDirectory = Path.Combine(Path.GetTempPath(), "TorBoxSDK.V2.ContractTests", Guid.NewGuid().ToString("N"));
@@ -172,6 +221,24 @@ public sealed class ContractSnapshotFileTests
             File.Copy(ContractTestPaths.CoveragePath, Path.Combine(contractDirectory, "coverage.json"));
 
             return new TemporaryContractDirectory(rootDirectory, contractDirectory);
+        }
+
+        internal void CreateCandidateTransaction()
+        {
+            string transactionDirectory = Path.Combine(RootDirectory, "contracts", "torbox", ".update-transaction");
+            string candidateBaselineDirectory = Path.Combine(TransactionCandidateDirectory, "baseline");
+            Directory.CreateDirectory(candidateBaselineDirectory);
+
+            File.Copy(Path.Combine(BaselineDirectory, "openapi.json"), Path.Combine(candidateBaselineDirectory, "openapi.json"));
+            File.Copy(Path.Combine(BaselineDirectory, "manifest.json"), Path.Combine(candidateBaselineDirectory, "manifest.json"));
+            File.Copy(CoveragePath, Path.Combine(TransactionCandidateDirectory, "coverage.json"));
+
+            JsonObject journal = new()
+            {
+                ["activeGeneration"] = "candidate",
+                ["publishCoverage"] = true
+            };
+            WriteJson(Path.Combine(transactionDirectory, "journal.json"), journal);
         }
 
         public void Dispose()
