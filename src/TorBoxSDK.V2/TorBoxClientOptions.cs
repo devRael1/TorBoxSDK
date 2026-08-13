@@ -9,6 +9,8 @@ namespace TorBoxSDK;
 /// </remarks>
 public sealed class TorBoxClientOptions
 {
+	private static readonly TimeSpan _maximumHttpClientTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
+
 	/// <summary>
 	/// Gets or sets the TorBox API key used by the authentication handler.
 	/// </summary>
@@ -45,9 +47,11 @@ public sealed class TorBoxClientOptions
 			throw new ArgumentException("A non-blank TorBox API key is required.", nameof(ApiKey));
 		}
 
-		if (Timeout <= TimeSpan.Zero)
+		if (Timeout <= TimeSpan.Zero || Timeout > _maximumHttpClientTimeout)
 		{
-			throw new ArgumentException("The TorBox HTTP timeout must be greater than zero.", nameof(Timeout));
+			throw new ArgumentException(
+				"The TorBox HTTP timeout must be greater than zero and cannot exceed the maximum supported by HttpClient.",
+				nameof(Timeout));
 		}
 
 		return new ValidatedTorBoxClientOptions(

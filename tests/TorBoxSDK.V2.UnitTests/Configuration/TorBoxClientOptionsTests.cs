@@ -150,6 +150,35 @@ public sealed class TorBoxClientOptionsTests
 		Assert.Equal(nameof(TorBoxClientOptions.Timeout), exception.ParamName);
 	}
 
+	[Fact]
+	public void ValidateAndNormalize_WithTimeoutAboveHttpClientMaximum_ThrowsArgumentException()
+	{
+		// Arrange
+		TorBoxClientOptions options = CreateValidOptions();
+		options.Timeout = TimeSpan.FromDays(25);
+
+		// Act
+		ArgumentException exception = Assert.Throws<ArgumentException>(() => options.ValidateAndNormalize());
+
+		// Assert
+		Assert.Equal(nameof(TorBoxClientOptions.Timeout), exception.ParamName);
+	}
+
+	[Fact]
+	public void ValidateAndNormalize_WithMaximumHttpClientTimeout_AcceptsTimeout()
+	{
+		// Arrange
+		TimeSpan maximumHttpClientTimeout = TimeSpan.FromMilliseconds(int.MaxValue);
+		TorBoxClientOptions options = CreateValidOptions();
+		options.Timeout = maximumHttpClientTimeout;
+
+		// Act
+		ValidatedTorBoxClientOptions validatedOptions = options.ValidateAndNormalize();
+
+		// Assert
+		Assert.Equal(maximumHttpClientTimeout, validatedOptions.Timeout);
+	}
+
 	private static TorBoxClientOptions CreateValidOptions() => new()
 	{
 		ApiKey = "test-api-key",

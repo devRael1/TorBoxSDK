@@ -219,3 +219,45 @@ core package dependencies:
 
 No endpoint method belongs to Task 7 or this Task 6 slice. Main/Search/Relay
 resource plans must add contract-backed endpoint methods later.
+
+## Fix round 1/5 — timeout range validation
+
+This isolated fix addresses the confirmed major validation gap found after the
+Task 6 commit. `ValidateAndNormalize()` previously rejected only timeout values
+less than or equal to zero. It therefore accepted values above the maximum that
+`HttpClient.Timeout` accepts, allowing direct construction to reach the BCL
+setter instead of reporting a complete options error before pipeline creation.
+
+The selected upper bound is exactly
+`TimeSpan.FromMilliseconds(int.MaxValue)` (`24.20:31:23.647`). It is the
+maximum supported by `HttpClient.Timeout`, is expressed solely with portable
+`TimeSpan` and `int` APIs available to `netstandard2.0`, and preserves the BCL
+boundary rather than choosing an arbitrary lower SDK limit. The validation rule
+is now explicitly `Timeout > TimeSpan.Zero && Timeout <=
+TimeSpan.FromMilliseconds(int.MaxValue)` and throws `ArgumentException` with
+the `Timeout` parameter name outside that range.
+
+### RED/GREEN evidence
+
+Two regression tests were first added in
+`Configuration/TorBoxClientOptionsTests.cs` and execute `ValidateAndNormalize()`
+directly, so they create no `HttpClient`, handler, or network request:
+
+- `ValidateAndNormalize_WithTimeoutAboveHttpClientMaximum_ThrowsArgumentException`
+  sets `TimeSpan.FromDays(25)`. Before production code changed, it failed as
+  intended on net6.0 through net10.0: `Assert.Throws() Failure: No exception
+  was thrown` (1 failed, 1 passed, 2 total per target).
+- `ValidateAndNormalize_WithMaximumHttpClientTimeout_AcceptsTimeout` sets the
+  exact BCL maximum and verifies that the normalized immutable snapshot retains
+  it. It was already green during RED and remains green after the fix.
+
+After adding the explicit upper-bound guard, the focused two-test filter passed
+2/2 with zero failures on each of net6.0, net7.0, net8.0, net9.0, and net10.0.
+The full post-fix validation passed with the following counts on each executable
+target: hierarchy/options filter 25/25, UnitTests 80/80, and ContractTests 39
+passed / 0 failed / 1 skipped (the existing disabled
+`V2ReleaseContractTests.AllOperationsAreImplemented`). The Release V2 solution
+build also passed with zero warnings and zero errors, including the
+`netstandard2.0` core target. Targeted whitespace/style/analyzer formatting
+passed; the formatter repeated its existing generic workspace-load warning but
+reported no formatting or analyzer failure.
