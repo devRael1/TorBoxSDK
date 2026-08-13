@@ -102,3 +102,24 @@ jobs:
           name: schema-validation-results
           path: ./test-results/*.trx
           retention-days: 14
+
+  v2-deterministic:
+    name: V2 Deterministic Gate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Run V2 deterministic gate
+        shell: pwsh
+        run: ./eng/Invoke-V2DeterministicChecks.ps1

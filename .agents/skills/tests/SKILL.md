@@ -53,14 +53,16 @@ Use integration tests for:
 5. Keep integration tests isolated.
 Mark them clearly so they can be excluded in default local and CI runs when credentials are unavailable.
 
-6. Update schema validation tests when models change.
-When adding or modifying SDK models:
+### V1 legacy schema-validation workflow
+
+6. Update V1 schema validation tests when models change.
+When adding or modifying V1 SDK models:
 - add or update mappings in `SchemaModelMapping.SchemaToType`
 - register any intentional field or type discrepancies in the appropriate known exclusion sets
 - ensure static schema tests pass by running with `--filter "Category!=Live"`
 - add live schema tests when a new endpoint is mapped, using `SchemaAssert.FindUnmappedFieldsAsync<T>()`
 
-The OpenAPI specification is fetched from `https://api.torbox.app/openapi.json` at test time — no local file is versioned.
+The V1 OpenAPI specification is fetched from `https://api.torbox.app/openapi.json` at test time — no local file is versioned.
 
 ## Checks
 
@@ -71,6 +73,18 @@ A test set is sufficient when:
 - schema validation mappings are current for any new or changed models
 - tests remain deterministic unless explicitly integration-based
 - the tests follow the repo xUnit conventions
+
+## V2 Contract and Deterministic Tests
+
+V2 is a side-by-side foundation with a checked-in, multi-source contract baseline. Its static tests are offline: they read `contracts/torbox/sources.json`, source snapshots and manifests, `coverage.json`, and `divergences.json`. Do not download or refresh an OpenAPI document while developing or validating V2 static tests.
+
+Run the V2 deterministic gate from the repository root:
+
+```powershell
+pwsh -NoProfile -File eng/Invoke-V2DeterministicChecks.ps1
+```
+
+The gate uses a locked restore, Release build, V2 unit tests, non-release V2 contract tests, and local package inspection. The release-trait contract test is opt-in with `-IncludeReleaseContract` only after the final cutover declares every source eligible. V2 integration validation is separate, manually dispatched, protected by `TORBOX_API_KEY`, and is not a default local or CI check.
 
 ## References
 

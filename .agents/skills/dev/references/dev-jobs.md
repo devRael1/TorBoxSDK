@@ -214,6 +214,18 @@ No dedicated skill — follow the Phase 1 tasks directly in `docs/TODO.md`.
 - `client.Main.Torrents` is accessible (even if empty)
 - Sub-clients are not directly resolvable from the DI container
 
+### V2 side-by-side foundation and contract gate
+
+For the V2 foundation, use the checked-in multi-source baseline under `contracts/torbox/` rather than the V1 direct OpenAPI path. Static V2 validation is offline after its locked restore and is closed by:
+
+```powershell
+pwsh -NoProfile -File eng/Invoke-V2DeterministicChecks.ps1
+```
+
+The gate builds `TorBoxSDK.V2.slnx`, runs V2 unit and non-release contract tests, and inspects the two local V2 packages without publishing them. The `Microsoft.Extensions.*` boundary belongs to `TorBoxSDK.DependencyInjection`, not the core package. The release contract and protected V2 integration validation remain opt-in until cutover eligibility is declared.
+
+The V1 schema-validation and integration guidance in this reference remains legacy until cutover; do not use its downloaded OpenAPI workflow for V2 static tests.
+
 ---
 
 ## Recommended Overall Development Order

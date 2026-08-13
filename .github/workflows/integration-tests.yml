@@ -13,6 +13,11 @@ on:
         required: false
         default: true
         type: boolean
+      run_v2_live:
+        description: 'Run protected V2 live validation'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -93,5 +98,45 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: live-schema-validation-results
+          path: ./test-results/*.trx
+          retention-days: 14
+
+  v2-live-validation:
+    name: V2 Live Validation
+    if: inputs.run_v2_live == true
+    runs-on: ubuntu-latest
+    environment: testing
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDKs
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            6.0.x
+            7.0.x
+            8.0.x
+            9.0.x
+            10.0.x
+
+      - name: Restore V2 dependencies
+        run: dotnet restore TorBoxSDK.V2.slnx --locked-mode
+
+      - name: Run V2 live validation
+        env:
+          TORBOX_API_KEY: ${{ secrets.TORBOX_API_KEY }}
+        run: >
+          dotnet test tests/TorBoxSDK.V2.IntegrationTests/
+          --configuration Release
+          --no-restore
+          --logger "trx;LogFileName=v2-live-validation.trx"
+          --results-directory ./test-results
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v2-live-validation-results
           path: ./test-results/*.trx
           retention-days: 14

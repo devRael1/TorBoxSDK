@@ -130,6 +130,26 @@ Playbooks standardize the most common multi-skill sequences in TorBoxSDK. They a
 
 ---
 
+## Playbook G — Validate the V2 foundation and contract baseline
+
+**When to use:** validating the side-by-side V2 core, dependency-injection package, or checked-in contract baseline.
+
+**Sequence:**
+1. confirm V2 source changes preserve the core/DI package boundary and the supported target matrix
+2. `tests` validates the checked-in baseline with the deterministic V2 gate
+3. `code-review` reviews the changed V2 source, contract, or gate files
+4. `docs` aligns engineering or package guidance when the public or delivery surface changes
+
+**Exit criteria:**
+- `pwsh -NoProfile -File eng/Invoke-V2DeterministicChecks.ps1` succeeds without an API key
+- the core package has no Microsoft.Extensions dependency; the DI package has only its reviewed dependencies plus the core package
+- no static V2 test downloads or refreshes contract data
+- no package is published
+
+**Boundary:** V1 direct OpenAPI and live-validation guidance remains legacy until cutover. V2 live validation is a separately protected, manually dispatched workflow and never a prerequisite of the default deterministic gate.
+
+---
+
 ## Skill handoff rules
 
 - `architecture` delivers a target structure and placement constraints.
