@@ -23,7 +23,8 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 		{
 			EnvelopeValues values = await reader.ReadEnvelopeAsync(captureData: true).ConfigureAwait(false);
 			T? data = values.Success
-				? DeserializeData<T>(values.DataJson, reader, requestUri, statusCode)
+				? await DeserializeDataAsync<T>(values.DataCapture, reader, requestUri, statusCode, cancellationToken)
+					.ConfigureAwait(false)
 				: default;
 
 			return new TorBoxResponse<T>
@@ -75,24 +76,31 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 		}
 	}
 
-	private static T? DeserializeData<T>(
-		byte[]? dataJson,
+	private static async Task<T?> DeserializeDataAsync<T>(
+		CapturedValue? dataCapture,
 		JsonEnvelopeStreamReader reader,
 		Uri? requestUri,
-		HttpStatusCode statusCode)
+		HttpStatusCode statusCode,
+		CancellationToken cancellationToken)
 	{
-		if (dataJson is null)
+		if (dataCapture is null)
 		{
 			return default;
 		}
 
-		try
+		using (dataCapture)
 		{
-			return JsonSerializer.Deserialize<T>(dataJson, TorBoxJsonOptions.Default);
-		}
-		catch (JsonException exception)
-		{
-			throw CreateProtocolException(requestUri, statusCode, reader.GetDiagnostic(), exception);
+			try
+			{
+				return await JsonSerializer.DeserializeAsync<T>(
+					dataCapture.OpenRead(),
+					TorBoxJsonOptions.Default,
+					cancellationToken).ConfigureAwait(false);
+			}
+			catch (JsonException exception)
+			{
+				throw CreateProtocolException(requestUri, statusCode, reader.GetDiagnostic(), exception);
+			}
 		}
 	}
 
@@ -109,12 +117,12 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 
 	private sealed class EnvelopeValues
 	{
-		internal EnvelopeValues(bool success, string? error, string? detail, byte[]? dataJson)
+		internal EnvelopeValues(bool success, string? error, string? detail, CapturedValue? dataCapture)
 		{
 			Success = success;
 			Error = error;
 			Detail = detail;
-			DataJson = dataJson;
+			DataCapture = dataCapture;
 		}
 
 		internal bool Success { get; }
@@ -123,7 +131,82 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 
 		internal string? Detail { get; }
 
-		internal byte[]? DataJson { get; }
+		internal CapturedValue? DataCapture { get; }
+	}
+
+	private sealed class CapturedValue : IDisposable
+	{
+		private const int MaximumInMemoryByteCount = BoundedDiagnosticReader.MaxByteCount;
+		private FileStream? _file;
+		private MemoryStream? _memory = new(MaximumInMemoryByteCount);
+
+		internal void WriteByte(byte value)
+		{
+			if (_file is null)
+			{
+				MemoryStream memory = _memory ?? throw new ObjectDisposedException(nameof(CapturedValue));
+
+				if (memory.Length < MaximumInMemoryByteCount)
+				{
+					memory.WriteByte(value);
+					return;
+				}
+
+				SpillToTemporaryFile(memory);
+			}
+
+			FileStream file = _file ?? throw new ObjectDisposedException(nameof(CapturedValue));
+			file.WriteByte(value);
+		}
+
+		internal Stream OpenRead()
+		{
+			if (_file is FileStream file)
+			{
+				file.Flush();
+				file.Position = 0;
+				return file;
+			}
+
+			MemoryStream memory = _memory ?? throw new ObjectDisposedException(nameof(CapturedValue));
+			memory.Position = 0;
+			return memory;
+		}
+
+		public void Dispose()
+		{
+			_memory?.Dispose();
+			_memory = null;
+			_file?.Dispose();
+			_file = null;
+		}
+
+		private void SpillToTemporaryFile(MemoryStream memory)
+		{
+			string temporaryFilePath = Path.Combine(Path.GetTempPath(), $"TorBoxSDK-{Guid.NewGuid():N}.tmp");
+			FileStream file = new(
+				temporaryFilePath,
+				FileMode.CreateNew,
+				FileAccess.ReadWrite,
+				FileShare.None,
+				bufferSize: 8192,
+				FileOptions.DeleteOnClose);
+
+			try
+			{
+				memory.Position = 0;
+				memory.CopyTo(file);
+			}
+			catch
+			{
+				file.Dispose();
+				throw;
+			}
+
+			memory.Dispose();
+			_memory = null;
+			_file = file;
+		}
 	}
 
 	private sealed class JsonEnvelopeStreamReader : IDisposable
@@ -132,7 +215,8 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 		private readonly CancellationToken _cancellationToken;
 		private readonly MemoryStream _diagnosticBytes = new(BoundedDiagnosticReader.MaxByteCount);
 		private readonly Stream _stream;
-		private MemoryStream? _capture;
+		private CapturedValue? _capture;
+		private CapturedValue? _dataCapture;
 		private int _bufferCount;
 		private int _bufferPosition;
 
@@ -154,7 +238,6 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 			bool success = false;
 			string? error = null;
 			string? detail = null;
-			byte[]? dataJson = null;
 			bool firstProperty = true;
 
 			while (true)
@@ -196,7 +279,8 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 
 					if (!success)
 					{
-						dataJson = null;
+						_dataCapture?.Dispose();
+						_dataCapture = null;
 					}
 				}
 				else if (!propertyName.WasTruncated && string.Equals(propertyName.Value, "error", StringComparison.Ordinal))
@@ -226,9 +310,14 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 						throw new JsonException("A TorBox JSON envelope cannot contain duplicate data properties.");
 					}
 
-					dataJson = captureData && (!hasSuccess || success)
-						? await ReadCapturedValueAsync().ConfigureAwait(false)
-						: await ReadValueAndReturnNullAsync().ConfigureAwait(false);
+					if (captureData && (!hasSuccess || success))
+					{
+						_dataCapture = await ReadCapturedValueAsync().ConfigureAwait(false);
+					}
+					else
+					{
+						await ReadValueAsync(0).ConfigureAwait(false);
+					}
 					hasData = true;
 				}
 				else
@@ -251,7 +340,14 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 				throw new JsonException("The TorBox JSON envelope does not contain a success property.");
 			}
 
-			return new EnvelopeValues(success, error, detail, success ? dataJson : null);
+			if (!success)
+			{
+				return new EnvelopeValues(success, error, detail, dataCapture: null);
+			}
+
+			CapturedValue? dataCapture = _dataCapture;
+			_dataCapture = null;
+			return new EnvelopeValues(success, error, detail, dataCapture);
 		}
 
 		internal string? GetDiagnostic()
@@ -265,26 +361,29 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 			return TorBoxProtocolException.BoundDiagnostic(diagnostic);
 		}
 
-		public void Dispose() => _diagnosticBytes.Dispose();
-
-		private async Task<byte[]?> ReadValueAndReturnNullAsync()
+		public void Dispose()
 		{
-			await ReadValueAsync(0).ConfigureAwait(false);
-			return null;
+			_dataCapture?.Dispose();
+			_diagnosticBytes.Dispose();
 		}
 
-		private async Task<byte[]> ReadCapturedValueAsync()
+		private async Task<CapturedValue> ReadCapturedValueAsync()
 		{
-			_capture = new MemoryStream();
+			CapturedValue capture = new();
+			_capture = capture;
 
 			try
 			{
 				await ReadValueAsync(0).ConfigureAwait(false);
-				return _capture.ToArray();
+				return capture;
+			}
+			catch
+			{
+				capture.Dispose();
+				throw;
 			}
 			finally
 			{
-				_capture.Dispose();
 				_capture = null;
 			}
 		}

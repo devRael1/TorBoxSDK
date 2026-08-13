@@ -182,6 +182,81 @@ public sealed class TorBoxApiTransportTests
 	}
 
 	[Fact]
+	public async Task DeserializeEnvelopeAsync_WithLargeDataBeforeFailure_DoesNotAllocateInProportionToDiscardedData()
+	{
+		// Arrange
+		const int discardedDataByteCount = 2 * 1024 * 1024;
+		const long maximumAdditionalAllocatedByteCount = 512 * 1024;
+		TorBoxEnvelopeJsonConverterFactory converter = new();
+		using RepeatingPropertyBeforeResultStream ignoredWarmUpStream = new("ignored", 1);
+		_ = await converter.DeserializeEnvelopeAsync<string>(
+			ignoredWarmUpStream,
+			requestUri: null,
+			HttpStatusCode.Unauthorized,
+			CancellationToken.None);
+		using RepeatingPropertyBeforeResultStream dataWarmUpStream = new("data", 1);
+		_ = await converter.DeserializeEnvelopeAsync<string>(
+			dataWarmUpStream,
+			requestUri: null,
+			HttpStatusCode.Unauthorized,
+			CancellationToken.None);
+		using RepeatingPropertyBeforeResultStream ignoredResponseStream = new("ignored", discardedDataByteCount);
+		long ignoredAllocatedByteCountBefore = GC.GetAllocatedBytesForCurrentThread();
+
+		// Act
+		TorBoxResponse<string> ignoredResponse = await converter.DeserializeEnvelopeAsync<string>(
+			ignoredResponseStream,
+			requestUri: null,
+			HttpStatusCode.Unauthorized,
+			CancellationToken.None);
+		long ignoredAllocatedByteCount = GC.GetAllocatedBytesForCurrentThread() - ignoredAllocatedByteCountBefore;
+		using RepeatingPropertyBeforeResultStream dataResponseStream = new("data", discardedDataByteCount);
+		long dataAllocatedByteCountBefore = GC.GetAllocatedBytesForCurrentThread();
+		TorBoxResponse<string> dataResponse = await converter.DeserializeEnvelopeAsync<string>(
+			dataResponseStream,
+			requestUri: null,
+			HttpStatusCode.Unauthorized,
+			CancellationToken.None);
+		long dataAllocatedByteCount = GC.GetAllocatedBytesForCurrentThread() - dataAllocatedByteCountBefore;
+
+		// Assert
+		Assert.False(ignoredResponse.Success);
+		Assert.False(dataResponse.Success);
+		Assert.Equal("BAD_TOKEN", dataResponse.Error);
+		Assert.Equal("Invalid token.", dataResponse.Detail);
+		Assert.Null(dataResponse.Data);
+		Assert.Equal(HttpStatusCode.Unauthorized, dataResponse.StatusCode);
+		Assert.InRange(
+			dataAllocatedByteCount - ignoredAllocatedByteCount,
+			0,
+			maximumAdditionalAllocatedByteCount);
+	}
+
+	[Fact]
+	public async Task DeserializeEnvelopeAsync_WithDataLargerThan64KiBBeforeSuccess_DeserializesThePayload()
+	{
+		// Arrange
+		const int dataByteCount = 64 * 1024 + 1;
+		string expectedData = new('x', dataByteCount);
+		TorBoxEnvelopeJsonConverterFactory converter = new();
+		using RepeatingPropertyBeforeResultStream responseStream = new("data", dataByteCount, success: true);
+
+		// Act
+		TorBoxResponse<string> response = await converter.DeserializeEnvelopeAsync<string>(
+			responseStream,
+			requestUri: null,
+			HttpStatusCode.OK,
+			CancellationToken.None);
+
+		// Assert
+		Assert.True(response.Success);
+		Assert.Equal(expectedData, response.Data);
+		Assert.Null(response.Error);
+		Assert.Equal("Found.", response.Detail);
+		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+	}
+
+	[Fact]
 	public async Task SendAsync_WithLargeIgnoredPropertyBeforeFailureDetail_PreservesTheEnvelope()
 	{
 		// Arrange
@@ -647,6 +722,102 @@ public sealed class TorBoxApiTransportTests
 
 		// Assert
 		Assert.False(allowAutoRedirect);
+	}
+
+	private sealed class RepeatingPropertyBeforeResultStream : Stream
+	{
+		private static readonly byte[] DataPrefix = Encoding.UTF8.GetBytes("{\"data\":\"");
+		private static readonly byte[] IgnoredPrefix = Encoding.UTF8.GetBytes("{\"ignored\":\"");
+		private static readonly byte[] FailureSuffix = Encoding.UTF8.GetBytes("\",\"error\":\"BAD_TOKEN\",\"detail\":\"Invalid token.\",\"success\":false}");
+		private static readonly byte[] SuccessSuffix = Encoding.UTF8.GetBytes("\",\"error\":null,\"detail\":\"Found.\",\"success\":true}");
+		private readonly int _dataByteCount;
+		private readonly long _length;
+		private readonly byte[] _prefix;
+		private readonly byte[] _suffix;
+		private long _position;
+
+		internal RepeatingPropertyBeforeResultStream(string propertyName, int dataByteCount, bool success = false)
+		{
+			_prefix = propertyName switch
+			{
+				"data" => DataPrefix,
+				"ignored" => IgnoredPrefix,
+				_ => throw new ArgumentOutOfRangeException(nameof(propertyName)),
+			};
+			_dataByteCount = dataByteCount;
+			_suffix = success ? SuccessSuffix : FailureSuffix;
+			_length = _prefix.Length + dataByteCount + _suffix.Length;
+		}
+
+		public override bool CanRead => true;
+
+		public override bool CanSeek => false;
+
+		public override bool CanWrite => false;
+
+		public override long Length => _length;
+
+		public override long Position
+		{
+			get => _position;
+			set => throw new NotSupportedException();
+		}
+
+		public override void Flush()
+		{
+		}
+
+		public override Task FlushAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+		public override int Read(byte[] buffer, int offset, int count)
+		{
+			if (_position >= _length)
+			{
+				return 0;
+			}
+
+			int bytesRead = 0;
+
+			while (bytesRead < count && _position < _length)
+			{
+				buffer[offset + bytesRead] = GetByteAtPosition(_position);
+				_position++;
+				bytesRead++;
+			}
+
+			return bytesRead;
+		}
+
+		public override Task<int> ReadAsync(
+			byte[] buffer,
+			int offset,
+			int count,
+			CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromResult(Read(buffer, offset, count));
+		}
+
+		public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+
+		public override void SetLength(long value) => throw new NotSupportedException();
+
+		public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+
+		private byte GetByteAtPosition(long position)
+		{
+			if (position < _prefix.Length)
+			{
+				return _prefix[(int)position];
+			}
+
+			if (position < _prefix.Length + _dataByteCount)
+			{
+				return (byte)'x';
+			}
+
+			return _suffix[(int)(position - _prefix.Length - _dataByteCount)];
+		}
 	}
 
 	private sealed class CancellationAwareHttpMessageHandler : HttpMessageHandler
