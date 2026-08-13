@@ -1,8 +1,9 @@
 [
   {
+    "sourceId": "main",
     "operationKey": "DELETE /v1/api/integration/job/{job_id}",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -13,9 +14,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "DELETE /v1/api/integration/oauth/{provider}/unregister",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -26,9 +28,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "DELETE /v1/api/user/deleteme",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -39,9 +42,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "DELETE /v1/api/vendors/removeuser",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -52,9 +56,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -65,9 +70,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/changelogs/json",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -78,9 +84,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/changelogs/rss",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -91,9 +98,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/job/{job_id}",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -104,9 +112,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/jobs",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -117,9 +126,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/jobs/{hash}",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -130,9 +140,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/oauth/{provider}",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -143,9 +154,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/oauth/{provider}/callback",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -156,9 +168,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/oauth/{provider}/success",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -169,9 +182,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/integration/oauth/me",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -182,9 +196,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/notifications/mynotifications",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Notifications",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -195,9 +210,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/notifications/rss",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Notifications",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -208,9 +224,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/queued/getqueued",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Queued",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -221,9 +238,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/rss/getfeeditems",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Rss",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -234,9 +252,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/rss/getfeeds",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Rss",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -247,9 +266,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/speedtest",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -260,9 +280,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/stats",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -273,9 +294,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/stats/30days",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "General",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -286,9 +308,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/stream/createstream",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Stream",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -299,9 +322,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/stream/getstreamdata",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Stream",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -312,9 +336,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -325,9 +350,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/exportdata",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -338,9 +364,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/getqueued",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -351,9 +378,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/mylist",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -364,9 +392,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/requestdl",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -377,9 +406,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/torrents/torrentinfo",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -390,9 +420,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/usenet/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -403,9 +434,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/usenet/mylist",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -416,9 +448,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/usenet/provider/account",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -429,9 +462,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/usenet/provider/connection",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -442,9 +476,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/usenet/requestdl",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -455,9 +490,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/auth/device/start",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -468,9 +504,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/getconfirmation",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -481,9 +518,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/me",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -494,9 +532,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/referraldata",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -507,9 +546,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/stats",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -520,9 +560,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/subscriptions",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -533,9 +574,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/transaction/pdf",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -546,9 +588,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/user/transactions",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -559,9 +602,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/vendors/account",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -572,9 +616,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/vendors/getaccount",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -585,9 +630,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/vendors/getaccounts",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -598,9 +644,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/webdl/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -611,9 +658,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/webdl/hosters",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -624,9 +672,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/webdl/mylist",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -637,9 +686,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "GET /v1/api/webdl/requestdl",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -650,9 +700,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PATCH /v1/api/vendors/refresh",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -663,9 +714,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/1fichier",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -676,9 +728,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/dropbox",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -689,9 +742,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/gofile",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -702,9 +756,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/googledrive",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -715,9 +770,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/oauth/{provider}/callback",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -728,9 +784,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/oauth/{provider}/register",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -741,9 +798,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/oauth/discord/linked_roles",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -754,9 +812,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/onedrive",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -767,9 +826,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/integration/pixeldrain",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Integrations",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -780,9 +840,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/notifications/clear",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Notifications",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -793,9 +854,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/notifications/clear/{id}",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Notifications",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -806,9 +868,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/notifications/test",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Notifications",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -819,9 +882,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/queued/controlqueued",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Queued",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -832,9 +896,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/rss/addrss",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Rss",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -845,9 +910,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/rss/controlrss",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Rss",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -858,9 +924,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/rss/modifyrss",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Rss",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -871,9 +938,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/asynccreatetorrent",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -884,9 +952,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -897,9 +966,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/controlqueued",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -910,9 +980,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/controltorrent",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -923,9 +994,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/createtorrent",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -936,9 +1008,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/magnettofile",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -949,9 +1022,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/torrents/torrentinfo",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -962,9 +1036,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/usenet/asynccreateusenetdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -975,9 +1050,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/usenet/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -988,9 +1064,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/usenet/controlusenetdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1001,9 +1078,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/usenet/createusenetdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1014,9 +1092,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/usenet/provider/account/resetpw",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1027,9 +1106,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/user/addreferral",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1040,9 +1120,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/user/auth/device/token",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1053,9 +1134,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/user/refreshtoken",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1066,9 +1148,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/vendors/register",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1079,9 +1162,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/vendors/registeruser",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1092,9 +1176,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/webdl/asynccreatewebdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1105,9 +1190,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/webdl/checkcached",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1118,9 +1204,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/webdl/controlwebdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1131,9 +1218,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "POST /v1/api/webdl/createwebdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1144,9 +1232,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PUT /v1/api/torrents/edittorrent",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Torrents",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1157,9 +1246,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PUT /v1/api/usenet/editusenetdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Usenet",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1170,9 +1260,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PUT /v1/api/user/settings/editsettings",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "User",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1183,9 +1274,10 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PUT /v1/api/vendors/updateaccount",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "Vendors",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
@@ -1196,15 +1288,142 @@
     "divergenceIds": []
   },
   {
+    "sourceId": "main",
     "operationKey": "PUT /v1/api/webdl/editwebdownload",
-    "family": "Unassigned",
-    "resource": "Unassigned",
+    "family": "Main",
+    "resource": "WebDownloads",
     "publicInterface": null,
     "publicMethod": null,
     "parameterTypes": [],
     "requestType": null,
     "resultType": null,
     "responseMode": "requires-validation",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "relay",
+    "operationKey": "GET /",
+    "family": "Relay",
+    "resource": "Relay",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "relay",
+    "operationKey": "GET /v1/inactivecheck/torrent/{auth_id}/{torrent_id}",
+    "family": "Relay",
+    "resource": "Relay",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /meta/{id_type}:{id}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /meta/search/{query}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /search/{search_query}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /torrents/{id_type}:{id}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /torrents/search/{query}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /usenet/{id_type}:{id}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
+    "implementationState": "Planned",
+    "divergenceIds": []
+  },
+  {
+    "sourceId": "search",
+    "operationKey": "GET /usenet/search/{query}",
+    "family": "Search",
+    "resource": "Search",
+    "publicInterface": null,
+    "publicMethod": null,
+    "parameterTypes": [],
+    "requestType": null,
+    "resultType": null,
+    "responseMode": "json",
     "implementationState": "Planned",
     "divergenceIds": []
   }

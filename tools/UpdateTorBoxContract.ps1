@@ -2,45 +2,152 @@
 param(
     [switch] $Refresh,
     [switch] $InitializeCoverage,
-    [switch] $Validate
+    [switch] $Validate,
+    [ValidateSet('Main', 'Relay', 'Search')]
+    [string] $Source = 'Main'
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
-$officialSourceUrl = 'https://api.torbox.app/openapi.json'
 $repositoryRoot = Split-Path -Parent $PSScriptRoot
 $contractDirectory = Join-Path $repositoryRoot 'contracts/torbox'
-$baselineDirectory = Join-Path $contractDirectory 'baseline'
-$snapshotPath = Join-Path $baselineDirectory 'openapi.json'
-$manifestPath = Join-Path $baselineDirectory 'manifest.json'
 $coveragePath = Join-Path $contractDirectory 'coverage.json'
 $transactionDirectory = Join-Path $contractDirectory '.update-transaction'
 $httpMethods = @('get', 'put', 'post', 'delete', 'options', 'head', 'patch', 'trace')
+$supportedSourceIds = @('main', 'relay', 'search')
 
 if (-not ($Refresh -or $InitializeCoverage -or $Validate)) {
     throw 'Specify at least one of -Refresh, -InitializeCoverage, or -Validate.'
 }
 
-function Get-SnapshotFacts([string] $candidateSnapshotPath) {
+if ($InitializeCoverage -and $Source -ne 'Main') {
+    throw '-InitializeCoverage is Main-only and cannot initialize Relay or Search coverage.'
+}
+
+if ($Refresh -and $Source -eq 'Search') {
+    throw 'Search is a reviewed documentation inventory and has no automatic refresh path.'
+}
+
+function Get-SourceDefinition([string] $sourceName) {
+    switch ($sourceName) {
+        'Main' {
+            return [pscustomobject]@{
+                Name = 'Main'
+                Id = 'main'
+                Kind = 'openapi'
+                SourceUrl = 'https://api.torbox.app/openapi.json'
+                SnapshotRelativePath = 'baseline/openapi.json'
+                ManifestRelativePath = 'baseline/manifest.json'
+            }
+        }
+        'Relay' {
+            return [pscustomobject]@{
+                Name = 'Relay'
+                Id = 'relay'
+                Kind = 'openapi'
+                SourceUrl = 'https://relay.torbox.app/openapi.json'
+                SnapshotRelativePath = 'relay/openapi.json'
+                ManifestRelativePath = 'relay/manifest.json'
+            }
+        }
+        'Search' {
+            return [pscustomobject]@{
+                Name = 'Search'
+                Id = 'search'
+                Kind = 'documented-operations'
+                SourceUrl = 'https://www.postman.com/torbox/torbox-api/documentation/u47iwao/search-api'
+                SnapshotRelativePath = 'search/operations.json'
+                ManifestRelativePath = 'search/manifest.json'
+            }
+        }
+        default { throw "Unsupported contract source '$sourceName'." }
+    }
+}
+
+function Get-SourceDefinitionById([string] $sourceId) {
+    switch ($sourceId) {
+        'main' { return Get-SourceDefinition 'Main' }
+        'relay' { return Get-SourceDefinition 'Relay' }
+        'search' { return Get-SourceDefinition 'Search' }
+        default { throw "Unsupported contract source ID '$sourceId'." }
+    }
+}
+
+function Get-DurableSourcePaths([object] $definition) {
+    return [pscustomobject]@{
+        SnapshotPath = Join-Path $contractDirectory $definition.SnapshotRelativePath
+        ManifestPath = Join-Path $contractDirectory $definition.ManifestRelativePath
+        CoveragePath = $coveragePath
+    }
+}
+
+function Get-OpenApiOperationKeys([object] $openApiDocument) {
+    if ($null -eq $openApiDocument.paths) {
+        throw 'The OpenAPI document does not contain paths.'
+    }
+
+    foreach ($pathProperty in $openApiDocument.paths.PSObject.Properties) {
+        foreach ($methodProperty in $pathProperty.Value.PSObject.Properties) {
+            if ($httpMethods -contains $methodProperty.Name.ToLowerInvariant() -and $methodProperty.Value -is [pscustomobject]) {
+                "$($methodProperty.Name.ToUpperInvariant()) $($pathProperty.Name)"
+            }
+        }
+    }
+}
+
+function Get-DocumentedOperationKeys([object] $document) {
+    if ([string] $document.format -cne 'torbox-sdk/documented-operations/v1' -or $null -eq $document.operations) {
+        throw 'The Search documented operation inventory has an unsupported format.'
+    }
+
+    foreach ($operation in @($document.operations)) {
+        [string] $method = [string] $operation.method
+        [string] $path = [string] $operation.path
+        if ($httpMethods -notcontains $method.ToLowerInvariant() -or [string]::IsNullOrWhiteSpace($path) -or -not $path.StartsWith('/')) {
+            throw 'Every Search documented operation must contain a supported method and absolute path.'
+        }
+
+        "$($method.ToUpperInvariant()) $path"
+    }
+}
+
+function Get-SnapshotFacts([object] $definition, [string] $candidateSnapshotPath) {
     if (-not (Test-Path -LiteralPath $candidateSnapshotPath)) {
-        throw "The contract snapshot is missing at '$candidateSnapshotPath'."
+        throw "The $($definition.Name) contract snapshot is missing at '$candidateSnapshotPath'."
     }
 
     [byte[]] $snapshotBytes = [System.IO.File]::ReadAllBytes($candidateSnapshotPath)
     [string] $sha256 = (Get-FileHash -LiteralPath $candidateSnapshotPath -Algorithm SHA256).Hash.ToLowerInvariant()
     [string] $snapshotJson = [System.Text.Encoding]::UTF8.GetString($snapshotBytes)
-    $openApiDocument = $snapshotJson | ConvertFrom-Json -Depth 100
+    $document = $snapshotJson | ConvertFrom-Json -Depth 100
 
-    if ($null -eq $openApiDocument.info -or [string]::IsNullOrWhiteSpace([string] $openApiDocument.info.version)) {
-        throw 'The OpenAPI document does not contain info.version.'
+    if ($definition.Kind -ceq 'openapi') {
+        if ($null -eq $document.info -or [string]::IsNullOrWhiteSpace([string] $document.info.version)) {
+            throw 'The OpenAPI document does not contain info.version.'
+        }
+
+        $operationKeys = @(Get-OpenApiOperationKeys $document)
+        [string] $openApiVersion = [string] $document.info.version
+    }
+    else {
+        $operationKeys = @(Get-DocumentedOperationKeys $document)
+        [string] $openApiVersion = ''
+    }
+
+    $uniqueOperationKeys = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    foreach ($operationKey in $operationKeys) {
+        if (-not $uniqueOperationKeys.Add([string] $operationKey)) {
+            throw "The $($definition.Name) contract contains duplicate operation '$operationKey'."
+        }
     }
 
     return [pscustomobject]@{
         ByteLength = [int64] $snapshotBytes.LongLength
         Sha256 = $sha256
-        OpenApiVersion = [string] $openApiDocument.info.version
-        Document = $openApiDocument
+        OpenApiVersion = $openApiVersion
+        Document = $document
+        OperationKeys = $uniqueOperationKeys
     }
 }
 
@@ -65,13 +172,7 @@ function Get-RequiredManifestValue([object] $manifest, [string] $propertyName) {
     return $property.Value
 }
 
-function Test-Manifest([object] $snapshotFacts, [object] $manifest) {
-    [string] $sourceUrl = [string] (Get-RequiredManifestValue $manifest 'sourceUrl')
-    if ($sourceUrl -cne $officialSourceUrl) {
-        throw 'The contract manifest source URL is not the official TorBox OpenAPI URL.'
-    }
-
-    [string] $retrievedAtText = [string] (Get-RequiredManifestValue $manifest 'retrievedAtUtc')
+function Test-UtcTimestamp([string] $retrievedAtText) {
     [DateTimeOffset] $retrievedAtUtc = [DateTimeOffset]::MinValue
     if (-not $retrievedAtText.EndsWith('Z', [System.StringComparison]::Ordinal) -or
         -not [DateTimeOffset]::TryParse(
@@ -81,10 +182,28 @@ function Test-Manifest([object] $snapshotFacts, [object] $manifest) {
             [ref] $retrievedAtUtc) -or $retrievedAtUtc.Offset -ne [TimeSpan]::Zero) {
         throw 'The contract manifest retrieval timestamp must be a UTC timestamp.'
     }
+}
 
-    [string] $openApiVersion = [string] (Get-RequiredManifestValue $manifest 'openApiVersion')
-    if ([string]::IsNullOrWhiteSpace($openApiVersion) -or $openApiVersion -cne $snapshotFacts.OpenApiVersion) {
-        throw 'The contract manifest OpenAPI version is missing or does not match the snapshot.'
+function Test-Manifest([object] $definition, [object] $snapshotFacts, [object] $manifest) {
+    [string] $sourceUrl = [string] (Get-RequiredManifestValue $manifest 'sourceUrl')
+    if ($sourceUrl -cne $definition.SourceUrl) {
+        throw "The $($definition.Name) contract manifest source URL is not the approved source URL."
+    }
+
+    Test-UtcTimestamp ([string] (Get-RequiredManifestValue $manifest 'retrievedAtUtc'))
+
+    if ($definition.Kind -ceq 'openapi') {
+        [string] $openApiVersion = [string] (Get-RequiredManifestValue $manifest 'openApiVersion')
+        if ([string]::IsNullOrWhiteSpace($openApiVersion) -or $openApiVersion -cne $snapshotFacts.OpenApiVersion) {
+            throw 'The contract manifest OpenAPI version is missing or does not match the snapshot.'
+        }
+    }
+    else {
+        [string] $sourceKind = [string] (Get-RequiredManifestValue $manifest 'sourceKind')
+        [string] $releaseEligibility = [string] (Get-RequiredManifestValue $manifest 'releaseEligibility')
+        if ($sourceKind -cne 'postman-documentation' -or $releaseEligibility -cne 'requires-live-validation') {
+            throw 'The Search contract manifest does not preserve its documentation source and live-validation requirement.'
+        }
     }
 
     [int64] $byteLength = [int64] (Get-RequiredManifestValue $manifest 'byteLength')
@@ -98,21 +217,7 @@ function Test-Manifest([object] $snapshotFacts, [object] $manifest) {
     }
 }
 
-function Get-OperationKeys([object] $openApiDocument) {
-    if ($null -eq $openApiDocument.paths) {
-        throw 'The OpenAPI document does not contain paths.'
-    }
-
-    foreach ($pathProperty in $openApiDocument.paths.PSObject.Properties) {
-        foreach ($methodProperty in $pathProperty.Value.PSObject.Properties) {
-            if ($httpMethods -contains $methodProperty.Name.ToLowerInvariant() -and $methodProperty.Value -is [pscustomobject]) {
-                "$( $methodProperty.Name.ToUpperInvariant()) $($pathProperty.Name)"
-            }
-        }
-    }
-}
-
-function Test-Coverage([object] $openApiDocument, [string] $candidateCoveragePath) {
+function Test-Coverage([object] $definition, [object] $snapshotFacts, [string] $candidateCoveragePath) {
     if (-not (Test-Path -LiteralPath $candidateCoveragePath)) {
         throw "The contract coverage inventory is missing at '$candidateCoveragePath'."
     }
@@ -123,40 +228,48 @@ function Test-Coverage([object] $openApiDocument, [string] $candidateCoveragePat
     }
 
     $coverageRows = @($coverageJson | ConvertFrom-Json -Depth 100)
-    $coverageOperationKeys = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    $identities = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+    $selectedOperationKeys = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
     foreach ($coverageRow in $coverageRows) {
+        $sourceIdProperty = $coverageRow.PSObject.Properties['sourceId']
         $operationKeyProperty = $coverageRow.PSObject.Properties['operationKey']
+        if ($null -eq $sourceIdProperty -or [string]::IsNullOrWhiteSpace([string] $sourceIdProperty.Value) -or
+            $supportedSourceIds -cnotcontains [string] $sourceIdProperty.Value) {
+            throw 'Every contract coverage record must have an approved non-empty sourceId.'
+        }
+
         if ($null -eq $operationKeyProperty -or [string]::IsNullOrWhiteSpace([string] $operationKeyProperty.Value)) {
             throw 'Every contract coverage record must have a non-empty operationKey.'
         }
 
+        [string] $sourceId = [string] $sourceIdProperty.Value
         [string] $operationKey = [string] $operationKeyProperty.Value
-        if (-not $coverageOperationKeys.Add($operationKey)) {
-            throw "The contract coverage inventory contains duplicate operationKey '$operationKey'."
+        [string] $identity = "${sourceId}:$operationKey"
+        if (-not $identities.Add($identity)) {
+            throw "The contract coverage inventory contains duplicate identity '$identity'."
+        }
+
+        if ($sourceId -ceq $definition.Id) {
+            [void] $selectedOperationKeys.Add($operationKey)
         }
     }
 
-    $snapshotOperationKeys = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
-    foreach ($operationKey in @(Get-OperationKeys $openApiDocument)) {
-        [void] $snapshotOperationKeys.Add($operationKey)
-    }
-
-    if (-not $coverageOperationKeys.SetEquals($snapshotOperationKeys)) {
-        throw 'The contract coverage inventory must contain exactly the snapshot METHOD path operation keys.'
+    if (-not $selectedOperationKeys.SetEquals($snapshotFacts.OperationKeys)) {
+        throw "The $($definition.Name) coverage rows must contain exactly the selected source METHOD path operations."
     }
 }
 
-function Test-Baseline([string] $candidateSnapshotPath, [string] $candidateManifestPath, [string] $candidateCoveragePath) {
-    $snapshotFacts = Get-SnapshotFacts $candidateSnapshotPath
+function Test-Baseline([object] $definition, [string] $candidateSnapshotPath, [string] $candidateManifestPath, [string] $candidateCoveragePath) {
+    $snapshotFacts = Get-SnapshotFacts $definition $candidateSnapshotPath
     $manifest = Get-Manifest $candidateManifestPath
-    Test-Manifest $snapshotFacts $manifest
-    Test-Coverage $snapshotFacts.Document $candidateCoveragePath
+    Test-Manifest $definition $snapshotFacts $manifest
+    Test-Coverage $definition $snapshotFacts $candidateCoveragePath
     return $snapshotFacts
 }
 
-function Write-Manifest([object] $snapshotFacts, [string] $candidateManifestPath) {
+function Write-Manifest([object] $definition, [object] $snapshotFacts, [string] $candidateManifestPath) {
     $manifest = [ordered]@{
-        sourceUrl = $officialSourceUrl
+        sourceUrl = $definition.SourceUrl
         retrievedAtUtc = [DateTime]::UtcNow.ToString('O')
         openApiVersion = $snapshotFacts.OpenApiVersion
         byteLength = $snapshotFacts.ByteLength
@@ -166,9 +279,10 @@ function Write-Manifest([object] $snapshotFacts, [string] $candidateManifestPath
     $manifest | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $candidateManifestPath -Encoding utf8
 }
 
-function Write-Coverage([object] $openApiDocument, [string] $candidateCoveragePath) {
-    $coverage = foreach ($operationKey in @(Get-OperationKeys $openApiDocument)) {
+function Write-Coverage([object] $snapshotFacts, [string] $candidateCoveragePath) {
+    $coverage = foreach ($operationKey in $snapshotFacts.OperationKeys) {
         [pscustomobject][ordered]@{
+            sourceId = 'main'
             operationKey = $operationKey
             family = 'Unassigned'
             resource = 'Unassigned'
@@ -201,6 +315,9 @@ function Get-ContractTransaction() {
         throw 'The contract transaction journal does not state whether coverage must be published.'
     }
 
+    [string] $sourceId = if ($null -eq $journal.PSObject.Properties['sourceId']) { 'main' } else { [string] $journal.sourceId }
+    $definition = Get-SourceDefinitionById $sourceId
+    $journal | Add-Member -NotePropertyName Definition -NotePropertyValue $definition -Force
     return $journal
 }
 
@@ -229,47 +346,45 @@ function Test-CoverageExpectation([object] $transaction) {
     }
 
     if ($expectedCoverageExists) {
-        $expectedSha256 = [string] $transaction.expectedCoverageSha256
-        if ([string]::IsNullOrWhiteSpace($expectedSha256)) {
-            throw 'The contract transaction journal does not preserve the expected coverage hash.'
-        }
-
-        $actualSha256 = (Get-FileHash -LiteralPath $coveragePath -Algorithm SHA256).Hash
-        if ($actualSha256 -cne $expectedSha256) {
+        [string] $expectedSha256 = [string] $transaction.expectedCoverageSha256
+        if ([string]::IsNullOrWhiteSpace($expectedSha256) -or
+            (Get-FileHash -LiteralPath $coveragePath -Algorithm SHA256).Hash -cne $expectedSha256) {
             throw 'Coverage changed since the transaction began. Refusing to overwrite a reviewed mapping.'
         }
     }
 }
 
-function Get-ContractPaths([object] $transaction) {
+function Get-ContractPaths([object] $definition, [object] $transaction) {
+    $durablePaths = Get-DurableSourcePaths $definition
     if ($null -eq $transaction) {
-        return [pscustomobject]@{
-            SnapshotPath = $snapshotPath
-            ManifestPath = $manifestPath
-            CoveragePath = $coveragePath
-        }
+        return $durablePaths
     }
 
     $candidateDirectory = Join-Path $transactionDirectory 'candidate'
-    $candidatePaths = [pscustomobject]@{
-        SnapshotPath = Join-Path $candidateDirectory 'baseline/openapi.json'
-        ManifestPath = Join-Path $candidateDirectory 'baseline/manifest.json'
-        CoveragePath = Join-Path $candidateDirectory 'coverage.json'
+    [string] $effectiveSnapshotPath = $durablePaths.SnapshotPath
+    [string] $effectiveManifestPath = $durablePaths.ManifestPath
+    if ($definition.Id -ceq $transaction.Definition.Id) {
+        $effectiveSnapshotPath = Join-Path $candidateDirectory $definition.SnapshotRelativePath
+        $effectiveManifestPath = Join-Path $candidateDirectory $definition.ManifestRelativePath
     }
 
-    if (-not (Test-Path -LiteralPath $candidatePaths.SnapshotPath) -or
-        -not (Test-Path -LiteralPath $candidatePaths.ManifestPath) -or
-        -not (Test-Path -LiteralPath $candidatePaths.CoveragePath)) {
+    $candidateCoveragePath = Join-Path $candidateDirectory 'coverage.json'
+    if (-not (Test-Path -LiteralPath $effectiveSnapshotPath) -or
+        -not (Test-Path -LiteralPath $effectiveManifestPath) -or
+        -not (Test-Path -LiteralPath $candidateCoveragePath)) {
         throw 'The contract transaction candidate is incomplete and cannot be recovered safely.'
     }
 
-    return $candidatePaths
+    return [pscustomobject]@{
+        SnapshotPath = $effectiveSnapshotPath
+        ManifestPath = $effectiveManifestPath
+        CoveragePath = $candidateCoveragePath
+    }
 }
 
 function Publish-File([string] $sourcePath, [string] $destinationPath) {
     $destinationDirectory = Split-Path -Parent $destinationPath
     New-Item -ItemType Directory -Force -Path $destinationDirectory | Out-Null
-
     $temporaryDestinationPath = "$destinationPath.$([Guid]::NewGuid().ToString('N')).tmp"
     $backupDestinationPath = "$destinationPath.$([Guid]::NewGuid().ToString('N')).backup"
     try {
@@ -314,24 +429,26 @@ function Complete-ContractTransaction() {
         return
     }
 
-    $candidatePaths = Get-ContractPaths $transaction
-    [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
-
+    $definition = $transaction.Definition
+    $candidatePaths = Get-ContractPaths $definition $transaction
+    [void] (Test-Baseline $definition $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
     Test-CoverageExpectation $transaction
 
-    Publish-File $candidatePaths.SnapshotPath $snapshotPath
-    Publish-File $candidatePaths.ManifestPath $manifestPath
+    $durablePaths = Get-DurableSourcePaths $definition
+    Publish-File $candidatePaths.SnapshotPath $durablePaths.SnapshotPath
+    Publish-File $candidatePaths.ManifestPath $durablePaths.ManifestPath
     if ([bool] $transaction.publishCoverage) {
         Test-CoverageExpectation $transaction
         Publish-File $candidatePaths.CoveragePath $coveragePath
     }
 
-    [void] (Test-Baseline $snapshotPath $manifestPath $coveragePath)
+    [void] (Test-Baseline $definition $durablePaths.SnapshotPath $durablePaths.ManifestPath $coveragePath)
     Retire-ContractTransactionJournal
     Remove-RetiredContractTransaction
 }
 
 function Publish-ContractTransaction(
+    [object] $definition,
     [string] $candidateSnapshotPath,
     [string] $candidateManifestPath,
     [string] $candidateCoveragePath,
@@ -344,21 +461,18 @@ function Publish-ContractTransaction(
     $stagingDirectory = "$transactionDirectory.$([Guid]::NewGuid().ToString('N')).staging"
     $candidateDirectory = Join-Path $stagingDirectory 'candidate'
     try {
-        New-Item -ItemType Directory -Force -Path (Join-Path $candidateDirectory 'baseline') | Out-Null
-        Copy-Item -LiteralPath $candidateSnapshotPath -Destination (Join-Path $candidateDirectory 'baseline/openapi.json')
-        Copy-Item -LiteralPath $candidateManifestPath -Destination (Join-Path $candidateDirectory 'baseline/manifest.json')
+        $stagedSnapshotPath = Join-Path $candidateDirectory $definition.SnapshotRelativePath
+        $stagedManifestPath = Join-Path $candidateDirectory $definition.ManifestRelativePath
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $stagedSnapshotPath) | Out-Null
+        Copy-Item -LiteralPath $candidateSnapshotPath -Destination $stagedSnapshotPath
+        Copy-Item -LiteralPath $candidateManifestPath -Destination $stagedManifestPath
         Copy-Item -LiteralPath $candidateCoveragePath -Destination (Join-Path $candidateDirectory 'coverage.json')
-
-        $candidatePaths = [pscustomobject]@{
-            SnapshotPath = Join-Path $candidateDirectory 'baseline/openapi.json'
-            ManifestPath = Join-Path $candidateDirectory 'baseline/manifest.json'
-            CoveragePath = Join-Path $candidateDirectory 'coverage.json'
-        }
-        [void] (Test-Baseline $candidatePaths.SnapshotPath $candidatePaths.ManifestPath $candidatePaths.CoveragePath)
+        [void] (Test-Baseline $definition $stagedSnapshotPath $stagedManifestPath (Join-Path $candidateDirectory 'coverage.json'))
 
         $journal = [ordered]@{
-            schemaVersion = 2
+            schemaVersion = 3
             activeGeneration = 'candidate'
+            sourceId = $definition.Id
             publishCoverage = $publishCoverage
             expectedCoverageExists = [bool] $coverageExpectation.Exists
             expectedCoverageSha256 = $coverageExpectation.Sha256
@@ -373,9 +487,11 @@ function Publish-ContractTransaction(
     Complete-ContractTransaction
 }
 
+$definition = Get-SourceDefinition $Source
+$durablePaths = Get-DurableSourcePaths $definition
 $temporarySuffix = [Guid]::NewGuid().ToString('N')
-$temporarySnapshotPath = "$snapshotPath.$temporarySuffix.tmp"
-$temporaryManifestPath = "$manifestPath.$temporarySuffix.tmp"
+$temporarySnapshotPath = "$($durablePaths.SnapshotPath).$temporarySuffix.tmp"
+$temporaryManifestPath = "$($durablePaths.ManifestPath).$temporarySuffix.tmp"
 $temporaryCoveragePath = "$coveragePath.$temporarySuffix.tmp"
 
 try {
@@ -389,38 +505,34 @@ try {
     }
 
     if ($Refresh) {
-        New-Item -ItemType Directory -Force -Path $baselineDirectory | Out-Null
-        Invoke-WebRequest -Uri $officialSourceUrl -OutFile $temporarySnapshotPath
-        $snapshotFacts = Get-SnapshotFacts $temporarySnapshotPath
-        Write-Manifest $snapshotFacts $temporaryManifestPath
+        New-Item -ItemType Directory -Force -Path (Split-Path -Parent $durablePaths.SnapshotPath) | Out-Null
+        Invoke-WebRequest -Uri $definition.SourceUrl -OutFile $temporarySnapshotPath
+        $snapshotFacts = Get-SnapshotFacts $definition $temporarySnapshotPath
+        Write-Manifest $definition $snapshotFacts $temporaryManifestPath
     }
 
     if ($InitializeCoverage) {
-        if ($Refresh) {
-            $snapshotFacts = Get-SnapshotFacts $temporarySnapshotPath
+        $snapshotFacts = if ($Refresh) {
+            Get-SnapshotFacts $definition $temporarySnapshotPath
         }
         else {
-            $snapshotFacts = Get-SnapshotFacts $snapshotPath
+            Get-SnapshotFacts $definition $durablePaths.SnapshotPath
         }
-
-        Write-Coverage $snapshotFacts.Document $temporaryCoveragePath
+        Write-Coverage $snapshotFacts $temporaryCoveragePath
     }
 
     if ($Refresh -or $InitializeCoverage) {
-        $candidateSnapshotPath = if ($Refresh) { $temporarySnapshotPath } else { $snapshotPath }
-        $candidateManifestPath = if ($Refresh) { $temporaryManifestPath } else { $manifestPath }
+        $candidateSnapshotPath = if ($Refresh) { $temporarySnapshotPath } else { $durablePaths.SnapshotPath }
+        $candidateManifestPath = if ($Refresh) { $temporaryManifestPath } else { $durablePaths.ManifestPath }
         $candidateCoveragePath = if ($InitializeCoverage) { $temporaryCoveragePath } else { $coveragePath }
-        [void] (Test-Baseline $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath)
-    }
-
-    if ($Refresh -or $InitializeCoverage) {
-        Publish-ContractTransaction $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath $InitializeCoverage.IsPresent $coverageExpectation
+        [void] (Test-Baseline $definition $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath)
+        Publish-ContractTransaction $definition $candidateSnapshotPath $candidateManifestPath $candidateCoveragePath $InitializeCoverage.IsPresent $coverageExpectation
     }
 
     if ($Validate) {
         $transaction = Get-ContractTransaction
-        $effectivePaths = Get-ContractPaths $transaction
-        [void] (Test-Baseline $effectivePaths.SnapshotPath $effectivePaths.ManifestPath $effectivePaths.CoveragePath)
+        $effectivePaths = Get-ContractPaths $definition $transaction
+        [void] (Test-Baseline $definition $effectivePaths.SnapshotPath $effectivePaths.ManifestPath $effectivePaths.CoveragePath)
     }
 }
 finally {

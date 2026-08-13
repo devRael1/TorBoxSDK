@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a side-by-side, manually authored V2 foundation that can be verified offline and that freezes the TorBox contract before resource endpoints are implemented.
+**Goal:** Build a side-by-side, manually authored V2 foundation that can be verified offline and that freezes the Main, Search, and Relay contract sources before resource endpoints are implemented.
 
-**Architecture:** V2 is built in dedicated projects with the final `TorBoxSDK` and `TorBoxSDK.DependencyInjection` assembly and package identities, while V1 remains unchanged until final cutover. The core owns options, response envelopes, protocol errors, streaming, authentication, and transport; the DI project owns Microsoft.Extensions integration. A checked-in OpenAPI snapshot plus manually maintained coverage manifest controls endpoint work without generating SDK code.
+**Architecture:** V2 is built in dedicated projects with the final `TorBoxSDK` and `TorBoxSDK.DependencyInjection` assembly and package identities, while V1 remains unchanged until final cutover. The core owns options, response envelopes, protocol errors, streaming, authentication, and transport; the DI project owns Microsoft.Extensions integration. Checked-in Main/Relay OpenAPI snapshots, a reviewed Search documentation inventory, and one manually maintained coverage manifest control endpoint work without generating SDK code.
 
 **Tech Stack:** C# latest, `netstandard2.0`, .NET 6–10, `System.Net.Http`, `System.Text.Json`, xUnit, PowerShell, GitHub Actions, and the existing DocFX toolchain.
 
@@ -19,7 +19,7 @@
 - Reserve exceptions for cancellation, network failures, and contract-invalid responses. Use `TorBoxProtocolException` for the latter.
 - Return file/binary/redirect-oriented results through disposable `TorBoxStreamResponse`; it is the stream-operation response envelope and carries structured failure metadata when the server returns JSON instead of a stream. Never buffer a successful stream implicitly.
 - Do not add automatic retry, backoff, or endpoint replay. The caller owns retry policy; every request is sent at most once by the SDK transport.
-- Do not fetch OpenAPI during builds or deterministic tests. Store a reviewed snapshot, source metadata, retrieval timestamp, and SHA-256 hash in Git.
+- Do not fetch any contract source during builds or deterministic tests. Store each reviewed source snapshot or normalized documentation inventory, source metadata, retrieval timestamp, and SHA-256 hash in Git.
 - Use explicit `CancellationToken` propagation, file-scoped namespaces, nullable references, one public type per file, and complete XML documentation.
 - Never log or commit `TORBOX_API_KEY`; live tests are separate from deterministic tests.
 - Keep the existing V1 solution buildable until the final V2 cutover plan; do not publish an interim package.
@@ -37,8 +37,11 @@
 | `tests/TorBoxSDK.V2.UnitTests/` | Deterministic V2 unit tests using a recording HTTP handler. |
 | `tests/TorBoxSDK.V2.ContractTests/` | Offline snapshot and coverage-manifest tests. |
 | `tests/TorBoxSDK.V2.IntegrationTests/` | Secret-protected, separately invoked V2 live tests. |
-| `contracts/torbox/baseline/openapi.json` | Checked-in official contract snapshot. |
-| `contracts/torbox/baseline/manifest.json` | Snapshot source, retrieval time, OpenAPI version, byte length, and SHA-256 hash. |
+| `contracts/torbox/baseline/openapi.json` | Checked-in official Main OpenAPI snapshot. |
+| `contracts/torbox/baseline/manifest.json` | Main snapshot source, retrieval time, OpenAPI version, byte length, and SHA-256 hash. |
+| `contracts/torbox/relay/` | Checked-in official Relay OpenAPI snapshot and manifest. |
+| `contracts/torbox/search/` | Reviewed Search documentation operation inventory and manifest. |
+| `contracts/torbox/sources.json` | Versioned registry of the three contract sources and their release eligibility. |
 | `contracts/torbox/coverage.json` | Manual operation-to-public-surface mapping; code generation never reads it. |
 | `contracts/torbox/divergences.json` | Reviewed differences between the snapshot and observed TorBox behavior. |
 | `tools/UpdateTorBoxContract.ps1` | Explicit human-invoked refresh and validation command; not called from build/test. |
@@ -324,74 +327,106 @@ git add contracts/torbox tools/UpdateTorBoxContract.ps1 tests/TorBoxSDK.V2.Contr
 git commit -m "test: freeze TorBox V2 contract baseline"
 ```
 
-## Task 3: Enforce manual coverage inventory in offline contract tests
+## Task 3: Enforce the multi-source manual coverage inventory in offline contract tests
 
 **Files:**
 
-- Create: `tests/TorBoxSDK.V2.ContractTests/Infrastructure/ContractBaseline.cs`
+- Create: `contracts/torbox/sources.json`
+- Create: `contracts/torbox/relay/openapi.json`
+- Create: `contracts/torbox/relay/manifest.json`
+- Create: `contracts/torbox/search/operations.json`
+- Create: `contracts/torbox/search/manifest.json`
+- Modify: `contracts/torbox/coverage.json`
+- Modify: `tools/UpdateTorBoxContract.ps1`
+- Modify: `tests/TorBoxSDK.V2.ContractTests/Infrastructure/ContractBaseline.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/Infrastructure/CoverageManifest.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/Infrastructure/DivergenceRegister.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/OperationCoverageTests.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/DivergenceRegisterTests.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/ContractSurfaceTests.cs`
 - Create: `tests/TorBoxSDK.V2.ContractTests/V2ReleaseContractTests.cs`
+- Modify: `tests/TorBoxSDK.V2.ContractTests/ContractSnapshotFileTests.cs`
 - Modify: `tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj`
 
 **Interfaces:**
 
-- Consumes: checked-in baseline JSON and manual `coverage.json`.
-- Produces: `ContractBaseline.Load(string directory)`, `CoverageManifest.Load(string path)`, and deterministic tests that know the exact operation set without accessing the network.
+- Consumes: the checked-in Main OpenAPI baseline, the independent Relay OpenAPI baseline, a reviewed Search documentation inventory, and the manual `coverage.json`.
+- Produces: `ContractBaseline.Load(string directory)`, `CoverageManifest.Load(string path)`, and deterministic tests that know the exact Main, Search, and Relay operation set without accessing the network.
 
-- [ ] **Step 1: Write the failing operation-key coverage test.**
+**Contract-source amendment (approved 2026-08-13):**
 
-```csharp
-[Fact]
-public void CoverageManifest_ContainsExactlyOneRecordForEverySnapshotOperation()
+The initial single-OpenAPI assumption is replaced by a source registry at `contracts/torbox/sources.json`. It has schema version `1` and exactly these source entries, with all paths relative to `contracts/torbox/`:
+
+```json
 {
-    IReadOnlySet<string> snapshotKeys = ContractBaseline.Load(ContractTestPaths.BaselineDirectory).OperationKeys;
-    IReadOnlyList<CoverageRecord> coverage = CoverageManifest.Load(CoveragePath).Records;
-
-    Assert.Equal(snapshotKeys.Count, coverage.Count);
-    Assert.Equal(snapshotKeys.OrderBy(static key => key), coverage.Select(static record => record.OperationKey).OrderBy(static key => key));
+  "schemaVersion": 1,
+  "sources": [
+    { "id": "main", "kind": "openapi", "snapshotPath": "baseline/openapi.json", "manifestPath": "baseline/manifest.json", "releaseEligibility": "eligible" },
+    { "id": "relay", "kind": "openapi", "snapshotPath": "relay/openapi.json", "manifestPath": "relay/manifest.json", "releaseEligibility": "eligible" },
+    { "id": "search", "kind": "documented-operations", "snapshotPath": "search/operations.json", "manifestPath": "search/manifest.json", "releaseEligibility": "requires-live-validation" }
+  ]
 }
 ```
 
-- [ ] **Step 2: Write the failing record-shape test.**
+Keep the existing Main paths and manifest filename intact. The Relay snapshot is the exact bytes retrieved only through an explicit maintainer refresh from `https://relay.torbox.app/openapi.json`; its manifest has the same `sourceUrl`, `retrievedAtUtc`, `openApiVersion`, `byteLength`, and lower-case `sha256` facts as Main. The Search snapshot is deliberately a reviewed normalized operation inventory, not an invented OpenAPI document and not a claim that a private Postman export was downloaded. Its manifest records `sourceUrl` as `https://www.postman.com/torbox/torbox-api/documentation/u47iwao/search-api`, `sourceKind` as `postman-documentation`, its UTC retrieval timestamp, byte length, lower-case SHA-256, and `releaseEligibility` as `requires-live-validation`.
 
-Copy the checked-in `contracts/torbox/` tree to the contract-test output directory and resolve it from `AppContext.BaseDirectory`, never from the process working directory. Require each record to use a non-empty approved `family`, `resource`, and `responseMode`. Allow `publicInterface`, `publicMethod`, and `resultType` to remain null only while `implementationState` is `Planned`. `requestType` remains null for an operation without a request body; otherwise an implemented row must name its request type and include it in the ordered `parameterTypes`. Require an `Implemented` record to provide its fully qualified public interface, method name, ordered parameter type names, and result type. Require its response mode to be `json`, `stream`, or `redirect`, never `requires-validation`.
+`search/operations.json` uses `format` equal to `torbox-sdk/documented-operations/v1` and has exactly these seven `GET` operation paths:
 
-- [ ] **Step 3: Implement parsers that use `METHOD path` keys.**
-
-Parse every HTTP verb object beneath `paths`. Do not trust `operationId` uniqueness. Reject duplicate coverage records, missing snapshot operations, stale coverage operations, and divergence IDs that do not exist in `divergences.json`. Add a default-on `ContractSurfaceTests.ImplementedMappingsResolveToPublicMethods` test: load the core by its final assembly name (`TorBoxSDK`), then for each implemented row reflect the named public interface and method with the declared ordered parameters and exact `Task` result type from the manifest. It passes vacuously while all foundation rows are `Planned`, then protects every resource plan as rows become `Implemented`.
-
-- [ ] **Step 4: Run the contract suite and repair every initial coverage row.**
-
-Run: `dotnet test tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj --configuration Release`
-
-Expected: PASS with all snapshot operations represented, even though their implementation state is initially `Planned`.
-
-- [ ] **Step 5: Add the final-completeness test in a disabled-by-default category.**
-
-Create `V2ReleaseContractTests.AllOperationsAreImplemented` with `[Trait("Category", "Release")]`. It must fail whenever a record is not `Implemented`, has an unresolved response mode, lacks its public mapping, or fails the surface-mapping validation; it is not invoked until the final release plan enables it in the deterministic release gate.
-
-```csharp
-[Fact]
-[Trait("Category", "Release")]
-public void AllOperationsAreImplemented()
-{
-    IReadOnlyList<CoverageRecord> records = CoverageManifest.Load(CoveragePath).Records;
-
-    Assert.DoesNotContain(records, static record => record.ImplementationState != CoverageImplementationState.Implemented);
-    Assert.DoesNotContain(records, static record => record.ResponseMode == CoverageResponseMode.RequiresValidation);
-    Assert.DoesNotContain(records, static record => string.IsNullOrWhiteSpace(record.PublicInterface) || string.IsNullOrWhiteSpace(record.PublicMethod) || string.IsNullOrWhiteSpace(record.ResultType));
-}
+```text
+/meta/{id_type}:{id}
+/meta/search/{query}
+/torrents/{id_type}:{id}
+/torrents/search/{query}
+/usenet/{id_type}:{id}
+/usenet/search/{query}
+/search/{search_query}
 ```
 
-- [ ] **Step 6: Commit the offline coverage gate.**
+Do not import V1 tutorial, Torznab, Newznab, or download routes unless an approved current source adds them. At this capture, the Search host was not resolvable from the maintainer environment; preserve that as a source-level live-validation requirement, not as a divergence, removed family, or fabricated runtime success.
+
+Every coverage record has a non-empty `sourceId` and its identity is the ordered pair `(sourceId, operationKey)`, rendered in tests as `sourceId:METHOD path`. Main therefore contributes 93 records, Relay contributes 2, Search contributes 7, and the initial coverage inventory has exactly 102 records. Main rows use the approved Main resource names. Search rows use `family: "Search"`, `resource: "Search"`; Relay rows use `family: "Relay"`, `resource: "Relay"`. Search and Relay rows use `responseMode: "json"`; all initial rows remain `Planned` with no public mapping. No `Unassigned` family or resource is permitted.
+
+The existing `UpdateTorBoxContract.ps1` remains the only OpenAPI refresh entry point, with a backwards-compatible default of Main and a new validated `-Source Main|Relay` parameter. `-Refresh` fetches only the selected source after explicit invocation; `-Validate` is offline and validates the selected source plus exactly that source's coverage rows. `-InitializeCoverage` remains Main-only and emits `sourceId: "main"`; it must reject Relay and Search. `-Source Search -Refresh` must fail clearly because Search is a reviewed documentation inventory. Preserve the selected-source snapshot/manifest/coverage transaction guarantees already established for Main; no refresh may overwrite a reviewed `coverage.json`. The C# contract tests, not a network request, validate all three sources together.
+
+- [ ] **Step 1: Write the failing multi-source snapshot and coverage tests.**
+
+Require the registry, all six source files, and the existing divergence register to be copied below `AppContext.BaseDirectory`. Reject an unknown source kind, a manifest hash or byte count mismatch, an invalid UTC timestamp, a source not present in the registry, duplicate `(sourceId, operationKey)` records, and a coverage inventory which is not exactly the union of the source operations. The initial union must contain 102 identities: 93 Main, 2 Relay, and 7 Search.
+
+- [ ] **Step 2: Freeze the Relay and Search source records.**
+
+Retrieve the Relay OpenAPI only through the explicit refresh implementation, record its immutable manifest facts, and add its two operation identities. Create the normalized Search inventory and manifest exactly as specified above. Do not perform a live Search request, store a secret, or assert that the currently unresolved Search host is callable.
+
+- [ ] **Step 3: Implement source-aware parsers and Main/Relay refresh validation.**
+
+`ContractBaseline.Load` parses every supported OpenAPI `paths` verb and every documented Search operation. It exposes each operation's source ID, `METHOD path`, and whether the contract contains a request body. It validates every manifest locally, returns the union, and resolves an interrupted selected-source transaction through the existing candidate-generation rules. The Main and Relay update modes retain exact source URL, manifest, hash, and coverage protection; the Search source has no automatic refresh path.
+
+`CoverageManifest` and `DivergenceRegister` reject malformed JSON, duplicate identities, stale or missing records, invalid source IDs, non-empty unknown divergence IDs, and invalid state transitions. An implemented record requires its fully qualified public interface, method name, ordered parameter type names, exact `Task` result type, and an `json`, `stream`, or `redirect` response mode. `ContractSurfaceTests.ImplementedMappingsResolveToPublicMethods` loads the core by final assembly name `TorBoxSDK` and reflects only implemented rows; it passes vacuously while the foundation rows remain `Planned`.
+
+- [ ] **Step 4: Complete the initial resource mapping.**
+
+Assign every Main row to one of `General`, `Torrents`, `Usenet`, `WebDownloads`, `User`, `Notifications`, `Rss`, `Stream`, `Integrations`, `Vendors`, or `Queued`. Assign every Search and Relay row as described by the amendment. Keep unimplemented nullable public mapping fields null, response modes honest, parameter types ordered, and divergence IDs empty unless evidence is already registered.
+
+- [ ] **Step 5: Add a genuinely disabled release gate.**
+
+Use the existing test-only `Xunit.SkippableFact` package and create `V2ReleaseContractTests.AllOperationsAreImplemented` with `[Trait("Category", "Release")]`. It skips unless environment variable `TORBOXSDK_V2_RELEASE_CONTRACT` equals `1`. When enabled, it fails if any source has `releaseEligibility` other than `eligible`, any operation is not `Implemented`, any response mode remains `requires-validation`, any public mapping is absent, or the surface-mapping validation fails. Task 8 will set this variable only when the final cutover plan explicitly includes the release contract gate.
+
+- [ ] **Step 6: Run the source and contract checks.**
+
+Run: `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -Validate -Source Main`
+
+Run: `pwsh -NoProfile -File tools/UpdateTorBoxContract.ps1 -Validate -Source Relay`
+
+Run: `dotnet restore TorBoxSDK.V2.slnx --locked-mode`
+
+Run: `dotnet test tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj --configuration Release --no-restore`
+
+Expected: all default contract tests pass offline on net6.0 through net10.0; the release-category test is skipped unless explicitly enabled and no command calls a TorBox endpoint except the one explicit Relay refresh used to establish its snapshot.
+
+- [ ] **Step 7: Commit the multi-source offline coverage gate.**
 
 ```bash
-git add tests/TorBoxSDK.V2.ContractTests contracts/torbox/coverage.json contracts/torbox/divergences.json
-git commit -m "test: add offline V2 contract coverage gate"
+git add docs/superpowers/specs/2026-08-12-torboxsdk-v2-design.md docs/superpowers/plans/2026-08-12-torboxsdk-v2-foundation-and-contract-plan.md contracts/torbox tools/UpdateTorBoxContract.ps1 tests/TorBoxSDK.V2.ContractTests Directory.Packages.props tests/TorBoxSDK.V2.ContractTests/packages.lock.json
+git commit -m "test: add multi-source V2 contract coverage gate"
 ```
 
 ## Task 4: Define V2 response, protocol, serialization, and stream primitives

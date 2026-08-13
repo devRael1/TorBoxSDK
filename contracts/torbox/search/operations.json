@@ -1,0 +1,33 @@
+{
+  "format": "torbox-sdk/documented-operations/v1",
+  "operations": [
+    {
+      "method": "GET",
+      "path": "/meta/{id_type}:{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/meta/search/{query}"
+    },
+    {
+      "method": "GET",
+      "path": "/torrents/{id_type}:{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/torrents/search/{query}"
+    },
+    {
+      "method": "GET",
+      "path": "/usenet/{id_type}:{id}"
+    },
+    {
+      "method": "GET",
+      "path": "/usenet/search/{query}"
+    },
+    {
+      "method": "GET",
+      "path": "/search/{search_query}"
+    }
+  ]
+}

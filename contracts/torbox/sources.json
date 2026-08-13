@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "main",
+      "kind": "openapi",
+      "snapshotPath": "baseline/openapi.json",
+      "manifestPath": "baseline/manifest.json",
+      "releaseEligibility": "eligible"
+    },
+    {
+      "id": "relay",
+      "kind": "openapi",
+      "snapshotPath": "relay/openapi.json",
+      "manifestPath": "relay/manifest.json",
+      "releaseEligibility": "eligible"
+    },
+    {
+      "id": "search",
+      "kind": "documented-operations",
+      "snapshotPath": "search/operations.json",
+      "manifestPath": "search/manifest.json",
+      "releaseEligibility": "requires-live-validation"
+    }
+  ]
+}

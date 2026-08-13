@@ -145,6 +145,12 @@ Contract tests compare the snapshot and coverage manifest, then verify the linke
 
 When TorBox behavior differs from the versioned contract, the difference is recorded in a reviewed divergence register with evidence and the intended V2 behavior. A divergence is never silently normalized by generated code or undocumented transport logic.
 
+### Multi-source contract resolution
+
+The V2 contract inventory has three explicitly named sources. Main continues to use the official `https://api.torbox.app/openapi.json` snapshot. Relay uses its independently published official `https://relay.torbox.app/openapi.json` snapshot. Search uses a reviewed, normalized operation inventory sourced from TorBox's public Postman documentation at `https://www.postman.com/torbox/torbox-api/documentation/u47iwao/search-api` when a public collection export is unavailable.
+
+Each source is versioned, manifest-backed, and hash-validated locally. Coverage records identify both their source and their `METHOD path`, so similarly named routes from different API families cannot collide. The Search manifest must explicitly retain its documentation-only status and require controlled live validation before a stable release can claim Search runtime fidelity. Its unavailable or unresolvable live host is not silently converted into a removed API family or an invented endpoint.
+
 ## Verification strategy
 
 ### Deterministic checks
@@ -187,7 +193,7 @@ Existing V1 package versions remain historical releases. V2 does not contain a V
 
 Publication requires all of the following:
 
-1. Every documented Main, Search, and Relay operation is covered by the versioned contract baseline and coverage manifest.
+1. Every documented Main, Search, and Relay operation is covered by the versioned contract baseline and coverage manifest; every documentation-only source has the required controlled live-validation evidence before stable publication.
 2. Every mapped endpoint has its handwritten implementation, models, deterministic unit tests, and documented divergence behavior where applicable.
 3. All deterministic checks and exact-package validation pass.
 4. Documentation, examples, XML API reference, and the V1-to-V2 migration guide are complete and verified.
