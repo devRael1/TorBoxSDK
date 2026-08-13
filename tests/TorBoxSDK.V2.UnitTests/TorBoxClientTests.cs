@@ -93,7 +93,7 @@ public sealed class TorBoxClientTests
 	}
 
 	[Fact]
-	public void FamilyAndResourceInterfaces_ContainNoEndpointMethods()
+	public void FamilyAndUnimplementedResourceInterfaces_ContainNoEndpointMethods()
 	{
 		// Arrange
 		Type[] clientInterfaces =
@@ -107,7 +107,6 @@ public sealed class TorBoxClientTests
 			typeof(IUserClient),
 			typeof(INotificationsClient),
 			typeof(IRssClient),
-			typeof(IStreamClient),
 			typeof(IIntegrationsClient),
 			typeof(IVendorsClient),
 			typeof(IQueuedClient),

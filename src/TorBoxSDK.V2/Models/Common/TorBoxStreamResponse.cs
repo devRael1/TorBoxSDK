@@ -18,7 +18,7 @@ public sealed class TorBoxStreamResponse : IDisposable
 		HttpResponseMessage? ownedResponse,
 		bool success,
 		HttpStatusCode statusCode,
-		Stream? stream = null,
+		System.IO.Stream? stream = null,
 		string? error = null,
 		string? detail = null,
 		string? mediaType = null,
@@ -71,7 +71,7 @@ public sealed class TorBoxStreamResponse : IDisposable
 	/// <summary>
 	/// Gets the unbuffered content stream, or <see langword="null"/> for failures and streamless redirects.
 	/// </summary>
-	public Stream? Stream { get; }
+	public System.IO.Stream? Stream { get; }
 
 	/// <summary>
 	/// Gets the content media type, or <see langword="null"/> when the server did not provide one.
@@ -99,7 +99,7 @@ public sealed class TorBoxStreamResponse : IDisposable
 	public HttpStatusCode StatusCode { get; }
 
 	internal static TorBoxStreamResponse CreateForTesting(
-		Stream? stream,
+		System.IO.Stream? stream,
 		HttpStatusCode statusCode,
 		bool success = true,
 		string? error = null,
