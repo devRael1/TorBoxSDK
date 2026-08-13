@@ -1,1 +1,20 @@
-[]
+[
+  {
+    "id": "DIV-STREAM-001",
+    "operationKey": "GET /v1/api/stream/createstream",
+    "source": "Local checked-in Main OpenAPI snapshot and V1 Stream source",
+    "observedAtUtc": "2026-08-13T20:24:19.9943136Z",
+    "contractBehavior": "The checked-in Main OpenAPI snapshot declares application/json for HTTP 200 with an empty schema; it provides no typed response shape.",
+    "v2Behavior": "V2 exposes TorBoxResponse<string>, informed by the local V1 Stream source, for the JSON envelope data value.",
+    "evidence": "Local only: contracts/torbox/baseline/openapi.json and src/TorBoxSDK/Main/Stream. No live response, API call, refresh, integration, or credential was used; no raw live JSON exists."
+  },
+  {
+    "id": "DIV-STREAM-002",
+    "operationKey": "GET /v1/api/stream/getstreamdata",
+    "source": "Local checked-in Main OpenAPI snapshot and V1 Stream source",
+    "observedAtUtc": "2026-08-13T20:24:19.9943136Z",
+    "contractBehavior": "The checked-in Main OpenAPI snapshot declares application/json for HTTP 200 with an empty schema; it provides no typed response shape.",
+    "v2Behavior": "V2 exposes TorBoxResponse<StreamData>, informed by the local V1 Stream source; StreamData.SearchMetadata and StreamMetadata.Video remain JsonElement? to preserve locally untyped JSON portions.",
+    "evidence": "Local only: contracts/torbox/baseline/openapi.json and src/TorBoxSDK/Main/Stream. No live response, API call, refresh, integration, or credential was used; no raw live JSON exists."
+  }
+]

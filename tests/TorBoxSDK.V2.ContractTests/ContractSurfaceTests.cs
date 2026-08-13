@@ -6,6 +6,20 @@ namespace TorBoxSDK.V2.ContractTests;
 public sealed class ContractSurfaceTests
 {
     [Fact]
+    public void StreamMethodsExposeExpectedResponseTypes()
+    {
+        Assert.Equal(
+            "System.Threading.Tasks.Task`1[TorBoxSDK.Models.Common.TorBoxResponse`1[System.String]]",
+            CanonicalTypeIdentity.Format(
+                typeof(TorBoxSDK.Main.Stream.IStreamClient).GetMethod(nameof(TorBoxSDK.Main.Stream.IStreamClient.CreateStreamAsync))!.ReturnType));
+
+        Assert.Equal(
+            "System.Threading.Tasks.Task`1[TorBoxSDK.Models.Common.TorBoxResponse`1[TorBoxSDK.Models.Stream.StreamData]]",
+            CanonicalTypeIdentity.Format(
+                typeof(TorBoxSDK.Main.Stream.IStreamClient).GetMethod(nameof(TorBoxSDK.Main.Stream.IStreamClient.GetStreamDataAsync))!.ReturnType));
+    }
+
+    [Fact]
     public void ImplementedMappingsResolveToPublicMethods()
     {
         // Arrange

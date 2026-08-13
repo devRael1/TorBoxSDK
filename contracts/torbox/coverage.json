@@ -312,28 +312,34 @@
     "operationKey": "GET /v1/api/stream/createstream",
     "family": "Main",
     "resource": "Stream",
-    "publicInterface": null,
-    "publicMethod": null,
-    "parameterTypes": [],
+    "publicInterface": "TorBoxSDK.Main.Stream.IStreamClient",
+    "publicMethod": "CreateStreamAsync",
+    "parameterTypes": [
+      "TorBoxSDK.Models.Stream.CreateStreamRequest",
+      "System.Threading.CancellationToken"
+    ],
     "requestType": null,
-    "resultType": null,
-    "responseMode": "requires-validation",
-    "implementationState": "Planned",
-    "divergenceIds": []
+    "resultType": "System.Threading.Tasks.Task`1[TorBoxSDK.Models.Common.TorBoxResponse`1[System.String]]",
+    "responseMode": "json",
+    "implementationState": "Implemented",
+    "divergenceIds": ["DIV-STREAM-001"]
   },
   {
     "sourceId": "main",
     "operationKey": "GET /v1/api/stream/getstreamdata",
     "family": "Main",
     "resource": "Stream",
-    "publicInterface": null,
-    "publicMethod": null,
-    "parameterTypes": [],
+    "publicInterface": "TorBoxSDK.Main.Stream.IStreamClient",
+    "publicMethod": "GetStreamDataAsync",
+    "parameterTypes": [
+      "TorBoxSDK.Models.Stream.GetStreamDataRequest",
+      "System.Threading.CancellationToken"
+    ],
     "requestType": null,
-    "resultType": null,
-    "responseMode": "requires-validation",
-    "implementationState": "Planned",
-    "divergenceIds": []
+    "resultType": "System.Threading.Tasks.Task`1[TorBoxSDK.Models.Common.TorBoxResponse`1[TorBoxSDK.Models.Stream.StreamData]]",
+    "responseMode": "json",
+    "implementationState": "Implemented",
+    "divergenceIds": ["DIV-STREAM-002"]
   },
   {
     "sourceId": "main",
