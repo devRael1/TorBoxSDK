@@ -246,6 +246,55 @@ public sealed class StreamClientTests
 	}
 
 	[Fact]
+	public async Task GetStreamDataAsync_WithMalformedJson_DoesNotExposeTokensInProtocolException()
+	{
+		// Arrange
+		const string presignedToken = "presigned sentinel+/ ?&";
+		const string token = "stream sentinel+/ ?&";
+		RecordingHttpMessageHandler handler = CreateJsonHandler("{", HttpStatusCode.BadGateway);
+		using HttpClient httpClient = CreateHttpClient(handler);
+		StreamClient client = new(httpClient, new TorBoxApiTransport());
+		GetStreamDataRequest request = new() { PresignedToken = presignedToken, Token = token };
+
+		// Act
+		TorBoxProtocolException exception = await Assert.ThrowsAsync<TorBoxProtocolException>(
+			() => client.GetStreamDataAsync(request));
+
+		// Assert
+		Assert.Equal(
+			new Uri("https://api.torbox.app/v1/api/stream/getstreamdata"),
+			exception.RequestUri);
+		Assert.Equal("The HTTP response did not contain a valid TorBox JSON envelope.", exception.Message);
+		Assert.Equal(HttpStatusCode.BadGateway, exception.StatusCode);
+		Assert.Equal("{", exception.Detail);
+		Assert.IsType<JsonException>(exception.InnerException);
+
+		IReadOnlyList<string> exposedDiagnostics =
+		[
+			exception.RequestUri?.OriginalString ?? string.Empty,
+			exception.Message,
+			exception.Detail ?? string.Empty,
+			exception.InnerException?.ToString() ?? string.Empty,
+			exception.ToString(),
+		];
+		IReadOnlyList<string> forbiddenTokenForms =
+		[
+			presignedToken,
+			Uri.EscapeDataString(presignedToken),
+			token,
+			Uri.EscapeDataString(token),
+		];
+
+		foreach (string exposedDiagnostic in exposedDiagnostics)
+		{
+			foreach (string forbiddenTokenForm in forbiddenTokenForms)
+			{
+				Assert.DoesNotContain(forbiddenTokenForm, exposedDiagnostic, StringComparison.Ordinal);
+			}
+		}
+	}
+
+	[Fact]
 	public async Task GetStreamDataAsync_WithCancellationToken_ForwardsItToTheHandler()
 	{
 		// Arrange

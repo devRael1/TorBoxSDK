@@ -47,6 +47,65 @@ public sealed class TorBoxProtocolExceptionTests
 	}
 
 	[Fact]
+	public void Constructor_WithAbsoluteUriContainingQueryAndFragment_RemovesQueryAndFragment()
+	{
+		// Arrange
+		Uri requestUri = new("https://api.torbox.app/v1/api/stream/getstreamdata?presigned_token=secret&token=secret#client-fragment");
+		InvalidOperationException innerException = new("Malformed JSON.");
+
+		// Act
+		TorBoxProtocolException exception = new(
+			"The response envelope is invalid.",
+			requestUri,
+			HttpStatusCode.BadGateway,
+			"Unexpected JSON response.",
+			innerException);
+
+		// Assert
+		Assert.Equal(new Uri("https://api.torbox.app/v1/api/stream/getstreamdata"), exception.RequestUri);
+		Assert.Equal("The response envelope is invalid.", exception.Message);
+		Assert.Equal(HttpStatusCode.BadGateway, exception.StatusCode);
+		Assert.Equal("Unexpected JSON response.", exception.Detail);
+		Assert.Same(innerException, exception.InnerException);
+	}
+
+	[Fact]
+	public void Constructor_WithRelativeUriContainingQueryAndFragment_RemovesQueryAndFragment()
+	{
+		// Arrange
+		Uri requestUri = new(
+			"stream/getstreamdata?presigned_token=secret&token=secret#client-fragment",
+			UriKind.Relative);
+
+		// Act
+		TorBoxProtocolException exception = new(
+			"The response envelope is invalid.",
+			requestUri,
+			HttpStatusCode.BadGateway,
+			detail: null);
+
+		// Assert
+		Assert.Equal("stream/getstreamdata", exception.RequestUri?.OriginalString);
+	}
+
+	[Fact]
+	public void Constructor_WithUriWithoutQueryOrFragment_PreservesRequestUri()
+	{
+		// Arrange
+		Uri requestUri = new("https://api.torbox.app/v1/api/user/me");
+
+		// Act
+		TorBoxProtocolException exception = new(
+			"The response envelope is invalid.",
+			requestUri,
+			HttpStatusCode.BadGateway,
+			detail: null);
+
+		// Assert
+		Assert.Equal(requestUri, exception.RequestUri);
+	}
+
+	[Fact]
 	public void Constructor_WithMultibyteDiagnostic_BoundsTheRetainedUtf8Bytes()
 	{
 		// Arrange
