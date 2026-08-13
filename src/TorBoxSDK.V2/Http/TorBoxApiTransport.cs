@@ -27,9 +27,11 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 					.ConfigureAwait(false);
 			}
 
-			using Stream body = await HttpContentStreamReader
-				.ReadAsync(response.Content, cancellationToken)
-				.ConfigureAwait(false);
+			using Stream body = await ReadJsonContentAsync(
+				response.Content,
+				request.RequestUri,
+				response.StatusCode,
+				cancellationToken).ConfigureAwait(false);
 
 			return await _envelopeConverter
 				.DeserializeEnvelopeAsync<T>(body, request.RequestUri, response.StatusCode, cancellationToken)
@@ -60,9 +62,11 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 					.ConfigureAwait(false);
 			}
 
-			using Stream body = await HttpContentStreamReader
-				.ReadAsync(response.Content, cancellationToken)
-				.ConfigureAwait(false);
+			using Stream body = await ReadJsonContentAsync(
+				response.Content,
+				request.RequestUri,
+				response.StatusCode,
+				cancellationToken).ConfigureAwait(false);
 
 			return await _envelopeConverter
 				.DeserializeEnvelopeAsync(body, request.RequestUri, response.StatusCode, cancellationToken)
@@ -88,31 +92,13 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 
 		try
 		{
-			if (IsRedirect(response.StatusCode))
-			{
-				if (response.Headers.Location is null)
-				{
-					throw await CreateProtocolExceptionForUnexpectedStreamResponseAsync(
-						response,
-						request.RequestUri,
-						"A redirect response did not provide a location header.",
-						cancellationToken).ConfigureAwait(false);
-				}
-
-				TorBoxStreamResponse redirectResponse = new(
-					response,
-					success: true,
-					response.StatusCode,
-					redirectUri: response.Headers.Location);
-				ownershipTransferred = true;
-				return redirectResponse;
-			}
-
 			if (IsJsonContent(response.Content.Headers.ContentType))
 			{
-				using Stream body = await HttpContentStreamReader
-					.ReadAsync(response.Content, cancellationToken)
-					.ConfigureAwait(false);
+				using Stream body = await ReadJsonContentAsync(
+					response.Content,
+					request.RequestUri,
+					response.StatusCode,
+					cancellationToken).ConfigureAwait(false);
 				TorBoxResponse envelope = await _envelopeConverter
 					.DeserializeEnvelopeAsync(body, request.RequestUri, response.StatusCode, cancellationToken)
 					.ConfigureAwait(false);
@@ -131,7 +117,27 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 					"A stream endpoint returned a successful JSON envelope instead of a stream or redirect.",
 					request.RequestUri,
 					response.StatusCode,
-					envelope.Detail);
+						envelope.Detail);
+			}
+
+			if (IsRedirect(response.StatusCode))
+			{
+				if (response.Headers.Location is null)
+				{
+					throw await CreateProtocolExceptionForUnexpectedStreamResponseAsync(
+						response,
+						request.RequestUri,
+						"A redirect response did not provide a location header.",
+						cancellationToken).ConfigureAwait(false);
+				}
+
+				TorBoxStreamResponse redirectResponse = new(
+					response,
+					success: true,
+					response.StatusCode,
+					redirectUri: response.Headers.Location);
+				ownershipTransferred = true;
+				return redirectResponse;
 			}
 
 			if (!response.IsSuccessStatusCode)
@@ -172,10 +178,11 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 		Uri? requestUri,
 		CancellationToken cancellationToken)
 	{
-		using Stream body = await HttpContentStreamReader
-			.ReadAsync(response.Content, cancellationToken)
-			.ConfigureAwait(false);
-		string? diagnostic = await BoundedDiagnosticReader.ReadAsync(body, cancellationToken).ConfigureAwait(false);
+		string? diagnostic = await ReadDiagnosticAsync(
+			response.Content,
+			requestUri,
+			response.StatusCode,
+			cancellationToken).ConfigureAwait(false);
 
 		return new TorBoxProtocolException(
 			"The HTTP response content type is not supported for a TorBox JSON endpoint.",
@@ -190,12 +197,58 @@ internal sealed class TorBoxApiTransport : ITorBoxApiTransport
 		string message,
 		CancellationToken cancellationToken)
 	{
-		using Stream body = await HttpContentStreamReader
-			.ReadAsync(response.Content, cancellationToken)
-			.ConfigureAwait(false);
-		string? diagnostic = await BoundedDiagnosticReader.ReadAsync(body, cancellationToken).ConfigureAwait(false);
+		string? diagnostic = await ReadDiagnosticAsync(
+			response.Content,
+			requestUri,
+			response.StatusCode,
+			cancellationToken).ConfigureAwait(false);
 
 		return new TorBoxProtocolException(message, requestUri, response.StatusCode, diagnostic);
+	}
+
+	private static async Task<Stream> ReadJsonContentAsync(
+		HttpContent content,
+		Uri? requestUri,
+		HttpStatusCode statusCode,
+		CancellationToken cancellationToken)
+	{
+		try
+		{
+			return await HttpContentStreamReader.ReadAsync(content, cancellationToken).ConfigureAwait(false);
+		}
+		catch (IOException exception)
+		{
+			throw new TorBoxProtocolException(
+				"The HTTP response JSON content could not be read.",
+				requestUri,
+				statusCode,
+				detail: null,
+				innerException: exception);
+		}
+	}
+
+	private static async Task<string?> ReadDiagnosticAsync(
+		HttpContent content,
+		Uri? requestUri,
+		HttpStatusCode statusCode,
+		CancellationToken cancellationToken)
+	{
+		try
+		{
+			using Stream body = await HttpContentStreamReader
+				.ReadAsync(content, cancellationToken)
+				.ConfigureAwait(false);
+			return await BoundedDiagnosticReader.ReadAsync(body, cancellationToken).ConfigureAwait(false);
+		}
+		catch (IOException exception)
+		{
+			throw new TorBoxProtocolException(
+				"The HTTP response diagnostic content could not be read.",
+				requestUri,
+				statusCode,
+				detail: null,
+				innerException: exception);
+		}
 	}
 
 	private static string? GetFileName(ContentDispositionHeaderValue? contentDisposition)

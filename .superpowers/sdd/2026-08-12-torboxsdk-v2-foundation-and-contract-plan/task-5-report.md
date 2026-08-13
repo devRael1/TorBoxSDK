@@ -171,3 +171,134 @@ Task 6 peut composer `AuthHandler` interne avec une clé déjà validée dans se
 options, utiliser `TorBoxHttpClientHandlerFactory` pour construire le handler
 sans auto-redirection et dépendre de `ITorBoxApiTransport`. Le transport ne
 prend pas de dépendance anticipée sur les options publiques Task 6.
+
+## Fix round 1/5 — corrections demandées après relecture
+
+Cette section couvre exclusivement les trois findings MAJOR de
+`task-5-contract-review.md`. Les deux findings MINOR consignés au ledger
+restent volontairement hors périmètre de ce round.
+
+### 1. `data` avant `success:false` dans une réponse générique
+
+Régression ajoutée :
+`SendAsync_WithDataBeforeFailureAndIncompatibleGenericData_ReturnsFailureEnvelopeWithoutDeserializingData`.
+Elle envoie, pour `T=int`, l'enveloppe ordonnée ainsi :
+
+```json
+{
+  "data": "not-an-int",
+  "error": "BAD_TOKEN",
+  "detail": "Invalid token.",
+  "success": false
+}
+```
+
+RED observé :
+
+```powershell
+dotnet test tests\TorBoxSDK.V2.UnitTests\TorBoxSDK.V2.UnitTests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~SendAsync_WithDataBeforeFailureAndIncompatibleGenericData"
+```
+
+Le test échouait 1/1 sur net6.0 à net10.0 avec
+`TorBoxProtocolException` / `JsonException` depuis `DeserializeData<int>` :
+la chaîne n'était pas convertible vers `Int32`.
+
+GREEN observé avec la même commande : 1/1 par TFM. La réponse est maintenant
+une `TorBoxResponse<int>` failure, avec `BAD_TOKEN`, `Invalid token.`, le
+statut 401 et `Data == default`.
+
+Correction : `DeserializeData<T>` n'est appelé qu'après lecture complète de
+l'enveloppe et seulement lorsque `Success` final vaut `true`. Lors de la
+lecture de `success:false`, un éventuel buffer déjà capturé est immédiatement
+libéré de l'état du reader, et `EnvelopeValues` ne transporte jamais de
+`DataJson` pour une failure.
+
+Limite explicitement conservée pour préserver le contrat : lorsque `data`
+apparaît avant `success`, le reader ne peut pas encore savoir si l'enveloppe
+finira en succès. Il conserve donc temporairement le JSON de `data` afin de
+préserver les réponses succès data-first, y compris les grandes réponses
+succès. Ce buffer temporaire n'est pas borné dans cette situation ; il est
+abandonné dès qu'un `success:false` ultérieur est connu et n'est ni
+désérialisé ni conservé dans la valeur de failure. Ce round ne prétend pas
+borner un `data` data-first sans casser le support des grands succès ; cette
+contrepartie est signalée pour la rerevue ciblée.
+
+### 2. Priorité d'une failure JSON sur une redirection HTTP
+
+Régression ajoutée :
+`SendStreamAsync_WithJsonFailureRedirectResponse_ReturnsTheFailureEnvelope`.
+Elle simule `307 Temporary Redirect`, un header `Location`,
+`application/json`, et `success:false`.
+
+RED observé :
+
+```powershell
+dotnet test tests\TorBoxSDK.V2.UnitTests\TorBoxSDK.V2.UnitTests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~SendStreamAsync_WithJsonFailureRedirectResponse"
+```
+
+Le test échouait 1/1 sur net6.0 à net10.0 à `Assert.False`: la réponse était
+un redirect avec `Success == true`.
+
+GREEN observé avec la même commande : 1/1 par TFM. `SendStreamAsync` analyse
+d'abord une réponse dont le content type est JSON ; le `307` JSON devient une
+`TorBoxStreamResponse` failure sans `RedirectUri` ni stream, en préservant
+statut, erreur et détail. La classification redirect et son transfer
+d'ownership restent ensuite réservés aux réponses non JSON ; le test de
+redirection non JSON préexistant reste inclus dans la suite HTTP complète.
+
+### 3. Échecs d'E/S de contenu HTTP
+
+Régressions ajoutées :
+
+- `SendAsync_WithJsonContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException`;
+- `SendAsync_WithUnsupportedContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException`;
+- `SendAsync_WithUnsupportedContentWhoseDiagnosticReadFails_ThrowsTorBoxProtocolException`;
+- `SendStreamAsync_WithJsonContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException`.
+
+Les deux premières et la quatrième utilisent un `HttpContent` dont
+`CreateContentReadStreamAsync` lève `IOException`. La troisième acquiert son
+stream, puis lève `IOException` pendant la lecture bornée du diagnostic.
+Toutes vérifient l'URI de requête résolue, le statut HTTP, un diagnostic null
+et l'`IOException` interne.
+
+RED observé :
+
+```powershell
+dotnet test tests\TorBoxSDK.V2.UnitTests\TorBoxSDK.V2.UnitTests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~ContentThatFailsToAcquireStream|FullyQualifiedName~DiagnosticReadFails"
+```
+
+Les quatre tests échouaient 4/4 sur chacun de net6.0 à net10.0, car
+`IOException` s'échappait brut : acquisition JSON générique, acquisition
+non-JSON, lecture du diagnostic non-JSON et acquisition JSON stream.
+
+GREEN observé avec la même commande : 4/4 par TFM. `ReadJsonContentAsync` et
+`ReadDiagnosticAsync` capturent uniquement `IOException` et créent une
+`TorBoxProtocolException` avec URI, statut et détail null. Une lecture de
+diagnostic qui échoue n'invente donc aucun détail non borné. Il n'y a aucun
+catch général : `OperationCanceledException` continue de se propager et
+`HttpClient.SendAsync` reste avant les blocs qui traitent le contenu, de sorte
+que ses exceptions réseau ne sont pas masquées.
+
+### Validation du round
+
+```powershell
+dotnet test tests\TorBoxSDK.V2.UnitTests\TorBoxSDK.V2.UnitTests.csproj --configuration Release --no-restore --filter "FullyQualifiedName~Http"
+dotnet build TorBoxSDK.V2.slnx --configuration Release --no-restore
+dotnet test tests\TorBoxSDK.V2.ContractTests\TorBoxSDK.V2.ContractTests.csproj --configuration Release --no-build --no-restore
+dotnet format TorBoxSDK.V2.slnx whitespace --no-restore --include src/TorBoxSDK.V2/Http/TorBoxApiTransport.cs src/TorBoxSDK.V2/Http/TorBoxEnvelopeJsonConverterFactory.cs tests/TorBoxSDK.V2.UnitTests/Http/TorBoxApiTransportTests.cs
+dotnet format TorBoxSDK.V2.slnx style --verify-no-changes --no-restore --include src/TorBoxSDK.V2/Http/TorBoxApiTransport.cs src/TorBoxSDK.V2/Http/TorBoxEnvelopeJsonConverterFactory.cs tests/TorBoxSDK.V2.UnitTests/Http/TorBoxApiTransportTests.cs
+dotnet format TorBoxSDK.V2.slnx analyzers --verify-no-changes --no-restore --include src/TorBoxSDK.V2/Http/TorBoxApiTransport.cs src/TorBoxSDK.V2/Http/TorBoxEnvelopeJsonConverterFactory.cs tests/TorBoxSDK.V2.UnitTests/Http/TorBoxApiTransportTests.cs
+git diff --check
+git diff --cached --check
+```
+
+Résultats observés :
+
+- filtre HTTP : **37 passed, 0 failed** pour net6.0, net7.0, net8.0, net9.0
+  et net10.0 ;
+- build Release : netstandard2.0 et net6.0 à net10.0, **0 warning, 0 error** ;
+- ContractTests hors réseau : **39 passed, 0 failed, 1 skipped** par TFM
+  (gate release existante) ;
+- formatter ciblé : sorties 0 ; les trois commandes ont uniquement émis
+  l'avertissement générique de chargement du workspace.
+- contrôles d'espaces Git, avant puis après indexation : aucune sortie.

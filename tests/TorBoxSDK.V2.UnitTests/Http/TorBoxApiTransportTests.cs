@@ -150,6 +150,38 @@ public sealed class TorBoxApiTransportTests
 	}
 
 	[Fact]
+	public async Task SendAsync_WithDataBeforeFailureAndIncompatibleGenericData_ReturnsFailureEnvelopeWithoutDeserializingData()
+	{
+		// Arrange
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.Json(
+			HttpStatusCode.Unauthorized,
+			"""
+			{
+			  "data": "not-an-int",
+			  "error": "BAD_TOKEN",
+			  "detail": "Invalid token.",
+			  "success": false
+			}
+			""");
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "user/me");
+
+		// Act
+		TorBoxResponse<int> response = await transport.SendAsync<int>(client, request, CancellationToken.None);
+
+		// Assert
+		Assert.False(response.Success);
+		Assert.Equal("BAD_TOKEN", response.Error);
+		Assert.Equal("Invalid token.", response.Detail);
+		Assert.Equal(0, response.Data);
+		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+	}
+
+	[Fact]
 	public async Task SendAsync_WithLargeIgnoredPropertyBeforeFailureDetail_PreservesTheEnvelope()
 	{
 		// Arrange
@@ -277,6 +309,94 @@ public sealed class TorBoxApiTransportTests
 
 		// Assert
 		Assert.Equal(HttpStatusCode.ServiceUnavailable, exception.StatusCode);
+		Assert.IsType<IOException>(exception.InnerException);
+	}
+
+	[Fact]
+	public async Task SendAsync_WithJsonContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException()
+	{
+		// Arrange
+		ThrowingContentReadStreamContent content = new("application/json");
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.FromResponse(
+			(request, cancellationToken) => new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
+			{
+				Content = content,
+			});
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "user/me");
+		Uri expectedRequestUri = new("https://api.torbox.app/v1/api/user/me");
+
+		// Act
+		TorBoxProtocolException exception = await Assert.ThrowsAsync<TorBoxProtocolException>(
+			() => transport.SendAsync<string>(client, request, CancellationToken.None));
+
+		// Assert
+		Assert.Equal(expectedRequestUri, exception.RequestUri);
+		Assert.Equal(HttpStatusCode.ServiceUnavailable, exception.StatusCode);
+		Assert.Null(exception.Detail);
+		Assert.IsType<IOException>(exception.InnerException);
+	}
+
+	[Fact]
+	public async Task SendAsync_WithUnsupportedContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException()
+	{
+		// Arrange
+		ThrowingContentReadStreamContent content = new("text/plain");
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.FromResponse(
+			(request, cancellationToken) => new HttpResponseMessage(HttpStatusCode.BadGateway)
+			{
+				Content = content,
+			});
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "user/me");
+		Uri expectedRequestUri = new("https://api.torbox.app/v1/api/user/me");
+
+		// Act
+		TorBoxProtocolException exception = await Assert.ThrowsAsync<TorBoxProtocolException>(
+			() => transport.SendAsync<string>(client, request, CancellationToken.None));
+
+		// Assert
+		Assert.Equal(expectedRequestUri, exception.RequestUri);
+		Assert.Equal(HttpStatusCode.BadGateway, exception.StatusCode);
+		Assert.Null(exception.Detail);
+		Assert.IsType<IOException>(exception.InnerException);
+	}
+
+	[Fact]
+	public async Task SendAsync_WithUnsupportedContentWhoseDiagnosticReadFails_ThrowsTorBoxProtocolException()
+	{
+		// Arrange
+		ThrowingReadStream responseStream = new();
+		PassthroughStreamContent content = new(responseStream, "text/plain");
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.FromResponse(
+			(request, cancellationToken) => new HttpResponseMessage(HttpStatusCode.BadGateway)
+			{
+				Content = content,
+			});
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "user/me");
+		Uri expectedRequestUri = new("https://api.torbox.app/v1/api/user/me");
+
+		// Act
+		TorBoxProtocolException exception = await Assert.ThrowsAsync<TorBoxProtocolException>(
+			() => transport.SendAsync<string>(client, request, CancellationToken.None));
+
+		// Assert
+		Assert.Equal(expectedRequestUri, exception.RequestUri);
+		Assert.Equal(HttpStatusCode.BadGateway, exception.StatusCode);
+		Assert.Null(exception.Detail);
 		Assert.IsType<IOException>(exception.InnerException);
 	}
 
@@ -416,6 +536,35 @@ public sealed class TorBoxApiTransportTests
 	}
 
 	[Fact]
+	public async Task SendStreamAsync_WithJsonContentThatFailsToAcquireStream_ThrowsTorBoxProtocolException()
+	{
+		// Arrange
+		ThrowingContentReadStreamContent content = new("application/json");
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.FromResponse(
+			(request, cancellationToken) => new HttpResponseMessage(HttpStatusCode.ServiceUnavailable)
+			{
+				Content = content,
+			});
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "torrents/requestdl");
+		Uri expectedRequestUri = new("https://api.torbox.app/v1/api/torrents/requestdl");
+
+		// Act
+		TorBoxProtocolException exception = await Assert.ThrowsAsync<TorBoxProtocolException>(
+			() => transport.SendStreamAsync(client, request, CancellationToken.None));
+
+		// Assert
+		Assert.Equal(expectedRequestUri, exception.RequestUri);
+		Assert.Equal(HttpStatusCode.ServiceUnavailable, exception.StatusCode);
+		Assert.Null(exception.Detail);
+		Assert.IsType<IOException>(exception.InnerException);
+	}
+
+	[Fact]
 	public async Task SendStreamAsync_WithRedirectResponse_TransfersTheRedirectOwnership()
 	{
 		// Arrange
@@ -441,6 +590,49 @@ public sealed class TorBoxApiTransportTests
 		Assert.True(response.Success);
 		Assert.Null(response.Stream);
 		Assert.Equal(redirectUri, response.RedirectUri);
+		Assert.Equal(HttpStatusCode.TemporaryRedirect, response.StatusCode);
+	}
+
+	[Fact]
+	public async Task SendStreamAsync_WithJsonFailureRedirectResponse_ReturnsTheFailureEnvelope()
+	{
+		// Arrange
+		Uri redirectUri = new("https://downloads.torbox.app/archive.bin");
+		RecordingHttpMessageHandler handler = RecordingHttpMessageHandler.FromResponse(
+			(request, cancellationToken) =>
+			{
+				HttpResponseMessage response = new(HttpStatusCode.TemporaryRedirect)
+				{
+					Content = new StringContent(
+						"""
+						{
+						  "success": false,
+						  "error": "BAD_TOKEN",
+						  "detail": "Invalid token."
+						}
+						""",
+						Encoding.UTF8,
+						"application/json"),
+				};
+				response.Headers.Location = redirectUri;
+				return response;
+			});
+		using HttpClient client = new(handler)
+		{
+			BaseAddress = new Uri("https://api.torbox.app/v1/api/"),
+		};
+		TorBoxApiTransport transport = new();
+		using HttpRequestMessage request = new(HttpMethod.Get, "torrents/requestdl");
+
+		// Act
+		using TorBoxStreamResponse response = await transport.SendStreamAsync(client, request, CancellationToken.None);
+
+		// Assert
+		Assert.False(response.Success);
+		Assert.Equal("BAD_TOKEN", response.Error);
+		Assert.Equal("Invalid token.", response.Detail);
+		Assert.Null(response.RedirectUri);
+		Assert.Null(response.Stream);
 		Assert.Equal(HttpStatusCode.TemporaryRedirect, response.StatusCode);
 	}
 
@@ -562,6 +754,32 @@ public sealed class TorBoxApiTransportTests
 			}
 
 			base.Dispose(disposing);
+		}
+	}
+
+	private sealed class ThrowingContentReadStreamContent : HttpContent
+	{
+		internal ThrowingContentReadStreamContent(string mediaType)
+		{
+			Headers.ContentType = new MediaTypeHeaderValue(mediaType);
+		}
+
+		protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context) =>
+			Task.FromException(new IOException("The test response content stream cannot be acquired."));
+
+		protected override bool TryComputeLength(out long length)
+		{
+			length = 0;
+			return false;
+		}
+
+		protected override Task<Stream> CreateContentReadStreamAsync() =>
+			Task.FromException<Stream>(new IOException("The test response content stream cannot be acquired."));
+
+		protected override Task<Stream> CreateContentReadStreamAsync(CancellationToken cancellationToken)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			return Task.FromException<Stream>(new IOException("The test response content stream cannot be acquired."));
 		}
 	}
 

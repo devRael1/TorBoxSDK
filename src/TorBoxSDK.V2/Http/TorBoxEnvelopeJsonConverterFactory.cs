@@ -22,7 +22,9 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 		try
 		{
 			EnvelopeValues values = await reader.ReadEnvelopeAsync(captureData: true).ConfigureAwait(false);
-			T? data = DeserializeData<T>(values.DataJson, reader, requestUri, statusCode);
+			T? data = values.Success
+				? DeserializeData<T>(values.DataJson, reader, requestUri, statusCode)
+				: default;
 
 			return new TorBoxResponse<T>
 			{
@@ -191,6 +193,11 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 
 					success = await ReadBooleanAsync().ConfigureAwait(false);
 					hasSuccess = true;
+
+					if (!success)
+					{
+						dataJson = null;
+					}
 				}
 				else if (!propertyName.WasTruncated && string.Equals(propertyName.Value, "error", StringComparison.Ordinal))
 				{
@@ -244,7 +251,7 @@ internal sealed class TorBoxEnvelopeJsonConverterFactory
 				throw new JsonException("The TorBox JSON envelope does not contain a success property.");
 			}
 
-			return new EnvelopeValues(success, error, detail, dataJson);
+			return new EnvelopeValues(success, error, detail, success ? dataJson : null);
 		}
 
 		internal string? GetDiagnostic()
