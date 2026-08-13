@@ -24,7 +24,7 @@ public sealed class TorBoxProtocolException : Exception
 		HttpStatusCode? statusCode,
 		string? detail,
 		Exception? innerException = null)
-		: base(message, innerException)
+		: base(message ?? throw new ArgumentNullException(nameof(message)), innerException)
 	{
 		RequestUri = requestUri;
 		StatusCode = statusCode;
@@ -46,7 +46,7 @@ public sealed class TorBoxProtocolException : Exception
 	/// </summary>
 	public string? Detail { get; }
 
-	private static string? BoundDiagnostic(string? detail)
+	internal static string? BoundDiagnostic(string? detail)
 	{
 		if (detail is null || Encoding.UTF8.GetByteCount(detail) <= MaxDiagnosticByteCount)
 		{

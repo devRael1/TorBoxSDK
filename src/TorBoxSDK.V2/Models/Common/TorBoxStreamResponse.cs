@@ -34,22 +34,22 @@ public sealed class TorBoxStreamResponse : IDisposable
 			throw new ArgumentNullException(nameof(ownedResponse), "A successful stream response must own its HTTP response.");
 		}
 
-		if (success && stream is null && redirectUri is null)
+		if (success && (stream is null) == (redirectUri is null))
 		{
-			throw new ArgumentException("A successful stream response must contain a stream or a redirect URI.", nameof(stream));
+			throw new ArgumentException("A successful response must contain exactly one stream or redirect URI.", nameof(stream));
 		}
 
-		if (!success && (ownedResponse is not null || stream is not null))
+		if (!success && (ownedResponse is not null || stream is not null || redirectUri is not null))
 		{
-			throw new ArgumentException("A structured API failure cannot own an HTTP response or content stream.", nameof(ownedResponse));
+			throw new ArgumentException("A structured API failure cannot own an HTTP response, content stream, or redirect URI.", nameof(ownedResponse));
 		}
 
 		_ownedResponse = ownedResponse;
 		Success = success;
 		StatusCode = statusCode;
 		Stream = stream;
-		Error = error;
-		Detail = detail;
+		Error = TorBoxProtocolException.BoundDiagnostic(error);
+		Detail = TorBoxProtocolException.BoundDiagnostic(detail);
 		MediaType = mediaType;
 		ContentLength = contentLength;
 		FileName = fileName;
@@ -147,8 +147,16 @@ public sealed class TorBoxStreamResponse : IDisposable
 			return;
 		}
 
-		_ownedResponse?.Dispose();
 		_disposed = true;
-		GC.SuppressFinalize(this);
+
+		try
+		{
+			Stream?.Dispose();
+		}
+		finally
+		{
+			_ownedResponse?.Dispose();
+			GC.SuppressFinalize(this);
+		}
 	}
 }

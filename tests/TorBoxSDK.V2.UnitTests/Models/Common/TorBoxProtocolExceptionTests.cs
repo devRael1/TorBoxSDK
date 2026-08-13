@@ -7,6 +7,26 @@ namespace TorBoxSDK.V2.UnitTests.Models.Common;
 public sealed class TorBoxProtocolExceptionTests
 {
 	[Fact]
+	public void Constructor_WithNullMessage_ThrowsArgumentNullException()
+	{
+		// Arrange
+		Uri requestUri = new("https://api.torbox.app/v1/api/user/me");
+
+		// Act
+		Action create = () => _ = new TorBoxProtocolException(
+#pragma warning disable CS8625 // Intentionally violate the nullable contract to verify the runtime guard.
+			null,
+#pragma warning restore CS8625
+			requestUri,
+			HttpStatusCode.BadGateway,
+			"Unexpected HTML response.");
+
+		// Assert
+		ArgumentNullException exception = Assert.Throws<ArgumentNullException>(create);
+		Assert.Equal("message", exception.ParamName);
+	}
+
+	[Fact]
 	public void Constructor_WithKnownResponse_PreservesRequestStatusAndDetail()
 	{
 		// Arrange

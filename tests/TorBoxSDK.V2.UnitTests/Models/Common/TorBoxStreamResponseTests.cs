@@ -1,4 +1,5 @@
 using System.Net;
+using System.Text;
 using TorBoxSDK.Models.Common;
 
 namespace TorBoxSDK.V2.UnitTests.Models.Common;
@@ -17,6 +18,30 @@ public sealed class TorBoxStreamResponseTests
 
 		// Assert
 		Assert.Throws<ObjectDisposedException>(() => stream.ReadByte());
+	}
+
+	[Fact]
+	public void Dispose_WithDistinctContentAndExposedStreams_ClosesBothOwnedStreams()
+	{
+		// Arrange
+		using MemoryStream contentStream = new([1, 2, 3]);
+		using MemoryStream exposedStream = new([4, 5, 6]);
+		using HttpResponseMessage ownedResponse = new(HttpStatusCode.OK)
+		{
+			Content = new StreamContent(contentStream),
+		};
+		TorBoxStreamResponse response = new(
+			ownedResponse,
+			success: true,
+			HttpStatusCode.OK,
+			exposedStream);
+
+		// Act
+		response.Dispose();
+
+		// Assert
+		Assert.Throws<ObjectDisposedException>(() => exposedStream.ReadByte());
+		Assert.Throws<ObjectDisposedException>(() => contentStream.ReadByte());
 	}
 
 	[Fact]
@@ -60,6 +85,61 @@ public sealed class TorBoxStreamResponseTests
 	}
 
 	[Fact]
+	public void Constructor_WithStreamAndRedirect_RejectsAmbiguousSuccess()
+	{
+		// Arrange
+		using MemoryStream stream = new([1, 2, 3]);
+		using HttpResponseMessage ownedResponse = new(HttpStatusCode.OK)
+		{
+			Content = new StreamContent(stream),
+		};
+
+		// Act
+		Action create = () => _ = new TorBoxStreamResponse(
+			ownedResponse,
+			success: true,
+			HttpStatusCode.OK,
+			stream,
+			redirectUri: new Uri("https://download.example/file.bin"));
+
+		// Assert
+		Assert.Throws<ArgumentException>(create);
+	}
+
+	[Fact]
+	public void Constructor_WithStructuredFailureAndRedirect_RejectsHybridFailure()
+	{
+		// Arrange
+		Uri redirectUri = new("https://download.example/file.bin");
+
+		// Act
+		Action create = () => _ = new TorBoxStreamResponse(
+			ownedResponse: null,
+			success: false,
+			HttpStatusCode.BadRequest,
+			redirectUri: redirectUri);
+
+		// Assert
+		Assert.Throws<ArgumentException>(create);
+	}
+
+	[Fact]
+	public void Constructor_WithSuccessAndNoStreamOrRedirect_RejectsMissingResult()
+	{
+		// Arrange
+		using HttpResponseMessage ownedResponse = new(HttpStatusCode.OK);
+
+		// Act
+		Action create = () => _ = new TorBoxStreamResponse(
+			ownedResponse,
+			success: true,
+			HttpStatusCode.OK);
+
+		// Assert
+		Assert.Throws<ArgumentException>(create);
+	}
+
+	[Fact]
 	public void CreateForTesting_WithStructuredApiFailure_PreservesBoundedFailureWithoutAStream()
 	{
 		// Arrange
@@ -81,6 +161,46 @@ public sealed class TorBoxStreamResponseTests
 		Assert.Null(response.Stream);
 		Assert.Null(response.RedirectUri);
 		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+	}
+
+	[Fact]
+	public void CreateForTesting_WithOversizedError_BoundsTheRetainedUtf8Bytes()
+	{
+		// Arrange
+		string oversizedError = new('E', 65_537);
+		string expectedError = new('E', 65_536);
+
+		// Act
+		using TorBoxStreamResponse response = TorBoxStreamResponse.CreateForTesting(
+			stream: null,
+			HttpStatusCode.BadRequest,
+			success: false,
+			error: oversizedError);
+
+		// Assert
+		Assert.NotNull(response.Error);
+		Assert.Equal(expectedError, response.Error);
+		Assert.Equal(65_536, Encoding.UTF8.GetByteCount(response.Error));
+	}
+
+	[Fact]
+	public void CreateForTesting_WithOversizedDetail_DoesNotSplitAUnicodeScalar()
+	{
+		// Arrange
+		string expectedDetail = new('a', 65_533);
+		string oversizedDetail = expectedDetail + "🙂tail";
+
+		// Act
+		using TorBoxStreamResponse response = TorBoxStreamResponse.CreateForTesting(
+			stream: null,
+			HttpStatusCode.BadRequest,
+			success: false,
+			detail: oversizedDetail);
+
+		// Assert
+		Assert.NotNull(response.Detail);
+		Assert.Equal(expectedDetail, response.Detail);
+		Assert.Equal(65_533, Encoding.UTF8.GetByteCount(response.Detail));
 	}
 
 	[Fact]
