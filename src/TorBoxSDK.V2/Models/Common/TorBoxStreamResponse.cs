@@ -1,7 +1,4 @@
 using System.Net;
-using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("TorBoxSDK.V2.UnitTests")]
 
 namespace TorBoxSDK.Models.Common;
 
