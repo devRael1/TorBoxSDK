@@ -391,6 +391,11 @@ public async Task<TorBoxResponse<Torrent>> CreateTorrentAsync(CreateTorrentReque
 
 # Part 4 — Tests (`tests/**/*.cs`)
 
+> **V2 test behavior:** tests under `tests/TorBoxSDK.V2.*/` keep every Part 4
+> rule. Their expected response and transport behavior is defined by
+> `torboxsdk-v2.instructions.md`; the legacy Part 2 failure-mapping rules do
+> not apply to test files.
+
 ## Test Naming
 
 ```

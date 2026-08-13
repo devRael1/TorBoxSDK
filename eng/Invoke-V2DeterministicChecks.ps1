@@ -64,6 +64,43 @@ function Get-DeterministicSolutionProjectPaths {
     return $projectPaths
 }
 
+function Resolve-ApprovedRepositoryProjectReference {
+    param(
+        [Parameter(Mandatory)]
+        [string]$ReferencingFilePath,
+        [Parameter(Mandatory)]
+        [string]$ReferenceInclude,
+        [Parameter(Mandatory)]
+        [string[]]$ApprovedProjectPaths
+    )
+
+    if ([System.IO.Path]::IsPathRooted($ReferenceInclude)) {
+        throw "Project '$ReferencingFilePath' must use a repository-relative ProjectReference, not '$ReferenceInclude'."
+    }
+
+    try {
+        $referencedProjectPath = [System.IO.Path]::GetFullPath(
+            [System.IO.Path]::Combine((Split-Path -Parent $ReferencingFilePath), $ReferenceInclude))
+    }
+    catch {
+        throw "Project '$ReferencingFilePath' has an invalid ProjectReference path '$ReferenceInclude': $($_.Exception.Message)"
+    }
+
+    $normalizedRepositoryRoot = [System.IO.Path]::GetFullPath($repositoryRoot)
+    $relativeReferencedProjectPath = [System.IO.Path]::GetRelativePath($normalizedRepositoryRoot, $referencedProjectPath).Replace('\', '/')
+    if ([System.IO.Path]::IsPathRooted($relativeReferencedProjectPath) -or
+        $relativeReferencedProjectPath -ceq '..' -or
+        $relativeReferencedProjectPath.StartsWith('../', [System.StringComparison]::Ordinal)) {
+        throw "Project '$ReferencingFilePath' must not traverse outside the repository root: '$ReferenceInclude'."
+    }
+
+    if ($ApprovedProjectPaths -cnotcontains $relativeReferencedProjectPath) {
+        throw "Project '$ReferencingFilePath' resolves ProjectReference '$ReferenceInclude' to '$relativeReferencedProjectPath', which is not in the approved deterministic V2 project graph."
+    }
+
+    return $referencedProjectPath
+}
+
 function Assert-DeterministicSolutionExcludesIntegrationTests {
     $expectedProjectPaths = @(
         'src/TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj',
@@ -98,11 +135,11 @@ function Assert-DeterministicSolutionExcludesIntegrationTests {
                 throw "Project '$projectPath' contains a ProjectReference without Include metadata."
             }
 
-            $referencedProjectPath = [System.IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $projectPath) $referenceInclude))
-            if ([System.IO.Path]::GetFileName($referencedProjectPath) -ieq $prohibitedIntegrationProjectName) {
+            if ([System.IO.Path]::GetFileName($referenceInclude) -ieq $prohibitedIntegrationProjectName) {
                 throw "The deterministic V2 project graph must not reference '$prohibitedIntegrationProjectName': $projectPath"
             }
 
+            $referencedProjectPath = Resolve-ApprovedRepositoryProjectReference $projectPath $referenceInclude $expectedProjectPaths
             if (-not (Test-Path -LiteralPath $referencedProjectPath -PathType Leaf)) {
                 throw "Project '$projectPath' references a missing project: $referenceInclude"
             }

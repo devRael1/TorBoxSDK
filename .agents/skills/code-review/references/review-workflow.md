@@ -1,8 +1,9 @@
 # Code Review Workflow — Dimension Checklist
 
 > **Source of generic rules:** `.github/instructions/csharp-conventions.instructions.md`.
-> For V2 targets, also apply the narrowly scoped precedence rule in
-> `.github/instructions/torboxsdk-v2.instructions.md`.
+> For V2 source, also apply the narrowly scoped precedence rule in
+> `.github/instructions/torboxsdk-v2.instructions.md`; for V2 tests, use it
+> to evaluate the response/transport behavior under test.
 > This file contains only the **review structure** (which dimensions to check, in what order). Do not duplicate rules here.
 
 ---
@@ -10,10 +11,12 @@
 ## Before You Start
 
 1. Read `.github/instructions/csharp-conventions.instructions.md` in full.
-2. For V2 files under `src/TorBoxSDK.V2/`,
-   `src/TorBoxSDK.DependencyInjection.V2/`, or `tests/TorBoxSDK.V2.*/`, read
+2. For V2 source under `src/TorBoxSDK.V2/` or
+   `src/TorBoxSDK.DependencyInjection.V2/`, read
    `.github/instructions/torboxsdk-v2.instructions.md` and apply its override
-   only to the legacy Part 2 response/exception rules.
+   only to the legacy Part 2 response/exception rules. For V2 tests under
+   `tests/TorBoxSDK.V2.*/`, read it to assess the response/transport behavior
+   under test; apply Part 1 and Part 4, not Part 2.
 3. Identify the file path to determine which Parts apply:
 
 | File path | Parts to apply |
@@ -81,6 +84,10 @@ Note: hardcoded secrets and log injection are always **CRITICAL**.
 
 ### D14 — Test Quality *(tests/ only)*
 → Rules in **Part 4** — naming, AAA, attributes, assertions, HttpClient mocking, isolation
+
+For V2 tests, also verify that the asserted response/transport behavior follows
+the V2 response-as-value policy. Do not apply the legacy Part 2 exception
+mapping to test files.
 
 ### D15 — Sample Quality *(samples/ only)*
 → Rules in **Part 5** — API key handling, DI, error handling, no magic values, prohibited patterns

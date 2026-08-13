@@ -177,8 +177,88 @@ job; and successful YAML parsing for both workflows.
 
 `pwsh -NoProfile -File eng/Invoke-V2DeterministicChecks.ps1 -SkipPack -IncludeReleaseContract` also completed successfully after the correction. It selected exactly the release trait and reported **1 skip** per executable target because `TORBOXSDK_V2_RELEASE_CONTRACT` was removed from the process environment; this is the expected current cutover guard and did not make a live request.
 
+## Corrective cycle 2 — fail-closed deterministic project graph
+
+The exact six-root solution assertion did not previously make the reachable
+`ProjectReference` graph fail closed: it rejected only the specifically named
+integration project and missing files, so another existing project could be
+walked and implicitly admitted. This was reproduced before the production
+change with an isolated Temp shadow of only the gate prefix through
+`Assert-DeterministicSolutionExcludesIntegrationTests`. The shadow contained
+the unchanged six-root solution plus a real, persisted `ProjectReference` from
+the core project to an existing temporary
+`src/TorBoxSDK.V2.Unapproved/TorBoxSDK.V2.Unapproved.csproj`. It retained no
+`dotnet` invocation, API key, network command, or external API operation. The
+pre-change static gate returned success, and the probe therefore failed RED
+with:
+
+```text
+RED: the pre-dotnet graph guard accepted reachable unapproved project
+'src/TorBoxSDK.V2.Unapproved/TorBoxSDK.V2.Unapproved.csproj'.
+```
+
+The graph guard now normalizes every `ProjectReference` declared by each
+reachable project file relative to the repository root before it is enqueued.
+It rejects rooted references,
+paths that traverse outside the repository, and every normalized path not in
+the exact six approved repository-relative projects. The existing explicit
+integration-project rejection remains before traversal, so a renamed or V1
+integration project is also rejected by the allowlist.
+
+The same Temp shadow then passed GREEN by rejecting the added reachable project
+with the expected `not in the approved deterministic V2 project graph`
+diagnostic. With `TORBOX_API_KEY` removed, the real
+`pwsh -NoProfile -File eng/Invoke-V2DeterministicChecks.ps1 -SkipPack` also
+passed: locked restore, Release build with 0 warnings and 0 errors, 92/92 V2
+unit tests and 39/39 non-release contract tests on each executable target. No
+integration test or live API call was invoked. The temporary probe was removed
+after the evidence was captured.
+
+Final cycle-2 verification also ran the full gate with the API key and release
+eligibility variable removed. It passed the same restore, build, and test
+matrix, created and validated the local core and DI packages, and did not make
+an external request. `-SkipPack -IncludeReleaseContract` then passed with the
+release trait selected and one expected skip on each executable target.
+
 `git diff --check` completed with no whitespace errors. The `actionlint`
 binary was not installed in this worktree, so that dedicated workflow-linter
 check could not be run locally. NuGet emitted a README advisory for each local
 package; it did not produce a build warning/error and was not changed within
 this task's authorized file scope.
+
+## Corrective cycle 3 — explicit V2 test-review policy
+
+The first documentation rereview found that the V2 instruction described the
+response/exception precedence for V2 source paths, while the code-review skill
+and review workflow also told reviewers to apply it to V2 tests. That wording
+was internally ambiguous because Part 2 is a source-only convention and Part 4
+governs tests.
+
+A local consistency probe failed RED before the documentation change because
+the V2 instruction, generic convention, instruction map, review skill, and
+review workflow did not all state an explicit V2 test policy. The corrected
+rules now make the boundary precise:
+
+- V2 source keeps generic conventions and every unrelated Part 2 rule, while
+  the V2 instruction supersedes only the two legacy Part 2 failure-mapping
+  requirements;
+- V2 tests keep Part 1 and every Part 4 rule; they use the V2
+  response-as-value and transport policy to determine the behavior to assert,
+  not the source-only legacy Part 2 exception mapping;
+- V1 source and tests retain the legacy rules unchanged.
+
+The same consistency probe passed GREEN after the change. This was an
+instruction-only correction: it made no API request, changed no V1 code or
+workflow behavior, and introduced no package or runtime dependency.
+
+## Deferred hardening at the stop point
+
+A later review identified one further, unimplemented hardening: the static
+preflight walks `ProjectReference` elements declared in the reachable project
+files, but it does not yet traverse local MSBuild import closures such as
+`Directory.Build.props`, `Directory.Build.targets`, or explicit local imports.
+No such imported `ProjectReference` exists in the current V2 graph. An initial
+implementation of that traversal was deliberately removed when work stopped,
+because it had not reached a complete, independently reviewed state. The next
+gate-hardening task must cover that import closure before claiming absolute
+project-graph isolation.

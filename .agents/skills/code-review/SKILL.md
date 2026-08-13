@@ -29,11 +29,13 @@ Determine what to review:
 
 Before writing a single line of the review, read `.github/instructions/csharp-conventions.instructions.md` in full. Then use [the instruction map](./references/instruction-map.md) to identify which Parts of that file apply to the target (Part 1 always applies; Parts 2–5 depend on file path).
 
-For any V2 target under `src/TorBoxSDK.V2/`,
-`src/TorBoxSDK.DependencyInjection.V2/`, or `tests/TorBoxSDK.V2.*/`, also
-read `.github/instructions/torboxsdk-v2.instructions.md`. Apply its narrow V2
+For V2 source under `src/TorBoxSDK.V2/` or
+`src/TorBoxSDK.DependencyInjection.V2/`, also read
+`.github/instructions/torboxsdk-v2.instructions.md`. Apply its narrow V2
 override to the legacy Part 2 response/exception rules; do not treat it as an
-override of the generic or unrelated Part 2 rules.
+override of the generic or unrelated Part 2 rules. For V2 tests under
+`tests/TorBoxSDK.V2.*/`, read the same instruction to review the
+response/transport behavior under test; apply Part 1 and Part 4, not Part 2.
 
 Do NOT skip this step.
 
@@ -55,7 +57,7 @@ Read the entire file. Do not skim. For each of the following dimensions, activel
 11. **File organization** — one type per file, filename matches type name
 12. **XML documentation** — all public members documented
 
-For tests, also check: naming pattern, AAA structure, `[Fact]`/`[Theory]` usage, `HttpClient` mocking, test isolation.  
+For tests, also check: naming pattern, AAA structure, `[Fact]`/`[Theory]` usage, `HttpClient` mocking, test isolation. For V2 tests, confirm that the expected behavior follows the V2 response-as-value policy rather than the legacy Part 2 exception mapping.
 For samples, also check: no hardcoded API key, `AddTorBox()` DI, error handling shown, self-explanatory code.
 
 See [full severity guide](./references/severity-guide.md) to rate each finding.

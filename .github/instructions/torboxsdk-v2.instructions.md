@@ -7,7 +7,7 @@ description: "Use for the side-by-side TorBoxSDK V2 foundation, its contract bas
 
 These rules apply to the side-by-side V2 foundation. They do not change the V1 public surface or its legacy validation behavior before cutover.
 
-## Instruction precedence on V2 source paths
+## Instruction precedence on V2 paths
 
 For `src/TorBoxSDK.V2/**/*.cs` and
 `src/TorBoxSDK.DependencyInjection.V2/**/*.cs`, this instruction supersedes
@@ -16,6 +16,11 @@ Handling** of `csharp-conventions.instructions.md`: converting `success:
 false` into `TorBoxException`, and translating HTTP 4xx/5xx responses into
 typed exceptions. Apply every generic rule and every other Part 2 rule as
 written. V1 paths retain the legacy response/exception requirements.
+
+For V2 test files under `tests/TorBoxSDK.V2.*/**/*.cs`, keep every **Part 4**
+test rule in force. The response and transport policy below defines the V2
+behavior those tests must assert; Part 2 does not apply to test files and its
+legacy exception requirements are not test expectations.
 
 ## Target matrix
 
