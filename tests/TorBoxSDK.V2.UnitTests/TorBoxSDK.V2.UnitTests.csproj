@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="../TorBoxSDK.V2.Testing/TorBoxSDK.V2.Testing.csproj" />
     <ProjectReference Include="../../src/TorBoxSDK.V2/TorBoxSDK.V2.csproj" />
+    <ProjectReference Include="../../src/TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj" />
   </ItemGroup>
 
   <ItemGroup>
