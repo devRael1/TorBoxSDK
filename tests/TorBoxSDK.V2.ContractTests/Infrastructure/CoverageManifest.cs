@@ -200,8 +200,8 @@ internal sealed class CoverageManifest
         }
 
         bool hasExactTaskResultType = record.ResultType is not null &&
-            (record.ResultType.StartsWith("System.Threading.Tasks.Task, ", StringComparison.Ordinal) ||
-             record.ResultType.StartsWith("System.Threading.Tasks.Task`1[[", StringComparison.Ordinal));
+            (record.ResultType == "System.Threading.Tasks.Task" ||
+             record.ResultType.StartsWith("System.Threading.Tasks.Task`1[", StringComparison.Ordinal));
         if (string.IsNullOrWhiteSpace(record.PublicInterface) || !record.PublicInterface.Contains('.', StringComparison.Ordinal) ||
             string.IsNullOrWhiteSpace(record.PublicMethod) || !hasExactTaskResultType)
         {

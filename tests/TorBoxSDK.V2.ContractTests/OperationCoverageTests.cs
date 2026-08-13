@@ -183,6 +183,23 @@ public sealed class OperationCoverageTests
     }
 
     [Fact]
+    public void CoverageManifest_WhenImplementedRecordUsesCanonicalGenericTaskResult_LoadsSuccessfully()
+    {
+        // Arrange
+        string coveragePath = CreateTemporaryCoverageFile("""
+            [
+              { "sourceId": "main", "operationKey": "GET /v1/api/stats", "family": "Main", "resource": "General", "publicInterface": "TorBoxSDK.Main.IGeneralResource", "publicMethod": "GetStatsAsync", "parameterTypes": [], "requestType": null, "resultType": "System.Threading.Tasks.Task`1[System.String]", "responseMode": "json", "implementationState": "Implemented", "divergenceIds": [] }
+            ]
+            """);
+
+        // Act
+        CoverageManifest manifest = CoverageManifest.Load(coveragePath);
+
+        // Assert
+        Assert.Single(manifest.Records);
+    }
+
+    [Fact]
     public void CoverageManifest_WhenImplementedRecordUsesTaskLikeResultName_ThrowsInvalidDataException()
     {
         // Arrange

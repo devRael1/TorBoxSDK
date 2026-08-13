@@ -33,7 +33,7 @@ public sealed class ContractSurfaceTests
             Type[] parameterTypes = record.ParameterTypes.Select(typeName => ResolveType(assembly, typeName)).ToArray();
             MethodInfo method = interfaceType.GetMethod(publicMethod, BindingFlags.Public | BindingFlags.Instance, null, parameterTypes, null)
                 ?? throw new InvalidDataException($"{record.Identity} must resolve to the declared public method with the exact ordered parameter types.");
-            Assert.Equal(resultType, method.ReturnType.AssemblyQualifiedName);
+            Assert.Equal(resultType, CanonicalTypeIdentity.Format(method.ReturnType));
         }
     }
 
