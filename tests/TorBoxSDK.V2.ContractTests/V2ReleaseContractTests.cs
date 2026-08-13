@@ -21,6 +21,7 @@ public sealed class V2ReleaseContractTests
         Assert.DoesNotContain(baseline.Sources, static source => source.ReleaseEligibility != ContractReleaseEligibility.Eligible);
         Assert.DoesNotContain(records, static record => record.ImplementationState != CoverageImplementationState.Implemented);
         Assert.DoesNotContain(records, static record => record.ResponseMode == CoverageResponseMode.RequiresValidation);
+        Assert.DoesNotContain(records, static record => (record.SourceId is "search" or "relay") && record.ResponseMode != CoverageResponseMode.Json);
         Assert.DoesNotContain(records, static record => string.IsNullOrWhiteSpace(record.PublicInterface) || string.IsNullOrWhiteSpace(record.PublicMethod) || string.IsNullOrWhiteSpace(record.ResultType));
         validateSurface();
     }

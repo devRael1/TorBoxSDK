@@ -315,6 +315,10 @@ function Get-ContractTransaction() {
         throw 'The contract transaction journal does not state whether coverage must be published.'
     }
 
+    if ($journal.publishCoverage -isnot [bool]) {
+        throw 'The contract transaction journal publishCoverage value must be a boolean.'
+    }
+
     [string] $sourceId = if ($null -eq $journal.PSObject.Properties['sourceId']) { 'main' } else { [string] $journal.sourceId }
     $definition = Get-SourceDefinitionById $sourceId
     $journal | Add-Member -NotePropertyName Definition -NotePropertyValue $definition -Force
@@ -368,17 +372,21 @@ function Get-ContractPaths([object] $definition, [object] $transaction) {
         $effectiveManifestPath = Join-Path $candidateDirectory $definition.ManifestRelativePath
     }
 
-    $candidateCoveragePath = Join-Path $candidateDirectory 'coverage.json'
+    [string] $effectiveCoveragePath = $coveragePath
+    if ([bool] $transaction.publishCoverage) {
+        $effectiveCoveragePath = Join-Path $candidateDirectory 'coverage.json'
+    }
+
     if (-not (Test-Path -LiteralPath $effectiveSnapshotPath) -or
         -not (Test-Path -LiteralPath $effectiveManifestPath) -or
-        -not (Test-Path -LiteralPath $candidateCoveragePath)) {
+        -not (Test-Path -LiteralPath $effectiveCoveragePath)) {
         throw 'The contract transaction candidate is incomplete and cannot be recovered safely.'
     }
 
     return [pscustomobject]@{
         SnapshotPath = $effectiveSnapshotPath
         ManifestPath = $effectiveManifestPath
-        CoveragePath = $candidateCoveragePath
+        CoveragePath = $effectiveCoveragePath
     }
 }
 
@@ -466,8 +474,13 @@ function Publish-ContractTransaction(
         New-Item -ItemType Directory -Force -Path (Split-Path -Parent $stagedSnapshotPath) | Out-Null
         Copy-Item -LiteralPath $candidateSnapshotPath -Destination $stagedSnapshotPath
         Copy-Item -LiteralPath $candidateManifestPath -Destination $stagedManifestPath
-        Copy-Item -LiteralPath $candidateCoveragePath -Destination (Join-Path $candidateDirectory 'coverage.json')
-        [void] (Test-Baseline $definition $stagedSnapshotPath $stagedManifestPath (Join-Path $candidateDirectory 'coverage.json'))
+        [string] $stagedCoveragePath = $coveragePath
+        if ($publishCoverage) {
+            $stagedCoveragePath = Join-Path $candidateDirectory 'coverage.json'
+            Copy-Item -LiteralPath $candidateCoveragePath -Destination $stagedCoveragePath
+        }
+
+        [void] (Test-Baseline $definition $stagedSnapshotPath $stagedManifestPath $stagedCoveragePath)
 
         $journal = [ordered]@{
             schemaVersion = 3

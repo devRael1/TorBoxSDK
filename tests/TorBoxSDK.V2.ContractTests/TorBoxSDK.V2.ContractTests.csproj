@@ -22,9 +22,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="../../contracts/torbox/**/*">
+    <Content Include="../../contracts/torbox/**/*"
+             Exclude="../../contracts/torbox/.update-transaction/**/*">
       <Link>contracts/torbox/%(RecursiveDir)%(Filename)%(Extension)</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
+  <Target Name="RemoveCopiedTorBoxContractsBeforeBuild" BeforeTargets="PrepareForBuild">
+    <RemoveDir Directories="$(OutDir)contracts/torbox" />
+  </Target>
 </Project>

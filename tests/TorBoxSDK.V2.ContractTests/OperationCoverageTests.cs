@@ -121,6 +121,33 @@ public sealed class OperationCoverageTests
         Assert.Throws<InvalidDataException>(load);
     }
 
+    [Theory]
+    [InlineData("relay", "Relay", "Relay", "stream")]
+    [InlineData("relay", "Relay", "Relay", "redirect")]
+    [InlineData("relay", "Relay", "Relay", "requires-validation")]
+    [InlineData("search", "Search", "Search", "stream")]
+    [InlineData("search", "Search", "Search", "redirect")]
+    [InlineData("search", "Search", "Search", "requires-validation")]
+    public void CoverageManifest_WhenSearchOrRelayResponseModeIsNotJson_ThrowsInvalidDataException(
+        string sourceId,
+        string family,
+        string resource,
+        string responseMode)
+    {
+        // Arrange
+        string coveragePath = CreateTemporaryCoverageFile($$"""
+            [
+              { "sourceId": "{{sourceId}}", "operationKey": "GET /", "family": "{{family}}", "resource": "{{resource}}", "publicInterface": null, "publicMethod": null, "parameterTypes": [], "requestType": null, "resultType": null, "responseMode": "{{responseMode}}", "implementationState": "Planned", "divergenceIds": [] }
+            ]
+            """);
+
+        // Act
+        Action load = () => CoverageManifest.Load(coveragePath);
+
+        // Assert
+        Assert.Throws<InvalidDataException>(load);
+    }
+
     [Fact]
     public void CoverageManifest_WhenPlannedRecordDeclaresPublicMapping_ThrowsInvalidDataException()
     {

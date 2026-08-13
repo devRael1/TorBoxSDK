@@ -170,16 +170,25 @@ internal sealed class ContractBaseline
                 : "main";
             SourceRegistryEntry selectedSource = registry.SingleOrDefault(source => string.Equals(source.Id, sourceId, StringComparison.Ordinal))
                 ?? throw new InvalidDataException($"The contract transaction selects unknown source '{sourceId}'.");
+            if (!root.TryGetProperty("publishCoverage", out JsonElement publishCoverageElement) ||
+                publishCoverageElement.ValueKind is not (JsonValueKind.True or JsonValueKind.False))
+            {
+                throw new InvalidDataException("The contract transaction journal does not state whether coverage must be published.");
+            }
+
+            bool publishCoverage = publishCoverageElement.GetBoolean();
             string candidateDirectory = Path.Combine(transactionDirectory, CandidateGenerationName);
             string candidateSnapshotPath = ResolveRelativePath(candidateDirectory, selectedSource.SnapshotPath);
             string candidateManifestPath = ResolveRelativePath(candidateDirectory, selectedSource.ManifestPath);
             string candidateCoveragePath = Path.Combine(candidateDirectory, "coverage.json");
-            if (!File.Exists(candidateSnapshotPath) || !File.Exists(candidateManifestPath) || !File.Exists(candidateCoveragePath))
+            if (!File.Exists(candidateSnapshotPath) || !File.Exists(candidateManifestPath) ||
+                (publishCoverage && !File.Exists(candidateCoveragePath)))
             {
                 throw new InvalidDataException("The contract transaction candidate is incomplete and cannot be recovered safely.");
             }
 
-            return new ActiveTransaction(sourceId, candidateDirectory, candidateCoveragePath);
+            string effectiveCoveragePath = publishCoverage ? candidateCoveragePath : Path.Combine(contractDirectory, "coverage.json");
+            return new ActiveTransaction(sourceId, candidateDirectory, effectiveCoveragePath);
         }
         catch (JsonException exception)
         {

@@ -35,6 +35,24 @@ public sealed class ContractSnapshotFileTests
     }
 
     [Fact]
+    public void ContractArtifacts_WhenCopiedToTestOutput_ContainOnlyReviewedFiles()
+    {
+        // Arrange
+        IReadOnlyList<string> expectedPaths = RequiredRelativePaths
+            .OrderBy(static path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        // Act
+        IReadOnlyList<string> actualPaths = Directory.GetFiles(ContractTestPaths.ContractDirectory, "*", SearchOption.AllDirectories)
+            .Select(path => Path.GetRelativePath(ContractTestPaths.ContractDirectory, path).Replace('\\', '/'))
+            .OrderBy(static path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        // Assert
+        Assert.Equal(expectedPaths, actualPaths);
+    }
+
+    [Fact]
     public void ContractBaseline_LoadsTheExactThreeSourceUnion()
     {
         // Arrange
@@ -182,6 +200,64 @@ public sealed class ContractSnapshotFileTests
         Assert.Throws<InvalidDataException>(load);
     }
 
+    [Theory]
+    [InlineData("main")]
+    [InlineData("relay")]
+    public void ContractTransaction_WhenCoverageIsNotPublished_ValidatesDurableCoverage(string sourceId)
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        temporaryContract.CreateCandidateTransaction(sourceId);
+        JsonArray durableCoverage = JsonNode.Parse(File.ReadAllText(temporaryContract.CoveragePath))?.AsArray()
+            ?? throw new InvalidDataException("The coverage fixture must be an array.");
+        string durableSourceId = string.Equals(sourceId, "main", StringComparison.Ordinal) ? "relay" : "main";
+        JsonNode durableRecord = durableCoverage.First(node => string.Equals(node?["sourceId"]?.GetValue<string>(), durableSourceId, StringComparison.Ordinal))
+            ?? throw new InvalidDataException($"The coverage fixture must contain source '{durableSourceId}'.");
+        _ = durableCoverage.Remove(durableRecord);
+        WriteJson(temporaryContract.CoveragePath, durableCoverage);
+
+        // Act
+        Action load = () => ContractBaseline.Load(temporaryContract.ContractDirectory);
+
+        // Assert
+        Assert.Throws<InvalidDataException>(load);
+    }
+
+    [Fact]
+    public void ContractTransaction_WhenCoverageIsPublished_ValidatesCandidateCoverage()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        temporaryContract.CreateCandidateTransaction("main", publishCoverage: true);
+        JsonArray durableCoverage = JsonNode.Parse(File.ReadAllText(temporaryContract.CoveragePath))?.AsArray()
+            ?? throw new InvalidDataException("The coverage fixture must be an array.");
+        durableCoverage.RemoveAt(0);
+        WriteJson(temporaryContract.CoveragePath, durableCoverage);
+
+        // Act
+        ContractBaseline baseline = ContractBaseline.Load(temporaryContract.ContractDirectory);
+
+        // Assert
+        Assert.Equal(102, baseline.Operations.Count);
+    }
+
+    [Fact]
+    public void ContractTransaction_WhenPublishCoverageIsNotBoolean_RejectsJournal()
+    {
+        // Arrange
+        using TemporaryContractDirectory temporaryContract = TemporaryContractDirectory.Create();
+        temporaryContract.CreateCandidateTransaction("relay");
+        JsonObject journal = ReadJsonObject(temporaryContract.TransactionJournalPath);
+        journal["publishCoverage"] = "false";
+        WriteJson(temporaryContract.TransactionJournalPath, journal);
+
+        // Act
+        Action load = () => ContractBaseline.Load(temporaryContract.ContractDirectory);
+
+        // Assert
+        Assert.Throws<InvalidDataException>(load);
+    }
+
     [Fact]
     public void ContractTransaction_WhenJournalIsRetired_LoadsDurableSources()
     {
@@ -223,6 +299,8 @@ public sealed class ContractSnapshotFileTests
 
         internal string SourcesPath => Path.Combine(ContractDirectory, "sources.json");
 
+        internal string CoveragePath => Path.Combine(ContractDirectory, "coverage.json");
+
         internal string TransactionDirectory => Path.Combine(ContractDirectory, ".update-transaction");
 
         internal string TransactionCandidateDirectory => Path.Combine(TransactionDirectory, "candidate");
@@ -239,21 +317,24 @@ public sealed class ContractSnapshotFileTests
             return new TemporaryContractDirectory(rootDirectory, contractDirectory);
         }
 
-        internal void CreateCandidateTransaction(string sourceId)
+        internal void CreateCandidateTransaction(string sourceId, bool publishCoverage = false)
         {
             string sourceDirectory = sourceId == "main" ? "baseline" : sourceId;
             string candidateSourceDirectory = Path.Combine(TransactionCandidateDirectory, sourceDirectory);
             Directory.CreateDirectory(candidateSourceDirectory);
             File.Copy(Path.Combine(ContractDirectory, sourceDirectory, "openapi.json"), Path.Combine(candidateSourceDirectory, "openapi.json"));
             File.Copy(Path.Combine(ContractDirectory, sourceDirectory, "manifest.json"), Path.Combine(candidateSourceDirectory, "manifest.json"));
-            File.Copy(Path.Combine(ContractDirectory, "coverage.json"), Path.Combine(TransactionCandidateDirectory, "coverage.json"));
+            if (publishCoverage)
+            {
+                File.Copy(Path.Combine(ContractDirectory, "coverage.json"), Path.Combine(TransactionCandidateDirectory, "coverage.json"));
+            }
 
             JsonObject journal = new()
             {
                 ["schemaVersion"] = 3,
                 ["activeGeneration"] = "candidate",
                 ["sourceId"] = sourceId,
-                ["publishCoverage"] = false
+                ["publishCoverage"] = publishCoverage
             };
             WriteJson(TransactionJournalPath, journal);
         }

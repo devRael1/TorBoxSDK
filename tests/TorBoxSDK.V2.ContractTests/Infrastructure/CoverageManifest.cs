@@ -228,6 +228,11 @@ internal sealed class CoverageManifest
         {
             throw new InvalidDataException($"Coverage operation '{record.Identity}' has an unapproved source/family/resource mapping '{record.SourceId}/{record.Family}/{record.Resource}'.");
         }
+
+        if ((record.SourceId is "search" or "relay") && record.ResponseMode != CoverageResponseMode.Json)
+        {
+            throw new InvalidDataException($"Coverage operation '{record.Identity}' from source '{record.SourceId}' must use json response mode.");
+        }
     }
 
     private static void ValidateOperationKey(string operationKey)
