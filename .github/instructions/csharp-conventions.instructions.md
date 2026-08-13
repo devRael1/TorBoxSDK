@@ -207,6 +207,13 @@ public sealed class AuthHandler(TorBoxClientOptions options) : DelegatingHandler
 
 TorBox API standard shape: `{ success, error, detail, data }`.
 
+> **V2 precedence:** for `src/TorBoxSDK.V2/**/*.cs` and
+> `src/TorBoxSDK.DependencyInjection.V2/**/*.cs`, read
+> `torboxsdk-v2.instructions.md`. Its response/transport policy supersedes
+> only the next two legacy failure-mapping requirements. All generic rules and
+> every other Part 2 requirement remain mandatory. V1 and all other paths keep
+> the legacy requirements below.
+
 - All endpoints deserialize via `TorBoxResponse<T>` or `TorBoxResponse`
 - `success == false` must throw `TorBoxException` with `ErrorCode` and `Detail`
 - HTTP 4xx/5xx translate to typed exceptions

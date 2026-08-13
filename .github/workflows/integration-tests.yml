@@ -120,14 +120,14 @@ jobs:
             9.0.x
             10.0.x
 
-      - name: Restore V2 dependencies
-        run: dotnet restore TorBoxSDK.V2.slnx --locked-mode
+      - name: Restore V2 integration-test dependencies
+        run: dotnet restore tests/TorBoxSDK.V2.IntegrationTests/TorBoxSDK.V2.IntegrationTests.csproj --locked-mode
 
       - name: Run V2 live validation
         env:
           TORBOX_API_KEY: ${{ secrets.TORBOX_API_KEY }}
         run: >
-          dotnet test tests/TorBoxSDK.V2.IntegrationTests/
+          dotnet test tests/TorBoxSDK.V2.IntegrationTests/TorBoxSDK.V2.IntegrationTests.csproj
           --configuration Release
           --no-restore
           --logger "trx;LogFileName=v2-live-validation.trx"

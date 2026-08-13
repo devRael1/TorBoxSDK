@@ -29,6 +29,12 @@ Determine what to review:
 
 Before writing a single line of the review, read `.github/instructions/csharp-conventions.instructions.md` in full. Then use [the instruction map](./references/instruction-map.md) to identify which Parts of that file apply to the target (Part 1 always applies; Parts 2–5 depend on file path).
 
+For any V2 target under `src/TorBoxSDK.V2/`,
+`src/TorBoxSDK.DependencyInjection.V2/`, or `tests/TorBoxSDK.V2.*/`, also
+read `.github/instructions/torboxsdk-v2.instructions.md`. Apply its narrow V2
+override to the legacy Part 2 response/exception rules; do not treat it as an
+override of the generic or unrelated Part 2 rules.
+
 Do NOT skip this step.
 
 ### Step 3 — Read all lines of the target file
@@ -42,7 +48,8 @@ Read the entire file. Do not skim. For each of the following dimensions, activel
 5. **Modern C#** — file-scoped ns, primary constructors, expression-bodied, pattern matching
 6. **Async patterns** — `ConfigureAwait(false)`, `CancellationToken`, no `.Result`/`.Wait()`
 7. **Architecture** — client hierarchy, no hardcoded URLs, no manual auth
-8. **Response handling** — `TorBoxResponse<T>`, typed exceptions on failure
+8. **Response handling** — V1 uses typed exceptions on failure; V2 source uses
+   the response-as-value policy in `torboxsdk-v2.instructions.md`
 9. **Security** — no hardcoded secrets, no log injection, input validation at boundaries
 10. **Performance** — no sync I/O, no unnecessary allocations, `HttpResponseMessage` disposed
 11. **File organization** — one type per file, filename matches type name

@@ -1,7 +1,13 @@
 # Instruction Map — Which Rules to Apply
 
-> **All rules live in a single file:** `.github/instructions/csharp-conventions.instructions.md`  
+> **Generic rules live in:** `.github/instructions/csharp-conventions.instructions.md`
 > This file is organized in 5 Parts. Apply the relevant Parts based on the file path being reviewed.
+
+For V2 paths, also read `.github/instructions/torboxsdk-v2.instructions.md`.
+It supersedes only the legacy Part 2 response/exception requirements for
+`src/TorBoxSDK.V2/` and `src/TorBoxSDK.DependencyInjection.V2/`; Part 1 and
+every other applicable Part remains in force. V1 paths keep all legacy Part 2
+rules.
 
 ---
 
@@ -14,6 +20,8 @@
 | `src/**/Models/**/*.cs` | + **Part 3** — Response shape, record vs class, JSON serialization, immutability, enums, request validation |
 | `tests/**/*.cs` | + **Part 4** — xUnit naming, AAA, attributes, assertions, HttpClient mocking, test isolation, integration/perf |
 | `samples/**/*.cs` | + **Part 5** — API key handling, `AddTorBox()`, error handling, no magic values, prohibited patterns |
+| `src/TorBoxSDK.V2/**/*.cs` or `src/TorBoxSDK.DependencyInjection.V2/**/*.cs` | Applicable generic Parts + `torboxsdk-v2.instructions.md` (only its response/exception override takes precedence) |
+| `tests/TorBoxSDK.V2.*/**/*.cs` | Part 1 + Part 4 + `torboxsdk-v2.instructions.md` |
 
 ---
 

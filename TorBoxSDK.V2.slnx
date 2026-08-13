@@ -10,7 +10,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj" />
-    <Project Path="tests/TorBoxSDK.V2.IntegrationTests/TorBoxSDK.V2.IntegrationTests.csproj" />
     <Project Path="tests/TorBoxSDK.V2.Testing/TorBoxSDK.V2.Testing.csproj" />
     <Project Path="tests/TorBoxSDK.V2.UnitTests/TorBoxSDK.V2.UnitTests.csproj" />
   </Folder>

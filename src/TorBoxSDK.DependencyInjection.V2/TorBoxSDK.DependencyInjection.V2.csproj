@@ -19,4 +19,15 @@
   <ItemGroup>
     <ProjectReference Include="../TorBoxSDK.V2/TorBoxSDK.V2.csproj" />
   </ItemGroup>
+
+  <Target Name="ConstrainCorePackageDependency"
+          AfterTargets="_GetProjectReferenceVersions"
+          BeforeTargets="GenerateNuspec">
+    <ItemGroup>
+      <_ProjectReferencesWithVersions Update="@(_ProjectReferencesWithVersions)"
+                                      Condition="'%(_ProjectReferencesWithVersions.Filename)' == 'TorBoxSDK.V2'">
+        <ProjectVersion>[%(_ProjectReferencesWithVersions.ProjectVersion)]</ProjectVersion>
+      </_ProjectReferencesWithVersions>
+    </ItemGroup>
+  </Target>
 </Project>

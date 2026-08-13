@@ -15,7 +15,7 @@ $unitTestProjectPath = 'tests/TorBoxSDK.V2.UnitTests/TorBoxSDK.V2.UnitTests.cspr
 $contractTestProjectPath = 'tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj'
 $coreProjectPath = 'src/TorBoxSDK.V2/TorBoxSDK.V2.csproj'
 $dependencyInjectionProjectPath = 'src/TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj'
-$integrationTestLockPath = 'tests/TorBoxSDK.V2.' + 'Integration' + 'Tests/packages.lock.json'
+$prohibitedIntegrationProjectName = 'TorBoxSDK.V2.IntegrationTests.csproj'
 $packageOutputPath = [System.IO.Path]::GetFullPath((Join-Path $repositoryRoot 'artifacts/v2-packages'))
 $repositoryRootWithSeparator = $repositoryRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar, [System.IO.Path]::AltDirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
 
@@ -39,8 +39,7 @@ $requiredRelativePaths = @(
     'src/TorBoxSDK.V2.Examples/packages.lock.json',
     'tests/TorBoxSDK.V2.Testing/packages.lock.json',
     'tests/TorBoxSDK.V2.UnitTests/packages.lock.json',
-    'tests/TorBoxSDK.V2.ContractTests/packages.lock.json',
-    $integrationTestLockPath
+    'tests/TorBoxSDK.V2.ContractTests/packages.lock.json'
 )
 
 function Assert-RequiredFiles {
@@ -48,6 +47,67 @@ function Assert-RequiredFiles {
         $absolutePath = Join-Path $repositoryRoot $relativePath
         if (-not (Test-Path -LiteralPath $absolutePath -PathType Leaf)) {
             throw "Required V2 validation file is missing: $relativePath"
+        }
+    }
+}
+
+function Get-DeterministicSolutionProjectPaths {
+    [xml]$solution = Get-Content -LiteralPath (Join-Path $repositoryRoot $solutionPath) -Raw
+    $projectPaths = @(
+        $solution.SelectNodes("//*[local-name()='Project']") |
+            ForEach-Object { $_.GetAttribute('Path').Replace('\', '/') }
+    )
+    if ($projectPaths.Count -eq 0) {
+        throw "The deterministic V2 solution contains no projects: $solutionPath"
+    }
+
+    return $projectPaths
+}
+
+function Assert-DeterministicSolutionExcludesIntegrationTests {
+    $expectedProjectPaths = @(
+        'src/TorBoxSDK.DependencyInjection.V2/TorBoxSDK.DependencyInjection.V2.csproj',
+        'src/TorBoxSDK.V2.Examples/TorBoxSDK.V2.Examples.csproj',
+        'src/TorBoxSDK.V2/TorBoxSDK.V2.csproj',
+        'tests/TorBoxSDK.V2.ContractTests/TorBoxSDK.V2.ContractTests.csproj',
+        'tests/TorBoxSDK.V2.Testing/TorBoxSDK.V2.Testing.csproj',
+        'tests/TorBoxSDK.V2.UnitTests/TorBoxSDK.V2.UnitTests.csproj'
+    )
+    $actualProjectPaths = @(Get-DeterministicSolutionProjectPaths | Sort-Object)
+    $solutionDifference = @(Compare-Object -ReferenceObject ($expectedProjectPaths | Sort-Object) -DifferenceObject $actualProjectPaths)
+    if ($solutionDifference.Count -ne 0) {
+        throw "The deterministic V2 solution must contain exactly the approved offline projects: $($solutionDifference | Out-String)"
+    }
+
+    $visitedProjectPaths = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+    $pendingProjectPaths = [System.Collections.Generic.Queue[string]]::new()
+    foreach ($relativeProjectPath in $actualProjectPaths) {
+        $pendingProjectPaths.Enqueue([System.IO.Path]::GetFullPath((Join-Path $repositoryRoot $relativeProjectPath)))
+    }
+
+    while ($pendingProjectPaths.Count -ne 0) {
+        $projectPath = $pendingProjectPaths.Dequeue()
+        if (-not $visitedProjectPaths.Add($projectPath)) {
+            continue
+        }
+
+        [xml]$project = Get-Content -LiteralPath $projectPath -Raw
+        foreach ($projectReference in @($project.SelectNodes("//*[local-name()='ProjectReference']"))) {
+            $referenceInclude = $projectReference.GetAttribute('Include')
+            if ([string]::IsNullOrWhiteSpace($referenceInclude)) {
+                throw "Project '$projectPath' contains a ProjectReference without Include metadata."
+            }
+
+            $referencedProjectPath = [System.IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $projectPath) $referenceInclude))
+            if ([System.IO.Path]::GetFileName($referencedProjectPath) -ieq $prohibitedIntegrationProjectName) {
+                throw "The deterministic V2 project graph must not reference '$prohibitedIntegrationProjectName': $projectPath"
+            }
+
+            if (-not (Test-Path -LiteralPath $referencedProjectPath -PathType Leaf)) {
+                throw "Project '$projectPath' references a missing project: $referenceInclude"
+            }
+
+            $pendingProjectPaths.Enqueue($referencedProjectPath)
         }
     }
 }
@@ -110,6 +170,19 @@ function Assert-DescendantPackageOutputPath {
     }
 }
 
+function ConvertTo-NormalizedTargetFramework {
+    param(
+        [Parameter(Mandatory)]
+        [string]$TargetFramework
+    )
+
+    switch -Regex ($TargetFramework.Trim()) {
+        '^netstandard2\.0$|^\.NETStandard2\.0$' { return 'netstandard2.0' }
+        '^(?:net|\.NETCoreApp)(?<major>6|7|8|9|10)\.0$' { return "net$($Matches['major']).0" }
+        default { throw "Package dependency group uses an unsupported target framework '$TargetFramework'." }
+    }
+}
+
 function Get-PackageMetadata {
     param(
         [Parameter(Mandatory)]
@@ -139,18 +212,52 @@ function Get-PackageMetadata {
             throw "Package '$PackagePath' has no nuspec metadata."
         }
 
-        $packageId = [string]$metadata.SelectSingleNode("./*[local-name()='id']").InnerText
-        $packageVersion = [string]$metadata.SelectSingleNode("./*[local-name()='version']").InnerText
-        $dependencyIds = @(
-            $metadata.SelectNodes(".//*[local-name()='dependency']") |
-                ForEach-Object { [string]$_.GetAttribute('id') } |
-                Sort-Object -Unique
-        )
+        $dependenciesElement = $metadata.SelectSingleNode("./*[local-name()='dependencies']")
+        $dependencyGroups = @()
+        if ($null -ne $dependenciesElement) {
+            $groupNodes = @($dependenciesElement.SelectNodes("./*[local-name()='group']"))
+            $ungroupedDependencies = @($dependenciesElement.SelectNodes("./*[local-name()='dependency']"))
+            if ($ungroupedDependencies.Count -ne 0) {
+                throw "Package '$PackagePath' must declare dependencies in target-framework groups."
+            }
+
+            $seenTargetFrameworks = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+            foreach ($groupNode in $groupNodes) {
+                $targetFramework = ConvertTo-NormalizedTargetFramework $groupNode.GetAttribute('targetFramework')
+                if (-not $seenTargetFrameworks.Add($targetFramework)) {
+                    throw "Package '$PackagePath' contains duplicate '$targetFramework' dependency groups."
+                }
+
+                $dependencies = @()
+                $seenDependencyIds = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::Ordinal)
+                foreach ($dependencyNode in @($groupNode.SelectNodes("./*[local-name()='dependency']"))) {
+                    $dependencyId = [string]$dependencyNode.GetAttribute('id')
+                    $dependencyVersion = [string]$dependencyNode.GetAttribute('version')
+                    if ([string]::IsNullOrWhiteSpace($dependencyId) -or [string]::IsNullOrWhiteSpace($dependencyVersion)) {
+                        throw "Package '$PackagePath' has a dependency without an id or version in '$targetFramework'."
+                    }
+
+                    if (-not $seenDependencyIds.Add($dependencyId)) {
+                        throw "Package '$PackagePath' contains duplicate dependency '$dependencyId' in '$targetFramework'."
+                    }
+
+                    $dependencies += [pscustomobject]@{
+                        Id = $dependencyId
+                        Version = $dependencyVersion
+                    }
+                }
+
+                $dependencyGroups += [pscustomobject]@{
+                    TargetFramework = $targetFramework
+                    Dependencies = @($dependencies)
+                }
+            }
+        }
 
         return [pscustomobject]@{
-            Id = $packageId
-            Version = $packageVersion
-            DependencyIds = $dependencyIds
+            Id = [string]$metadata.SelectSingleNode("./*[local-name()='id']").InnerText
+            Version = [string]$metadata.SelectSingleNode("./*[local-name()='version']").InnerText
+            DependencyGroups = @($dependencyGroups)
             EntryNames = @($entries | ForEach-Object { $_.FullName })
         }
     }
@@ -169,7 +276,7 @@ function Assert-PackageContents {
         [string]$ExpectedAssemblyName
     )
 
-    if ($Package.Id -cne $ExpectedId -or $Package.Version -cne '2.0.0') {
+    if ($Package.Id -cne $ExpectedId -or [string]::IsNullOrWhiteSpace($Package.Version)) {
         throw "Unexpected package identity '$($Package.Id) $($Package.Version)'."
     }
 
@@ -181,29 +288,116 @@ function Assert-PackageContents {
     }
 }
 
-function Assert-PackageDependencies {
+function Assert-DependencyIdSet {
     param(
         [Parameter(Mandatory)]
         [string]$PackageId,
         [Parameter(Mandatory)]
-        [string[]]$DependencyIds,
-        [Parameter(Mandatory)]
-        [string[]]$AllowedDependencyIds,
-        [string[]]$RequiredDependencyIds = @()
+        [string]$TargetFramework,
+        [AllowEmptyCollection()]
+        [object[]]$Dependencies = @(),
+        [AllowEmptyCollection()]
+        [string[]]$ExpectedDependencyIds = @()
     )
 
-    $unexpectedDependencyIds = @($DependencyIds | Where-Object { $AllowedDependencyIds -notcontains $_ })
+    $actualDependencyIds = @($Dependencies | ForEach-Object { [string]$_.Id } | Sort-Object -Unique)
+    $unexpectedDependencyIds = @($actualDependencyIds | Where-Object { $ExpectedDependencyIds -notcontains $_ })
     if ($unexpectedDependencyIds.Count -ne 0) {
-        throw "Package '$PackageId' has unexpected production dependencies: $($unexpectedDependencyIds -join ', ')."
+        throw "Package '$PackageId' has unexpected dependencies in '$TargetFramework': $($unexpectedDependencyIds -join ', ')."
     }
 
-    $missingDependencyIds = @($RequiredDependencyIds | Where-Object { $DependencyIds -notcontains $_ })
+    $missingDependencyIds = @($ExpectedDependencyIds | Where-Object { $actualDependencyIds -notcontains $_ })
     if ($missingDependencyIds.Count -ne 0) {
-        throw "Package '$PackageId' is missing required dependencies: $($missingDependencyIds -join ', ')."
+        throw "Package '$PackageId' is missing required dependencies in '$TargetFramework': $($missingDependencyIds -join ', ')."
+    }
+}
+
+function Assert-MicrosoftExtensionsVersionPolicy {
+    param(
+        [Parameter(Mandatory)]
+        [string]$TargetFramework,
+        [Parameter(Mandatory)]
+        [object[]]$Dependencies
+    )
+
+    $expectedMajorByTargetFramework = @{
+        'netstandard2.0' = 10
+        'net6.0' = 8
+        'net7.0' = 8
+        'net8.0' = 10
+        'net9.0' = 10
+        'net10.0' = 10
+    }
+    $expectedMajor = [int]$expectedMajorByTargetFramework[$TargetFramework]
+    foreach ($dependency in $Dependencies) {
+        if ($dependency.Version -notmatch '^(?<major>[0-9]+)\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?$') {
+            throw "Microsoft.Extensions dependency '$($dependency.Id)' in '$TargetFramework' must use a plain semantic version, not '$($dependency.Version)'."
+        }
+
+        if ([int]$Matches['major'] -ne $expectedMajor) {
+            throw "Microsoft.Extensions dependency '$($dependency.Id)' in '$TargetFramework' must use major version '$expectedMajor', not '$($dependency.Version)'."
+        }
+    }
+}
+
+function Assert-PackageDependencyGroups {
+    param(
+        [Parameter(Mandatory)]
+        [object]$Package,
+        [Parameter(Mandatory)]
+        [ValidateSet('Core', 'DependencyInjection')]
+        [string]$PackageKind,
+        [Parameter(Mandatory)]
+        [string]$ExpectedCoreVersion
+    )
+
+    $expectedTargetFrameworks = @('netstandard2.0', 'net6.0', 'net7.0', 'net8.0', 'net9.0', 'net10.0')
+    $actualTargetFrameworks = @($Package.DependencyGroups | ForEach-Object { [string]$_.TargetFramework } | Sort-Object -Unique)
+    $unexpectedTargetFrameworks = @($actualTargetFrameworks | Where-Object { $expectedTargetFrameworks -notcontains $_ })
+    $missingTargetFrameworks = @($expectedTargetFrameworks | Where-Object { $actualTargetFrameworks -notcontains $_ })
+    if ($unexpectedTargetFrameworks.Count -ne 0 -or $missingTargetFrameworks.Count -ne 0) {
+        throw "Package '$($Package.Id)' dependency groups are invalid. Missing: $($missingTargetFrameworks -join ', '); unexpected: $($unexpectedTargetFrameworks -join ', ')."
+    }
+
+    $groupsByTargetFramework = @{}
+    foreach ($dependencyGroup in $Package.DependencyGroups) {
+        $groupsByTargetFramework[$dependencyGroup.TargetFramework] = $dependencyGroup
+    }
+
+    foreach ($targetFramework in $expectedTargetFrameworks) {
+        $dependencies = @($groupsByTargetFramework[$targetFramework].Dependencies)
+        if ($PackageKind -ceq 'Core') {
+            [string[]]$expectedDependencyIds = @()
+            if ($targetFramework -ceq 'netstandard2.0') {
+                $expectedDependencyIds = @('System.Text.Json')
+            }
+
+            Assert-DependencyIdSet -PackageId $Package.Id -TargetFramework $targetFramework -Dependencies $dependencies -ExpectedDependencyIds $expectedDependencyIds
+            continue
+        }
+
+        $expectedDependencyIds = @(
+            'TorBoxSDK',
+            'Microsoft.Extensions.Configuration.Abstractions',
+            'Microsoft.Extensions.DependencyInjection.Abstractions',
+            'Microsoft.Extensions.Http',
+            'Microsoft.Extensions.Options',
+            'Microsoft.Extensions.Options.ConfigurationExtensions'
+        )
+        Assert-DependencyIdSet $Package.Id $targetFramework $dependencies $expectedDependencyIds
+
+        $coreDependency = @($dependencies | Where-Object { $_.Id -ceq 'TorBoxSDK' })
+        if ($coreDependency.Count -ne 1 -or $coreDependency[0].Version -cne "[$ExpectedCoreVersion]") {
+            throw "Package '$($Package.Id)' must depend on TorBoxSDK as exact range '[$ExpectedCoreVersion]' in '$targetFramework'."
+        }
+
+        $microsoftExtensionsDependencies = @($dependencies | Where-Object { $_.Id -like 'Microsoft.Extensions.*' })
+        Assert-MicrosoftExtensionsVersionPolicy $targetFramework $microsoftExtensionsDependencies
     }
 }
 
 Assert-RequiredFiles
+Assert-DeterministicSolutionExcludesIntegrationTests
 
 Invoke-DotNet @('restore', $solutionPath, '--locked-mode') 'V2 locked restore failed.'
 Invoke-DotNet @('build', $solutionPath, '--configuration', 'Release', '--no-restore') 'V2 Release build failed.'
@@ -231,39 +425,34 @@ New-Item -ItemType Directory -Path $packageOutputPath | Out-Null
 Invoke-DotNet @('pack', $coreProjectPath, '--configuration', 'Release', '--no-build', '--no-restore', '--output', $packageOutputPath) 'V2 core package creation failed.'
 Invoke-DotNet @('pack', $dependencyInjectionProjectPath, '--configuration', 'Release', '--no-build', '--no-restore', '--output', $packageOutputPath) 'V2 dependency-injection package creation failed.'
 
-$corePackagePath = Join-Path $packageOutputPath 'TorBoxSDK.2.0.0.nupkg'
-$dependencyInjectionPackagePath = Join-Path $packageOutputPath 'TorBoxSDK.DependencyInjection.2.0.0.nupkg'
-foreach ($packagePath in @($corePackagePath, $dependencyInjectionPackagePath)) {
-    if (-not (Test-Path -LiteralPath $packagePath -PathType Leaf)) {
-        throw "Expected V2 package is missing: $packagePath"
-    }
+$packageArtifacts = @(
+    Get-ChildItem -LiteralPath $packageOutputPath -File -Filter '*.nupkg' |
+        ForEach-Object {
+            [pscustomobject]@{
+                Path = $_.FullName
+                Metadata = Get-PackageMetadata $_.FullName
+            }
+        }
+)
+$expectedPackageIds = @('TorBoxSDK', 'TorBoxSDK.DependencyInjection')
+$actualPackageIds = @($packageArtifacts | ForEach-Object { $_.Metadata.Id } | Sort-Object -Unique)
+$unexpectedPackageIds = @($actualPackageIds | Where-Object { $expectedPackageIds -notcontains $_ })
+$missingPackageIds = @($expectedPackageIds | Where-Object { $actualPackageIds -notcontains $_ })
+if ($packageArtifacts.Count -ne 2 -or $unexpectedPackageIds.Count -ne 0 -or $missingPackageIds.Count -ne 0) {
+    throw "V2 package output must contain only the core and DI packages. Missing: $($missingPackageIds -join ', '); unexpected: $($unexpectedPackageIds -join ', ')."
 }
 
-$corePackage = Get-PackageMetadata $corePackagePath
-$dependencyInjectionPackage = Get-PackageMetadata $dependencyInjectionPackagePath
+$corePackageArtifact = @($packageArtifacts | Where-Object { $_.Metadata.Id -ceq 'TorBoxSDK' })
+$dependencyInjectionPackageArtifact = @($packageArtifacts | Where-Object { $_.Metadata.Id -ceq 'TorBoxSDK.DependencyInjection' })
+if ($corePackageArtifact.Count -ne 1 -or $dependencyInjectionPackageArtifact.Count -ne 1) {
+    throw 'V2 package output must contain exactly one core package and one dependency-injection package.'
+}
 
+$corePackage = $corePackageArtifact[0].Metadata
+$dependencyInjectionPackage = $dependencyInjectionPackageArtifact[0].Metadata
 Assert-PackageContents $corePackage 'TorBoxSDK' 'TorBoxSDK'
 Assert-PackageContents $dependencyInjectionPackage 'TorBoxSDK.DependencyInjection' 'TorBoxSDK.DependencyInjection'
-
-$coreMicrosoftExtensionsDependencies = @($corePackage.DependencyIds | Where-Object { $_ -like 'Microsoft.Extensions.*' })
-if ($coreMicrosoftExtensionsDependencies.Count -ne 0) {
-    throw "Package 'TorBoxSDK' must not depend on Microsoft.Extensions packages: $($coreMicrosoftExtensionsDependencies -join ', ')."
-}
-Assert-PackageDependencies 'TorBoxSDK' $corePackage.DependencyIds @('System.Text.Json')
-Assert-PackageDependencies 'TorBoxSDK.DependencyInjection' $dependencyInjectionPackage.DependencyIds @(
-    'TorBoxSDK',
-    'Microsoft.Extensions.Configuration.Abstractions',
-    'Microsoft.Extensions.DependencyInjection.Abstractions',
-    'Microsoft.Extensions.Http',
-    'Microsoft.Extensions.Options',
-    'Microsoft.Extensions.Options.ConfigurationExtensions'
-) @(
-    'TorBoxSDK',
-    'Microsoft.Extensions.Configuration.Abstractions',
-    'Microsoft.Extensions.DependencyInjection.Abstractions',
-    'Microsoft.Extensions.Http',
-    'Microsoft.Extensions.Options',
-    'Microsoft.Extensions.Options.ConfigurationExtensions'
-)
+Assert-PackageDependencyGroups $corePackage 'Core' $corePackage.Version
+Assert-PackageDependencyGroups $dependencyInjectionPackage 'DependencyInjection' $corePackage.Version
 
 Write-Host "V2 packages were validated in '$packageOutputPath'."

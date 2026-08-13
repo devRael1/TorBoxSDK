@@ -1,6 +1,8 @@
 # Code Review Workflow — Dimension Checklist
 
-> **Source of rules:** All coding rules live in `.github/instructions/csharp-conventions.instructions.md`.  
+> **Source of generic rules:** `.github/instructions/csharp-conventions.instructions.md`.
+> For V2 targets, also apply the narrowly scoped precedence rule in
+> `.github/instructions/torboxsdk-v2.instructions.md`.
 > This file contains only the **review structure** (which dimensions to check, in what order). Do not duplicate rules here.
 
 ---
@@ -8,7 +10,11 @@
 ## Before You Start
 
 1. Read `.github/instructions/csharp-conventions.instructions.md` in full.
-2. Identify the file path to determine which Parts apply:
+2. For V2 files under `src/TorBoxSDK.V2/`,
+   `src/TorBoxSDK.DependencyInjection.V2/`, or `tests/TorBoxSDK.V2.*/`, read
+   `.github/instructions/torboxsdk-v2.instructions.md` and apply its override
+   only to the legacy Part 2 response/exception rules.
+3. Identify the file path to determine which Parts apply:
 
 | File path | Parts to apply |
 |-----------|---------------|
@@ -53,7 +59,9 @@ Note: `.Result` / `.Wait()` in `src/` is always **CRITICAL**.
 → Rules in **Part 2** — client hierarchy, HTTP, auth, DI
 
 ### D8 — Response Handling *(src/ only)*
-→ Rules in **Part 2 § Response Handling**
+→ V1 and other source: **Part 2 § Response Handling**. V2 source: read and
+apply the V2 response-as-value override; all other Part 2 rules remain in
+force.
 
 ### D9 — Security
 → Rules in **Part 2 § Security**  
